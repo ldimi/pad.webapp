@@ -3,6 +3,7 @@ target/**
 .svn/**
 .project
 .classpath
+.buildpath
 .settings
 .settings/**
 node_modules
