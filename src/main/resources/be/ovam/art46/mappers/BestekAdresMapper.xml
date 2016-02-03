@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.BestekAdresMapper">
+
+    <select id="getBestekAdres" parameterType="map" resultType="ciMap">
+        select *
+        from ART46.bestek_adres
+        where 1 = 1
+            <if test='bestek_adres_id != null'>
+                and bestek_adres_id = #{bestek_adres_id}
+            </if>
+            <if test='bestek_adres_id == null'>
+                and bestek_id = #{bestekId}
+                and adres_id = #{adresId}
+                <if test='contactId == null or contactId == 0'>
+                    and (contact_id is null or contact_id = 0)
+                </if>
+                <if test='contactId != null and contactId != 0'>
+                    and contact_id = #{contactId}
+                </if>
+            </if>
+    </select>
+
+    <insert id="insertBestekAdres" parameterType="map">
+        <selectKey keyProperty="bestek_adres_id" resultType="int" order="AFTER">
+            SELECT IDENTITY_VAL_LOCAL() AS VAL FROM SYSIBM.SYSDUMMY1
+        </selectKey>
+        insert into ART46.bestek_adres  (
+                bestek_id,
+                adres_id,
+                contact_id
+        )
+        values (
+                #{bestekId},
+                #{adresId},
+                #{contactId}
+        )
+    </insert>
+
+    <delete id="deleteBestekAdres" parameterType="map">
+        delete from ART46.bestek_adres
+        where 1 = 1
+            <if test='bestek_adres_id != null'>
+                and bestek_adres_id = #{bestek_adres_id}
+            </if>
+            <if test='bestek_adres_id == null'>
+                and bestek_id = #{bestekId}
+                and adres_id = #{adresId}
+                <if test='contactId == null or contactId == 0'>
+                    and (contact_id is null or contact_id = 0)
+                </if>
+                <if test='contactId != null and contactId != 0'>
+                    and contact_id = #{contactId}
+                </if>
+            </if>
+    </delete>
+
+    <sql id="bestekOpdrachthouders_select" >
+        select
+            ada.bestek_id,
+            ad.adres_id,
+            ac.contact_id,
+            coalesce(ac.tel,ad.tel) as tel,
+            coalesce(ac.gsm,ad.gsm) as gsm,
+            coalesce(ac.email,ad.email) as email,
+            ad.straat,
+            ad.gemeente,
+            ad.postcode,
+            ac.functie,
+            coalesce(ad.naam,'') || ' '|| coalesce(ad.voornaam,'') naam_l,
+            coalesce(ac.naam,'') || ' '|| coalesce(ac.voornaam,'') naam_contact_l,
+            coalesce(ad.naam,'') || ' '||coalesce(ac.naam,'') || ' '|| coalesce(ac.voornaam,'') label,
+            ada.bestek_adres_id as value
+        from ART46.bestek_adres ada
+                inner join ART46.adres ad on (ad.adres_id = ada.adres_id)
+            left outer join ART46.adres_contact ac
+            on ad.adres_id = ac.adres_id
+            and ac.contact_id = ada.contact_id
+    </sql>
+
+    <select id="getBestekOpdrachthouders" parameterType="int" resultType="ciMap">
+        <include refid="bestekOpdrachthouders_select"/>
+        where ada.bestek_id = #{bestekId}
+    </select>
+
+    <select id="getBestekOpdrachtHouder" parameterType="int" resultType="ciMap">
+        <include refid="bestekOpdrachthouders_select"/>
+        WHERE ada.bestek_adres_id = #{bestek_adres_id}
+    </select>
+
+
+</mapper>

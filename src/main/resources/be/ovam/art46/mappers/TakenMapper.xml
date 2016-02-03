@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="be.ovam.art46.mappers.TakenMapper">
+
+    <!--
+         taak_type_nr     : geeft een volgorde aan de taak soorten, verplicht
+         taak_type        : geeft ondubbelzinnig aan welk soort taak het is,
+                            (niet verplicht) , wordt eventueel gebruikt om correcte taakAfhandeling te kiezen
+         taak_key         : niet verplichte string, wordt door taakafhandeling gebruikt om correcte data te behandelen.
+         taak             :
+         kleur            : je kan een kleur meegeven aan elke taak afzonderlijk (niet verplicht)
+         dossier_nr       : (niet verplicht)
+         uitvoerder       :
+         omschrijving     : (verplicht)
+         extra_info       : (niet verplicht)
+         dms_file         : (niet verplicht)
+         link             : naar deze link kan gesprongen worden, -> meer detail info, evetueel daar de taak uit te voeren (verplicht)
+         afwerk_jn        : indien 'J' wordt er een edit potlood getoond, en moet er een
+                            dialog scherm voor taakafhandeling voorzien worden. (niet verplicht)
+         uiterste_eind_d  :
+         termijn          :  aantal dagen tot uiterste_eind_d
+    -->
+
+    <select id="get_taken_schuldvorderingBeoordelen"
+        parameterType="be.ovam.art46.controller.taken.TakenLijstController$ParamsDO"
+        resultType="ciMap" >
+        select *
+        from (
+                select
+                    10 as taak_type_nr,
+                    'schuldvordering goedkeuren' as taak,
+                    d.dossier_nr,
+                    d.dossier_b_l as dossier_b,
+                    case when sv.DEELOPDRACHT_ID is null then coalesce(br.auteur_id, d.DOSS_HDR_ID)
+                         else dod.DOSS_HDR_ID
+                    end as uitvoerder,
+                    coalesce(br.BRIEF_NR, art46.schuldvordering_nr(vordering_id)) as omschrijving,
+                    b.bestek_nr || ': ' || coalesce(b.omschrijving, '') as extra_info,
+                    case
+                        when sv.AANVR_SCHULDVORDERING_ID is null then
+                            's/bestek/' || sv.BESTEK_Id || '/schuldvorderingen/' || sv.vordering_id
+                        else
+                            's/bestek/' || sv.BESTEK_Id || '/aanvraagSchuldvordering/' || sv.aanvr_schuldvordering_id
+                    end as link,
+                    (sv.UITERSTE_VERIFIC_D - 2 days) as uiterste_eind_d,
+                    (days(sv.UITERSTE_VERIFIC_D) - days(current date) - 2 ) as termijn,
+                    1
+                from
+                    ART46.SCHULDVORDERING sv
+                        left join ART46.BRIEF br on sv.brief_id = br.brief_id
+                    inner join ART46.BESTEK b
+                    on sv.bestek_id = b.bestek_id
+                        inner join ART46.V_DOSSIER d
+                        on b.dossier_id = d.id
+                    left join art46.DEELOPDRACHT do
+                    on sv.DEELOPDRACHT_ID = do.DEELOPDRACHT_ID
+                        left join art46.v_DOSSIER dod
+                        on do.DOSSIER_ID = dod.id
+                where sv.acceptatie_D is null
+                    and sv.afgekeurd_jn != 'J'
+                    and sv.status != 'IN OPMAAK'
+                ) as t
+        where 1 =1
+            and uitvoerder = #{doss_hdr_id}
+        order by termijn
+    </select>
+
+    <select id="get_taken_schuldvorderingOndertekenen" resultType="ciMap" >
+        with sv_agregate as (
+            select count(*) as aantal,
+                  min(sv.UITERSTE_VERIFIC_D) as uiterste_eind_d
+            from art46.schuldvordering sv
+                    left join art46.brief br
+                    on sv.brief_id = br.brief_id
+            where sv.status like 'BEOORDEELD'
+                  and ( br.dms_id is not null  OR sv.AANVR_SCHULDVORDERING_ID is not null)
+        )
+        select
+            20 as taak_type_nr,
+            'ondertekenen schuldvorderingen' as taak,
+            cast(null as int) as dossier_id,
+            cast(null as char) as uitvoerder,
+            'ondertekenen' as omschrijving,
+            sv_agregate.aantal || ' schuldvordering(en) te ondertekenen' as extra_info,
+             's/tekeurenschuldvorderingen' as link,
+             sv_agregate.uiterste_eind_d,
+             (days(sv_agregate.uiterste_eind_d) - days(current date)) as termijn
+        from sv_agregate
+        where sv_agregate.aantal > 0
+    </select>
+
+
+    <select id="get_taken_schuldvorderingScannen" resultType="ciMap" >
+        with sv_agregate as (
+            select count(*) as aantal,
+                  min(sv.UITERSTE_VERIFIC_D) as uiterste_eind_d
+            from art46.schuldvordering sv
+                    inner join art46.brief br
+                    on sv.brief_id = br.brief_id
+            where sv.status like 'BEOORDEELD'
+                  and br.dms_id is null
+                  and sv.AANVR_SCHULDVORDERING_ID is null -- enkel niet digitaal traject
+        )
+        select
+            40 as taak_type_nr,
+            'scannen schuldvorderingen' as taak,
+            cast(null as int) as dossier_id,
+            cast(null as char) as uitvoerder,
+            'scannen' as omschrijving,
+            sv_agregate.aantal || ' schuldvordering(en) te scannen' as extra_info,
+            's/tescannenschuldvorderingen' as link,
+            sv_agregate.uiterste_eind_d,
+            (days(sv_agregate.uiterste_eind_d) - days(current date)) as termijn
+        from sv_agregate
+        where sv_agregate.aantal > 0
+    </select>
+
+    <select id="get_taken_schuldvorderingPrinten" resultType="ciMap" >
+        with sv_agregate as (
+            select count(*) as aantal,
+                  min(sv.UITERSTE_VERIFIC_D) as uiterste_eind_d
+            from art46.schuldvordering sv
+                    inner join art46.brief br
+                    on sv.brief_id = br.brief_id
+            where sv.status like 'ONDERTEKEND'
+                and br.dms_id is not null
+                and sv.AANVR_SCHULDVORDERING_ID is null -- enkel niet digitaal traject
+        )
+        select
+            50 as taak_type_nr,
+            'printen schuldvorderingen' as taak,
+            cast(null as int) as dossier_id,
+            cast(null as char) as uitvoerder,
+            'printen' as omschrijving,
+            sv_agregate.aantal || ' schuldvordering(en) te printen' as extra_info,
+             's/teprintenschuldvorderingen' as link,
+             sv_agregate.uiterste_eind_d,
+             (days(sv_agregate.uiterste_eind_d) - days(current date)) as termijn
+        from sv_agregate
+        where sv_agregate.aantal > 0
+    </select>
+
+    <select id="get_taken_voorstelDeelopdrachtBeoordelen"
+        parameterType="be.ovam.art46.controller.taken.TakenLijstController$ParamsDO"
+        resultType="ciMap" >
+        select
+            60 as taak_type_nr,
+            'voorstel beoordelen' as taak,
+            d.dossier_nr,
+            d.dossier_b_l as dossier_b,
+            d.DOSS_HDR_ID as uitvoerder,
+            art46.VOORSTEL_DEELOPDRACHT_NR(vd.id) || ', inzender : ' || of.INZENDER as omschrijving,
+            b.bestek_nr || ': ' || coalesce(b.omschrijving, '') as extra_info,
+            's/bestek/' || of.BESTEK_Id || '/voorstel/' || vd.ID as link,
+            (date(vd.AANVRAAG_DATUM) + 30 days) as uiterste_eind_d,
+            (days(date(vd.AANVRAAG_DATUM)) + 30 - days(current date)) as termijn
+        from art46.VOORSTEL_DEELOPDRACHT vd
+                left  join art46.v_dossier d
+                on vd.DOSSIER_ID = d.id
+            left join art46.OFFERTE of
+            on vd.OFFERTE_ID = of.ID
+                left join art46.BESTEK b
+                on of.BESTEK_ID = b.BESTEK_ID
+        WHERE 1 = 1
+            and vd.status = 'BEOORDELEN'
+            and d.DOSS_HDR_ID = #{doss_hdr_id}
+    </select>
+
+    <select id="get_taken_deelopdrachtGoedkeuren"
+        parameterType="be.ovam.art46.controller.taken.TakenLijstController$ParamsDO"
+        resultType="ciMap" >
+        select
+            100 as taak_type_nr,
+            'deelopdracht goedkeuren' as taak,
+            do.ander_dossier_nr as dossier_nr,
+            do.ander_dossier_b as dossier_b,
+            do.ander_doss_hdr_id as uitvoerder,
+            do.deelopdracht_nr as omschrijving,
+            do.dossier_nr || ' : ' || do.dossier_b_l as extra_info,
+            's/bestek/' || do.bestek_id || '/deelopdrachten/' || do.deelopdracht_id as link,
+            null as uiterste_eind_d,
+            null as termijn
+        from art46.v_deelopdracht do
+        where 1 = 1
+            and do.afsluit_d is null
+            and do.goedkeuring_d is null
+            and do.ander_raamcontract_jn = 'J'
+            and do.ander_doss_hdr_id = #{doss_hdr_id}
+    </select>
+
+    <select id="get_taken_brief_in_check_afd_hfd"
+        parameterType="be.ovam.art46.controller.taken.TakenLijstController$ParamsDO"
+        resultType="ciMap" >
+        select
+            80 as taak_type_nr,
+            'brief_in_check_afd_hfd' as taak_type,
+            br.brief_id as taak_key,
+            'inkomende brief' as taak,
+            'green' as kleur,
+            d.dossier_nr,
+            d.dossier_b_l as dossier_b,
+            cast(null as char) as uitvoerder,
+            br.brief_nr as omschrijving,
+            br.dms_folder || '/' || br.dms_filename as dms_file,
+            bra.brief_aard_b || ' , TODOOOO' as extra_info,
+            'briefdetails.do?brief_id=' || br.brief_id as link,
+            'J' as afwerk_jn,
+            (date(coalesce(br.in_d, br.inschrijf_d)) + 30 days) as uiterste_eind_d,
+            (days(date(coalesce(br.in_d, br.inschrijf_d))) + bra.TERMIJN - days(current date)) as termijn
+        from art46.brief br
+                left  join art46.v_dossier d
+                on br.DOSSIER_ID = d.id
+             inner join art46.brief_aard bra
+             on br.IN_AARD_ID = bra.BRIEF_AARD_ID
+                left join art46.schuldvordering sv
+                on br.brief_id = sv.brief_id
+        WHERE 1 = 1
+            and br.QR_CODE is not null
+            and br.check_afd_hfd_d is null
+            and bra.termijn is not null
+            and sv.vordering_id is null
+            and bra.CONTROLE_AFDELINGSHOOFD_JN = 'J'
+        fetch first 200 rows only
+    </select>
+
+    <select id="get_taken_brief_in_check_auteur"
+        parameterType="be.ovam.art46.controller.taken.TakenLijstController$ParamsDO"
+        resultType="ciMap" >
+        select
+            90 as taak_type_nr,
+            'brief_in_check_auteur' as taak_type,
+            br.brief_id as taak_key,
+            'inkomende brief' as taak,
+            case when br.opmerking_afd_hfd is null then null
+                 else 'red'
+            end as kleur,
+            d.dossier_nr,
+            d.dossier_b_l as dossier_b,
+            cast(null as char) as uitvoerder,
+            br.brief_nr as omschrijving,
+            br.dms_folder || '/' || br.dms_filename as dms_file,
+            bra.brief_aard_b || ' , ' || coalesce(br.betreft, '') as extra_info,
+            case when br.opmerking_afd_hfd is null then ''
+                 else br.opmerking_afd_hfd
+            end as extra_info_2,
+            'briefdetails.do?brief_id=' || br.brief_id as link,
+            'J' as afwerk_jn,
+            (date(coalesce(br.in_d, br.inschrijf_d)) + 30 days) as uiterste_eind_d,
+            (days(date(coalesce(br.in_d, br.inschrijf_d))) + bra.TERMIJN - days(current date)) as termijn
+        from art46.brief br
+                left  join art46.v_dossier d
+                on br.DOSSIER_ID = d.id
+             inner join art46.brief_aard bra
+             on br.IN_AARD_ID = bra.BRIEF_AARD_ID
+                left join art46.schuldvordering sv
+                on br.brief_id = sv.brief_id
+        WHERE 1 = 1
+            and br.QR_CODE is not null
+            and br.check_auteur_d is null
+            and bra.termijn is not null
+            and sv.vordering_id is null
+            and (bra.CONTROLE_AFDELINGSHOOFD_JN = 'N' or
+                 (bra.CONTROLE_AFDELINGSHOOFD_JN = 'J' and br.CHECK_AFD_HFD_D is not null))
+            and (br.auteur_id = #{doss_hdr_id} or
+                 (br.auteur_id is null and d.DOSS_HDR_ID = #{doss_hdr_id})
+                 )
+        fetch first 200 rows only
+    </select>
+
+    <select id="get_taken_brieven_printen" resultType="ciMap" >
+        with agregate as (
+            select count(*) as aantal
+            from art46.brief br
+                    left join art46.schuldvordering sv
+                    on sv.brief_id = br.brief_id
+            where 1 = 1
+                and sv.vordering_id is null
+                and br.teprinten_jn = 'J'
+                and br.uit_aard_id is not null
+                and br.uit_aard_id != 0
+                and br.dms_id is not null
+        )
+        select
+            51 as taak_type_nr,
+            'printen brieven' as taak,
+            cast(null as int) as dossier_id,
+            cast(null as char) as uitvoerder,
+            'printen' as omschrijving,
+            agregate.aantal || ' brieven te printen' as extra_info,
+            's/taken/brief/printen' as link
+        from agregate
+        where agregate.aantal > 0
+    </select>
+
+
+</mapper>

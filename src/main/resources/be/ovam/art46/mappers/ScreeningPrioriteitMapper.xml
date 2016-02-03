@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.ScreeningPrioriteitMapper">
+
+    <cache/>
+
+    <select id="getScreeningPrioriteitCriteriumList"  resultType="ciMap">
+        select
+            pr.criterium_code,
+            pr.criterium_b,
+            pr.gewicht,
+            'R' as status_crud
+        from art46.screening_prioriteit_criterium_code pr
+        order by pr.criterium_code
+    </select>
+
+
+    <select id="getScreeningPrioriteitWaardeList"  resultType="ciMap">
+        select
+            waarde_id,
+            criterium_code,
+            bbo_beschikbaar_jn,
+            waarde_b,
+            score,
+            'R' as status_crud
+        from  art46.screening_prioriteit_waarde wa
+        order by criterium_code, bbo_beschikbaar_jn, score
+        
+    </select>
+
+
+</mapper>

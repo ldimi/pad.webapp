@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.BriefAardMapper">
+
+    <cache/>
+
+    <select id="getBriefAardList"  resultType="ciMap">
+        select
+                brief_aard_id,
+                brief_aard_b,
+                termijn,
+                controle_afdelingshoofd_jn
+        from art46.brief_aard
+        order by brief_aard_id
+    </select>
+
+    <update id="updateBriefAard" parameterType="map">
+        update art46.brief_aard
+        set
+                brief_aard_b = #{brief_aard_b},
+                termijn = #{termijn},
+                controle_afdelingshoofd_jn = #{controle_afdelingshoofd_jn}
+        where
+                brief_aard_id = #{brief_aard_id}
+    </update>
+
+    <insert id="insertBriefAard" parameterType="map">
+        insert into art46.brief_aard (
+                brief_aard_id,
+                brief_aard_b,
+                termijn,
+                controle_afdelingshoofd_jn
+        )
+        values (
+                #{brief_aard_id},
+                #{brief_aard_b},
+                #{termijn},
+                #{controle_afdelingshoofd_jn}
+        )
+    </insert>
+
+    <delete id="deleteBriefAard" parameterType="int">
+        delete from  art46.brief_aard
+        where brief_aard_id = #{brief_aard_id}
+    </delete>
+
+</mapper>

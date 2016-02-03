@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+
+    <definition name="emptyPage" path="/WEB-INF/pages/empty.jsp">
+    </definition>
+
+    <definition name="baseDef" path="/WEB-INF/pages/layouts/mainlayout1.jsp">
+        <put name="titleKey" value="replace.key"/>
+        <put name="menu" value="menu1"/>
+        <put name="menuId" value="m_briefwisseling.zoekAdres"/>
+        <put name="body" value="/"/>
+    </definition>
+
+    <definition name="menu1" path="/WEB-INF/pages/layouts/menu1.jsp" />
+
+    <definition name="laadJS" path="/WEB-INF/pages/layouts/laadJS.jsp" />
+     <definition name="laadJSzonderSlickgrid" path="/WEB-INF/pages/layouts/laadJSzonderSlickgrid.jsp" />
+
+	<!-- Algemene schermen -->
+
+	<definition name="actielijst" path="/WEB-INF/pages/algemeen/actielijst.jsp" controllerClass="be.ovam.art46.struts.tiles.controller.ActieLijstController"/>
+
+    <definition name="dossierPlanning" path="/WEB-INF/pages/planning/dossier/dossierPlanning.jsp"/>
+
+	<!-- Schermen voor lijsten module -->
+    <!-- **************************** -->
+    
+    <definition name="lijstenBaseDef12" extends="baseDef">
+        <put name="title" value="Overzichtslijsten"/>
+        <put name="menuId" value="m_overzichtslijsten" />
+    </definition>
+
+	<definition name="index" extends="lijstenBaseDef12">
+    	<put name="title" value="Lijst Dossiers"/>
+        <put name="menuId" value="m_dossier.dossiers"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/index_lijst.jsp"/>
+    </definition>
+
+	<definition name="lijstjdacties" extends="lijstenBaseDef12">
+        <put name="title" value="Acties JD"/>
+        <put name="menuId" value="m_overzichtslijsten.actiesJD"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/lijstjdacties.jsp"/>
+    </definition>
+
+	<definition name="lijstschuldvorderingen" extends="lijstenBaseDef12">
+        <put name="title" value="Lijst Schuldvorderingen"/>
+        <put name="menuId" value="m_overzichtslijsten.schuldvordering"/>
+     	<put name="body" value="/WEB-INF/pages/lijsten/lijstschuldvorderingen.jsp"/>
+    </definition>
+
+	<definition name="actielijstview" extends="lijstenBaseDef12" controllerClass="be.ovam.art46.struts.tiles.controller.ActieZoekResultController">
+        <put name="title" value="Realisatiegraad"/>
+        <put name="menuId" value="m_overzichtslijsten.realisatie"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/actielijst.jsp"/>
+    </definition>
+
+	<definition name="archieflijstview" extends="lijstenBaseDef12">
+        <put name="title" value="Archief"/>
+        <put name="menuId" value="m_overzichtslijsten.archief"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/archieflijst.jsp"/>
+    </definition>
+
+	<definition name="lijstdossiersfz" extends="lijstenBaseDef12">
+        <put name="title" value="Verbintenissen"/>
+        <put name="menuId" value="m_overzichtslijsten.verbintenissen"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/lijstdossiersfz.jsp"/>
+    </definition>
+
+	<definition name="dossierbestekprojectview" extends="lijstenBaseDef12">
+        <put name="title" value="Stand van Zaken"/>
+        <put name="menuId" value="m_overzichtslijsten.standVanZaken"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/dossierbestekproject.jsp"/>
+    </definition>
+
+	<definition name="lijstnietafgeslotendeelopdrachten" extends="lijstenBaseDef12">
+        <put name="title" value="Lijst Deelopdrachten"/>
+        <put name="menuId" value="m_overzichtslijsten.deelopdrachten"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/lijstnietafgeslotendeelopdrachten.jsp"/>
+    </definition>
+
+	<definition name="queryBaseDef" extends="lijstenBaseDef12">
+		<put name="title" value="Queries"/>
+        <put name="menuId" value="m_overzichtslijsten.queries"/>
+    </definition>
+
+	<definition name="querylijst" extends="queryBaseDef">
+		<put name="body" value="/WEB-INF/pages/query/querylijst.jsp"/>
+    </definition>
+
+	<definition name="querydetails" extends="queryBaseDef">
+		<put name="body" value="/WEB-INF/pages/query/querydetails.jsp"/>
+    </definition>
+
+	<definition name="ordonnancering" extends="lijstenBaseDef12">
+        <put name="title" value="Lijst Ordonnancering"/>
+        <put name="menuId" value="m_overzichtslijsten.ordonnancering"/>
+    	<put name="body" value="ordonnancering.tabs.body"/>
+    </definition>
+
+	<definition name="lijstindicatoren" extends="lijstenBaseDef12">
+        <put name="title" value="Lijst Indicatoren"/>
+        <put name="menuId" value="m_overzichtslijsten.indicatoren"/>
+    	<put name="body" value="/WEB-INF/pages/lijsten/lijstindicatoren.jsp"/>
+    </definition>
+
+
+	<!-- Schermen voor brief module -->
+    <!-- ************************** -->
+    
+	<definition name="briefzoek" extends="baseDef">
+        <put name="title" value="Briefwisseling"/>
+        <put name="menuId" value="m_briefwisseling.zoeken"/>
+    	<put name="body" value="/WEB-INF/pages/brief/briefzoek.jsp" />
+    </definition>
+
+	<definition name="brieflijst" extends="baseDef">
+        <put name="title" value="Briefwisseling"/>
+        <put name="menuId" value="m_briefwisseling.zoeken"/>
+    	<put name="body" value="/WEB-INF/pages/brief/brieflijst.jsp" />
+    </definition>
+
+    <definition name="brieflijstAlgemeen" page="/WEB-INF/pages/algemeen/brieflijst.jsp"/>
+
+
+	<definition name="briefdetailsnieuw" extends="baseDef">
+        <put name="title" value="Briefwisseling"/>
+        <put name="menuId" value="m_briefwisseling.details"/>
+		<put name="body" value="/WEB-INF/pages/brief/briefdetails.jsp" />
+    </definition>
+
+	<definition name="briefdetails" extends="baseDef" controllerClass="be.ovam.art46.struts.tiles.controller.BriefLoadBestekkenController">
+        <put name="title" value="Briefwisseling"/>
+        <put name="menuId" value="m_briefwisseling.details"/>
+		<put name="body" value="/WEB-INF/pages/brief/briefdetails.jsp" />
+    </definition>
+
+	<definition name="startnieuwdossier" extends="baseDef">
+        <put name="title" value="Briefwisseling"/>
+        <put name="menuId" value="m_toepassingsbeheer.nieuwDossier"/>
+    	<put name="body" value="/WEB-INF/pages/brief/startnieuwdossier.jsp" />
+    </definition>
+
+	<definition name="dossierart46zoek" extends="baseDef">
+        <put name="title" value="Briefwisseling"/>
+        <put name="menuId" value="m_briefwisseling.zoekenDossier"/>
+    	<put name="body" value="/WEB-INF/pages/brief/dossierzoek.jsp"/>
+    </definition>
+
+	<definition name="dossierart46zoekresult" extends="baseDef">
+        <put name="title" value="Briefwisseling"/>
+        <put name="menuId" value="m_briefwisseling.zoekenDossier"/>
+    	<put name="body" value="/WEB-INF/pages/brief/dossierzoekresult.jsp"/>
+    </definition>
+
+	<!-- Schermen voor adres module -->
+
+
+	<definition name="adrescontactlijst" path="/WEB-INF/pages/adres/adrescontactlijst.jsp" controllerClass="be.ovam.art46.struts.tiles.controller.AdresContactLijstController" />
+
+	<definition name="adresdetails" extends="baseDef">
+        <put name="title" value="Adres details"/>
+        <put name="menuId" value="m_briefwisseling.detailAdres"/>
+    	<put name="body" value="/WEB-INF/pages/adres/adresdetails.jsp" />
+    </definition>
+
+	<definition name="adrescontactdetails" extends="baseDef">
+        <put name="title" value="Adres contact"/>
+        <put name="menuId" value="m_briefwisseling.detailAdres"/>
+    	<put name="body" value="/WEB-INF/pages/adres/adrescontactdetails.jsp" />
+    </definition>
+
+	<!-- Schermen voor beheer module -->
+
+    <definition name="beheerBaseDef12" extends="baseDef">
+        <put name="title" value="beheer"/>
+        <put name="body" value="/" />
+    </definition>
+
+    <!-- Adres types submodule -->
+
+	<definition name="adrestypelijst" extends="beheerBaseDef12">
+		<put name="title" value="Beheer Adrestypes"/>
+        <put name="menuId" value="m_toepassingsbeheer.adrestypes"/>
+    	<put name="body" value="/WEB-INF/pages/beheer/adrestypelijst.jsp" />
+    </definition>
+
+	<definition name="adrestypedetails" extends="adrestypelijst">
+    	<put name="body" value="/WEB-INF/pages/beheer/adrestypedetails.jsp" />
+    </definition>
+
+
+    
+    <!-- Budgetair Artikel -->
+
+	<definition name="beheerBudgetairArtikelBaseDef" extends="beheerBaseDef12">
+		<put name="title" value="Beheer Budgetaire artikels"/>
+        <put name="menuId" value="m_toepassingsbeheer.budgetaire-artikels"/>
+    </definition>
+
+	<definition name="budgetairartikellijst" extends="beheerBudgetairArtikelBaseDef">
+    	<put name="body" value="/WEB-INF/pages/beheer/budgetairartikellijst.jsp" />
+    </definition>
+
+	<definition name="budgetairartikeldetails" extends="beheerBudgetairArtikelBaseDef">
+    	<put name="body" value="/WEB-INF/pages/beheer/budgetairartikeldetails.jsp" />
+    </definition>
+
+
+
+    <!-- Actie types -->
+
+	<definition name="beheeractietypeBaseDef" extends="beheerBaseDef12">
+		<put name="title" value="Beheer Actie types"/>
+        <put name="menuId" value="m_toepassingsbeheer.actietypes"/>
+    </definition>
+
+	<definition name="actietypelijst" extends="beheeractietypeBaseDef" controllerClass="be.ovam.art46.struts.tiles.controller.ActieTypeLijstController">
+    	<put name="body" value="/WEB-INF/pages/beheer/actietypelijst.jsp" />
+    </definition>
+
+	<definition name="actietypedetails" extends="beheeractietypeBaseDef" controllerClass="be.ovam.art46.struts.tiles.controller.ActieTypeDetailsController">
+    	<put name="body" value="/WEB-INF/pages/beheer/actietypedetails.jsp" />
+    </definition>
+
+	<definition name="actiesubtypedetails" extends="beheeractietypeBaseDef">
+    	<put name="body" value="/WEB-INF/pages/beheer/actiesubtypedetails.jsp" />
+    </definition>
+
+
+	<!-- Schermen voor dossier details (+ tabs) -->
+
+	<definition name="dossierBBBaseDef" extends="baseDef">
+		<put name="title" value="Dossier BB"/>
+    	<put name="menuId" value="m_dossier.zoeken" />
+    	<put name="body" value="/" />
+    </definition>
+
+    <!-- Schermen voor kadaster details (+tabs) -->
+
+    <definition name="kadasterdetails" extends="dossierBBBaseDef">
+    	<put name="title" value="Kadaster"/>
+    	<put name="menuId" value="m_dossier.zoekenKadaster" />
+    	<put name="body" value="kadaster.tabs.body" />
+    </definition>
+
+    <definition name="kadaster.tabs.body" path="/WEB-INF/pages/layouts/tabsLayout.jsp">
+  		<put name="titleKey" value="kadaster.details.title"/>
+			<put name="parameterName" value="selected" />
+			<put name="action" value="kadasterdetails.do" />
+			<putList name="tabList">
+				<item value="Opname" link="/kadasterdetailsopname.do" />
+				<item value="Publicatie" link="/kadasterdetailspublicatie.do" />
+			</putList>
+		</definition>
+
+		<definition name="baseDefKadasterTab" path="/WEB-INF/pages/layouts/tabsbody.jsp">
+			<put name="tabsbody" value="/"/>
+    </definition>
+
+    <definition name="kadasterdetailsopname" extends="baseDefKadasterTab">
+    	<put name="tabsbody" value="/WEB-INF/pages/bodem/kadasterdetailsopname.jsp" />
+    </definition>
+
+    <definition name="kadasterdetailspublicatie" extends="baseDefKadasterTab">
+    	<put name="tabsbody" value="/WEB-INF/pages/bodem/kadasterdetailspublicatie.jsp" />
+    </definition>
+    
+    <definition name="kadasterzoek" extends="dossierBBBaseDef">
+    	<put name="title" value="Zoek kadaster"/>
+    	<put name="menuId" value="m_dossier.zoekenKadaster" />
+    	<put name="body" value="/WEB-INF/pages/bodem/kadasterzoek.jsp"/>
+    </definition>
+
+    <definition name="kadasterzoekresult" extends="kadasterzoek">
+    	<put name="body" value="/WEB-INF/pages/bodem/kadasterzoekresult.jsp"/>
+    </definition>
+
+    
+
+	<!-- Module Artikel 46 -->
+
+	<definition name="lijstindex" extends="baseDef">
+    	<put name="menuId" value="m_artikel46" />
+    	<put name="title" value="Lijst voor opname goedkeuring"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstindex.jsp"/>
+    </definition>
+
+	<definition name="lijstopname" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.opname" />
+    	<put name="title" value="Lijst voor opname goedkeuring"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstopname.jsp"/>
+    </definition>
+
+    <definition name="lijstvoorgoedk" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.voorGoedkeuring" />
+    	<put name="title" value="Lijst voor goedkeuring"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstvoorgoedk.jsp"/>
+    </definition>
+
+    <definition name="lijstvoorgoedkdate" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.voorGoedkeuring" />
+    	<put name="title" value="Datum goedkeuring"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstvoorgoedkdate.jsp"/>
+    </definition>
+
+    <definition name="lijstnagoedk" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.naGoedkeuring" />
+    	<put name="title" value="Lijst na goedkeuring"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstnagoedk.jsp"/>
+    </definition>
+
+    <definition name="lijstnagoedkdate" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.naGoedkeuring" />
+    	<put name="title" value="Datum publicatie"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstnagoedkdate.jsp"/>
+    </definition>
+
+    <definition name="lijstnapub" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.naPublicatie" />
+    	<put name="title" value="Lijst na publicatie"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstnapub.jsp"/>
+    </definition>
+
+	<definition name="lijsthistoriek" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.overzichtPublicatie" />
+    	<put name="title" value="Overzicht publicatielijsten"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijsthistoriek.jsp"/>
+    </definition>
+s
+    <definition name="lijstenoverzicht" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.lijsten" />
+    	<put name="title" value="Overzicht lijsten"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstenoverzicht.jsp"/>
+    </definition>
+
+    <definition name="lijstendetails" extends="lijstenoverzicht">
+    	<put name="body" value="/WEB-INF/pages/art46/lijstendetails.jsp"/>
+    </definition>
+
+	<definition name="lijstafgeslotendossiers" extends="baseDef">
+    	<put name="menuId" value="m_artikel46.afgeslotenDossiers" />
+    	<put name="title" value="Afgesloten dossiers"/>
+    	<put name="body" value="/WEB-INF/pages/art46/lijstafgeslotendossiers.jsp"/>
+    </definition>
+
+
+</tiles-definitions>
+
+
+
+
+
+

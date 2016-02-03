@@ -1,0 +1,1187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.DossierMapper">
+
+    <sql id="getDossierDO_sql" >
+        select
+                dos.id,
+                dos.dossier_nr,
+                dos.dossier_id_boa,
+                smegdos.naam as smeg_naam,
+                smegdos.id as smeg_id,
+                dos.doss_hdr_id,
+                dos.dossier_b,
+                dos.dossier_b_l,
+                dos.dossier_type,
+                dos.nis_id,
+                -- afval dossier
+                ados.postcode,
+                ados.land,
+                ados.adres,
+                ados.deelgemeente,
+                --
+                dos.afsluit_d,
+                dos.commentaar,
+                dos.dossier_fase_id,
+                -- dos.aanpak_s,           wordt in een apparte query opgehaald voor basisscherm
+                coalesce(dos.aanpak_onderzocht_s, '0') as aanpak_onderzocht_s,
+                dos.aanpak_onderzocht_l,
+                dos.financiele_info,
+                dos.onderzoek_id,
+                dos.conform_bbo_d,
+                dos.conform_bsp_d,
+                dos.eindverklaring_d,
+                dos.commentaar_bodem,
+                dos.sap_project_nr,
+                dos.wbs_ivs_nr,
+                dos.programma_code,
+                dos.rechtsgrond_code,
+                dos.doelgroep_type_id
+        from art46.v_dossier dos
+                    inner join art46.dossier ados
+                    on dos.id = ados.id
+             left join smeg.dossier smegdos
+             on dos.dossier_id_boa = smegdos.dossier_id
+        where 1 = 1
+    </sql>
+
+    <select id="getDossierDObyId" parameterType="int" resultType="be.ovam.art46.controller.dossier.DossierDO">
+        <include refid="getDossierDO_sql"/>
+            and dos.id = #{dossier_id}
+    </select>
+
+    <select id="getDossierDObyNr" parameterType="string" resultType="be.ovam.art46.controller.dossier.DossierDO">
+        <include refid="getDossierDO_sql"/>
+            and dos.dossier_nr = #{dossier_nr}
+    </select>
+
+    <select id="getMaxIdDossier" resultType="int">
+        select max(id)
+        from ART46.dossier
+    </select>
+
+    <select id="getNieuwVolgNrDossier" resultType="int">
+        select coalesce(cast(max(substr(dossier_nr,3,3)) as int), 0) + 1 as maxid
+        from ART46.v_dossier
+        where dossier_nr like substr( cast( (year(current date) ) as char(4)), 3,2) || '%'
+              and dossier_type in ('A', 'B')
+    </select>
+
+    <select id="getNieuwVolgNrDossierAnder" resultType="int">
+        select max(INT(substr(dossier_nr,2, length(dossier_nr)-3))) + 1 as maxid
+        from art46.v_dossier
+        where dossier_type = 'X'
+            and dossier_nr like 'A%'
+    </select>
+
+
+
+    <select id="getBestekNrsByDossierId" parameterType="int" resultType="string">
+        with dossier as (select id from ART46.v_dossier where ID = #{dossier_id})
+        select
+            b.bestek_nr
+        from
+            dossier d
+                inner join ART46.BESTEK b
+                on d.ID = b.DOSSIER_ID
+        union
+        select
+            b.bestek_nr
+        from DOSSIER d
+            inner join art46.DEELOPDRACHT do
+            on d.id = do.DOSSIER_ID
+                inner join art46.bestek b
+                on do.BESTEK_ID = b.BESTEK_ID
+    </select>
+
+    <select id="getDossierSmeg" parameterType="int" resultType="ciMap">
+        select
+            dos.id,
+            sd.id as smeg_id,
+            sd.naam as smeg_naam,
+            dos.dossier_id_boa,
+            dos.commentaar_bodem
+        from art46.v_dossier dos
+                left join smeg.dossier sd on sd.dossier_id = dos.dossier_id_boa
+        where dos.id = #{id}
+    </select>
+
+    <select id="getIndicatoren" parameterType="be.ovam.art46.struts.actionform.LijstForm" resultType="ciMap">
+        with lijst as (
+            select distinct dossier_id
+            from ART46.NA_GOEDK a
+            where a.ARTIKEL_ID = 1
+            <if test="lijst_id != null">
+                and a.LIJST_ID = #{lijst_id}
+            </if>
+        )
+        select
+            d.id,
+            d.dossier_nr as dossier_id,
+            d.dossier_id_boa,
+            d.dossier_b_l as dossier_l,
+            sd.naam as dossier_b_boa,
+            d.programma_code,
+            d.AANPAK_ONDERZOCHT_S,
+            case when (max(b.bestek_id) is null and max(do.bestek_id) is null) then null
+                 else '1'
+            end as aanpak_s
+        from art46.v_dossier d
+                inner join smeg.DOSSIER sd
+                on d.dossier_id_boa = sd.dossier_id
+            inner join lijst l
+            on d.id = l.dossier_id
+                left join art46.BESTEK b
+                on d.id = b.DOSSIER_ID
+            left join art46.DEELOPDRACHT do
+            on d.id = do.DOSSIER_ID
+        where 1 =1
+            <if test="programma_code != null">
+                and d.programma_code = #{programma_code}
+            </if>
+        group by d.id, d.dossier_nr, d.dossier_id_boa, d.dossier_b_l, sd.naam, d.programma_code, d.AANPAK_ONDERZOCHT_S
+    </select>
+
+
+    <select id="getDataForSap" parameterType="int" resultType="map">
+    <![CDATA[
+        select
+            trim(d.dossier_nr) as IVS_NUMBER,
+            trim(substr(d.dossier_b, 1, 30)) as IVS_DESCRIPTION ,
+            trim(substr(ik.NAAM_1, 1, 30)) as IVS_RESPONSABLE,
+
+            trim(char(smegd.dossier_id)) as BODEM_NUMBER,
+            trim(substr(smegd.naam, 1, 30))  as BODEM_DESCRIPTION,
+            trim(substr(bk.NAAM_1, 1, 30)) as BODEM_RESPONSABLE,
+
+            trim(substr(jur.DOSSIER_ID_JD, 1, 15)) as JD_NUMBER,
+            trim(substr(jur.DOSSIER_B, 1, 30)) as JD_DESCRIPTION,
+            trim(substr(jk.NAAM_1, 1, 30)) as JD_RESPONSABLE,
+            d.dossier_type
+        from art46.v_dossier d
+                      left JOIN SMEG.KLANT_AMBTENAAR ika on d.DOSS_HDR_ID = ika.UID
+                      left join SMEG.KLANT ik  ON ika.id = ik.id
+               left join (
+                        select distinct DOSSIER_ID, DOSSIER_ID_JD, DOSSIER_B, DOSS_HDR_ID
+                        from
+                            (
+                               select distinct djd.ART46_DOSSIER_ID as DOSSIER_ID,
+                                      CONCAT(cast(djd.VOLGNUMMER as varchar(100)),'-T')  as DOSSIER_ID_JD,
+                                      djd.NAAM as DOSSIER_B,
+                                      jrst.PERSONEELSLID_ID as DOSS_HDR_ID,
+                                      ROW_NUMBER() OVER(PARTITION BY djd.ART46_DOSSIER_ID ORDER BY djd.ID) AS NUMBER
+                            from JURIDISCH.JURIDISCH_DOSSIER djd left join JURIDISCH.JURIST jrst on jrst.ID = djd.HUIDIGE_JURIST_ID
+                            where
+                                djd.ART46_DOSSIER_ID =  #{id}
+                                and djd.AARD_ID = 8 ) as T
+                        where T.number = 1
+                        ) as jur
+                on d.id = jur.DOSSIER_ID
+                      left JOIN SMEG.KLANT_AMBTENAAR jka on jur.DOSS_HDR_ID = jka.UID
+                      left join SMEG.KLANT jk  ON jka.id = jk.id
+            left join SMEG.DOSSIER smegd
+            on d.DOSSIER_ID_BOA  = smegd.dossier_id
+            and d.DOSSIER_ID_BOA <> 0
+                left join (
+                         select v.dossier_id, v.ambtenaar_id, ROW_NUMBER() OVER(PARTITION BY v.dossier_id) as number
+                           from art46.V_DOSSIERHOUDERS_BOA v
+                                inner join art46.v_dossier d
+                                on v.dossier_id  = d.DOSSIER_ID_BOA
+                                and d.id =  #{id}
+                           ) as smegdh
+                on smegdh.dossier_id = d.DOSSIER_ID_BOA
+                and smegdh.number = 1
+                      left JOIN SMEG.KLANT_AMBTENAAR bka on smegdh.ambtenaar_id = bka.UID
+                      left join SMEG.KLANT bk  ON bka.id = bk.id
+        where 1 = 1
+           and d.dossier_b is not null
+           and d.id = #{id}
+    ]]>
+    </select>
+
+    <select id="getDossiersByDossHdr" parameterType="string" resultType="ciMap">
+        select
+            ad.ID,
+            ad.DOSSIER_NR as dossier_id,
+            ad.DOSSIER_B,
+            ad.NIS_ID,
+            ad.GEMEENTE_B,
+            ad.DOSSIER_TYPE,
+            case when exists (select b.bestek_id from art46.bestek b where b.dossier_id  = ad.id) then 'Ja'
+                 when exists (select do.deelopdracht_id from art46.deelopdracht do where do.dossier_id = ad.id and do.bestek_id is not null) then 'Ja'
+                 else 'Nee'
+            end as opgestart_jn,
+            coalesce(ad.dossier_id_boa,0) DOSSIER_ID_BOA,
+            adf.FASE_ID,
+            coalesce(adf.FASE_S, '') fase_s,
+            coalesce(adf.FASE_B, '') fase_b
+        from ART46.V_DOSSIER ad
+                left outer join SMEG.OVAM_GEMEENTE_VIEW ka
+                on ka.nis_id = ad.nis_id
+            left outer join ART46.DOSSIER_FASE adf
+            on ad.DOSSIER_FASE_ID = adf.FASE_ID
+        where
+            ad.afsluit_d is null and
+            ad.DOSS_HDR_ID in ( select DOSS_HDR_ID
+                            from ART46.DOSSIER_HOUDER
+                            where DOSS_HDR_ID = #{DOSS_HDR_ID}
+                            union
+                            select DOSS_HDR_ID
+                            from ART46.DOSSIER_HOUDER
+                            where vervanger = #{DOSS_HDR_ID}
+                            )
+    </select>
+
+
+    <sql id="dossier_zoek_sql" >
+        select distinct
+            d.id,
+            d.dossier_nr as dossier_id,
+            d.sap_project_nr,
+            d.dossier_b,
+            sd.naam as dossier_b_boa,
+            d.dossier_id_boa,
+            d.nis_id,
+            d.doss_hdr_id,
+            coalesce(k.naam_1, '') doss_hdr_naam,
+            d.programma_code,
+            d.rechtsgrond_code,
+            d.doelgroep_type_b,
+            d.gemeente_b,
+            d.dossier_type,
+            art46dossier.adres
+        from
+            ART46.V_DOSSIER d
+
+                inner join art46.dossier art46dossier
+                on d.id = art46dossier.id
+
+                left join SMEG.DOSSIER sd
+                on sd.dossier_id = d.dossier_id_boa
+
+
+
+            <if test=" project_id != null || bestek_nr != null || aanpak_s != null">
+                inner join ART46.BESTEK b
+                on d.id = b.dossier_id
+                <!-- aanpak_s = 1 :  dossier opgestart als er een bestek aan gekoppeld is -->
+                <if test="bestek_nr != null">
+                    and b.bestek_nr = #{bestek_nr}
+                </if>
+                <if test="project_id != null">
+                    inner join ART46.BESTEK_SAP_PROJECT bsp
+                    on b.bestek_id = bsp.bestek_id
+                    and bsp.project_id = #{project_id}
+                </if>
+            </if>
+
+            left join smeg.klant_ambtenaar ka
+            on d.doss_hdr_id = ka.uid
+                left join smeg.klant k
+                on ka.id = k.id
+
+            <if test="dossier_id_jd != null || doss_hdr_id_jd != null">
+                inner join juridisch.juridisch_dossier jjd
+                on d.id = jjd.ART46_DOSSIER_ID
+                <if test="dossier_id_jd != null">
+                    and jjd.volgnummer like #{dossier_id_jd} || '%'
+                </if>
+                <if test="doss_hdr_id_jd != null">
+                    inner join juridisch.jurist jj
+                    on jjd.HUIDIGE_JURIST_ID = jj.ID
+                    and jj.PERSONEELSLID_ID = #{doss_hdr_id_jd}
+                </if>
+            </if>
+
+            <if test='dossier_type != "A" and dossier_type != "X"'>
+                <if test="doss_hdr_id_boa != null or adres != null">
+                    left join ART46.V_SMEG_DOSSIER_ONDERZOEK o
+                    on d.dossier_id_boa = o.dossier_id
+                </if>
+            </if>
+
+            <if test='ob_s == "1" || ig_s == "1"' >
+                inner join ART46.DOS_KAD_TYPE dkt
+                on d.id = dkt.dossier_id
+                <if test='ob_s == "1"' >
+                    and dkt.onschuldige_eig_s = #{ob_s}
+                </if>
+                <if test='ig_s == "1"' >
+                    and dkt.ingebreke_stel_s  = #{ig_s}
+                </if>
+            </if>
+
+
+            <if test='(historiek_lijst_id != null)  or (art46_lijst_id != null) '>
+                inner join art46.na_goedk ang
+                on d.id = ang.dossier_id
+
+                <if test='historiek_lijst_id != null'>
+                and ang.lijst_id = #{historiek_lijst_id}
+                </if>
+
+                <if test='art46_lijst_id != null' >
+                    <if test='art46_lijst_id == "-1"' >
+                        -- and ang.artikel_id is not null
+                        and ang.artikel_id = #{art46_lijst_id}
+                    </if>
+                    <if test='art46_lijst_id != "-1"' >
+                        and ang.artikel_id = #{art46_lijst_id}
+                    </if>
+                </if>
+            </if>
+
+
+        where 1 = 1
+        <if test="dossier_type != null">
+            and d.dossier_type = #{dossier_type}
+        </if>
+        <if test="rechtsgrond_code != null">
+            and d.rechtsgrond_code = #{rechtsgrond_code}
+        </if>
+        <if test='dossier_fase_id != null and dossier_fase_id != "0"  and dossier_fase_id != "13"  and dossier_fase_id != "17"'>
+            and d.dossier_fase_id = #{dossier_fase_id}
+        </if>
+        <if test="programma_code != null">
+            and d.programma_code = #{programma_code}
+        </if>
+        <if test="doelgroep_type_id != null">
+            and d.doelgroep_type_id = #{doelgroep_type_id}
+        </if>
+        <if test="dossier_id != null">
+            and d.dossier_nr like #{dossier_id} || '%'
+        </if>
+        <if test="dossier_id_boa != null">
+            and d.dossier_id_boa = #{dossier_id_boa}
+        </if>
+        <if test="sap_project_nr != null">
+            and d.sap_project_nr like '%' || #{sap_project_nr} || '%'
+        </if>
+        <if test="dossier_b != null">
+            and UPPER(d.dossier_b) like '%' || UPPER(#{dossier_b}) || '%'
+        </if>
+        <if test="doss_hdr_id != null">
+            and d.doss_hdr_id = #{doss_hdr_id}
+        </if>
+
+        <if test='raamcontract_J_N == "J"'>
+            and d.DOSSIER_FASE_ID = 2
+        </if>
+        <if test='raamcontract_J_N == "N"'>
+            <![CDATA[
+            and d.DOSSIER_FASE_ID <> 2
+            ]]>
+        </if>
+
+        <if test="nis_id != null">
+            and d.nis_id = #{nis_id}
+        </if>
+        <if test="provincie != null">
+            and d.nis_id like #{provincie} || '____'
+        </if>
+
+        <choose>
+            <when test='dossier_type != "A" and dossier_type != "X"'>
+                <if test="doss_hdr_id_boa != null">
+                    <if test="doss_hdr_id_boa != null">
+                         and o.doss_hdr_id = #{doss_hdr_id_boa}
+                    </if>
+                </if>
+                <if test="adres != null">
+                     and ( (d.dossier_type = 'B' and UPPER(o.adres) like ('%' || UPPER(#{adres}) || '%') ) OR
+                           (d.dossier_type != 'B' and UPPER(art46dossier.adres) like ('%' || UPPER(#{adres}) || '%') )
+                         )
+                </if>
+            </when>
+            <otherwise>
+                <if test="adres != null">
+                     and UPPER(art46dossier.adres) like ('%' || UPPER(#{adres}) || '%')
+                </if>
+            </otherwise>
+        </choose>
+
+        <if test='incl_afgesloten_s == null || incl_afgesloten_s != "1"'>
+                and d.afsluit_d is null
+        </if>
+        <if test='ivs_s != null and ivs_s == "1"' >
+                and d.dossier_nr not like '+_%' escape '+'
+        </if>
+        <if test="aanpak_onderzocht_s != null">
+                and d.aanpak_onderzocht_s = '1'
+        </if>
+        fetch first 1001 rows only
+    </sql>
+
+
+    <select id="getDossierZoekResult" parameterType="be.ovam.art46.struts.actionform.DossierZoekForm" resultType="ciMap">
+        with r as (
+            <include refid="dossier_zoek_sql"/>
+        )
+        <choose>
+            <when test='dossier_type != "A" and dossier_type != "X"'>
+                select
+                    r.id,
+                    r.dossier_id,
+                    r.sap_project_nr,
+                    r.dossier_b,
+                    r.dossier_b_boa,
+                    r.dossier_id_boa,
+                    r.nis_id,
+                    r.doss_hdr_id,
+                    r.doss_hdr_naam,
+                    r.programma_code,
+                    r.rechtsgrond_code,
+                    r.doelgroep_type_b,
+                    r.gemeente_b,
+                    r.dossier_type,
+                    case count(ang.dossier_id) + count(avg.dossier_id)
+                        when 0 then 0
+                        else 1
+                    end lijst_art46,
+                    case r.dossier_type
+                        when 'B' then  max(o.adres)
+                        else r.adres
+                    end as adres
+                from r
+                        left join art46.na_goedk ang
+                        on r.id = ang.dossier_id
+                            left join art46.voor_goedk avg
+                            on r.id = avg.dossier_id
+                        left outer join ART46.V_SMEG_DOSSIER_ONDERZOEK o
+                        on r.dossier_id_boa = o.dossier_id
+                group by
+                    r.id,
+                    r.dossier_id,
+                    r.sap_project_nr,
+                    r.dossier_b,
+                    r.dossier_b_boa,
+                    r.dossier_id_boa,
+                    r.nis_id,
+                    r.doss_hdr_id,
+                    r.doss_hdr_naam,
+                    r.programma_code,
+                    r.rechtsgrond_code,
+                    r.doelgroep_type_b,
+                    r.gemeente_b,
+                    r.dossier_type,
+                    r.adres
+            </when>
+            <otherwise>
+                select
+                    r.id,
+                    r.dossier_id,
+                    r.sap_project_nr,
+                    r.dossier_b,
+                    r.dossier_b_boa,
+                    r.dossier_id_boa,
+                    r.nis_id,
+                    r.doss_hdr_id,
+                    r.doss_hdr_naam,
+                    r.programma_code,
+                    r.rechtsgrond_code,
+                    r.doelgroep_type_b,
+                    r.gemeente_b,
+                    r.dossier_type,
+                    0 as lijst_art46,
+                    r.adres
+                from r
+            </otherwise>
+        </choose>
+        order by r.gemeente_b
+    </select>
+
+
+    <select id="getBBDossierZoekResult" parameterType="be.ovam.art46.struts.actionform.DossierZoekForm" resultType="ciMap">
+        with
+            result as (
+                SELECT distinct
+                    d.id,
+                    sd.dossier_id as dossier_id_boa,
+                    sd.naam as dossier_b_boa,
+                    coalesce(d.dossier_nr, '') dossier_nr,
+                    coalesce(d.sap_project_nr, '') sap_project_nr,
+                    coalesce(d.dossier_b, '') dossier_b,
+                    d.nis_id,
+                    d.programma_code,
+                    d.rechtsgrond_code,
+                    coalesce(k.naam_1, '') doss_hdr_naam,
+                    case count(ang.dossier_id) + count(avg.dossier_id)
+                        when 0 then 0
+                        else 1
+                    end lijst_art46,
+                    max(o.adres) as adres
+                FROM art46.v_dossier d
+                        left join SMEG.DOSSIER sd
+                        on sd.dossier_id = d.dossier_id_boa
+
+                <if test='ob_s == "1" || ig_s == "1"' >
+                    inner join ART46.DOS_KAD_TYPE dkt
+                    on d.id = dkt.dossier_id
+                    <if test='ob_s == "1"' >
+                        and dkt.onschuldige_eig_s = '1'
+                    </if>
+                    <if test='ig_s == "1"' >
+                        and dkt.ingebreke_stel_s  ='1'
+                    </if>
+                </if>
+
+                <choose>
+                    <when test="doss_hdr_id_boa != null || adres != null">
+                        inner join ART46.V_SMEG_DOSSIER_ONDERZOEK o
+                        on d.dossier_id_boa = o.dossier_id
+                        <if test="doss_hdr_id_boa != null">
+                             and o.doss_hdr_id = #{doss_hdr_id_boa}
+                        </if>
+                        <if test="adres != null">
+                             and UPPER(o.adres) like ('%' || UPPER(#{adres}) || '%')
+                        </if>
+                    </when>
+                    <otherwise>
+                        left outer join ART46.V_SMEG_DOSSIER_ONDERZOEK o
+                        on d.dossier_id_boa = o.dossier_id
+                    </otherwise>
+                </choose>
+
+                <if test="dossier_id_jd != null || doss_hdr_id_jd != null">
+                    inner join juridisch.juridisch_dossier jjd
+                    on d.id = jjd.ART46_DOSSIER_ID
+                    <if test="dossier_id_jd != null">
+                        and jjd.volgnummer like #{dossier_id_jd} || '%'
+                    </if>
+                    <if test="doss_hdr_id_jd != null">
+                        inner join juridisch.jurist jj
+                        on jjd.HUIDIGE_JURIST_ID = jj.ID
+                        and jj.PERSONEELSLID_ID = #{doss_hdr_id_jd}
+                    </if>
+                </if>
+
+
+
+                    left join art46.na_goedk ang
+                    on d.id = ang.dossier_id
+
+                    left join art46.voor_goedk avg
+                    on d.id = avg.dossier_id
+
+                    left join smeg.klant_ambtenaar ka
+                    on d.doss_hdr_id = ka.uid
+                        left join smeg.klant k
+                        on ka.id = k.id
+
+
+                WHERE 1 = 1
+                    <!-- als het dossier al een IVS dossier is, moeten de dossiers zonder smeg-link toch getoond worden -->
+                    and (sd.dossier_id is not null OR
+                         d.dossier_b is not null)
+
+                <if test='historiek_lijst_id != null and historiek_lijst_id != "0"'>
+                    and ang.lijst_id = #{historiek_lijst_id}
+                </if>
+
+
+                <if test='art46_lijst_id != null and art46_lijst_id != "0"' >
+                    <if test='art46_lijst_id == "-1"' >
+                        and ang.artikel_id is not null
+                    </if>
+                    <if test='art46_lijst_id != "-1"' >
+                        and ang.artikel_id = #{art46_lijst_id}
+                    </if>
+                </if>
+
+
+
+
+                <if test="dossier_type != null">
+                        and d.dossier_type = #{dossier_type}
+                </if>
+                <if test="nis_id != null">
+                        and d.nis_id = #{nis_id}
+                </if>
+                <if test="provincie != null">
+                        and d.nis_id like #{provincie} || '____'
+                </if>
+                <if test="dossier_id_boa != null">
+                        and d.dossier_id_boa = #{dossier_id_boa}
+                </if>
+                <if test="dossier_id != null">
+                        and d.dossier_nr like '%' || #{dossier_id} || '%'
+                </if>
+                <if test="sap_project_nr != null">
+                        and d.sap_project_nr like '%' || #{sap_project_nr} || '%'
+                </if>
+                <if test="doss_hdr_id != null">
+                        and d.doss_hdr_id = #{doss_hdr_id}
+                </if>
+                <if test="dossier_b != null">
+                        and UPPER(d.dossier_b) like '%' || UPPER(#{dossier_b}) || '%'
+                </if>
+                <if test="aanpak_onderzocht_s != null">
+                        and d.aanpak_onderzocht_s = '1'
+                </if>
+                <if test="aanpak_s != null">
+                        and d.aanpak_s = '1'
+                </if>
+                <if test='ivs_s != null and ivs_s == "1"' >
+                        and d.dossier_nr not like '+_%' escape '+'
+                </if>
+                <if test="programma_code != null">
+                        and d.programma_code = #{programma_code}
+                </if>
+                <if test="rechtsgrond_code != null">
+                        and d.rechtsgrond_code = #{rechtsgrond_code}
+                </if>
+
+                <if test="dossier_fase_id != null and dossier_fase_id != '0'  and dossier_fase_id != '13'  and dossier_fase_id != '17'">
+                        and d.dossier_fase_id = #{dossier_fase_id}
+                </if>
+                <if test="doelgroep_type_id != null">
+                        and d.doelgroep_type_id = #{doelgroep_type_id}
+                </if>
+
+
+                <if test='incl_afgesloten_s == null || incl_afgesloten_s != "1"'>
+                        and d.afsluit_d is null
+                </if>
+
+                group by
+                    d.id,
+                    sd.dossier_id,
+                    sd.naam,
+                    d.dossier_nr,
+                    d.sap_project_nr,
+                    d.dossier_b,
+                    d.nis_id,
+                    d.programma_code,
+                    d.rechtsgrond_code,
+                    k.naam_1
+            )
+            select distinct
+                r.id,
+                r.dossier_id_boa,
+                r.dossier_b_boa,
+                r.dossier_nr,
+                r.sap_project_nr,
+                r.dossier_b,
+                r.nis_id,
+                r.programma_code,
+                r.rechtsgrond_code,
+                r.lijst_art46,
+                r.doss_hdr_naam,
+                g.naam as "gemeente_b",
+                r.adres
+            from result r
+                    left outer join SMEG_REF.CRAB_GEMEENTE g
+                    on g.nis_id = r.nis_id
+            order by g.naam, r.id desc
+            fetch first 1001 rows only
+    </select>
+
+    <select id="getAfgeslotenDossiersLijst" resultType="ciMap">
+        select
+            d.id,
+            sd.dossier_id,
+            sd.naam as dossier_b,
+            d.afsluit_d,
+            d.dossier_nr as dossier_nr,
+            d.dossier_b as dossier_b_ivs,
+            g.naam as "gemeente_b",
+            min(ng.publicatie_d) eerste_pub_d,
+            coalesce((days(d.afsluit_d) - days(min(ng.publicatie_d))), 0) aantal_dagen
+        from smeg.dossier sd
+                inner join art46.v_dossier d
+                on sd.dossier_id = d.dossier_id_boa
+            left outer join ART46.NA_GOEDK ng
+            on d.id = ng.dossier_id
+                left outer join SMEG_REF.CRAB_GEMEENTE g
+                on d.nis_id = g.nis_id
+        where
+            d.afsluit_d is not null
+            and ng.publicatie_d is not null
+        group by
+            d.id,
+            sd.dossier_id,
+            sd.naam,
+            d.afsluit_d,
+            d.dossier_nr,
+            d.dossier_b,
+            g.naam
+        order by sd.DOSSIER_ID
+     </select>
+
+    <select id="getDossierhouders" parameterType="int" resultType="ciMap">
+        select dh.dossier_id, dh.ambtenaar_id, dh.ambtenaar_b, dh.afdeling, dh.type
+        from art46.v_dossierhouders dh
+        where dossier_id = #{dossier_id}
+    </select>
+
+    <select id="getDossierAdressen" parameterType="int" resultType="ciMap">
+        select *
+        from (
+                select distinct
+                    min(o.onderzoek_id) value,
+                    o.ADRES label
+                from
+                    ART46.V_DOSSIER do
+                        inner join ART46.V_SMEG_DOSSIER_ONDERZOEK o
+                        on do.dossier_id_boa = o.dossier_id
+                where
+                    do.id = #{dossier_id}
+                    and o.adres is not null
+                    and o.adres != ''
+                group by o.ADRES
+            union
+                select
+                    null as value,
+                    '' as label
+                from SYSIBM.SYSDUMMY1
+            ) as adr
+        order by label
+    </select>
+
+    <select id="getDossierContactLijst" parameterType="int" resultType="ciMap">
+        select
+            da.dossier_id,
+            da.adres_id,
+            da.contact_id,
+            da.eigenaar_s,
+            da.gebruiker_s,
+            da.commentaar,
+            a.naam,
+            a.straat,
+            a.postcode,
+            a.gemeente,
+            a.type_id,
+            coalesce(ac.tel, a.tel) as tel,
+            coalesce(ac.gsm, a.gsm) gsm,
+            coalesce(ac.email, a.email) email,
+            coalesce(a.naam,'') || ' '|| coalesce(a.voornaam,'') as naam_l,
+            coalesce(ac.naam,'') || ' '|| coalesce(ac.voornaam,'') as naam_contact_l,
+            ac.functie
+        from
+            ART46.DOSSIER_ADRES da
+                inner join  ART46.ADRES a
+                on da.adres_id = a.adres_id
+            left outer join ART46.ADRES_CONTACT ac
+            on da.contact_id = ac.contact_id
+        where
+            da.dossier_id = #{dossier_id}
+    </select>
+
+    <select id="getDossierAlleAdressen" parameterType="int" resultType="ciMap">
+        select distinct
+            adres_id,
+            naam,
+            coalesce(naam,'') || ' '|| coalesce(voornaam,'') as naam_l,
+            straat, postcode, gemeente, type_id,
+            tel, gsm, email,
+            contact_id,
+            coalesce(naam_contact,'') || ' '|| coalesce(voornaam_contact,'') as naam_contact_l
+        from (
+                select
+                    distinct adr.adres_id, adr.naam, adr.voornaam, adr.straat, adr.postcode, adr.gemeente, adr.type_id,
+                         coalesce(ac.tel, adr.tel) as tel,
+                         coalesce(ac.gsm, adr.gsm) gsm,
+                         coalesce(ac.email, adr.email) email,
+                         coalesce(ac.contact_id, 0) as contact_id,
+                         ac.naam as naam_contact, ac.voornaam as voornaam_contact
+                from
+                    art46.bestek b
+                        inner join art46.BESTEK_ADRES ba
+                        on ba.BESTEK_ID = b.BESTEK_ID
+                            inner join art46.adres adr
+                            on adr.ADRES_ID = ba.ADRES_ID
+                      left outer join ART46.ADRES_CONTACT ac
+                      on ba.contact_id = ac.contact_id
+                where
+                    b.DOSSIER_ID = #{dossier_id}
+                union
+                select
+                    distinct adr.adres_id, adr.naam, adr.voornaam, adr.straat, adr.postcode, adr.gemeente, adr.type_id,
+                         coalesce(ac.tel, adr.tel) as tel,
+                         coalesce(ac.gsm, adr.gsm) gsm,
+                         coalesce(ac.email, adr.email) email,
+                         coalesce(ac.contact_id, 0) as contact_id,
+                         ac.naam as naam_contact, ac.voornaam as voornaam_contact
+                from
+                    art46.dossier_adres dadr
+                        inner join art46.adres adr
+                        on adr.adres_id = dadr.adres_id
+                        left outer join ART46.ADRES_CONTACT ac
+                        on dadr.contact_id = ac.contact_id
+                where
+                    dadr.dossier_id = #{dossier_id}
+                union
+                select
+                    distinct adr.adres_id, adr.naam, adr.voornaam, adr.straat, adr.postcode, adr.gemeente, adr.type_id,
+                         coalesce(ac.tel, adr.tel) as tel,
+                         coalesce(ac.gsm, adr.gsm) gsm,
+                         coalesce(ac.email, adr.email) email,
+                         coalesce(ac.contact_id, 0) as contact_id,
+                         ac.naam as naam_contact, ac.voornaam as voornaam_contact
+                from
+                    art46.brief brf
+                        inner join art46.adres adr
+                        on adr.adres_id = brf.adres_id
+                        left outer join ART46.ADRES_CONTACT ac
+                        on brf.contact_id = ac.contact_id
+                where
+                    brf.dossier_id = #{dossier_id}
+                    and adr.adres_id != 2124
+              ) as T
+        order by 2
+    </select>
+
+    <select id="getDossierRamingen" parameterType="int" resultType="ciMap">
+        select
+            dossier_id,
+            dossier_type,
+            raming_id,
+            fase_id,
+            prioriteit_id,
+            jaartal,
+            maand,
+            raming,
+            budget_vastgelegd,
+            commentaar,
+            afgesloten_s
+        from ART46.DOSSIER_RAMING
+        where DOSSIER_ID = #{dossier_id}
+        order by jaartal
+    </select>
+
+    <select id="getDossierRamingenHistoriek" parameterType="int" resultType="ciMap">
+        select *
+        from ART46.DOSSIER_RAMING_VOORSTEL_HISTORIEK
+        where dossier_id = #{id}
+            and goedkeur_d in (select max(goedkeur_d)
+                                from ART46.DOSSIER_RAMING_VOORSTEL_HISTORIEK
+                                where dossier_id = #{id}
+                              )
+    </select>
+
+    <sql id="actie_velden" >
+            actie_id,
+            actie_type_id,
+            actie_sub_type_id,
+            actie_d,
+            realisatie_d,
+            commentaar,
+            rate,
+            stop_d
+    </sql>
+
+    <sql id="actie_zimbra_velden" >
+            zimbraid,
+            ZIMBRA_ID_VAN as zimbraIdVan,
+            ZIMBRA_ID_tot as zimbraIdTot
+    </sql>
+
+    <select id="getDossierActies" parameterType="int" resultType="ciMap">
+        select
+            dossier_id,
+            <include refid="actie_velden"/>,
+            <include refid="actie_zimbra_velden"/>
+        from art46.DOSSIER_ACTIE da
+        where DOSSIER_ID = #{dossier_id}
+    </select>
+
+    <select id="getDossierActiesNietGerealiseerd" parameterType="int" resultType="ciMap">
+        select
+            dossier_id,
+            <include refid="actie_velden"/>,
+            <include refid="actie_zimbra_velden"/>
+        from art46.DOSSIER_ACTIE da
+        where DOSSIER_ID = #{dossier_id}
+                and realisatie_d is null
+    </select>
+
+    <select id="getDossierJdActies" parameterType="int" resultType="ciMap">
+        select
+            dossier_id,
+            <include refid="actie_velden"/>
+        from art46.DOSSIER_JD_ACTIE da
+        where DOSSIER_ID = #{dossier_id}
+    </select>
+
+    <select id="getBestekActies" parameterType="int" resultType="ciMap">
+        select
+            bestek_id,
+            <include refid="actie_velden"/>
+        from art46.BESTEK_ACTIE da
+        where bestek_id = #{bestek_id}
+    </select>
+
+
+
+
+    <sql id="dossiersFz_sql" >
+        with dossier_fz as (
+            select distinct dossier_id
+            from smeg.rs_DOSS_VERBINTENIS_view
+        )
+        select
+            ad.id,
+            do.dossier_id dossier_id_boa,
+            do.dossier_b,
+            ad.dossier_nr as dossier_id,
+            ad.dossier_b
+            dossier_b_ivs,
+            ad.doss_hdr_id,
+            ad.nis_id,
+            ad.doss_hdr_id
+        from dossier_fz fz
+                inner join SMEG.RS_DOSSIER_VIEW do
+                on fz.dossier_id = do.dossier_id
+            left outer join ART46.V_DOSSIER ad
+            on do.dossier_id = ad.dossier_id_boa
+    </sql>
+
+    <select id="getDossiersFzAll" resultType="ciMap">
+        <include refid="dossiersFz_sql"/>
+    </select>
+
+    <select id="getDossiersFzIVS" resultType="ciMap">
+        <include refid="dossiersFz_sql"/>
+        where
+            ad.id is not null and
+            ad.dossier_id not like '+_%' escape '+'
+    </select>
+
+    <select id="getDetailsArchiefLijst" parameterType="int" resultType="ciMap">
+        select
+            aa.*,
+            oad.DIENST_ID
+        from ART46.ARCHIEF aa
+                inner join ART46.V_DOSSIER ad
+                on aa.dossier_id = ad.id
+            left outer join SMEG.ART46_AMBTENAAR_DIENST_VIEW oad
+            on oad.ambtenaar_id = ad.doss_hdr_id
+        where
+        ad.id = #{id}
+        order by aa.archief_d
+    </select>
+
+    <select id="getBestekLijst" parameterType="map" resultType="ciMap">
+        with bestek_ids as
+        (
+         select b.bestek_id,
+                0 as deelopdracht
+         from ART46.V_DOSSIER d
+                inner join art46.bestek b
+                on d.id = b.dossier_id
+         where d.id = #{id}
+         union
+         select b.bestek_id,
+                1 as deelopdracht
+         from ART46.V_DOSSIER d
+                inner join ART46.DEELOPDRACHT do
+                on d.id = do.dossier_id
+            inner join art46.bestek b
+            on do.bestek_id = b.bestek_id
+         where d.id = #{id}
+        )
+        select
+            b.dossier_id,
+            b.bestek_id,
+            b.bestek_nr,
+            b.fase_id,
+            b.procedure_id,
+            b.type_id,
+            b.omschrijving,
+            bi.deelopdracht,
+            b.wbs_nr,
+            min(coalesce(a.naam, '') || ' ' || coalesce(a.voornaam,'')) naam
+        from bestek_ids bi
+                inner join art46.bestek b
+                on bi.bestek_id = b.bestek_id
+             left outer join ART46.BESTEK_ADRES ba
+             on b.bestek_id = ba.bestek_id
+                  left outer join ART46.adres a
+                  on ba.adres_id = a.adres_id
+        where 1 = 1
+            <if test='afgesloten_jn == "J"'>
+                and b.afsluit_d is not null
+            </if>
+            <if test='afgesloten_jn == "N"'>
+                and b.afsluit_d is null
+            </if>
+        group by
+            b.dossier_id,
+            b.bestek_id,
+            b.bestek_nr,
+            b.fase_id,
+            b.procedure_id,
+            b.type_id,
+            b.omschrijving,
+            bi.deelopdracht,
+            b.wbs_nr
+        order by bestek_id
+    </select>
+
+    <select id="getOpnameLijst" parameterType="int" resultType="ciMap">
+            select distinct
+                ad.id,
+                dk.COMMENTAAR_VOOR COMMENTAAR_SH,
+                ka.KADASTER_AFD_B,
+                SUBSTR(k.KADASTER_ID,6) KADASTER_ID_SH,
+                dk.ID as dossier_id,
+                dk.KADASTER_ID,
+                dk.ARTIKEL_ID,
+                dk.GOEDKEURING_S,
+                dk.COMMENTAAR_VOOR,
+                a.ARTIKEL_B,
+                case ao.ONSCHULDIGE_EIG_S when '1' then k.KADASTER_ID
+                                    else NULL
+                end as ONSCHULDIGE_EIG_S,
+                case ao.INGEBREKE_STEL_S when '1' then k.KADASTER_ID
+                                         else NULL
+                end as INGEBREKE_STEL_S
+            from
+                ART46.V_DOSSIER ad
+                    inner join SMEG.RS_DOSSIER_VIEW d
+                    on ad.dossier_id_boa = d.dossier_id
+                inner join ART46.V_DOSSIER_KADASTER as dk
+                on ad.ID = dk.id
+                    left outer join art46.ARTIKEL a
+                    on dk.ARTIKEL_ID = a.ARTIKEL_ID
+                left outer join ART46.DOS_KAD_TYPE ao
+                on dk.ID = ao.DOSSIER_ID
+                and dk.KADASTER_ID = ao.KADASTER_ID
+                    inner join ART46.RS_KADASTER_VIEW k
+                    on k.KADASTER_ID = dk.KADASTER_ID
+                inner join art46.RS_KADASTER_AFD_VIEW ka
+                on k.KADASTER_AFD_ID = ka.KADASTER_AFD_ID
+            where
+                ad.ID = #{id}
+            order by ka.kadaster_afd_b
+    </select>
+
+    <select id="getPublicatieLijst" parameterType="int" resultType="ciMap">
+        select
+            a.DOSSIER_ID,
+            a.KADASTER_ID,
+            GOEDKEURING_D,
+            PUBLICATIE_D,
+            SUBSTR(a.KADASTER_ID,6) KADASTER_ID_SH,
+            ka.KADASTER_AFD_B,
+            a.COMMENTAAR,
+            al.LIJST_B,
+            oa.ARTIKEL_B
+        from ART46.NA_GOEDK a
+                inner join OVAM.ARTIKEL oa
+                on a.ARTIKEL_ID = oa.ARTIKEL_ID
+            inner join SMEG.RS_KADASTER_AFD_VIEW ka
+            on SUBSTR(a.KADASTER_ID,1,5) = ka.KADASTER_AFD_ID
+                inner join ART46.LIJST al
+                on a.LIJST_ID = al.LIJST_ID
+        where
+            a.DOSSIER_ID = #{id}
+        order by al.LIJST_B, oa.ARTIKEL_B, ka.KADASTER_AFD_B, KADASTER_ID_SH
+    </select>
+
+    <select id="getFactuurLijst" parameterType="map" resultType="ciMap">
+        select
+            ab.dossier_id,
+            (select min(coalesce(aa.naam, '') || ' ' || coalesce(aa.voornaam, '') )
+            from ART46.ADRES aa
+                    inner join art46.BESTEK_ADRES ba
+                    on aa.ADRES_ID = ba.adres_id
+                    and ba.bestek_id = ab.bestek_id) as opdrachthouder,
+            ab.bestek_nr,
+            ab.omschrijving,
+            spf.*,
+            case coalesce(adspf.dossier_id, 0)
+                when 0 then ''
+                else adspf.project_id || '_' || adspf.factuur_id || '_' || trim(cast(adspf.dossier_id as char(10)))
+            end project_factuur_dossier_id,
+            'A' dossier_type
+        from SAP.PROJECT_FACTUUR spf
+            inner join ART46.BESTEK_SAP_PROJECT absp on absp.project_id = spf.project_id
+                inner join ART46.BESTEK ab on ab.bestek_id = absp.bestek_id
+            left outer join ART46.DOSSIER_SAP_PROJECT_FACTUUR adspf
+            on adspf.project_id = spf.project_id
+            and adspf.factuur_id = spf.factuur_id
+        where
+            ab.DOSSIER_ID = #{id}
+            <if test='afgesloten_jn == "J"'>
+                and ab.afsluit_d is not null
+            </if>
+            <if test='afgesloten_jn == "N"'>
+                and ab.afsluit_d is null
+            </if>
+        union
+        select
+            ab.dossier_id,
+            (select min(coalesce(aa.naam, '') || ' ' || coalesce(aa.voornaam, '') )
+            from ART46.ADRES aa
+                    inner join art46.BESTEK_ADRES ba
+                    on aa.ADRES_ID = ba.adres_id
+                    and ba.bestek_id = ab.bestek_id) as opdrachthouder,
+            ab.bestek_nr,
+            ab.omschrijving,
+            spf.*,
+            '' project_factuur_dossier_id,
+            'X' dossier_type
+        from SAP.PROJECT_FACTUUR spf
+            inner join ART46.BESTEK_SAP_PROJECT absp on absp.project_id = spf.project_id
+                inner join ART46.BESTEK ab on ab.bestek_id = absp.bestek_id
+            inner join ART46.DOSSIER_SAP_PROJECT_FACTUUR adspf
+            on adspf.project_id = spf.project_id
+            and adspf.factuur_id = spf.factuur_id
+        where
+            adspf.DOSSIER_ID = #{id}
+            <if test='afgesloten_jn == "J"'>
+                and ab.afsluit_d is not null
+            </if>
+            <if test='afgesloten_jn == "N"'>
+                and ab.afsluit_d is null
+            </if>
+    </select>
+
+    <select id="getFacturenDossiersLijst" parameterType="int" resultType="ciMap">
+        select distinct
+            coalesce(og.gemeente_b, '') || ' ' || coalesce(ad.dossier_b, '') || case ad.dossier_type when 'A' then '(Afval)'
+                                                                                                     when 'B' then '(Bodem)'
+                                                                                                     else ' (Ander)'
+            end dossier_l,
+            ad.id
+        from ART46.BESTEK ab
+            inner join ART46.DEELOPDRACHT ade on ab.bestek_id = ade.bestek_id
+                inner join ART46.V_DOSSIER ad on ad.id = ade.dossier_id
+            inner join SMEG.OVAM_GEMEENTE_VIEW og on ad.nis_id = og.nis_id
+        where
+            ab.DOSSIER_ID = #{id}
+        order by 1
+    </select>
+
+    <select id="getArchiefZoekResult" parameterType="be.ovam.art46.struts.actionform.ArchiefZoekForm" resultType="ciMap" >
+        select
+            aa.*,
+            ad.doss_hdr_id,
+            ad.dossier_type,
+            ad.dossier_nr as dossier_nr,
+            oa.DIENST_ID
+        from
+            art46.archief aa
+                inner join art46.v_dossier ad on (aa.dossier_id = ad.id)
+            left outer join SMEG.ART46_AMBTENAAR_DIENST_VIEW oa on (oa.ambtenaar_id = ad.doss_hdr_id)
+        where 1=1
+            <if test='doss_hdr_id != null'>
+                and ad.doss_hdr_id = #{doss_hdr_id}
+            </if>
+            <if test='dossier_id != null and dossier_id != -1'>
+                and aa.dossier_id = #{dossier_id}
+            </if>
+        order by aa.archief_d desc
+    </select>
+
+    <select id="dossierOrganisatieEmail_lijst" parameterType="int" resultType="ciMap" >
+        select dossier_id, organisatie_id, email
+        from art46.dossier_organisatie_email
+        where dossier_id = #{dossier_id}
+    </select>
+
+</mapper>

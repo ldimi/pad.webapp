@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="be.ovam.art46.mappers.SchuldvorderingMapper">
+
+    <select id="getVastleggingenCombo" parameterType="int" resultType="map">
+    <![CDATA[
+        select *
+        from (
+            select project_id as "value",
+                   INITIEEL_ACHT_NR,
+                   initieel_bedrag,
+                   boekjaar,
+                   (initieel_bedrag - (debet_totaal - credit_totaal) - sv_open_bedrag) as open_bedrag,
+                   (1.15 * initieel_bedrag - (debet_totaal - credit_totaal) - sv_open_bedrag) as mogelijk_bedrag
+            from (
+            select
+                        pr.project_id,
+                        pr.INITIEEL_ACHT_NR,
+                        pr.credit_totaal,
+                        pr.debet_totaal,
+                        pr.initieel_bedrag,
+                        pr.boekjaar,
+                        (select coalesce(sum(sp1.BEDRAG), 0 )
+                         from art46.SCHULDVORDERING_SAP_PROJECT sp1
+                                left join art46.SCHULDVORDERING_SAP_PROJECT_FACTUUR svspf1
+                                on sp1.VORDERING_ID = svspf1.VORDERING_ID
+                                and sp1.PROJECT_ID = svspf1.PROJECT_ID
+                         where svspf1.VORDERING_ID is null
+                            and sp1.vordering_id <> sv.vordering_id
+                            and sp1.project_id = pr.project_id) as sv_open_bedrag
+                                -- bedrag dat via sv al aan vastlegging gekoppeld is
+                                --  en nog niet via facturen in project bedragen meegenomen is
+                    from art46.SCHULDVORDERING sv
+                            left join art46.SCHULDVORDERING_SAP_PROJECT sp
+                            on sv.VORDERING_ID = sp.VORDERING_ID
+                          inner join art46.BESTEK_SAP_PROJECT bsp
+                          on sv.BESTEK_ID = bsp.BESTEK_ID
+                            inner join sap.PROJECT pr
+                            on bsp.PROJECT_ID = pr.PROJECT_ID
+                    where
+                        sp.VORDERING_ID is null  -- sv nog niet gekoppeld aan een project
+                        and sv.VORDERING_ID = #{id}
+                    ) as t
+            order by project_id desc
+        ) as t2
+        where t2.mogelijk_bedrag > 0
+    ]]>
+    </select>
+
+    <select id="getSvDO" parameterType="int" resultType="be.ovam.art46.model.SchuldvorderingDO">
+        select
+              sv.vordering_id,
+              sv.schuldvordering_nr,
+              sv.contact_doss_hdr_id,
+              sv.contact_doss_hdr_email,
+              sv.bestek_id,
+              sv.aanvr_schuldvordering_id,
+              sv.offerte_id,
+              sv.bestek_nr,
+              sv.brief_id,
+              sv.brief_nr,
+              sv.vordering_d,
+              sv.vordering_nr,
+              sv.schuldvordering_fase_id,
+              sv.goedkeuring_d,
+              sv.acceptatie_d,
+              sv.print_d,
+              sv.uiterste_verific_d,
+              sv.uiterste_d,
+              sv.dossier_type,
+              sv.van_d,
+              sv.tot_d,
+              sv.vordering_bedrag,
+              sv.vordering_correct_bedrag,
+              sv.goedkeuring_bedrag,
+              sv.herziening_bedrag,
+              sv.herziening_correct_bedrag,
+              sv.boete_bedrag,
+              sv.commentaar,
+              sv.betaal_d,
+              sv.afgekeurd_jn,
+              sv.antwoord_pdf_brief_id,
+              antw_pdf.dms_folder as antw_dms_folder,
+              antw_pdf.dms_filename as antw_dms_filename,
+              sv.status,
+              sv.deelopdracht_id,
+              sv.webloket_gebruiker_email,
+              ssl.motivatie
+        from art46.v_schuldvordering sv
+                left join art46.v_schuldvordering_status_laatste ssl
+                on sv.VORDERING_ID = ssl.schuldvordering_id
+                and sv.status = ssl.status
+                and ssl.status = 'INGEDIEND'  <!-- alleen voor 'INGEDIEND' , de motivatie ophalen -->
+                and ssl.motivatie is not null
+                    left join art46.brief antw_pdf
+                    on sv.antwoord_pdf_brief_id = antw_pdf.brief_id
+        where sv.vordering_id = #{id}
+    </select>
+
+    <select id="getNieuwSvDO" parameterType="map" resultType="be.ovam.art46.model.SchuldvorderingDO">
+        select
+            b.bestek_id,
+            b.bestek_nr,
+            br.brief_id,
+            br.brief_nr,
+            cast(#{vordering_d} as date) as vordering_d,
+            (cast(#{vordering_d} as date) + 30 days) as uiterste_verific_d,
+            (cast(#{vordering_d} as date) + 61 days) as uiterste_d,
+            d.dossier_type,
+            'N' as afgekeurd_jn,
+            'INGEDIEND' as status
+        from art46.brief br
+                left outer join art46.bestek b
+                on br.bestek_id = b.bestek_id
+            left outer join art46.v_dossier d
+            on b.dossier_id = d.id
+        where 1 = 1
+            and  br.brief_id = #{brief_id}
+    </select>
+
+    <select id="getSvProjectDOs" parameterType="int" resultType="be.ovam.art46.model.SchuldvorderingProjectDO">
+        select sp.*, pr.INITIEEL_ACHT_NR
+        from art46.SCHULDVORDERING sv
+                inner join art46.SCHULDVORDERING_SAP_PROJECT sp
+                on sv.VORDERING_ID = sp.VORDERING_ID
+                    inner join sap.project pr
+                    on sp.PROJECT_ID = pr.PROJECT_ID
+        where sv.VORDERING_ID = #{id}
+        order by sp.volg_nr
+    </select>
+
+    <insert id="insertSvProject" parameterType="be.ovam.art46.model.SchuldvorderingProjectDO">
+        INSERT INTO "ART46"."SCHULDVORDERING_SAP_PROJECT"
+        (
+             vordering_id,
+             volg_nr,
+             project_id,
+             bedrag,
+             wbs_nr
+        ) VALUES (
+             #{vordering_id},
+             #{volg_nr},
+             #{project_id:VARCHAR},
+             #{bedrag:NUMERIC},
+             #{wbs_nr:VARCHAR}
+        )
+    </insert>
+
+    <update id="updateSchuldvorderingNaAanmakenSAP" parameterType="int">
+        update art46.SCHULDVORDERING
+        set acceptatie_d = current date,
+            uiterste_d =  case when uiterste_verific_d is not null then min(uiterste_verific_d + 31 days, current date + 31 days)
+                             else current date + 31 days
+                        end,
+            status = 'BEOORDEELD'
+        where VORDERING_ID = #{vordering_id}
+    </update>
+
+
+    <select id="getDeelOpdrachtenCombo" parameterType="map" resultType="map">
+        select
+            trim(char(t.deelopdracht_id)) as "value",
+            t.dossier_b_l || ' (' || COALESCE(char(t.GOEDKEURING_D, EUR), '') || '   '  || art46.float_format(coalesce(t.bedrag, 0)) || ' EUR, saldo: ' || art46.float_format(coalesce(t.saldo, 0)) || ' EUR)' as "label",
+            t.saldo as "saldo"
+        from (
+            select
+                do.deelopdracht_id,
+                d.dossier_b_l,
+                do.GOEDKEURING_D,
+                do.bedrag,
+                (coalesce(do.bedrag, 0) - (select coalesce(sum(sv2.goedkeuring_bedrag), 0)
+                                        from ART46.SCHULDVORDERING sv2
+                                        where sv2.DEELOPDRACHT_ID = do.DEELOPDRACHT_ID
+                                            <if test='vordering_id != null'>
+                                                and sv2.vordering_id != #{vordering_id}
+                                            </if>
+                                        )
+                ) as saldo   <!-- saldo op de deelopdracht , ZONDER bedrag van de gegeven schuldvordering -->
+            from ART46.DEELOPDRACHT do
+                    inner join ART46.V_DOSSIER d
+                    on do.dossier_id = d.id
+            where
+                do.bestek_id = #{bestek_id}
+            ) as t
+        order by "label"
+    </select>
+
+    <select id="getSvFactuurDOs" parameterType="int" resultType="be.ovam.art46.model.SchuldvorderingFactuurDO">
+        select
+            sspf.VORDERING_ID,
+            sspf.PROJECT_ID,
+            sp.INITIEEL_ACHT_NR,
+            sspf.FACTUUR_ID,
+            spf.VOLGNUMMER,
+            spf.BEDRAG,
+            spf.SALDO,
+            spf.FACTUUR_D,
+            spf.BETAAL_D
+        from art46.SCHULDVORDERING_SAP_PROJECT_FACTUUR sspf
+                inner join sap.PROJECT_FACTUUR spf
+                on sspf.project_id = spf.project_id
+                and sspf.factuur_id = spf.factuur_id
+                and sspf.boekjaar = spf.boekjaar
+            left join sap.PROJECT sp
+            on sspf.project_id = sp.project_id
+        where
+            sspf.vordering_id = #{id}
+    </select>
+
+    <delete id="verwijderWbs" parameterType="int">
+        delete
+        from art46.SCHULDVORDERING_SAP_PROJECT svsp
+        where svsp.VORDERING_ID = #{vordering_id}
+              and not exists (select svspf.VORDERING_ID
+                          from art46.SCHULDVORDERING_SAP_PROJECT_FACTUUR svspf
+                          where svsp.VORDERING_ID = svspf.VORDERING_ID
+                             )
+    </delete>
+
+    <update id="updateBijVerwijderWbs" parameterType="int">
+        update art46.SCHULDVORDERING sv
+        set sv.GOEDKEURING_D = null,
+            sv.ACCEPTATIE_D = null,
+            sv.PRINT_D = null,
+            sv.AFGEKEURD_JN = 'N',
+            sv.ANTWOORD_PDF_BRIEF_ID = null,
+            sv.status = 'INGEDIEND'
+        WHERE sv.VORDERING_ID = #{vordering_id}
+    </update>
+
+    <select id="getLijstSchuldvordering"
+            parameterType="be.ovam.art46.struts.actionform.schuldvordering.SchuldvorderingSelectForm"
+            resultType="ciMap" >
+        select
+            sv.vordering_id,
+            sv.vordering_d,
+            sv.goedkeuring_d,
+            sv.uiterste_verific_d,
+            case when sv.goedkeuring_d is null and current date > sv.uiterste_verific_d then 'J'
+                 when sv.goedkeuring_d > sv.uiterste_verific_d then 'J'
+                 else null
+            end as "laattijdige_verificatie_j",
+            sv.uiterste_d,
+            sv.vordering_bedrag,
+            sv.goedkeuring_bedrag,
+            coalesce(char(sv.betaal_d, eur), '') betaal_d,
+            sv.brief_id,
+            sv.afgekeurd_jn,
+            b.dossier_id,
+            b.bestek_nr,
+            d.dossier_type,
+            d.dossier_b,
+            d.programma_code,
+            d.doss_hdr_id
+        from
+            ART46.SCHULDVORDERING sv
+              inner join ART46.BESTEK b
+              on sv.bestek_id = b.bestek_id
+            inner join ART46.v_DOSSIER d
+            on b.dossier_id = d.id
+        where 1 = 1
+            and sv.status != 'IN OPMAAK'
+            <if test="forward == 'lijstschuldvorderingenbetaald'">
+                and sv.betaal_d is not null and sv.afgekeurd_jn != 'J'
+            </if>
+            <if test="forward == 'lijstschuldvorderingenietbetaald'">
+                and sv.betaal_d is null and sv.afgekeurd_jn != 'J'
+            </if>
+            <if test='programma_code != null'>
+                and d.programma_code = #{programma_code}
+            </if>
+            <if test="doss_hdr_id != null">
+                and d.doss_hdr_id = #{doss_hdr_id}
+            </if>
+        order by sv.vordering_d desc
+    </select>
+
+
+    <select id="bestekschuldvorderinglijst"
+            parameterType="int"
+            resultType="ciMap" >
+        select
+            sv.vordering_id,
+            art46.schuldvordering_nr(sv.vordering_id) as schuldvordering_nr,
+            sv.vordering_d,
+            sv.betaal_d,
+            sv.vordering_bedrag,
+            sv.goedkeuring_bedrag,
+            sv.afgekeurd_jn,
+            sv.aanvr_schuldvordering_id,
+            sv.status,
+            case when sp1.project_id is not null then p0.initieel_acht_nr || ' ' || p1.initieel_acht_nr
+                else p0.initieel_acht_nr
+            end as initieel_acht_nr,
+            case when sp1.project_id is not null then sp0.wbs_nr || ' ' || sp1.wbs_nr
+                else sp0.wbs_nr
+            end as wbs_nr,
+            br.brief_nr,
+            br.brief_id,
+            br.dms_folder as brief_dms_folder,
+            br.dms_filename as brief_dms_filename,
+            case when sv.deelopdracht_id is null then coalesce(br.auteur_id, dos.doss_hdr_id)
+                 else dodos.doss_hdr_id
+            end as beheerder,
+            dodos.dossier_b_l as deelopdracht_b,
+            antw.dms_folder as antw_dms_folder,
+            antw.dms_filename as antw_dms_filename
+        from
+            art46.schuldvordering sv
+                left join art46.brief br on sv.brief_id = br.brief_id
+            inner join art46.bestek b on sv.bestek_id = b.bestek_id
+              inner join art46.v_dossier dos on b.dossier_id = dos.id
+            left outer join art46.deelopdracht do
+            on sv.deelopdracht_id = do.deelopdracht_id
+                    left outer join art46.v_dossier dodos
+                    on do.dossier_id = dodos.id
+                left join art46.schuldvordering_sap_project sp0
+                on sv.vordering_id = sp0.vordering_id
+                and sp0.volg_nr = 0
+            left outer join sap.project p0 on
+            sp0.project_id = p0.project_id
+                left join art46.schuldvordering_sap_project sp1
+                on sv.vordering_id = sp1.vordering_id
+                and sp1.volg_nr = 1
+            left outer join sap.project p1 on
+            sp1.project_id = p1.project_id
+                left join art46.brief antw on sv.antwoord_pdf_brief_id = antw.brief_id
+        where
+            sv.bestek_id = #{bestek_id}
+            and sv.status != 'IN OPMAAK'
+        order by vordering_d desc
+    </select>
+
+
+    <select id="briefcategorieLijst" resultType="ciMap" >
+        select
+            bc.BRIEF_CATEGORIE_ID as value,
+            bc.BRIEF_CATEGORIE_B as label
+        from art46.BRIEF_CATEGORIE bc
+        WHERE 1 = 1
+            and bc.BRIEF_CATEGORIE_ID in (12, 13, 14, 15)
+    </select>
+
+    <select id="getSchuldvorderingDataForBudget"
+            parameterType="int"
+            resultType="be.ovam.art46.model.rest.SchuldvorderingBudget" >
+        select
+            sv.VORDERING_ID as padid,
+            sv.SCHULDVORDERING_NR as padnr,
+            ambt.AMBTENAAR_B as dossierhouder,
+            sv.UITERSTE_D,
+            sv.VORDERING_D,
+            sv.VAN_D,
+            sv.TOT_D,
+            abr.DMS_ID as noderef,
+            abr.NAAM_VOORNAAM as inzender,
+            ssp.BEDRAG,
+            ssp.WBS_NR as wbs,
+            (spr.BOEKJAAR || spr.INITIEEL_ACHT_NR) as initieelachtnummer,
+            spr.project_id as SapProjectId
+        from art46.v_schuldvordering sv
+                    left join  art46.V_AMBTENAAR ambt
+                    on sv.DOSS_HDR_ID = ambt.AMBTENAAR_ID
+                left join art46.v_brief abr
+                on sv.ANTWOORD_PDF_BRIEF_ID = abr.brief_id
+             left join  art46.SCHULDVORDERING_SAP_PROJECT ssp
+             on sv.VORDERING_ID = ssp.VORDERING_ID
+                left join sap.project spr
+                on ssp.PROJECT_ID = spr.PROJECT_ID
+        where 1 = 1
+            and sv.VORDERING_ID = #{vordering_id}
+    </select>
+
+    <select id="getSchuldvorderingStatusHistoryLijst"
+            parameterType="int"
+            resultType="ciMap" >
+        select
+            ssh.id,
+            ssh.schuldvordering_id,
+            ssh.webloket_gebruiker_email,
+            ssh.dossierhouder_id,
+            ssh.datum,
+            ssh.motivatie,
+            ssh.status,
+            ssh.status_pad,
+            ssh.status_webloket
+        from  art46.v_schuldvordering_status_history ssh
+        where ssh.schuldvordering_id = #{schuldvordering_id}
+    </select>
+
+    <select id="getAanvrSchuldvorderingBijlagen"
+            parameterType="int"
+            resultType="ciMap" >
+        select
+            ALFRESCO_NODE_ID as alfrescoNodeId,
+            name
+        from  art46.webloket_bijlage wb
+        where wb.aanvr_schuldvordering_id = #{aanvr_schuldvordering_id}
+    </select>
+
+</mapper>

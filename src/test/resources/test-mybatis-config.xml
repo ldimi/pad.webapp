@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<!-- 
+	<properties resource="dev.properties">
+	</properties>
+
+	
+	<environments default="development">
+	</environments>
+	-->
+	
+	<settings>
+		<setting name="callSettersOnNulls" value="true" />
+	</settings>
+	
+	<typeAliases>
+		<typeAlias alias="ciMap" type="org.apache.commons.collections.map.CaseInsensitiveMap"/>
+	</typeAliases>
+
+    <!--  
+       mappers worden automatisch opgepikt volgens patroon be/ovam/art46/mappers/*Mapper.xml
+       zie spring configuratie van SqlSessionFactoryBean	
+	 -->
+	
+</configuration>

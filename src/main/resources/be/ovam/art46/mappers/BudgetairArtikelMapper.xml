@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.BudgetairArtikelMapper">
+
+	<select id="budgetairArtikels"  resultType="ciMap">
+        select be.*, be.ARTIKEL_ID as value, CONCAT(CONCAT(be.ARTIKEL_B,': '), COALESCE(bu.BUDGET_CODE_B, '')) as label  from SAP.BUDGETAIR_ARTIKEL  be LEFT JOIN ART46.budget_code bu ON bu.ARTIKEL_B = be.ARTIKEL_B order by artikel_b
+	</select>
+
+    <select id="getCode" parameterType="int"  resultType="string">
+        select be.ARTIKEL_B from SAP.BUDGETAIR_ARTIKEL be where  be.ARTIKEL_ID = #{artikelId}
+    </select>
+
+
+</mapper>

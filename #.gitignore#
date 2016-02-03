@@ -1,0 +1,11 @@
+target/**
+.svn
+.svn/**
+.project
+.classpath
+.settings
+.settings/**
+alfresco.log
+.buildpath
+
+

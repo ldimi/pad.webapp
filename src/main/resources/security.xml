@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bean:beans xmlns:bean="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+	<bean:bean id="contextSourceTarget"
+		class="org.springframework.ldap.core.support.LdapContextSource">
+
+		<bean:property name="url" value="${ovam.security.ldapurl}" />
+		<bean:property name="base" value="" />
+		<bean:property name="pooled" value="true" />
+		<bean:property name="baseEnvironmentProperties">
+			<bean:map>
+				<bean:entry key="java.naming.ldap.attributes.binary"
+					value="userPassword" />
+			</bean:map>
+		</bean:property>
+	</bean:bean>
+	<bean:bean id="ldapOperations" class="org.springframework.ldap.core.LdapTemplate">
+		<bean:constructor-arg ref="contextSourceTarget" />
+	</bean:bean>
+
+
+	<global-method-security pre-post-annotations="enabled"
+		secured-annotations="disabled" />
+
+
+
+
+	<http use-expressions="true" >
+
+        <access-denied-handler error-page="/s/accessDenied"/>
+        <csrf disabled="true"/>
+
+		<intercept-url pattern="/" access="permitAll" />  <!-- komt neer op "isAnonymous() or isAuthenticated()" -->
+		
+		<intercept-url pattern="/ws/**" access="permitAll" />
+		<intercept-url pattern="/**/*.css" access="permitAll" />
+		<intercept-url pattern="/**/*.js" access="permitAll" />
+		<intercept-url pattern="/**/*.gif" access="permitAll" />
+		<intercept-url pattern="/**/*.png" access="permitAll" />
+		<intercept-url pattern="/**/*.jpg" access="permitAll" />
+		<intercept-url pattern="/**/*.ico" access="permitAll" />
+		
+		<intercept-url pattern="/s/login/**" access="permitAll" />
+		<intercept-url pattern="/s/logout" access="permitAll" />			
+		<intercept-url pattern="/s/j_spring_security_check"	access="permitAll" />
+
+        <!--  voor alle andere pagina's is mistral rol nodig
+        <intercept-url pattern="/**" access="hasRole('ROLE_AUTHENTICATED')" />
+		<intercept-url pattern="/**" access="hasRole('MISTRAL')" />
+         -->
+        <intercept-url pattern="/**" access="hasAuthority('ROLE_mistral')" />
+
+		<!-- voor header auth : 
+        -->
+		<custom-filter position="PRE_AUTH_FILTER" ref="headerFilter" />
+
+		<form-login login-page="/s/login/form"
+			login-processing-url="/s/j_spring_security_check" username-parameter="username"
+			password-parameter="password" authentication-failure-url="/s/login/form?error" />
+
+		<logout logout-url="/s/logout" logout-success-url="/s/login/form?logout" />
+
+	</http>
+
+    <!-- nodig voor de pre authenticatie: 
+
+        de header filter checkt of in de request een header parameter zit ... indien ja dan wordt een map opgebouwd
+        met deze info. Indien niet wordt null teruggegeven en stop deze authenticatie methode. 
+
+        de uitkomst wordt doorgegeven aan de authentication providers (in volgorde van declaratie ) 
+
+        de pre authentication provider zal dit dus eerst oppikken en  dus een authenticatie doen. 
+        deze pre authentication provider gebruikt de userdetail service om de principal en rollen samen te stellen voor
+        dit authenticatie geval. 
+     -->
+	<bean:bean id="headerFilter"
+		class="be.ovam.art46.security.HeaderAuthenticationFilter">
+		<bean:property name="principalRequestHeader" value="SSO_USER" />
+		<bean:property name="authenticationManager" ref="authenticationManager" />
+	</bean:bean>
+
+
+	<bean:bean id="preauthAuthProvider"
+		class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+		<bean:property name="preAuthenticatedUserDetailsService"
+			ref="userDetailsService">
+		</bean:property>
+	</bean:bean>
+
+	<authentication-manager alias="authenticationManager">
+		<!-- worden in volgorde afgegaan... eerst wordt de pre authentication gecheckt 
+			en daarna (enkel met een preauthenicationToken toegankelijk, dankzij de AbstractPreAuthenticatedProcessingFilter 
+			en daarna de loginAuthenticator die enkel toegankelijk is met een userPasswordAuthenticationToken -->
+		<!-- voor header auth -->
+		<authentication-provider ref="preauthAuthProvider" />
+		<authentication-provider ref="loginAuthenticationProvider" />
+	</authentication-manager>
+    
+</bean:beans>

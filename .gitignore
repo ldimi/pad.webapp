@@ -1,0 +1,10 @@
+target/**
+.svn
+.svn/**
+.project
+.classpath
+.settings
+.settings/**
+node_modules
+node_modules/**
+

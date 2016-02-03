@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.GemeentenMapper">
+
+    <cache flushInterval="3600000" readOnly="true" />
+
+    <select id="getGemeentenLijst" resultType="ciMap">
+        select postcode, upper(fusiegemeente) as fusiegemeente, deelgemeente, discriminator
+        from (
+            select
+                distinct dg.postcode, fg.naam as fusiegemeente, dg.naam as deelgemeente , dg.discriminator
+            from smeg_ref.crab_gemeente dg
+                    inner join smeg_ref.crab_gemeente fg
+                    on dg.parent_id = fg.id
+                    and fg.discriminator = 'F'
+            where dg.discriminator = 'D'
+            union
+            select distinct fg.postcode, fg.naam as fusiegemeente, '' as deelgemeente, fg.discriminator
+            from smeg_ref.crab_gemeente fg
+            where fg.discriminator = 'F'
+            )
+        order by fusiegemeente, discriminator desc, deelgemeente
+    </select>
+
+
+</mapper>

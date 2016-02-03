@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.ovamcoremappers.OrganisatieMapper">
+
+    <sql id="organisatie_dd_from" >
+        from plm.ORGANISATIE org
+                 inner join  plm.ORGANISATIE_ORGANISATIETYPE oot
+                 on org.ORGANISATIE_ID = oot.ORGANISATIE_ID
+                 and oot.actief = 1
+                     inner join plm.ORGANISATIETYPE ot
+                     on oot.ORGANISATIETYPE_ID = ot.ORGANISATIETYPE_ID
+    </sql>
+
+    <sql id="gekoppelde_emails_sql" >
+        select distinct
+            login.email as value,
+            login.email as label
+        from plm.login login
+                inner join plm.medewerker mw
+                on mw.login_id = login.login_id
+                  inner join plm.medewerkersrol mr
+                  on mw.medewerker_id = mr.medewerker_id
+                    inner join  plm.gebruikersrol gr
+                    on mr.gebruikersrol_id = gr.gebruikersrol_id
+                inner join plm.organisatie organisatie
+                on mw.organisatie_id = organisatie.organisatie_id
+        where 1 = 1
+            and login.email is not null
+            and login.toestandlogin_id != 2 
+            and mw.toestandmedewerker_id != 0
+            and (mr.van_d &lt;= current date and current date &lt;  mr.tot_d)
+            and gr.applicatie_id = 8
+    </sql>
+    
+    <!--
+           (5 , 'Labo'),
+           (6,  'Gemeente'),
+           (7,  'Intercommunale'),
+           (8,  'Vlaamse overheidsinstelling'),
+           (10, 'Aannemer'),
+           (11, 'Bodemdeskundige'),
+           (12, 'Veiligheidscoordinator'),
+           (13, 'Grondreinigingscentrum'),
+           (14, 'Eigenaar'),
+           (15, 'Projectontwikkelaar')
+    -->
+    <sql id="organisatietype_ids_voordossiers" >
+        5,6,7,8,10,11,12,13,14,15
+    </sql>
+    
+    <select id="organisatietypesVoorDossiers" resultType="ciMap">
+        select organisatietype
+        from  plm.organisatietype ot
+        where ot.organisatietype_id in (<include refid="organisatietype_ids_voordossiers"/>)
+    </select>
+    
+
+    <select id="organisatiesVoorDossiers" resultType="ciMap">
+        select distinct
+                org.organisatie_id,
+               ( coalesce (org.vkbo,' ') || ' ' || coalesce(org.naam, ' ') ||  
+                '  [' || coalesce(org.gemeente, ' ') || ',' || coalesce(org.adres, ' ') || ' ' ||  coalesce(org.huisnr, ' ') || ']' ) as label,
+                org.naam,
+                ot.organisatietype
+        <include refid="organisatie_dd_from"/>
+        where  oot.organisatietype_id in (<include refid="organisatietype_ids_voordossiers"/>)
+               and exists (
+                           <include refid="gekoppelde_emails_sql"/>
+                           and organisatie.organisatie_id = org.organisatie_id
+                           and gr.code like '%DOSSIER'
+                          )
+        order by org.organisatie_id
+    </select>
+ 
+    <!--
+           (5 , 'Labo'),
+           (10, 'Aannemer'),
+           (11, 'Bodemdeskundige'),
+           (12, 'Veiligheidscoordinator'),
+           (13, 'Grondreinigingscentrum'),
+    -->
+    <select id="organisatiesVoorOffertes_dd" resultType="ciMap">
+        select distinct
+                org.organisatie_id,
+               ( coalesce (org.vkbo,' ') || ' ' || coalesce(org.naam, ' ') ||  
+                '  [' || coalesce(org.gemeente, ' ') || ',' || coalesce(org.adres, ' ') || ' ' ||  coalesce(org.huisnr, ' ') || ']' ) as label,
+                org.naam
+        <include refid="organisatie_dd_from"/>
+        where oot.ORGANISATIETYPE_ID in (5,10,11,12,13)
+        order by org.naam
+    </select>
+ 
+    <select id="organisatiesVoorScreening_dd" resultType="ciMap">
+        select distinct
+                org.organisatie_id,
+                org.organisatie_id as value,
+               ( coalesce (org.vkbo,' ') || ' ' || coalesce(org.naam, ' ') ||  
+                '  [' || coalesce(org.gemeente, ' ') || ',' || coalesce(org.adres, ' ') || ' ' ||  coalesce(org.huisnr, ' ') || ']' ) as label,
+                org.naam
+        <include refid="organisatie_dd_from"/>
+        where oot.ORGANISATIETYPE_ID in (11)
+        order by org.naam
+    </select>
+ 
+    <select id="emailsVanOrganisatieVoorDossiers" resultType="ciMap">
+        <include refid="gekoppelde_emails_sql"/>
+            and gr.code like '%DOSSIER'
+            and organisatie.organisatie_id = #{organisatie_id}
+    </select>
+    
+    <select id="emailsVanOrganisatieVoorFinancieel" resultType="ciMap">
+        <include refid="gekoppelde_emails_sql"/>
+            and gr.code like '%FINANCIEEL'
+            and organisatie.organisatie_id = #{organisatie_id}
+    </select>       	
+
+</mapper>

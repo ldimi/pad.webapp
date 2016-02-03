@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.KadasterMapper">
+
+    <select id="getKadasterZoekResult" parameterType="int" resultType="ciMap">
+        with kadasters as (
+            select
+                ka.kadaster_afd_b,
+                SUBSTR(k.KADASTER_ID,6) KADASTER_ID_SH,
+                ka.kadaster_afd_b || ' ' || SUBSTR(k.KADASTER_ID,6) KADASTER_ID_L,
+                kd.kadaster_id
+            from
+                ART46.RS_KADASTER_VIEW k
+                    INNER JOIN art46.V_DOSSIER_KADASTER kd
+                    ON k.KADASTER_ID = kd.KADASTER_ID
+                inner join ART46.RS_KADASTER_AFD_VIEW ka
+                on k.kadaster_afd_id = ka.kadaster_afd_id
+            where
+                k.KADASTER_AFD_ID = #{kadaster_afd_id}
+        )
+        select
+            kadasters.kadaster_afd_b,
+            kadasters.kadaster_id_sh,
+            kadasters.kadaster_id_l,
+            kadasters.kadaster_id ,
+            case count(avg.kadaster_id) +   count(ang.kadaster_id)
+                when 0 then 0
+                else 1
+            end as art46
+        from
+            kadasters
+            left outer join ART46.VOOR_GOEDK avg on kadasters.kadaster_id = avg.kadaster_id
+            left outer join ART46.NA_GOEDK ang on kadasters.kadaster_id = ang.kadaster_id
+        group by
+            kadasters.kadaster_afd_b,
+            kadasters.kadaster_id_sh,
+            kadasters.kadaster_id_l,
+            kadasters.kadaster_id
+        order by
+            kadasters.kadaster_id
+    </select>
+
+    <select id="getDetailsOpnameLijst" parameterType="string" resultType="ciMap">
+        select distinct
+            ad.id,
+            kd.DOSSIER_ID_BOA,
+            kd.KADASTER_ID,
+            kd.ARTIKEL_ID,
+            kd.GOEDKEURING_S,
+            kd.COMMENTAAR_VOOR,
+            d.naam as DOSSIER_B,
+            a.ARTIKEL_B,
+            rka.KADASTER_AFD_B,
+            SUBSTR(kd.KADASTER_ID,6) KADASTER_ID_SH,
+            case adk.ONSCHULDIGE_EIG_S when '1' then ad.ID
+                                       else NULL
+            end as ONSCHULDIGE_EIG_S,
+            case adk.INGEBREKE_STEL_S when '1' then ad.ID
+                                      else NULL
+            end as INGEBREKE_STEL_S
+        from
+            SMEG.RS_KADASTER_VIEW k
+                inner join ART46.V_DOSSIER_KADASTER as kd
+                on kd.kadaster_id = k.kadaster_id
+            inner join ART46.V_DOSSIER ad on (kd.ID = ad.ID)
+            inner join SMEG.DOSSIER d on (d.DOSSIER_ID = ad.DOSSIER_ID_BOA)
+            inner join ART46.RS_KADASTER_AFD_VIEW rka
+            on k.kadaster_afd_id = rka.kadaster_afd_id
+                left outer join ART46.DOS_KAD_TYPE adk
+                on kd.KADASTER_ID = adk.KADASTER_ID
+                and kd.ID = adk.DOSSIER_ID
+            left outer join OVAM.ARTIKEL a
+            on kd.ARTIKEL_ID = a.ARTIKEL_ID
+        where
+            k.KADASTER_ID = #{kadaster_id}
+    </select>
+
+    <select id="getDetailsPublicatieLijst" parameterType="string" resultType="ciMap">
+        select
+            ad.ID,
+            ad.DOSSIER_ID_BOA,
+            a.KADASTER_ID,
+            GOEDKEURING_D,
+            PUBLICATIE_D,
+            SUBSTR(a.KADASTER_ID,6) KADASTER_ID_SH,
+            ka.KADASTER_AFD_B,
+            a.COMMENTAAR,
+            al.LIJST_B,
+            oa.ARTIKEL_B,
+            d.DOSSIER_B
+        from
+            ART46.NA_GOEDK a
+                inner join ART46.V_DOSSIER ad
+                on a.DOSSIER_ID = ad.id
+                    inner join OVAM.ARTIKEL oa
+                    on a.ARTIKEL_ID = oa.ARTIKEL_ID
+                inner join ART46.LIJST al
+                on a.LIJST_ID = al.LIJST_ID
+                    inner join SMEG.RS_KADASTER_AFD_VIEW ka
+                    on SUBSTR(a.KADASTER_ID,1,5) = ka.KADASTER_AFD_ID
+                inner join SMEG.RS_DOSSIER_VIEW d
+                on ad.DOSSIER_ID_BOA = d.DOSSIER_ID
+        where
+            a.KADASTER_ID = #{kadaster_id}
+        order by al.LIJST_B, oa.ARTIKEL_B, ka.KADASTER_AFD_B, KADASTER_ID_SH
+    </select>
+
+</mapper>

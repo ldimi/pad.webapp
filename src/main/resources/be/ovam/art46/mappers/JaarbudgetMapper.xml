@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.JaarbudgetMapper">
+
+    <cache/>
+
+    <select id="getJaarbudgetList"  resultType="ciMap" parameterType="map">
+        select jb.jaar,
+              jb.budget_code,
+              jb.budget,
+              jb.VEK_BUDGET,
+              jb.effectief_budget,
+              bc.ARTIKEL_B,
+              'R' as status_crud
+        from art46.JAARBUDGET jb
+                left join art46.BUDGET_CODE bc
+                on jb.budget_code = bc.BUDGET_CODE
+        where jb.jaar = #{jaar}
+        order by jb.budget_code
+    </select>
+
+    <update id="updateJaarbudget" parameterType="map">
+        update art46.JAARBUDGET
+        set
+            budget = #{budget},
+            effectief_budget = #{effectief_budget}
+        where jaar = #{jaar} and
+              budget_code = #{budget_code}
+    </update>
+
+    <insert id="insertJaarbudget" parameterType="map">
+        insert into art46.JAARBUDGET
+        (jaar, budget_code, budget, effectief_budget)
+        values
+        (#{jaar}, #{budget_code}, #{budget}, #{effectief_budget})
+    </insert>
+
+    <delete id="delete" parameterType="map">
+        delete from  art46.JAARBUDGET
+        where jaar = #{jaar} and
+              budget_code = #{budget_code}
+    </delete>
+
+
+</mapper>

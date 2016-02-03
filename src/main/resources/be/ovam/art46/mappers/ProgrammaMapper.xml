@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.ProgrammaMapper">
+
+    <cache/>
+
+    <select id="getProgrammaList"  resultType="ciMap">
+        select pt.CODE,
+               pt.PROGRAMMA_TYPE_B
+        from art46.PROGRAMMA_TYPE pt
+        order by PROGRAMMA_TYPE_B
+    </select>
+
+    <select id="getProgrammaDD"  resultType="ciMap">
+        select pt.CODE as value,
+               pt.PROGRAMMA_TYPE_B as label
+        from art46.PROGRAMMA_TYPE pt
+        order by PROGRAMMA_TYPE_B
+    </select>
+
+
+</mapper>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.DropDownMapper">
+
+    <cache flushInterval="60000" readOnly="true" />
+
+    <select id="maanden"  resultType="ciMap">
+        select maand_id, maand_b from ART46.RAMING_MAAND
+    </select>
+
+    <select id="bestekBodemType"  resultType="ciMap">
+        select
+            type_id as value,
+            type_b as label
+        from ART46.BESTEK_TYPE
+        where dossier_type ='B'
+        order by type_b
+    </select>
+
+    <select id="bestekBodemFase"  resultType="ciMap">
+        select
+            fase_id as value,
+            fase_b as label
+        from ART46.BESTEK_FASE
+        order by fase_b
+    </select>
+
+    <select id="bestekBodemProcedure"  resultType="ciMap">
+        select
+            procedure_id as value,
+            procedure_b as label
+        from ART46.BESTEK_PROCEDURE
+        where dossier_type ='B'
+        order by procedure_b
+    </select>
+
+    <select id="dossierFaseByType"  resultType="ciMap"  parameterType="string">
+        select * from ART46.DOSSIER_FASE
+        where dossier_type = #{dossier_type}
+        order by fase_b
+    </select>
+
+
+    <select id="briefAard"  resultType="ciMap">
+        <![CDATA[
+        select
+            brief_aard_id, brief_aard_b,
+            case when brief_aard_b in ('', 'Brief') then 0 else 1 end sort
+        from ART46.BRIEF_AARD
+        where brief_aard_id <> 0
+        order by sort, brief_aard_b
+        ]]>
+    </select>
+
+    <select id="bodemsaneringsdeskundigen" resultType="ciMap">
+        select
+            coalesce(naam_1, '') || ' ' || coalesce(adres, '') || ', ' || coalesce(rtrim(postcode),'') || ' ' || coalesce(stad, '') || ' (' || rol_id || ')' derde_b,
+            rtrim(cast(rol.derde_id as char(10))) || '_' || rol_id derde_id_rol_id
+        from
+            smeg.rs_derde_view der
+                inner join smeg.rs_derde_rol_view rol
+                on rol.derde_id = der.derde_id
+        where rol_id in ('BD1', 'BD2')
+        order by 1
+    </select>
+
+
+    <select id="briefType" resultType="ciMap">
+        select * from ART46.BRIEF_TYPE order by brief_type_b
+    </select>
+
+    <select id="briefTypeVos" resultType="ciMap">
+        select type_id, substr(type_b,1, 30) type_b, type_b type_b_label from ART46.BRIEF_TYPE_VOS order by type_b
+    </select>
+
+    <select id="landen" resultType="ciMap">
+        select * from OVAM.LAND order by land_b
+    </select>
+
+    <select id="faseRamingByDossierType"  resultType="ciMap"  parameterType="string">
+        select * from ART46.RAMING_FASE
+        where FASE_ID > -1 and
+              dossier_type = #{dossier_type}
+    </select>
+    <select id="faseRamingLijstByDossierType"  resultType="ciMap"  parameterType="string">
+        select * from ART46.RAMING_FASE
+        where dossier_type = #{dossier_type}
+    </select>
+
+
+    <select id="prioriteitRamingLijst" resultType="ciMap">
+        select * from ART46.RAMING_PRIORITEIT order by prioriteit_b desc
+    </select>
+
+
+    <select id="prioriteitRaming" resultType="ciMap">
+        select * from ART46.RAMING_PRIORITEIT where PRIORITEIT_ID > -1
+    </select>
+
+
+    <select id="jaartalRaming" resultType="ciMap">
+        select jaar_id, jaar_b from ART46.RAMING_JAAR where JAAR_ID > -1
+    </select>
+
+    <select id="artikels" resultType="ciMap">
+        select * from ART46.ARTIKEL where ARTIKEL_ID > 0 order by ARTIKEL_ID
+    </select>
+
+    <select id="dossierhouders" resultType="ciMap">
+        select dh.DOSS_HDR_ID,
+               case when dh.ACTIEF_JN = 'J' then k.NAAM_1
+                  else '- ' || k.naam_1 || ' NIET ACTIEF'
+               end as doss_hdr_b
+        from art46.DOSSIER_HOUDER dh
+                  LEFT JOIN SMEG.KLANT_AMBTENAAR ka
+                  ON dh.DOSS_HDR_ID = ka.uid
+              left join SMEG.KLANT k
+              on ka.id = k.id
+        order by dh.ACTIEF_JN, doss_hdr_b
+    </select>
+
+    <select id="ambtenaren" resultType="ciMap">
+        select AMBTENAAR_B, AMBTENAAR_ID
+        from ART46.OVAM_AMBTENAAR_VIEW
+        order by AMBTENAAR_B
+    </select>
+
+    <select id="ambtenarenJD" resultType="ciMap">
+        select AMBTENAAR_B, AMBTENAAR_ID
+        from ART46.OVAM_AMBTENAAR_VIEW
+        where UPPER(DIENST_ID) = 'JUR'
+        order by AMBTENAAR_B
+    </select>
+
+    <select id="ambtenarenBOA" resultType="ciMap">
+        select AMBTENAAR_B, AMBTENAAR_ID
+        from ART46.OVAM_AMBTENAAR_VIEW
+        where UPPER(AFDELING_ID) = 'BB'
+        order by AMBTENAAR_B
+    </select>
+
+    <select id="fusiegemeenten" resultType="ciMap">
+        select
+            NIS_ID,
+            gemeente_b
+        from art46.v_fusiegemeente
+        order by gemeente_b
+    </select>
+
+    <select id="provincies" resultType="ciMap">
+        select id, omschrijving
+        from art46.V_PROVINCIE_VLAANDEREN
+        order by id
+    </select>
+
+    <select id="adrestypes" resultType="ciMap">
+        select * from ART46.ADRES_TYPE order by adres_type_b
+    </select>
+
+    <select id="kadasterafdelingen" resultType="ciMap">
+        select KADASTER_AFD_B, KADASTER_AFD_ID
+        from art46.RS_KADASTER_AFD_VIEW
+        order by KADASTER_AFD_B
+    </select>
+
+    <select id="lijsten" resultType="ciMap">
+        select * from ART46.LIJST
+        order by lijst_id
+    </select>
+
+    <select id="actieveLijsten" resultType="ciMap">
+        <![CDATA[
+        select * from ART46.LIJST
+        where (AFGESLOTEN_S <> '1' or AFGESLOTEN_S is NULL)
+        order by lijst_id
+        ]]>
+    </select>
+
+    <select id="jaren_16" resultType="int">
+        <![CDATA[
+        with seq as (
+            SELECT ROW_NUMBER() OVER() as num
+            from SYSCAT.TABLES
+        )
+        select (year(current date) + num - 11) as jaar
+        from seq
+        where num < 17
+        order by jaar desc
+        ]]>
+    </select>
+
+</mapper>

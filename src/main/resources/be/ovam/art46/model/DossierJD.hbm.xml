@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping schema="ART46">
+	
+	<class name="be.ovam.art46.model.DossierJD" table="DOSSIER_JD" lazy="false">		
+		<id name="dossier_id_jd" type="string">
+			<column name="DOSSIER_ID_JD" sql-type="string" not-null="true"/>
+			<generator class="assigned"/>
+		</id>		
+		<property name="dossier_id"/>		
+		<property name="dossier_b"/>		
+		<property name="doss_hdr_id"/>		
+		<property name="commentaar"/>
+		<property name="stand_terugvordering"/>		
+	</class>
+		
+	<query name="dossierJD.by.dossierId"> 
+		from be.ovam.art46.model.DossierJD d where	d.dossier_id = ?
+	</query>
+	
+</hibernate-mapping>

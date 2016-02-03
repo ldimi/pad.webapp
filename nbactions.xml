@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>CUSTOM-package</actionName>
+        <displayName>package</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>package</goal>
+        </goals>
+        <properties>
+            <maven.test.skip>true</maven.test.skip>
+        </properties>
+        <activatedProfiles>
+            <activatedProfile>ant_dodeploy_exploded</activatedProfile>
+        </activatedProfiles>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-release</actionName>
+        <displayName>release</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+        <properties>
+            <maven.test.skip>true</maven.test.skip>
+        </properties>
+        <activatedProfiles>
+            <activatedProfile>ant_dodeploy_exploded</activatedProfile>
+            <activatedProfile>release</activatedProfile>
+        </activatedProfiles>
+    </action>
+
+
+    <action>
+        <actionName>CUSTOM-release to test</actionName>
+        <displayName>release to test</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+        <properties>
+            <maven.test.skip>true</maven.test.skip>
+        </properties>
+        <activatedProfiles>
+            <activatedProfile>ant_dodeploy_exploded</activatedProfile>
+            <activatedProfile>release</activatedProfile>
+            <activatedProfile>deploy-to-applicationserver</activatedProfile>
+        </activatedProfiles>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-deploy to nexus</actionName>
+        <displayName>release to nexus</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>deploy</goal>
+        </goals>
+        <properties>
+            <maven.test.skip>true</maven.test.skip>
+        </properties>
+        <activatedProfiles>
+            <activatedProfile>ant_dodeploy_exploded</activatedProfile>
+            <activatedProfile>release</activatedProfile>
+        </activatedProfiles>
+    </action>
+</actions>

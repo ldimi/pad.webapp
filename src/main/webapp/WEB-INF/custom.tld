@@ -1,0 +1,37 @@
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>2.0</jsp-version>
+  <short-name>Custom TLD</short-name>
+  
+  <tag>
+    <name>outJson</name>
+    <tag-class>be.ovam.art46.util.jsp.OutJsonTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+       <name>object</name>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>options</name>
+    <tag-class>be.ovam.art46.util.jsp.OptionsTag</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+       <name>items</name>
+       <type>java.util.List</type>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>itemValue</name>
+    </attribute>
+    <attribute>
+       <name>itemLabel</name>
+    </attribute>
+    <attribute>
+       <name>selectedValue</name>
+       <type>java.lang.Object</type>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+</taglib>

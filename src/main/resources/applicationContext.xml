@@ -1,0 +1,217 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+						http://www.springframework.org/schema/context   http://www.springframework.org/schema/context/spring-context-4.1.xsd
+                        http://www.springframework.org/schema/task      http://www.springframework.org/schema/task/spring-task-4.1.xsd
+                        http://www.springframework.org/schema/util      http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+                        >
+
+
+    <import resource="security.xml" />
+    
+    <context:component-scan base-package="be.ovam.art46.common.mail,be.ovam.art46.service,be.ovam.art46.dao,be.ovam.art46.security"/>
+    <context:component-scan base-package="be.ovam.pad.service"/>
+    
+    <bean id="encoder"
+                class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <constructor-arg name="strength" value="11" />
+    </bean>
+	<task:annotation-driven />
+
+	<context:property-placeholder
+		system-properties-mode="OVERRIDE" location=" classpath*:service.properties" />
+
+	<bean id="pad_versie" class="java.lang.String">
+		<constructor-arg>
+			<value>${project.version}</value>
+		</constructor-arg>
+	</bean>
+
+    <bean id="build_profile" class="java.lang.String">
+        <constructor-arg>
+            <value>${build.profile}</value>
+        </constructor-arg>
+    </bean>
+
+	<bean id="build_timestamp" class="java.lang.String">
+		<constructor-arg>
+			<value>${build.timestamp}</value>
+		</constructor-arg>
+	</bean>
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="mail.ovam.be" />
+	</bean>
+
+	<bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage" />
+
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.DB2Dialect</prop>
+				
+				<!--
+				  *  reden om dit af te zetten: 
+				  *        hibernate logt op deze manier via System.out,
+				  *          naar Catalina.out, en dat bestand wordt dan te groot
+				  *  beter sql tonen via logs
+                  *       log4j.logger.org.hibernate= INFO
+                  *       log4j.logger.org.hibernate.SQL=TRACE
+				 -->
+				<prop key="hibernate.show_sql">false</prop>
+				
+				<prop key="org.hibernate.envers.default_schema">SAP</prop>
+		</props>
+		</property>
+
+        <property name="mappingResources">
+			<list>
+				<value>be/ovam/art46/model/Actie.hbm.xml</value>
+				<value>be/ovam/art46/model/Archief.hbm.xml</value>
+				<value>be/ovam/art46/model/Bestek.hbm.xml</value>
+				<value>be/ovam/art46/model/BudgetairArtikel.hbm.xml</value>
+				<value>be/ovam/art46/model/Dossier.hbm.xml</value>
+				<value>be/ovam/art46/model/DossierJD.hbm.xml</value>
+				<value>be/ovam/art46/model/Lijst.hbm.xml</value>
+				<value>be/ovam/art46/model/Query.hbm.xml</value>
+				<value>be/ovam/art46/model/User.hbm.xml</value>
+			</list>
+		</property>
+
+		<property name="annotatedClasses">
+			<list>
+                <value>be.ovam.art46.sap.model.Project</value>
+                <value>be.ovam.art46.sap.model.Spreiding</value>
+			</list>
+		</property>
+
+        <property name="packagesToScan" value="be.ovam.art46.model,be.ovam.pad.model"/>
+	</bean>
+
+	<bean id="abstractDAO" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="baseDAO" class="be.ovam.art46.dao.BaseDAO" parent="abstractDAO" />
+
+	<bean id="actieDAO" class="be.ovam.art46.dao.ActieDAO" parent="abstractDAO">
+        <property name="sqlSession" ref="sqlSession" />
+	</bean>
+
+
+	<bean id="bestekDAO" class="be.ovam.art46.dao.BestekDAO" parent="abstractDAO">
+	</bean>
+
+	<bean id="dossierDAO" class="be.ovam.art46.dao.DossierDAO" parent="abstractDAO">
+	</bean>
+
+	<bean id="dossierJDDAO" class="be.ovam.art46.dao.DossierJDDAO" parent="abstractDAO" />
+
+	<bean id="dossierKadasterDAO" class="be.ovam.art46.dao.DossierKadasterDAO" parent="abstractDAO" />
+
+	<bean id="SAPDao" class="be.ovam.art46.dao.SAPDAO" parent="abstractDAO">
+	</bean>
+
+	<bean id="schuldvorderingDAO" class="be.ovam.art46.dao.SchuldvorderingDAO"	parent="abstractDAO">
+	</bean>
+
+	<bean id="userDAO" class="be.ovam.art46.dao.UserDAO" parent="abstractDAO">
+	</bean>
+
+	<bean id="baseService" class="be.ovam.art46.service.BaseService">
+		<property name="dao" ref="baseDAO" />
+	</bean>
+
+	<bean id="dossierJDService" class="be.ovam.art46.service.dossier.DossierJDService">
+		<property name="dao" ref="dossierJDDAO" />
+	</bean>
+
+	<bean id="schuldvorderingService" class="be.ovam.art46.service.BaseService">
+		<property name="dao" ref="schuldvorderingDAO" />
+	</bean>
+
+	<bean id="userService" class="be.ovam.art46.service.UserService">
+		<property name="dao" ref="userDAO" />
+	</bean>
+
+
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/BSPROD" />
+	</bean>
+
+	<bean id="ovamcore_dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/ovamcore" />
+	</bean>
+
+
+
+	<bean id="dmsUserAlfresco" class="be.ovam.dms.alfresco.DmsUserAlfresco">
+		<constructor-arg index="0">
+			<value>${ovam.dms.url}/api/</value>
+		</constructor-arg>
+
+		<property name="userId">
+			<value>${ovam.dms.user}</value>
+		</property>
+
+		<property name="password">
+			<value>${ovam.dms.pass}</value>
+		</property>
+
+		<property name="base">
+			<value>${ovam.dms.base}</value>
+		</property>
+	</bean>
+	
+	<util:list id="mapperLocations" value-type="java.lang.String">
+        <value>classpath*:be/ovam/pad/common/mappers/*Mapper.xml</value>
+		<value>classpath*:be/ovam/art46/mappers/*Mapper.xml</value>
+	    <value>classpath*:be/ovam/util/mybatis/mappers/*Mapper.xml</value>
+	</util:list> 
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="WEB-INF/mybatis-config.xml" />
+		<property name="mapperLocations" ref="mapperLocations" />
+	</bean>
+
+	<bean id="sqlSession" class="be.ovam.util.mybatis.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+		<constructor-arg index="1" ref="mapperLocations" />
+		<property name="refreshMappers" value="#{ systemProperties['ovam.omgeving'] == 'ontwikkeling' }" />
+	</bean>
+
+    
+
+                    	
+	<util:list id="ovamcore_mapperLocations" value-type="java.lang.String">
+		<value>classpath*:be/ovam/art46/ovamcoremappers/*Mapper.xml</value>
+	    <value>classpath*:be/ovam/util/mybatis/mappers/*Mapper.xml</value>
+	</util:list> 
+
+	<bean id="ovamcore_sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ovamcore_dataSource" />
+		<property name="configLocation" value="WEB-INF/mybatis-config.xml" />
+		<property name="mapperLocations" ref="ovamcore_mapperLocations" />
+	</bean>
+
+	<bean id="ovamcore_sqlSession" class="be.ovam.util.mybatis.SqlSessionTemplate">
+		<constructor-arg index="0" ref="ovamcore_sqlSessionFactory" />
+		<constructor-arg index="1" ref="ovamcore_mapperLocations" />
+		<property name="refreshMappers" value="#{ systemProperties['ovam.omgeving'] == 'ontwikkeling' }" />
+	</bean>
+
+	<import resource="services.xml" />
+	
+	
+
+</beans>

@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+        <!-- The contents of this file will be loaded for each web application -->
+<Context>
+
+    <!-- Default set of monitored resources -->
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+
+    <!-- Uncomment this to disable session persistence across Tomcat restarts -->
+    <!--
+    <Manager pathname="" />
+    -->
+    <Parameter name="ovam.omgeving" value="ontwikkeling" override="false"/>
+    <Parameter name="ovam.log4j.file" value="${catalina.base}/conf/log4j.properties" override="false"/>
+    <Parameter name="pad.mailadres" override="false" value="dvdveken@ovam.be"/>
+    <Parameter name="pad.mail.afsluitenBestek" override="false" value="dvdveken@ovam.be"/>
+    <Parameter name="pad.vastleggingsaanvraag.watcher" override="false" value="ctodtse"/>
+    <Parameter name="pad.path.to.template.folder" value="/home/dimitri/atemp"/>
+
+    <Parameter name="pad.mistral2Url" value="http://test-in.ovam.be/mistral/dossier/bookmarks/selecterenBundel.seam"/>
+    <Parameter name="pad.vos2Url" override="false" value="http://10.1.11.155:8180/vos2/genereer_scherm.do"/>
+
+    <!-- <Parameter name="pad.dms.url" value="http://localhost:8181/api/" override="false"/> -->
+    <Parameter name="ovam.dms.url" override="false" value="http://alfresco-test.ovam.be"/>
+    <Parameter name="pad.dms.user" override="false" value="admin"/>
+    <Parameter name="pad.dms.pass" override="false" value="admin"/>
+    <Parameter name="pad.dms.base" override="false" value="/app:company_home/cm:Toepassingen"/>
+    <Parameter name="pad.uid.afdelingshoofd.ivs" override="false" value="http://test-in.ovam.be/pad-webloket/webloket/"/>
+    <!--
+    -->
+    <Parameter name="pad.dms.webdrive.base" override="false" value="file://///webdrive/alfresco-test/"/>
+
+    <!--
+    <Parameter name="ovam.esb.searchProject.endpoint"
+              value="http://localhost:8080/EsbSap/http/SapServices/searchProject" override="false"/>
+    <Parameter name="ovam.esb.createProject.endpoint"
+              value="http://localhost:8080/EsbSap/http/SapServices/createProject" override="false"/>
+    <Parameter name="ovam.esb.updateProject.endpoint"
+              value="http://localhost:8080/EsbSap/http/SapServices/updateProject" override="false"/>
+    <Parameter name="ovam.esb.createWbs.endpoint"
+              value="http://localhost:8080/EsbSap/http/SapServices/createWBS" override="false"/>
+    <Parameter name="ovam.esb.createVastlegging.endpoint"
+              value="http://localhost:8080/EsbSap/http/SapServices/createVastlegging" override="false"/>
+    <Parameter name="ovam.esb.finOverzicht.endpoint"
+              value="http://localhost:8080/EsbSap/http/SapServices/finOverzicht" override="false"/>
+    <Parameter name="ovam.esb.readVastlegging.endpoint"
+              value="http://localhost:8080/EsbSap/http/SapServices/readVastlegging" override="false"/>
+    -->
+
+
+    <Parameter name="ovam.esb.searchProject.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/searchProject"/>
+    <Parameter name="ovam.esb.createProject.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/createProject"/>
+    <Parameter name="ovam.esb.updateProject.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/updateProject"/>
+    <Parameter name="ovam.esb.createWbs.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/createWBS"/>
+    <Parameter name="ovam.esb.createVastlegging.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/createVastlegging"/>
+    <Parameter name="ovam.esb.finOverzicht.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/finOverzicht"/>
+    <Parameter name="ovam.esb.readVastlegging.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/readVastlegging"/>
+    <Parameter name="ovam.budget.aanvraagvastlegging" override="false" value="http://test-in.ovam.be/budget/rest/budgetreservering/aanvraagVastlegging.do"/>
+    <Parameter name="ovam.budget.rest.url" override="false" value="http://10.1.154.86:8280/budget/rest"/>
+    <Parameter name="ovam.webloket.url" value="https://services.ovam.be/webloket-ivs/" override="false"/>
+    <Parameter name="ovam.esb.url" override="false" value="http://10.1.11.155:8001/rest/cmis"/>
+    <Parameter name="pad.schuldvordering.nieuwe.flow" value="true" override="false"/>
+
+
+    <Parameter name="ovam.security.ldapurl" override="false" value="ldap://10.1.5.6:389"/>
+    <Parameter name="ovam.security.reverseProxyIp" override="false" value=""/>
+    <Parameter name="ovam.security.isInTest" override="false" value="false"/>
+    <Parameter name="ovam.security.usersPath" override="false" value="ou=Users,o=ovam"/>
+    <Parameter name="ovam.security.rollenPath" override="false" value="ou=test,ou=pad,ou=Applicaties,o=ovam"/>
+    <Parameter name="java.io.tmpdir" override="false" value="C:\temp"/>
+
+    <Resource auth="Container" driverClassName="com.ibm.db2.jcc.DB2Driver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/BSPROD" password="db2inst1" type="javax.sql.DataSource" url="jdbc:db2://10.1.2.12:60000/mistrpad:useJDBC4ColumnNameAndLabelSemantics=false;retrieveMessagesFromServerOnGetMessage=true;" username="db2inst1"/>
+
+    <!-- Uncomment this to enable Comet connection tacking (provides events
+         on session expiration as well as webapp lifecycle) -->
+    <!--
+    <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
+    -->
+
+</Context>

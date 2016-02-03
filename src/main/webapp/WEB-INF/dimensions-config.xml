@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dimensions-config>   
+	
+    <decider className="be.ovam.art46.util.Art46Decider">
+        <set-property name="parameterName" value="popup" />       
+    </decider>
+    
+    <!-- This is the class that resolves inheritances between Tiles definitions files -->
+    <inheritance-resolver className="be.ovam.art46.util.Art46InheritanceResolver" />
+
+    <decisions>    
+        <decision>
+            <!-- Default decision -->
+            <definitions-config path="/WEB-INF/tiles-defs.xml" />
+        </decision>
+        <decision>           
+            <parameter name="popup" value="yes" />
+            <definitions-config path="/WEB-INF/tiles-defs_popup.xml" />
+        </decision>      
+    </decisions>
+</dimensions-config>

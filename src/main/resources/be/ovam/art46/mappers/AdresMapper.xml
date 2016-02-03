@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.AdresMapper">
+
+    <insert id="insertDossierAdres" parameterType="map">
+        insert into ART46.dossier_adres (
+            dossier_id,
+            adres_id,
+            contact_id,
+            eigenaar_s,
+            gebruiker_s,
+            commentaar
+        )
+        values (
+            #{dossier_id},
+            #{adres_id},
+            #{contact_id},
+            #{eigenaar_s},
+            #{gebruiker_s},
+            #{commentaar}
+        )
+    </insert>
+
+    <delete id="deleteDossierAdres" parameterType="map">
+        delete from ART46.dossier_adres
+        where
+                dossier_id = #{dossier_id} and
+                adres_id = #{adres_id} and
+                contact_id = #{contact_id}
+    </delete>
+
+
+    <select id="getAdresContacten" parameterType="int" resultType="ciMap">
+        select
+            contact_id,
+            adres_id,
+            coalesce(naam,'') || ' ' || coalesce(voornaam,'') naam,
+            tel,
+            fax,
+            gsm,
+            email,
+            functie,
+            commentaar,
+            stop_s,
+            case when stop_s = '1' then 'N'
+                 else 'J'
+            end as actief_jn,
+            referentie_postcodes
+        from art46.adres_contact
+        where adres_id = #{adres_id}
+    </select>
+
+    <select id="zoekAdres" parameterType="be.ovam.art46.struts.actionform.AdresZoekForm" resultType="ciMap">
+        with contacten_of_adressen as (
+            select
+                aa.adres_id,
+                aa.naam,
+                aa.voornaam,
+                aa.straat,
+                aa.postcode,
+                aa.gemeente,
+                aa.type_id,
+                at.adres_type_b,
+                case when (aa.stop_s = '1') then 'N'
+                     else 'J'
+                end as adres_actief_jn,
+                case when (ac.stop_s = '1' or aa.stop_s = '1') then 'N'
+                     else 'J'
+                end as actief_jn,
+                ac.contact_id,
+                trim(coalesce(ac.naam, '') || ' ' || coalesce(ac.voornaam,'')) as contact_naam,
+                ac.functie as contact_functie
+            from
+                ART46.ADRES aa
+                    left join ART46.ADRES_CONTACT ac
+                    on aa.adres_id = ac.adres_id
+                left join art46.ADRES_TYPE at
+                on aa.type_id = at.adres_type_id
+                <if test="provincie != null">
+                    left join OVAM.GEMEENTE_VIEW ovg
+                    on aa.POSTCODE = ovg.POSTCODE
+                </if>
+            where 1=1
+                <if test="provincie != null">
+                    and ovg.provincie = #{provincie}
+                </if>
+                <if test="type_id != null">
+                     and aa.type_id = #{type_id}
+                </if>
+                <if test="naam_adres != null">
+                     and (  upper(aa.naam) like  ('%' || upper(#{naam_adres}) || '%') OR
+                            upper(aa.voornaam) like  ('%' || upper(#{naam_adres}) || '%')  )
+                </if>
+                <if test="gemeente != null">
+                     and upper(aa.gemeente) like  ('%' || upper(#{gemeente}) || '%')
+                </if>
+                <if test="naam_contact != null">
+                     and ( upper(ac.naam) like  ('%' || upper(#{naam_contact}) || '%') OR
+                           upper(ac.voornaam) like  ('%' || upper(#{naam_contact}) || '%')      )
+                </if>
+                <if test='not (actief_s == "1")'>
+                     and aa.stop_s != '1'
+                     and coalesce(ac.stop_s, 0) != '1'
+                </if>
+        ),
+        adressen_en_contacten as (
+            select distinct
+                  adres_id, naam, voornaam, straat, postcode, gemeente, type_id, adres_type_b, adres_actief_jn as actief_jn, null as contact_id, '' as contact_naam, null as contact_functie
+            from contacten_of_adressen
+            union all
+            select
+                  adres_id, naam, voornaam, straat, postcode, gemeente, type_id, adres_type_b, actief_jn, contact_id, contact_naam, contact_functie
+            from contacten_of_adressen
+        )
+        select distinct adres_id, naam, voornaam, straat, postcode, gemeente, type_id, adres_type_b, actief_jn, contact_id, contact_naam, contact_functie
+        from adressen_en_contacten
+        order by naam, voornaam, gemeente, straat, contact_naam
+        fetch first 3001 rows only
+    </select>
+
+
+
+    <select id="zoekAdres_org" parameterType="be.ovam.art46.struts.actionform.AdresZoekForm" resultType="ciMap">
+        select
+            aa.adres_id,
+            aa.naam,
+            aa.voornaam,
+            aa.straat,
+            aa.postcode,
+            aa.gemeente,
+            aa.type_id,
+            at.adres_type_b,
+            <if test='naam_contact == null and zoek_contact != "J" '>
+                case when aa.stop_s = '1' then 'N'
+                     else 'J'
+                end as actief_jn,
+                null as contact_id,
+                null as contact_naam,
+                null as contact_functie
+            </if>
+            <if test='naam_contact != null or zoek_contact == "J"'>
+                case when (ac.stop_s = '1' or aa.stop_s = '1') then 'N'
+                     else 'J'
+                end as actief_jn,
+                coalesce(ac.contact_id, 0) as contact_id,
+                coalesce(ac.naam, '') || ' ' || coalesce(ac.voornaam,'') as contact_naam,
+                coalesce(ac.functie, '') as contact_functie
+            </if>
+        from
+            ART46.ADRES aa
+                <if test='naam_contact != null or zoek_contact == "J"'>
+                    left join ART46.ADRES_CONTACT ac
+                    on aa.adres_id = ac.adres_id
+                </if>
+            left join art46.ADRES_TYPE at
+            on aa.type_id = at.adres_type_id
+            <if test="provincie != null">
+                left join OVAM.GEMEENTE_VIEW ovg
+                on aa.POSTCODE = ovg.POSTCODE
+            </if>
+        where 1=1
+            <if test="provincie != null">
+                and ovg.provincie = #{provincie}
+            </if>
+            <if test="type_id != null">
+                 and aa.type_id = #{type_id}
+            </if>
+            <if test="naam_adres != null">
+                 and (  upper(aa.naam) like  ('%' || upper(#{naam_adres}) || '%') OR
+                        upper(aa.voornaam) like  ('%' || upper(#{naam_adres}) || '%')  )
+            </if>
+            <if test="gemeente != null">
+                 and upper(aa.gemeente) like  ('%' || upper(#{gemeente}) || '%')
+            </if>
+            <if test="naam_contact != null">
+                 and ( upper(ac.naam) like  ('%' || upper(#{naam_contact}) || '%') OR
+                       upper(ac.voornaam) like  ('%' || upper(#{naam_contact}) || '%')      )
+            </if>
+
+            <if test='naam_contact == null and zoek_contact != "J" '>
+                <if test='not (actief_s == "1")'>
+                     and aa.stop_s != '1'
+                </if>
+            </if>
+            <if test='naam_contact != null or zoek_contact == "J"'>
+                <if test='not (actief_s == "1")'>
+                     and aa.stop_s != '1'
+                     and ac.stop_s != '1'
+                </if>
+            </if>
+
+
+            order by naam, voornaam, gemeente, straat
+        fetch first 3001 rows only
+    </select>
+
+
+
+
+
+    <select id="getGemeenteNaamByPostcode" parameterType="string" resultType="string">
+        select
+            upper(naam)
+        from SMEG_REF.CRAB_GEMEENTE
+        where postcode = #{postcode}
+        order by nis_id
+        fetch first 1 rows only
+    </select>
+
+    <select id="geefgemeenten" parameterType="string" resultType="ciMap">
+        select DISTINCT
+            upper(trim(a.naam)) as gemeente,
+            trim(b.postcode) as value,
+            coalesce(b.naam,'') || ', '|| coalesce(a.naam,'')|| ', '|| coalesce(b.postcode,'') label
+        from SMEG_REF.CRAB_GEMEENTE a
+            INNER JOIN SMEG_REF.CRAB_GEMEENTE b
+            ON b.PARENT_ID=a.id
+                where lower(b.naam) like  ('%' || lower(#{gemeente}) || '%')
+            order by label ASC
+    </select>
+
+    <select id="geefgemeentenviapostcode" parameterType="string" resultType="ciMap">
+        select
+            upper(trim(a.NAAM)) as value ,
+            b.POSTCODE as postcode,
+            coalesce(b.naam,'') || ', '|| coalesce(a.naam,'')|| ', '|| coalesce(b.postcode,'') label
+        from SMEG_REF.CRAB_GEMEENTE a
+        INNER JOIN SMEG_REF.CRAB_GEMEENTE b
+        ON b.PARENT_ID=a.id
+        where b.postcode like (lower(#{postcode}) || '%')
+          order by postcode ASC
+    </select>
+
+    <select id="geefstraten" parameterType="string" resultType="ciMap">
+        select
+            DISTINCT
+            STRAATNM as value
+        from
+            CRAB.STRAATNM
+            where lower(STRAATNM) like ('%' || lower(#{straat}) || '%')
+    </select>
+
+
+    <select id="geefstraten2" parameterType="map" resultType="ciMap">
+        select  distinct a.straatnm as value
+        from crab.straatnm a inner join crab.gemnm b on b.gemid=a.GEMID
+        where lower(b.GEMNM) like ('%' || lower(#{gemeente}) || '%')
+        and  lower(STRAATNM) like ('%' || lower(#{straat}) || '%')
+    </select>
+
+
+    <select id="geeflanden" parameterType="string" resultType="ciMap">
+        select
+            land as label,
+            ISOcode as value
+        from
+            art46.land
+            where lower(land) like ('%' || lower(#{land}) || '%')
+    </select>
+
+
+    <select id="zoekpostcode" parameterType="string" resultType="ciMap">
+        select
+            b.postkannm as label,
+            a.pkancode as value
+        from CRAB.Postkan a inner join CRAB.POSTKNM b ON b.postkanid=a.id
+        where lower(b.postkannm) like ('%' || lower(#{gemeente}) || '%')
+    </select>
+
+    <select id="aantalAdresRecords" parameterType="string" resultType="int">
+        select
+            count(id)
+        from
+            ART46.ADRES_1
+    </select>
+
+    <select id="aantalActieveAdresRecords" parameterType="string" resultType="int">
+        select
+            count(id)
+        from
+            ART46.ADRES_1
+                where (teverwijderen != '1'
+            or teverwijderen is null)
+    </select>
+
+    <select id="aantalRPRecords" parameterType="string" resultType="int">
+        select
+            count(id)
+        from
+            ART46.Rechtspersoon
+    </select>
+
+    <select id="dubbelerecordsOpNaam" parameterType="string" resultType="int">
+        select
+            sum(doubles)
+        from(
+            select
+                count( distinct rp1.id) as doubles
+            from art46.RECHTSPERSOON rp1,art46.RECHTSPERSOON rp2
+            where rp1.NAAM = rp2.NAAM AND rp1.NAAM2=rp2.NAAM2
+            AND rp1.id !=rp2.id
+        UNION ALL
+            select
+                count( distinct rp1.id) as doubles
+            from art46.RECHTSPERSOON rp1,art46.RECHTSPERSOON rp2
+            where rp1.NAAM2 = rp2.NAAM AND rp1.NAAM=rp2.NAAM2
+            AND rp1.id !=rp2.id
+        )
+    </select>
+
+<!--     <select id="dubbeleAdressen" parameterType="string" resultType="int"> -->
+<!-- 	  select  -->
+<!-- 			count( distinct ad1.id) -->
+<!-- 	from art46.adres_1 ad1, art46.adres_1 ad2 -->
+<!-- 	where ad1.STRAATNAAM=ad2.STRAATNAAM and ad1.POSTCODE=ad2.POSTCODE -->
+<!-- 	AND ad1.id !=ad2.id -->
+<!-- 	and ad1.teverwijderen !='1' -->
+<!--     </select> -->
+
+    <select id="aantalonvolledigeAdressen" resultType="int">
+        select
+            count(id)
+        from
+            ART46.adres_1
+        where
+       (straatnaam=''
+        OR straatnaam is null
+        OR huisnummer=''
+        OR huisnummer  is null
+        OR Postcode=''
+        OR Postcode  is null
+        OR Gemeente=''
+        OR Gemeente  is null
+        OR land=''
+        OR land  is null)
+        and (teverwijderen != '1'
+            or teverwijderen is null)
+        </select>
+
+         <select id="IDonvolledigeAdressen" resultType="int">
+        select
+            id
+        from
+            ART46.adres_1
+        where
+        (straatnaam=''
+        OR straatnaam is null
+        OR huisnummer=''
+        OR huisnummer  is null
+        OR Postcode=''
+        OR Postcode  is null
+        OR Gemeente=''
+        OR Gemeente  is null
+        OR land=''
+        OR land  is null
+        or controle = 'FOUT'
+        )
+        and teverwijderen != '1'
+        order by ID ASC
+    </select>
+
+    <insert id="setRechtspersoon_Adres" parameterType="map">
+        insert into ART46.rechtspersoon_adres (
+            adres_id,
+            rechtspersoon_id
+        )
+        values (
+            #{adresid},
+            #{rechtspersoonid}
+        )
+    </insert>
+
+    <delete id="unsetRechtspersoon_Adres" parameterType="map">
+        delete ART46.rechtspersoon_adres
+        where
+        adres_id = #{adresid} and
+        rechtspersoon_id =  #{rechtspersoonid}
+    </delete>
+
+
+    <select id="getGelinkteAdressenViaRP_ID" parameterType="int" resultType="ciMap">
+        select
+            A.*
+        from art46.RECHTSPERSOON_ADRES RPA
+            Inner JOIN art46.ADRES_1 A
+                ON A.ID=RPA.ADRES_ID
+            Inner join art46.RECHTSPERSOON RP
+                ON RPA.RECHTSPERSOON_ID=RP.ID
+        Where RP.id= #{rechtspersoonid}
+    </select>
+
+    <insert id="markTeVerwijderen" parameterType="map">
+        update ART46.Adres_1
+            set teverwijderen='1'
+        where id= #{adresid}
+    </insert>
+
+    <select id ="getGelinkteContactpersonen" parameterType="int" resultType="ciMap">
+        select	*
+        from art46.CONTACTPERSOON a
+        Where a.RECHTSPERSOON_ID= #{rechtspersoonid}
+    </select>
+
+    <!--
+    <select id ="getAdres_rpid" parameterType="int" resultType="ciMap">
+        select
+        a.*,
+        b.rechtspersoon_id as rechtspersoonid,
+            coalesce(c.NAAM,'') || ', '|| coalesce(c.naam2,'') rechtspersoonFullname
+        from ART46.adres_1 a
+        inner join ART46.RECHTSPERSOON_ADRES b ON a.ID=b.ADRES_ID
+        inner join ART46.Rechtspersoon c on c.id=b.rechtspersoon_id
+        where a.id= #{adresid}
+    </select>
+    -->
+
+    <select id ="getAdres_rp" parameterType="be.ovam.art46.model.Adres_1" resultType="ciMap">
+        select
+            a.*,
+            rpa.rechtspersoon_id as rechtspersoonid,
+            coalesce(rp.NAAM,'') || ', '|| coalesce(rp.naam2,'') rechtspersoonFullname
+        from ART46.adres_1 a
+                inner join ART46.RECHTSPERSOON_ADRES rpa ON a.ID = rpa.ADRES_ID
+             inner join ART46.Rechtspersoon rp on rp.id = rpa.rechtspersoon_id
+        where 1 = 1
+            <if test="land != null">
+                 and upper(a.land) like  ('%' || upper(#{land}) || '%')
+            </if>
+            <if test="gemeente != null">
+                 and upper(a.gemeente) like  ('%' || upper(#{gemeente}) || '%')
+            </if>
+            <if test="postcode != null">
+                 and upper(a.postcode) like  ('%' || upper(#{postcode}) || '%')
+            </if>
+            <if test="straatnaam != null">
+                 and upper(a.straatnaam) like  ('%' || upper(#{straatnaam}) || '%')
+            </if>
+            <if test="huisnummer != null">
+                 and upper(a.huisnummer) like  ('%' || upper(#{huisnummer}) || '%')
+            </if>
+            <if test="busnummer != null">
+                 and upper(a.busnummer) like  ('%' || upper(#{busnummer}) || '%')
+            </if>
+    </select>
+
+
+    <select id ="getContact_RP" parameterType="int" resultType="ciMap">
+        select
+        a.*,
+            coalesce(b.NAAM,'') || ', '|| coalesce(b.naam2,'') rechtspersoonFullname
+        from ART46.Contactpersoon a
+        inner join ART46.RECHTSPERSOON b ON a.rechtspersoon_id=b.ID
+        where a.id= #{contactid}
+    </select>
+
+
+    <insert id ="updateRPwithMZ" parameterType="map">
+        update ART46.RECHTSPERSOON
+        set mz_adres_id=#{adresid}
+        where id= #{rechtspersoonid}
+    </insert>
+
+
+    <select id ="listrechtspersoon_adres" parameterType="int" resultType="ciMap">
+        select DISTINCT
+            a.id as rechtspersoonid,
+            a.naam,
+            a.naam2,
+            b.land,
+            b.gemeente,
+            b.STRAATNAAM,
+            b.HUISNUMMER
+        from ART46.RECHTSPERSOON a
+                Inner join art46.RECHTSPERSOON_ADRES c
+                ON a.id=c.RECHTSPERSOON_ID
+            Inner join art46.ADRES_1 b
+            ON c.ADRES_ID=b.id
+        where a.id= #{rechtspersoonid}
+            UNION
+        select d.id as rechtspersoonid,
+            d.naam,
+            d.naam2,
+            null,
+            null,
+            null,
+            null
+        from art46.RECHTSPERSOON d
+        where d.id= #{rechtspersoonid}
+            and d.id NOT in (
+                select  e.id
+                from ART46.RECHTSPERSOON e
+                    Inner join art46.RECHTSPERSOON_ADRES f
+                ON e.id=f.RECHTSPERSOON_ID
+                    Inner join art46.ADRES_1 g
+                ON f.ADRES_ID=g.id
+                where e.id= #{rechtspersoonid}
+            )
+    </select>
+
+    <select id="IDdubbeleAdressen" resultType="int">
+        select DISTINCT ad1.ID
+        from art46.adres_1 ad1,
+            art46.adres_1 ad2
+        where (ad1.STRAATNAAM=ad2.STRAATNAAM and ad1.STRAATNAAM!='' or ad1.STRAATNAAM != null)
+            and (ad1.huisnummer=ad2.huisnummer and ad1.huisnummer!='' or ad1.huisnummer != null)
+            and ad1.busnummer=ad2.busnummer
+            and ad1.POSTCODE=ad2.POSTCODE
+            AND ad1.id !=ad2.id
+            and ad1.teverwijderen ='0'
+            and ad1.CONSOLIDATED_REFERENCE is null
+        order by ad1.ID	ASC
+    </select>
+
+    <select id="dubbeleAdressen"  parameterType="int" resultType="ciMap">
+        select DISTINCT ad1.*
+        from art46.adres_1 ad1,
+        art46.adres_1 ad2
+        where (ad1.STRAATNAAM=ad2.STRAATNAAM and ad1.STRAATNAAM!='' or ad1.STRAATNAAM != null)
+        and (ad1.huisnummer=ad2.huisnummer and ad1.huisnummer!='' or ad1.huisnummer != null)
+        and ad1.busnummer=ad2.busnummer
+        and ad1.POSTCODE=ad2.POSTCODE
+        AND ad1.id !=ad2.id
+        and ad1.teverwijderen ='0'
+        and ad1.CONSOLIDATED_REFERENCE is null
+        and (ad1.id=#{adresid} or ad2.id=#{adresid})
+    </select>
+
+    <update id="markeerprimairadres"  parameterType="int" >
+            update ART46.ADRES_1
+            set CONSOLIDATED_REFERENCE=#{adresid}
+            where id in(
+            select
+        DISTINCT
+            ad1.id
+        from art46.adres_1 ad1,
+        art46.adres_1 ad2
+        where ad1.STRAATNAAM=ad2.STRAATNAAM
+        and ad1.POSTCODE=ad2.POSTCODE
+        AND ad1.id !=ad2.id
+        and (ad1.id=#{adresid} or ad2.id=#{adresid})
+        and (ad1.teverwijderen !='1'or ad1.teverwijderen is null)
+        and( ad1.STRAATNAAM!='' or ad1.STRAATNAAM != null)
+        and ad1.CONSOLIDATED_REFERENCE is null
+            )
+    </update>
+
+
+    <update id="correctControle" parameterType="int">
+        update ART46.ADRES_1
+        set controle='ok'
+        where id=#{id}
+    </update>
+
+
+</mapper>

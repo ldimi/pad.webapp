@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+
+   <fontFamily name="Arial">
+       <normal><![CDATA[fonts/Arial.ttf]]></normal>
+       <bold><![CDATA[fonts/Arial_Bold.ttf]]></bold>
+       <italic><![CDATA[fonts/Arial_Italic.ttf]]></italic>
+       <boldItalic><![CDATA[fonts/Arial_Bold_Italic.ttf]]></boldItalic>
+       <pdfEmbedded><![CDATA[false]]></pdfEmbedded>
+   </fontFamily>
+
+
+   <fontFamily name="DejaVu Sans">
+       <normal><![CDATA[fonts/DejaVuSans.ttf]]></normal>
+       <bold><![CDATA[fonts/DejaVuSans-Bold.ttf]]></bold>
+       <pdfEmbedded><![CDATA[false]]></pdfEmbedded>
+   </fontFamily>
+
+
+</fontFamilies>

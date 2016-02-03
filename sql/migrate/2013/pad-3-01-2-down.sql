@@ -1,0 +1,6 @@
+
+DROP TRIGGER ART46.BI_DOSSIER_FASE_ID;
+
+
+delete from  ART46.DB_VERSIE
+where DB_VERSIE = '3.01.2';

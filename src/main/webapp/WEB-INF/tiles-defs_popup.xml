@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+   	
+	
+	<definition name="baseDefPopup" path="/WEB-INF/pages/layouts/popup.jsp">		
+	    <!-- <put name="titleKey" value="replace.key"/>  -->                
+        <put name="body" value="/"/>
+    </definition>    	
+	
+	<definition name="adreszoek" extends="baseDefPopup">
+		<put name="title" value="Zoek adres" />		
+    	<put name="body" value="/WEB-INF/pages/adres/adreszoek.jsp" />
+    </definition>
+	
+    <definition name="adreslijst" extends="baseDefPopup">   
+        <put name="title" value="Resultaat zoek adres" />           
+        <put name="body" value="/WEB-INF/pages/adres/adreslijst.jsp" />
+    </definition>
+    
+    <definition name="contactzoek" extends="baseDefPopup">
+        <put name="title" value="Zoek adrescontact" />     
+        <put name="body" value="/WEB-INF/pages/adres/contactzoek.jsp" />
+    </definition>
+    
+	<definition name="contactlijst" extends="baseDefPopup">	
+		<put name="title" value="Resultaat zoek adrescontact" />		  	
+    	<put name="body" value="/WEB-INF/pages/adres/contactlijst.jsp" />
+    </definition>
+
+	<definition name="deelopdrachtlijstschuldvordering" extends="baseDefPopup">    	
+		<put name="titleKey" value="schuldvordering.title"/> 
+    	<put name="body" value="/WEB-INF/pages/budget/deelopdrachtlijstschuldvordering.jsp"></put>
+    </definition>
+	
+	<definition name="archief" extends="baseDefPopup">    	
+		<put name="titleKey" value="archief.title"/> 
+    	<put name="body" value="/WEB-INF/pages/archief/archiefdetails.jsp"></put>
+    </definition>
+	
+	<definition name="dossierart46zoek" extends="baseDefPopup">    
+		<put name="title" value="Zoek dossier"/> 
+    	<put name="body" value="/WEB-INF/pages/brief/dossierzoek.jsp"></put>
+    </definition>
+	
+	<definition name="dossierart46zoekresult" extends="baseDefPopup">    	
+		<put name="title" value="Zoek dossier"/> 
+    	<put name="body" value="/WEB-INF/pages/brief/dossierzoekresult.jsp"></put>
+    </definition>
+	
+	<definition name="sapprojectdetails" extends="baseDefPopup">    	
+		<put name="title" value="SAP Project fiche"/> 
+    	<put name="body" value="/WEB-INF/pages/budget/sapprojectdetails.jsp"></put>
+    </definition>
+	
+	<definition name="lijstvoorgoedkpersoon" extends="baseDefPopup">    	
+		<put name="titleKey" value="lijstvoorgoedkpersoon.title"/> 
+    	<put name="body" value="/WEB-INF/pages/art46/lijstvoorgoedkpersoon.jsp"></put>
+    </definition>
+	
+	<definition name="actiedetails" extends="baseDefPopup" controllerClass="be.ovam.art46.struts.tiles.controller.ActieDetailsController">    	
+		<put name="titleKey" value="actie.title"/> 
+    	<put name="body" value="/WEB-INF/pages/algemeen/actiedetails.jsp"></put>
+    </definition>
+
+	<definition name="dossierjddetails" extends="baseDefPopup">    	
+		<put name="title" value="Details juridisch dossier"/> 
+    	<put name="body" value="/WEB-INF/pages/bodem/dossierdetailsjd.jsp"></put>
+    </definition>
+	
+	<definition name="queryresult" extends="baseDefPopup">
+		<put name="titleKey" value="query.title"/> 
+		<put name="body" value="/WEB-INF/pages/query/queryresult.jsp"/>
+    </definition>
+	
+    <definition name="adresdetails" extends="baseDefPopup">	
+    	<put name="titleKey" value="adres.title"/> 	 	
+    	<put name="body" value="/WEB-INF/pages/adres/adresdetails.jsp" />
+    </definition>	
+    
+    <definition name="adrescontactdetails" extends="baseDefPopup">	
+		<put name="titleKey" value="adres.title"/> 		
+    	<put name="body" value="/WEB-INF/pages/adres/adrescontactdetails.jsp" />
+    </definition>    
+	
+    <definition name="briefupload" extends="baseDefPopup">	
+		<put name="titleKey" value="adres.title"/> 		
+    	<put name="body" value="/WEB-INF/pages/brief/briefupload.jsp" />
+    </definition>
+    
+    <definition name="dossierafspraakdetails" extends="baseDefPopup">	
+		<put name="titleKey" value="dossierafspraak.title"/> 		
+    	<put name="body" value="/WEB-INF/pages/bodem/dossierafspraakdetails.jsp" />
+    </definition>
+    
+	
+</tiles-definitions>
+
+
+
+
+	
+	
+   

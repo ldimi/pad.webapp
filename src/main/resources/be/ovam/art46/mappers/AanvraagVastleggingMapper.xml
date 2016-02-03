@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="be.ovam.art46.mappers.AanvraagVastleggingMapper">
+
+    <select id="getAll" resultType="be.ovam.art46.model.AanvraagVastlegging" parameterType="int">
+        select
+            avv.*,
+            p.*,
+            (p.DEBET_TOTAAL - p.CREDIT_TOTAAL) as verbruik,
+            bestek.*,
+            bestek.WBS_NR as wbsBestek,
+            bestek_type.*,
+            bestek_fase.*,
+            bestek_procedure.*
+        from ART46.bestek_sap_project bp
+            inner join SAP.PROJECT p
+                on bp.project_id = p.project_id
+            FULL OUTER JOIN ART46.AANVRAAGVASTLEGGING avv on p.aanvraagid = avv.aanvraagid
+            inner join art46.BESTEK as bestek on avv.bestekId = bestek.bestek_id or bp.BESTEK_ID =  bestek.bestek_id
+            LEFT JOIN ART46.BESTEK_PROCEDURE as bestek_procedure
+                ON bestek.procedure_id = bestek_procedure.procedure_id
+            LEFT JOIN ART46.BESTEK_TYPE as bestek_type
+                ON bestek.type_id = bestek_type.type_id
+            LEFT JOIN ART46.BESTEK_FASE as bestek_fase
+                ON bestek.fase_id = bestek_fase.fase_id
+        where bp.bestek_id = #{bestekId}  or avv.bestekId = #{bestekId}
+    </select>
+
+    <insert id="insert" parameterType="map">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select coalesce(max(id), 0) + 1
+            from ART46.AANVRAAGVASTLEGGING
+        </selectKey>
+        insert into ART46.AANVRAAGVASTLEGGING	(
+                id,
+                bestekid,
+                aanvraagid ,
+                planningsItem ,
+                budgetairartikel ,
+                kostenplaats,
+                inspectievanfinancien ,
+                voogdijminister ,
+                ministervanbegroting ,
+                vlaamseRegering ,
+                vast_bedrag  ,
+                gunningsverslag ,
+                gunningsbeslissing,
+                overeenkomst,
+                opdrachthouder_id
+        )
+            values (
+                #{id, jdbcType=INTEGER},
+                #{bestekid},
+                #{aanvraagid},
+                #{planningsitem},
+                #{budgetairartikel},
+                #{kostenplaats},
+                #{inspectievanfinancien},
+                #{voogdijminister},
+                #{ministervanbegroting},
+                #{vlaamseregering},
+                #{vast_bedrag},
+                #{gunningsverslag},
+                #{gunningsbeslissing},
+                #{overeenkomst},
+                #{opdrachthouder_id}
+            )
+    </insert>
+    <update id="weiger" parameterType="map">
+        update art46.AANVRAAGVASTLEGGING
+        set
+          geweigerd = 'j',
+          commentaarweigering = #{commentaar}
+        where aanvraagid = #{aanvraagId}
+    </update>
+
+    <update id="update" parameterType="map">
+        update art46.AANVRAAGVASTLEGGING
+        set
+            bestekid = #{bestekid},
+            aanvraagid = #{aanvraagid},
+            planningsItem = #{planningsitem},
+            budgetairartikel =  #{budgetairartikel},
+            kostenplaats = #{kostenplaats},
+            inspectievanfinancien = #{inspectievanfinancien},
+            voogdijminister = #{voogdijminister},
+            ministervanbegroting = #{ministervanbegroting},
+            vlaamseRegering = #{vlaamseregering},
+            vast_bedrag = #{vast_bedrag},
+            gunningsverslag = #{gunningsverslag},
+            gunningsbeslissing = #{gunningsbeslissing},
+            overeenkomst = #{overeenkomst},
+            opdrachthouder_id =  #{opdrachthouder_id},
+            geweigerd  =  #{geweigerd}
+        where id = #{id}
+    </update>
+    <delete id="delete" parameterType="int">
+        delete from ART46.AANVRAAGVASTLEGGING
+        where  id = #{id}
+
+    </delete>
+
+
+</mapper>

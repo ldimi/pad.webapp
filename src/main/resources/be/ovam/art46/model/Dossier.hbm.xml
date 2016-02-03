@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping schema="ART46">
+
+	<class name="be.ovam.art46.model.DossierArt46Raming" table="DOSSIER_RAMING" lazy="false">
+		<id name="raming_id" type="integer" unsaved-value="0">
+			<column name="RAMING_ID" not-null="true"/>
+			<generator class="increment" />
+		</id>
+		<property name="dossier_id" type="java.lang.Integer"/>
+		<property name="dossier_type" />
+		<property name="fase_id"/>
+		<property name="prioriteit_id"/>
+		<property name="jaartal"/>
+		<property name="maand" />
+		<property name="raming"/>
+		<property name="budget_vastgelegd"/>
+		<property name="commentaar"/>
+		<property name="afgesloten_s"/>
+	</class>
+	
+		
+	<class name="be.ovam.art46.model.Persoon" table="OVAM_PERSOON_VIEW" schema="SMEG">
+		<id name="persoon_id" column="persoon_id" unsaved-value="0">
+		<!-- 	<generator class="be.ovam.art46.generator.PersoonIdGenerator" /> -->
+		</id>
+		<property name="persoon_b"/>
+		<property name="firma"/>
+		<property name="adres"/>
+		<property name="postcode"/>
+		<property name="stad"/>
+		<property name="land"/>
+	</class>		
+	
+	<query name="update.ramingen">
+		update be.ovam.art46.model.DossierArt46Raming set prioriteit_id = :prioriteit_id where dossier_id = :dossier_id
+	</query>
+	
+	<query name="dossierIVS.by.dossieridBoa">
+    	from be.ovam.pad.model.Dossier d where d.dossier_id_boa = ?
+    </query>    
+	<query name="dossierIVS.by.dossieridIVS">
+    	from be.ovam.pad.model.Dossier d where d.dossier_id = ?
+    </query> 
+	<query name="dossierIVS.by.dossierid">
+    	from be.ovam.pad.model.Dossier d where d.id = ?
+    </query>
+	<query name="dossierIVS.by.doss_hdr_id">
+    	from be.ovam.pad.model.Dossier d where d.doss_hdr_id = ? order by d.dossier_b
+    </query>
+    <query name="dossierIVS.by.doss_hdr_id_niet_ander">
+        from be.ovam.pad.model.Dossier d where d.doss_hdr_id = ? and dossier_type != 'X' order by d.gemeente.naam
+    </query>
+	<query name="dossier.has.openbestekken">
+    	from be.ovam.pad.model.Bestek where afsluit_d is null and dossier_id = ?
+    </query> 	
+</hibernate-mapping>

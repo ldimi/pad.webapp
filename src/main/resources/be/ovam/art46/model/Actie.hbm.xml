@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping schema="ART46">
+
+    <class name="be.ovam.art46.model.DossierActie" table="DOSSIER_ACTIE">        
+        <id name="actie_id" type="integer" unsaved-value="0">
+            <column name="ACTIE_ID" not-null="true"/>
+            <generator class="increment" />            
+        </id>         
+        <property name="dossier_id" />          
+        <property name="actie_type_id"/> 
+		<property name="actie_sub_type_id"/>       
+        <property name="actie_d"/>  
+		<property name="realisatie_d"/>                   
+		<property name="commentaar"/>
+		<property name="stop_d"/>
+		<property name="rate" /> 
+		<property name="zimbraIdVan" column="ZIMBRA_ID_VAN"/>  
+		<property name="zimbraIdTot" column="ZIMBRA_ID_TOT"/>		                
+    </class>    
+	
+	<class name="be.ovam.art46.model.BestekActie" table="BESTEK_ACTIE">        
+        <id name="actie_id" type="integer" unsaved-value="0">
+            <column name="ACTIE_ID" not-null="true"/>
+            <generator class="increment" />            
+        </id>         
+        <property name="bestek_id" />       
+        <property name="actie_type_id"/>
+        <property name="actie_sub_type_id"/>
+        <property name="actie_d"/>                     
+		<property name="realisatie_d"/>
+		<property name="commentaar"/>
+		<property name="stop_d"/>
+		<property name="rate" /> 		                 
+    </class>    
+	
+	<class name="be.ovam.art46.model.DossierJDActie" table="DOSSIER_JD_ACTIE">        
+        <id name="actie_id" type="integer" unsaved-value="0">
+            <column name="ACTIE_ID" not-null="true"/>
+            <generator class="increment" />            
+        </id>        
+        <property name="dossier_id" />       
+        <property name="actie_type_id"/>       
+        <property name="actie_d"/>  
+		<property name="realisatie_d"/>                  
+		<property name="commentaar"/>        
+		<property name="stop_d"/>
+		<property name="rate" />           
+    </class>    
+
+	<class name="be.ovam.art46.model.ActieType" table="ACTIE_TYPE">
+		<id name="actie_type_id" type="integer" unsaved-value="0">
+			<column name="actie_type_id" not-null="true"/>
+			<generator class="increment" />
+		</id>
+		<property name="actie_type_b" />
+		<property name="dossier_type" />
+		<property name="ingebreke_s" />	
+		<property name="rate"/>	
+	</class>	
+	
+	<class name="be.ovam.art46.model.ActieSubType" table="ACTIE_SUB_TYPE">
+		<id name="actie_sub_type_id" type="integer" unsaved-value="0">
+			<column name="actie_sub_type_id" not-null="true"/>
+			<generator class="increment" />
+		</id>
+		<property name="actie_sub_type_b" />
+		<property name="actie_type_id" />
+	</class>
+	
+	<class name="be.ovam.art46.model.DossierAfspraak" table="DOSSIER_AFSPRAAK">        
+        <id name="id" type="integer" unsaved-value="0">
+            <column name="id" not-null="true"/>
+            <generator class="increment" />            
+        </id>         
+        <property name="dossier_id" />          
+        <property name="datum"/> 
+		<property name="omschrijving"/>                       
+    </class> 		
+		
+	<query name="afspraken.by.dossier_id">
+    	select a from be.ovam.art46.model.DossierAfspraak a where a.dossier_id = ? order by datum desc
+    </query>	
+			
+	<query name="acties.by.bestek_id">
+    	select a from be.ovam.art46.model.BestekActie a where a.bestek_id = ?
+    </query>	
+	
+	<query name="subtypes.by.actietype_id">
+    	select a from be.ovam.art46.model.ActieSubType a where a.actie_type_id = ? order by actie_sub_type_b
+    </query>
+	
+	
+	<query name="types.by.dossier_type">
+		select a from be.ovam.art46.model.ActieType a where a.dossier_type = ? order by actie_type_b
+	</query>
+	
+</hibernate-mapping>

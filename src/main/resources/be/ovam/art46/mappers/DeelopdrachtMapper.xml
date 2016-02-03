@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.DeelopdrachtMapper">
+
+    <select id="getDeelopdrachtById" resultType="be.ovam.pad.model.DeelOpdrachtDO" parameterType="int">
+        select
+            do.deelopdracht_id,
+            do.bestek_id,
+            do.bestek_nr,
+            do.dossier_id,
+            do.dossier_nr,
+            do.dossier_b_l,
+            do.doss_hdr_id,
+            do.bedrag,
+            do.goedkeuring_d,
+            do.voorstel_d,
+            do.afsluit_d,
+            do.wbs_nr,
+            do.planning_lijn_id,
+            do.goedkeuring_bedrag,
+            do.offerte_id,
+            do.totaal_schuldvorderingen as schuldvordering_bedrag,
+            date(do.creatie_ts) as creatie_d,
+            do.ander_raamcontract_jn as raamcontract_jn,
+            do.ander_dossier_id,
+            d.dossier_id as ander_dossier_nr,
+            d.dossier_b_l as ander_dossier_b_l,
+            do.ander_doss_hdr_id
+        from art46.v_deelopdracht do
+                left outer join art46.bestek b
+                on do.bestek_id = b.bestek_id
+             left outer join art46.v_dossier d
+             on b.dossier_id = d.id
+        where deelopdracht_id = #{deelopdracht_id}
+    </select>
+
+
+    <delete id="deleteDeelopdracht" parameterType="int">
+        delete from ART46.DEELOPDRACHT
+        WHERE DEELOPDRACHT_ID = #{deelopdracht_id}
+    </delete>
+
+    <update id="updateDeelopdracht" parameterType="map">
+        update ART46.DEELOPDRACHT
+        set
+            (BESTEK_ID,    DOSSIER_ID,    BEDRAG,    GOEDKEURING_D,    VOORSTEL_D,    AFSLUIT_D,    WBS_NR,    PLANNING_LIJN_ID, GOEDKEURING_BEDRAG, OFFERTE_ID) =
+            (#{bestek_id}, #{dossier_id}, #{bedrag}, #{goedkeuring_d}, #{voorstel_d}, #{afsluit_d},  #{wbs_nr}, #{planning_lijn_id}, #{goedkeuring_bedrag}, #{offerte_id})
+        WHERE DEELOPDRACHT_ID = #{deelopdracht_id}
+    </update>
+
+    <insert id="insertDeelopdracht" parameterType="map">
+        <selectKey keyProperty="deelopdracht_id" resultType="int" order="BEFORE">
+            select coalesce(max(DEELOPDRACHT_ID), 0) + 1
+            from ART46.DEELOPDRACHT
+        </selectKey>
+        insert into ART46.DEELOPDRACHT
+        (DEELOPDRACHT_ID,BESTEK_ID,    DOSSIER_ID,    BEDRAG,    GOEDKEURING_D,    VOORSTEL_D,    AFSLUIT_D,    WBS_NR,    PLANNING_LIJN_ID, GOEDKEURING_BEDRAG, OFFERTE_ID)
+        values
+        (#{deelopdracht_id},#{bestek_id}, #{dossier_id}, #{bedrag}, #{goedkeuring_d}, #{voorstel_d}, #{afsluit_d}, #{wbs_nr}, #{planning_lijn_id}, #{goedkeuring_bedrag}, #{offerte_id})
+    </insert>
+
+    <select id="getHistoriekById" resultType="ciMap" parameterType="int">
+        select * from (
+           SELECT
+                do.CREATIE_TS as wijzig_ts,
+                d.DOSSIER_B_L,
+                do.bedrag,
+                do.voorstel_d,
+                do.GOEDKEURING_D,
+                do.GOEDKEURING_BEDRAG,
+                do.AFSLUIT_D
+           FROM ART46.DEELOPDRACHT_HIST as do
+                left join art46.V_DOSSIER as d
+                on do.DOSSIER_ID = d.id
+           WHERE do.DEELOPDRACHT_ID = #{id}
+           union
+           SELECT
+                do.wijzig_TS,
+                d.DOSSIER_B_L,
+                do.bedrag,
+                do.voorstel_d,
+                do.GOEDKEURING_D,
+                do.GOEDKEURING_BEDRAG,
+                do.AFSLUIT_D
+           FROM ART46.DEELOPDRACHT as do
+                left join art46.V_DOSSIER as d
+                on do.DOSSIER_ID = d.id
+           WHERE do.DEELOPDRACHT_ID = #{id}
+        )
+        order by wijzig_TS asc
+    </select>
+
+    <sql id="bestekdeelopdrachtlijst_sql">
+        select
+            do.deelopdracht_id,
+            do.deelopdracht_nr,
+            do.bestek_id,
+            do.dossier_id,
+            do.bedrag,
+            do.goedkeuring_d,
+            do.stop_s,
+            do.voorstel_d,
+            do.afsluit_d,
+            do.wbs_nr,
+            do.creatie_ts,
+            do.wijzig_ts,
+            do.planning_lijn_id,
+            do.goedkeuring_bedrag,
+            do.offerte_id,
+            do.offerte_inzender || ' (' || art46.float_format(coalesce(do.offerte_totaal_incl_btw, 0)) || ' EUR)' as offerte_inzender_totaal,
+            do.offerte_totaal_incl_btw,
+            do.voorstel_deelopdracht_id,
+            do.voorstel_deelopdracht_nr,
+            do.totaal_schuldvorderingen,
+            do.totaal_facturen,
+            do.dossier_type,
+            do.dossier_id_boa,
+            do.doss_hdr_id,
+            do.dossier_b_l,
+            do.ander_raamcontract_jn
+        from art46.v_deelopdracht do
+    </sql>
+
+    <select id="bestekdeelopdrachtlijst" resultType="ciMap" parameterType="int" >
+        <include refid="bestekdeelopdrachtlijst_sql"/>
+        where 1 = 1
+            and do.bestek_id = #{bestek_id}
+            <if test="offerte_id != null and offerte_id != -1">
+                and do.offerte_id = #{offerte_id}
+            </if>
+        order by do.afsluit_d desc, do.dossier_b_l asc, do.goedkeuring_d desc
+    </select>
+
+    <select id="getSchuldvorderingen" resultType="ciMap" parameterType="int" >
+        select sv.VORDERING_D,
+                sv.GOEDKEURING_D,
+                sv.VORDERING_BEDRAG,
+                sv.GOEDKEURING_BEDRAG,
+                br.BRIEF_NR,
+                b.BESTEK_NR
+        from ART46.SCHULDVORDERING sv
+                left join ART46.BRIEF br
+                on sv.brief_id = br.brief_id
+            inner join ART46.BESTEK b
+            on sv.BESTEK_ID = b.BESTEK_ID
+        where
+            sv.deelopdracht_id = #{deelopdracht_id}
+    </select>
+
+    <select id="get_organisatieId_voor_voorstelDeelopdrachtId" resultType="int" parameterType="int" >
+        select
+             off.organisatie_id
+        from art46.voorstel_deelopdracht vdo
+              inner join art46.offerte off
+              on vdo.offerte_id = off.id
+        where 1 = 1
+              and vdo.id = #{voorstel_deelopdracht_id}
+    </select>
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping schema="OVAM">
+	<class name="be.ovam.art46.model.User" table="OVAM_USER_VIEW" schema="SMEG">
+		<id name="user_id" column="user_id" type="java.lang.String" length="8" >
+			<generator class="assigned" />
+		</id>
+		<!--removed for mistral2 <property name="paswoord" column="paswoord" type="java.lang.String" length="8"/> -->
+		<property name="ambtenaar_id"/>		
+	</class>
+	
+	<!--not used anymore -->
+	<class name="be.ovam.art46.model.UserRol" table="USER_ROL" >
+		<composite-id>
+			<key-property name="user_id"/>
+			<key-property name="user_rol"/>
+		</composite-id>			
+	</class>
+	
+	<!--not used anymore -->
+	 <query name="UserRol.by.UserId">
+    	from be.ovam.art46.model.UserRol u where u.user_id= ?
+    </query>
+</hibernate-mapping>
+           
+        
+        

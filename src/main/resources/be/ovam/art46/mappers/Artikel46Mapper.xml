@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.Artikel46Mapper">
+
+    <sql id="artikel_id_select" >
+            select distinct ARTIKEL_ID
+            from ART46.ARTIKEL_LIJST
+            where LIJST_ID = #{artikel_id}
+    </sql>
+
+    <sql id="artikel_select" >
+            select distinct
+                a.ARTIKEL_ID,
+                a.DOSSIER_ID,
+                a.KADASTER_ID,
+                <if test='query_type == "OPNAME" || query_type == "VOOR_GOEDKEURING"'>
+                    a.GOEDKEURING_S,
+                </if>
+                <if test='query_type == "NA_GOEDKEURING" || query_type == "NA_PUBLICATIE"'>
+                    a.goedkeuring_d,
+                    a.publicatie_d,
+                </if>
+                a.COMMENTAAR,
+                RTRIM(CHAR(a.DOSSIER_ID)) || '-' || a.KADASTER_ID as dossierkadaster,
+                coalesce(adkt.onschuldige_eig_s, '0') onschuldige_eig_s,
+                coalesce(adkt.ingebreke_stel_s, '0') ingebreke_stel_s,
+                art.artikel_b
+            from
+                <if test='query_type == "OPNAME" || query_type == "VOOR_GOEDKEURING"'>
+                    ART46.VOOR_GOEDK a
+                </if>
+                <if test='query_type == "NA_GOEDKEURING" || query_type == "NA_PUBLICATIE"'>
+                    ART46.NA_GOEDK a
+                </if>
+                    left outer join ART46.DOS_KAD_TYPE adkt
+                    on a.DOSSIER_ID = adkt.DOSSIER_ID
+                    and a.KADASTER_ID = adkt.KADASTER_ID
+                left join OVAM.ARTIKEL art
+                on a.ARTIKEL_ID = art.ARTIKEL_ID
+            where 1 = 1
+                <if test='query_type == "OPNAME"'>
+                    and a.GOEDKEURING_S = '0'
+                </if>
+                <if test='query_type == "VOOR_GOEDKEURING"'>
+                    and a.GOEDKEURING_S = '1'
+                    and (a.dossier_id, a.kadaster_id) not in
+                                                    (select dossier_id, kadaster_id
+                                                     from ART46.NA_GOEDK
+                                                     where lijst_id in (select max(lijst_id) from ART46.LIJST)
+                                                    )
+                </if>
+                <if test='query_type == "NA_GOEDKEURING"'>
+                    and a.PUBLICATIE_D is NULL
+                </if>
+                <if test='query_type == "NA_PUBLICATIE"'>
+                    and a.PUBLICATIE_D is not NULL
+                </if>
+                <if test='lijst_id != null'>
+                    and a.lijst_id = #{lijst_id}
+                </if>
+                and a.ARTIKEL_ID in (<include refid="artikel_id_select"/>)
+    </sql>
+
+    <sql id="dossier_data_select" >
+        select distinct
+            dos.id,
+            dos.dossier_id_boa,
+            dos.nis_id nis_id_ivs,
+            dos.gemeente_b,
+            dos.dossier_b,
+            dos.doss_hdr_id,
+            d.commentaar commentaar_dossier,
+            oa.AMBTENAAR_B
+        from art46.v_dossier dos
+            inner join SMEG.RS_DOSSIER_VIEW d
+            on d.DOSSIER_ID = dos.DOSSIER_ID_BOA
+                left outer join ART46.OVAM_AMBTENAAR_VIEW oa
+                on dos.DOSS_HDR_ID = oa.AMBTENAAR_ID
+        where dos.DOSSIER_TYPE = 'B'
+    </sql>
+
+    <sql id="kadaster_data_select" >
+        select distinct
+            k.KADASTER_ID k_id,
+            k.sectie,
+            k.grondnummer,
+            coalesce(k.bisnummer,'') bisnummer,
+            coalesce(k.exponent1,' ') exponent1,
+            coalesce(k.exponent2 , ' ') exponent2,
+            ka.kadaster_afd_b,
+            SUBSTR(k.KADASTER_ID,6) KADASTER_ID_SH,
+            ka.kadaster_afd_b || SUBSTR(k.KADASTER_ID,6)    KADASTER_ID_L
+        from SMEG.RS_KADASTER_VIEW k
+                inner join SMEG.RS_KADASTER_AFD_VIEW ka
+                on k.KADASTER_AFD_ID = ka.KADASTER_AFD_ID
+    </sql>
+
+    <select id="getLijstKadaster" parameterType="map" resultType="ciMap">
+        with
+        lijst as (
+            <include refid="artikel_select"/>
+        )
+        select distinct
+            l.*,
+            dd.*,
+            k.*
+        from lijst l
+            inner join (<include refid="dossier_data_select"/>) as dd
+            on l.dossier_id = dd.id
+                inner join (<include refid="kadaster_data_select"/>) as k
+                on l.kadaster_id = k.k_id
+        order by l.ARTIKEL_ID, k.KADASTER_AFD_B
+    </select>
+
+    <select id="getLijstDossier" parameterType="map" resultType="ciMap">
+         with
+        lijst_1 as (
+            <include refid="artikel_select"/>
+        ),
+        lijst as (
+            select distinct
+                a.dossier_id,
+                a.artikel_id,
+                <if test='query_type == "NA_GOEDKEURING"'>
+                    a.goedkeuring_d,
+                </if>
+                <if test='query_type == "NA_PUBLICATIE"'>
+                    a.goedkeuring_d,
+                    a.publicatie_d,
+                </if>
+                a.artikel_b,
+                sum(cast(a.onschuldige_eig_s as int)) onschuldige_eig_s,
+                sum(cast(a.ingebreke_stel_s as int)) ingebreke_stel_s
+            from lijst_1 a
+            group by a.dossier_id,
+                     a.artikel_id,
+                    <if test='query_type == "NA_GOEDKEURING"'>
+                        a.goedkeuring_d,
+                    </if>
+                    <if test='query_type == "NA_PUBLICATIE"'>
+                        a.goedkeuring_d,
+                        a.publicatie_d,
+                    </if>
+                     a.artikel_b
+        )
+        select distinct
+            l.*,
+            dd.*
+        from lijst l
+                inner join (<include refid="dossier_data_select"/>) as dd
+                on l.dossier_id = dd.id
+        order by l.ARTIKEL_ID
+    </select>
+
+    <select id="getLijstVoorGoedkPersoon" parameterType="string" resultType="ciMap">
+        select distinct
+            a.dossier_id,
+            a.kadaster_id,
+            ka.kadaster_afd_b,
+            oa.ARTIKEL_B,
+            kp.*,
+            op.*,
+            k.kadaster_afd_id,
+            k.sectie,
+            k.grondnummer,
+            coalesce(k.bisnummer,'') bisnummer,
+            coalesce(k.exponent1, '') exponent1,
+            coalesce(k.exponent2, '') exponent2
+        from
+            ART46.VOOR_GOEDK a
+            inner join OVAM.ARTIKEL oa on a.ARTIKEL_ID = oa.ARTIKEL_ID
+            inner join SMEG.RS_KADASTER_VIEW k on a.KADASTER_ID = k.KADASTER_ID
+            inner join SMEG.RS_KADASTER_AFD_VIEW ka on k.KADASTER_AFD_ID = ka.KADASTER_AFD_ID
+            inner join SMEG.RS_KADASTER_PERSOON_VIEW kp on a.KADASTER_ID = kp.KADASTER_ID
+            inner join SMEG.OVAM_PERSOON_VIEW op on kp.PERSOON_ID = op.PERSOON_ID
+        where
+            a.GOEDKEURING_S = '1'
+            and (a.dossier_id, a.kadaster_id) not in
+                                                    (select
+                                                        dossier_id, kadaster_id
+                                                     from ART46.NA_GOEDK
+                                                     where
+                                                        lijst_id in ( select max(lijst_id) from ART46.LIJST )
+                                                    )
+            and a.ARTIKEL_ID in (select ARTIKEL_ID
+                                 from OVAM.ARTIKEL_LIJST
+                                 where LIJST_ID = #{artikel_id})
+        order by a.ARTIKEL_ID, a.kadaster_id, op.persoon_b
+    </select>
+
+    <select id="getLijstHistoriek" parameterType="be.ovam.art46.struts.actionform.Art46SelectForm" resultType="ciMap">
+        with lijst as (
+            select distinct
+                lijst_id, dossier_id, kadaster_id, artikel_id
+            from ART46.NA_GOEDK
+            where
+                lijst_id = #{lijst_id} and
+                publicatie_d is not null and
+                artikel_id in (select artikel_id
+                               from ovam.ARTIKEL_LIJST
+                               where lijst_id = #{artikelid})
+        )
+        select
+            'Totaal aantal' type,
+            count(distinct dossier_id) dossiers,
+            count(distinct kadaster_id) kadasters
+        from lijst
+        union
+        select
+             'Aantal
+             onschuldige eigenaars' type,
+             count(distinct adkt.dossier_id) dossiers,
+             count(distinct adkt.kadaster_id) kadasters
+        from ART46.DOS_KAD_TYPE_HIST adkt
+                 inner join lijst
+                 on adkt.lijst_id = lijst.lijst_id
+                 and adkt.dossier_id = lijst.dossier_id
+                 and adkt.kadaster_id = lijst.kadaster_id
+        where
+            adkt.onschuldige_eig_s = '1'
+        union
+        select
+            'Aantal
+            ingebreke stellingen' type,
+            count(distinct adkt.dossier_id) dossiers,
+            count(distinct adkt.kadaster_id) kadasters
+        from ART46.DOS_KAD_TYPE_HIST adkt
+                 inner join lijst
+                 on adkt.lijst_id = lijst.lijst_id
+                 and adkt.dossier_id = lijst.dossier_id
+                 and adkt.kadaster_id = lijst.kadaster_id
+        where
+            adkt.ingebreke_stel_s = '1'
+        union
+        select
+            'Dossiers
+            Conform BBO' type,
+            count(distinct d.dossier_id) dossiers,
+            count(distinct kadaster_id) kadasters
+        from lijst
+                inner join SMEG.RS_DOSSIER_VIEW d
+                on lijst.dossier_id = d.dossier_id
+        where
+            d.conform_bbo_d is not null
+        union
+        select
+            'Dossiers Conform BSP' type,
+            count(distinct d.dossier_id)
+            dossiers,
+            count(distinct kadaster_id) kadasters
+        from lijst
+                inner join SMEG.RS_DOSSIER_VIEW d
+                on lijst.dossier_id = d.dossier_id
+        where
+            d.conform_bsp_d is not null
+        order by type
+    </select>
+
+</mapper>
+

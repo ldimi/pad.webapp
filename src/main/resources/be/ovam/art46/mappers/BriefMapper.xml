@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.BriefMapper" >
+
+    <select id="getBriefDetails" parameterType="int" resultType="ciMap">
+        select
+            br.brief_id,
+            br.bestek_id,
+            br.brief_nr,
+            br.inschrijf_d,
+            br.betreft,
+            br.in_aard_id,
+            br.in_d,
+            br.in_stuk_d,
+            br.in_referte,
+            br.in_bijlage,
+            br.in_type_id,
+            br.uit_aard_id,
+            br.uit_d,
+            br.uit_referte,
+            br.uit_bijlage,
+            br.uit_type_id,
+            br.uit_type_id_vos,
+            br.commentaar,
+            br.ltst_wzg_user_id,
+            br.ltst_wzg_d,
+            br.volgnummer,
+            br.auteur_id,
+            br.dms_id,
+            br.dms_filename,
+            br.dms_folder,
+            br.categorie_id,
+            br.reactie_d,
+            br.reactie_voor_d,
+            br.parent_brief_id,
+            br.qr_code,
+            br.teprinten_jn,
+            br.print_d,
+            --
+            br.adres_id,
+            a.naam adres_naam,
+            a.voornaam adres_voornaam,
+            a.straat adres_straat,
+            a.gemeente adres_gemeente,
+            br.contact_id,
+            ac.NAAM contact_naam,
+            --
+            br.dossier_id,
+            d.dossier_nr dossier_nr,
+            d.dossier_type dossier_type_ivs,
+            d.doss_hdr_id dossier_hdr_ivs,
+            d.dossier_b dossier_b_ivs,
+            d.dossier_id_boa,
+            d.nis_id,
+            --
+            sv.vordering_id,
+            case when sv.AFGEKEURD_JN = 'J' then 'J'
+                 when exists (select vordering_id
+                              from art46.SCHULDVORDERING_SAP_PROJECT ssp
+                              where sv.vordering_id = ssp.vordering_id)  then 'J'
+                 else 'N'
+            end as vordering_definitief_jn
+        from art46.brief br
+                left join art46.adres a
+                on br.adres_id = a.adres_id
+                    left join art46.adres_contact ac
+                    on br.adres_id = ac.adres_id
+                    and br.contact_id = ac.contact_id
+             left join art46.v_dossier d
+             on br.dossier_id = d.id
+                left join art46.schuldvordering sv
+                on br.brief_id = sv.brief_id
+         where br.brief_id = #{briefid}
+    </select>
+
+
+    <update id="updateCommentaarBrief" parameterType="map">
+        update art46.BRIEF
+        set
+            commentaar = #{commentaar}
+        where brief_id = #{brief_id}
+    </update>
+
+    <update id="updateCheckedAfdelingsHoofd" parameterType="map">
+        update art46.BRIEF
+        set
+            check_afd_hfd_d = current date,
+            opmerking_afd_hfd = #{opmerking_afd_hfd}
+        where brief_id = #{brief_id}
+    </update>
+
+    <update id="updateCheckedAuteur" parameterType="map">
+        update art46.BRIEF
+        set
+            check_auteur_d = current date
+        where brief_id = #{brief_id}
+    </update>
+
+    <update id="updateAfgedrukt" parameterType="int">
+        update art46.BRIEF
+        set
+            teprinten_jn = 'N',
+            print_d = current date
+        where brief_id = #{brief_id}
+    </update>
+
+    <select id="countQrCode" parameterType="be.ovam.art46.struts.actionform.BriefForm" resultType="int">
+        select count(*)
+        from art46.brief br
+        where 1 = 1
+            and br.qr_code = #{qr_code}
+            <if test='brief_id != null'>
+                and br.BRIEF_ID != #{brief_id}
+            </if>
+    </select>
+
+    <select id="getScansForVastleggingsAanvraag" parameterType="map" resultType="ciMap">
+        SELECT
+            brief.brief_id as value,
+            CONCAT(CONCAT(CONCAT(brief.BRIEF_NR,': '), CONCAT(COALESCE(brief.betreft, ''), ' ')),COALESCE(brief.COMMENTAAR, ''))  as label
+        FROM ART46.BRIEF brief
+        where
+            brief.CATEGORIE_ID = 5
+            and brief.BESTEK_ID = #{bestekId}
+            and brief.brief_id not in (Select GUNNINGSBESLISSING
+                                       from ART46.AANVRAAGVASTLEGGING
+                                       where id != #{aanvraagId}
+                                            and GUNNINGSBESLISSING is not null)
+            and brief.brief_id not in (Select GUNNINGSVERSLAG
+                                       from ART46.AANVRAAGVASTLEGGING
+                                       where id != #{aanvraagId}
+                                            and GUNNINGSVERSLAG is not null)
+            and brief.brief_id not in (Select briefid
+                                       from ART46.AANVRAAGVASTLEGGINGBRIEVEN
+                                       where aanvraagid != #{aanvraagId}
+                                            and briefid is not null)
+            and brief.DMS_ID is NOT NULL
+            <if test='typeIds != null'>
+                and brief.UIT_TYPE_ID_VOS in
+                <foreach item="item" index="index" collection="typeIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+    </select>
+
+    <select id="getDMSid" parameterType="map" resultType="string">
+        select DMS_ID FROM ART46.BRIEF where brief_id = #{briefId}
+    </select>
+
+
+    <select id="getBrievenFor" parameterType="map" resultType="be.ovam.pad.model.Brief">
+        SELECT b.*,
+            a.straat as adres_straat, a.gemeente as gemeente, a.naam as adresnaam, a.postcode as postcode
+        FROM ART46.BRIEF b
+                LEFT JOIN ART46.ADRES a ON b.ADRES_ID = a.ADRES_ID
+        WHERE (b.dossier_id = #{dossierId} OR (
+                    brief_id IN
+                        (SELECT brief_id FROM art46.DEELOPDRACHT_BRIEF  WHERE deelopdracht_id IN
+                            (SELECT DEELOPDRACHT_ID FROM art46.DEELOPDRACHT WHERE dossier_id = #{dossierId})
+                        )
+                    )
+                )
+                and b.categorie_id != 6
+                <if test = 'uitTypeIdVos != null'>
+                    AND (B.UIT_TYPE_ID_VOS = #{uitTypeIdVos})
+                </if>
+                <if test='bestekId != null'>
+                     AND (b.BESTEK_ID = #{bestekId})
+                </if>
+                <if test='inschrijfVan != null'>
+                    AND (b.INSCHRIJF_D >= #{inschrijfVan})
+                </if>
+                <if test='inschrijfTot != null'>
+                    AND (#{inschrijfTot} >= b.INSCHRIJF_D)
+                </if>
+          ORDER BY B.inschrijf_d desc
+    </select>
+
+
+    <select id="getBriefCategorieById" resultType="ciMap" parameterType="int">
+        select
+            bc.brief_categorie_id,
+            bc.brief_categorie_b,
+            bc.sort,
+            bcbc.parent_brief_categorie_id
+        from art46.brief_categorie bc
+                left outer join art46.brief_categorie_brief_categorie bcbc
+                on bc.brief_categorie_id = bcbc.child_brief_categorie_id
+        where bc.brief_categorie_id = #{brief_categorie_id}
+    </select>
+
+    <select id="briefCategorieList" resultType="ciMap" parameterType="int">
+            select
+                rtrim(cast(parent.sort as char(10))) || '-0',
+                case when parent.BRIEF_CATEGORIE_ID = 0 then ''
+                    else '+ ' ||  parent.BRIEF_CATEGORIE_B
+                end as BRIEF_CATEGORIE_B,
+                parent.BRIEF_CATEGORIE_ID,
+                NULLIF(1,1) PARENT_BRIEF_CATEGORIE_ID
+            from
+                ART46.BRIEF_CATEGORIE parent
+            where
+                parent.BRIEF_CATEGORIE_ID not in (select CHILD_BRIEF_CATEGORIE_ID from ART46.BRIEF_CATEGORIE_BRIEF_CATEGORIE)
+                and not (parent.BRIEF_CATEGORIE_ID = 18 and
+                         exists (select id
+                               from art46.v_dossier d
+                               where d.dossier_type != 'X'
+                                 and d.id = #{dossier_id})
+                         )
+        union
+            select
+                rtrim(cast(parent.sort as char(10))) || '-' || rtrim(cast(child.sort as char(10))),
+                '+----- ' || child.BRIEF_CATEGORIE_B  as BRIEF_CATEGORIE_B,
+                child.BRIEF_CATEGORIE_ID,
+                parent.BRIEF_CATEGORIE_ID as PARENT_BRIEF_CATEGORIE_ID
+            from
+                ART46.BRIEF_CATEGORIE child
+                    inner join ART46.BRIEF_CATEGORIE_BRIEF_CATEGORIE koppeling
+                    on (koppeling.CHILD_BRIEF_CATEGORIE_ID = child.BRIEF_CATEGORIE_ID)
+                inner join ART46.BRIEF_CATEGORIE parent
+                on (koppeling.PARENT_BRIEF_CATEGORIE_ID = parent.BRIEF_CATEGORIE_ID)
+            where not (child.BRIEF_CATEGORIE_ID = 18 and
+                       exists (select id
+                               from art46.v_dossier d
+                               where d.dossier_type != 'X'
+                                 and d.id = #{dossier_id})
+                      )
+        order by 1
+    </select>
+
+
+    <sql id="zoekBrieven_select" >
+        select
+            br.brief_id,
+            br.dossier_id,
+            br.dossier_nr,
+            br.dossier_id_boa,
+            br.doss_hdr_id,
+            br.nis_id,
+            br.gemeente_b,
+            br.brief_nr,
+            br.inschrijf_d,
+            br.in_d,
+            br.uit_d,
+            br.betreft,
+            br.reactie_voor_d,
+            br.reactie_d,
+            br.uit_type_id_vos,
+            br.uit_type_vos_b,
+            br.in_aard_id,
+            br.in_aard_b,
+            br.uit_aard_id,
+            br.uit_aard_b,
+            case when (br.IN_AARD_ID is not null and br.IN_AARD_ID != 0) then br.IN_AARD_ID
+                 when (br.UIT_AARD_ID is not null and br.UIT_AARD_ID != 0) then br.UIT_AARD_ID
+                 else null
+            end aard_id,
+            case when (br.IN_AARD_ID is not null and br.IN_AARD_ID != 0) then 'In'
+                 when (br.UIT_AARD_ID is not null and br.UIT_AARD_ID != 0) then 'Uit'
+                 else null
+            end in_uit_aard,
+            case when (br.IN_AARD_ID is not null and br.IN_AARD_ID != 0) then br.in_aard_b
+                 when (br.UIT_AARD_ID is not null and br.UIT_AARD_ID != 0) then br.uit_aard_b
+                 else null
+            end aard_b,
+            br.brief_categorie_b,
+            br.adres_id,
+            br.adres_naam,
+            br.qr_code
+        from art46.v_brief br
+    </sql>
+
+
+
+
+    <select id="zoekBrieven" resultType="ciMap" parameterType="be.ovam.art46.struts.actionform.BriefZoekForm">
+        <include refid="zoekBrieven_select"/>
+                <if test="bestek_nr != null">
+                    inner join ART46.BESTEK be
+                    on br.dossier_id = be.dossier_id
+                    and upper(be.bestek_nr) like '%' || UPPER(#{bestek_nr}) || '%'
+                </if>
+        where 1 = 1
+            <if test="adres_naam != null">
+                and upper(br.adres_naam) like '%' || UPPER(#{adres_naam}) || '%'
+            </if>
+
+            <if test="inschrijf_d_van != null">
+                and br.inschrijf_d &gt;= #{inschrijf_d_van}
+            </if>
+            <if test="inschrijf_d_tot != null">
+                and br.inschrijf_d &lt;= #{inschrijf_d_tot}
+            </if>
+
+            <if test="in_d_van != null">
+                and br.in_d &gt;= #{in_d_van}
+            </if>
+            <if test="in_d_tot != null">
+                and br.in_d &lt;= #{in_d_tot}
+            </if>
+
+            <if test="uit_d_van != null">
+                and br.uit_d &gt;= #{uit_d_van}
+            </if>
+            <if test="uit_d_tot != null">
+                and br.uit_d &lt;= #{uit_d_tot}
+            </if>
+
+            <if test="betreft != null">
+                and upper(br.betreft) like '%' || UPPER(#{betreft}) || '%'
+            </if>
+            <if test="brief_nr != null">
+                and upper(br.brief_nr) like '%' || UPPER(#{brief_nr}) || '%'
+            </if>
+            <if test="auteur_id != null">
+                and br.auteur_id = #{auteur_id}
+            </if>
+            <if test="in_referte != null">
+                and upper(br.in_referte) like '%' || UPPER(#{in_referte}) || '%'
+            </if>
+            <if test="dossier_nr != null">
+                and upper(br.dossier_nr) like '%' || UPPER(#{dossier_nr}) || '%'
+            </if>
+            <if test="dossier_hdr_ivs != null">
+                and br.doss_hdr_id = #{dossier_hdr_ivs}
+            </if>
+            <if test="dossier_b_ivs != null">
+                and upper(br.dossier_b) like '%' || UPPER(#{dossier_b_ivs}) || '%'
+            </if>
+            <if test="dossier_fase_id != null">
+                and br.dossier_fase_id = #{dossier_fase_id}
+            </if>
+            <if test="dossier_id_boa != null">
+                and br.dossier_id_boa = #{dossier_id_boa}
+            </if>
+            <if test="dossier_gemeente != null">
+                and upper(br.gemeente_b) like '%' || UPPER(#{dossier_gemeente}) || '%'
+            </if>
+            <if test="qr_code != null">
+                and br.qr_code = #{qr_code}
+            </if>
+            <if test="in_aard_id != null">
+                and br.in_aard_id = #{in_aard_id}
+            </if>
+            <if test="uit_aard_id != null">
+                and br.uit_aard_id = #{uit_aard_id}
+            </if>
+        order by br.brief_id desc
+        fetch first 5001 rows only
+    </select>
+
+    <select id="tePrintenBrieven" resultType="ciMap">
+        select
+            br.inschrijf_d,
+            br.uit_d,
+            br.uit_aard_b,
+            br.uit_type_vos_b,
+            br.brief_nr,
+            br.dossier_nr,
+            br.doss_hdr_id,
+            br.gemeente_b,
+            br.adres_naam,
+            br.dms_folder,
+            br.dms_filename
+        from art46.v_brief as br
+        where br.teprinten_jn = 'J'
+              and br.uit_aard_id is not null
+              and br.uit_aard_id != 0
+              and br.dms_id is not null
+        order by br.dossier_id
+        fetch first 500 rows only
+    </select>
+
+
+
+
+    <select id="getMaxVolgNrByDossierId" resultType="int" parameterType="int" flushCache="true" >
+        select coalesce(max(volgnummer), 0)
+        from art46.brief
+        where dossier_id = #{dossier_id}
+    </select>
+
+
+    <sql id="brief_opmerking_velden" >
+        brief_id,
+        opmerking,
+        auteur,
+        creatie_d,
+        behandeld_d,
+        verwijderd_jn,
+        wijzig_user
+    </sql>
+
+    <sql id="brief_opmerking_params" >
+        #{brief_id},
+        #{opmerking},
+        #{auteur},
+        #{creatie_d},
+        #{behandeld_d},
+        #{verwijderd_jn},
+        #{wijzig_user}
+    </sql>
+
+
+    <select id="getBriefOpmerkingen" resultType="be.ovam.art46.model.BriefOpmerking" parameterType="int">
+        select
+            opmerking_id,
+            <include refid="brief_opmerking_velden"/>,
+            wijzig_ts
+       from art46.brief_opmerking opm
+       where verwijderd_jn ='N'
+           and brief_id = #{brief_id}
+       order by wijzig_ts desc
+    </select>
+
+    <select id="getBriefOpmerking" resultType="be.ovam.art46.model.BriefOpmerking" parameterType="int">
+        select
+            opmerking_id,
+            <include refid="brief_opmerking_velden"/>,
+            wijzig_ts
+       from art46.brief_opmerking opm
+       where  opmerking_id = #{opmerking_id}
+    </select>
+
+    <insert id="insertBriefOpmerking" parameterType="be.ovam.art46.model.BriefOpmerking"  useGeneratedKeys="true" keyProperty="opmerking_id">
+        insert into art46.brief_opmerking
+            (<include refid="brief_opmerking_velden"/>)
+        values
+            (<include refid="brief_opmerking_params"/>)
+    </insert>
+
+    <update id="updateBriefOpmerking" parameterType="be.ovam.art46.model.BriefOpmerking">
+        update art46.brief_opmerking
+        set
+            (<include refid="brief_opmerking_velden"/>) = (<include refid="brief_opmerking_params"/>)
+        where
+            opmerking_id = #{opmerking_id}
+    </update>
+
+    <select id="getBriefDocumenten" resultType="ciMap" parameterType="int">
+            select
+                'brief' as type,
+                br.brief_id,
+                br.brief_nr,
+                br.dms_id,
+                br.DMS_FILENAME,
+                br.DMS_FOLDER
+            from art46.brief br
+            where 1 = 1
+                and br.parent_brief_id is null
+                and br.DMS_ID is not null
+                and br.BRIEF_ID = #{brief_id}
+        union
+            select
+                'scan' as type,
+                br.brief_id,
+                br.brief_nr,
+                br.dms_id,
+                br.DMS_FILENAME,
+                br.DMS_FOLDER
+            from art46.brief br
+            where 1 = 1
+                and br.DMS_ID is not null
+                and br.PARENT_BRIEF_ID = #{brief_id}
+    </select>
+
+
+</mapper>

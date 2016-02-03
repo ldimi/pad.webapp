@@ -1,0 +1,242 @@
+
+
+--  ??????????????????????????????????????????????????????????????
+--
+--   ALTER TABLE ART46.WEBLOKET_BIJLAGE ADD VOORSTEL_ID INT;
+--   CALL SYSPROC.ADMIN_CMD('REORG TABLE ART46.WEBLOKET_BIJLAGE');
+--
+
+
+ CREATE TABLE ART46.WEBLOKET_BIJLAGE
+(
+   ID bigint PRIMARY KEY NOT NULL,
+   ALFRESCO_NODE_ID varchar(255),
+   DOCID varchar(255),
+   DOCUMENTURL varchar(255),
+   EDITURL varchar(255),
+   NAME varchar(255),
+   SCHULDVORDERING_ID int,
+   VOORSTEL_ID int
+)
+;
+
+
+alter table ART46.WEBLOKET_BIJLAGE
+   add constraint FK_WLB_SCHULDVORDERING foreign key (SCHULDVORDERING_ID)
+      references ART46.SCHULDVORDERING (vordering_id)
+      on delete restrict on update restrict
+;
+
+alter table ART46.WEBLOKET_BIJLAGE
+   add constraint FK_WLB_VOORSTEL_DEELOPDRACHT foreign key (VOORSTEL_ID)
+      references ART46.VOORSTEL_DEELOPDRACHT (id)
+      on delete restrict on update restrict
+;
+
+
+
+-- ---------------------------------------------------
+--  VOORSTEL_DEELOPDRACHT
+-- foreign keys OFFERTE_ID, DOSSIER_ID, STATUS
+--
+
+
+alter table ART46.VOORSTEL_DEELOPDRACHT
+   add constraint FK_VODO_OFFERTE foreign key (OFFERTE_ID)
+      references ART46.OFFERTE (id)
+      on delete restrict on update restrict
+;
+
+alter table ART46.VOORSTEL_DEELOPDRACHT
+   add constraint FK_VODO_DOSSIER foreign key (DOSSIER_ID)
+      references ART46.DOSSIER (id)
+      on delete restrict on update restrict
+;
+
+
+alter table ART46.VOORSTEL_DEELOPDRACHT
+   add constraint FK_VODO_STATUS foreign key (STATUS)
+      references ART46.VOORSTEL_DEELOPDRACHT_STATUS (key)
+      on delete restrict on update restrict
+;
+
+
+-- ------------------------------------------------------
+--    MEETSTAATREGEL_TYPE
+--
+
+CREATE TABLE ART46.MEETSTAATREGEL_TYPE
+(
+   TYPE varchar(24)  not null primary key
+)
+;
+
+
+insert into ART46.MEETSTAATREGEL_TYPE
+values
+('SPM'),
+('TP'),
+('voorbehouden post'),
+('VH')
+;
+
+alter table ART46.MEETSTAATREGEL
+   add constraint FK_MR_TYPE foreign key (TYPE)
+      references ART46.MEETSTAATREGEL_TYPE (TYPE)
+      on delete restrict on update restrict
+;
+
+alter table ART46.VOORSTEL_DEELOPDRACHT_REGEL
+   add constraint FK_VDOR_MEETSTAATREGEL_TYPE foreign key (MEERWERKEN_TYPE)
+      references ART46.MEETSTAATREGEL_TYPE (TYPE)
+      on delete restrict on update restrict
+;
+
+alter table ART46.OFFERTE_REGEL
+   add constraint FK_OFR_MEETSTAATREGEL_TYPE foreign key (EXTRA_REGEL_TYPE)
+      references ART46.MEETSTAATREGEL_TYPE (TYPE)
+      on delete restrict on update restrict
+;
+
+--------------------------------------------------------------------------------
+
+
+drop table ART46.MEETSTAAT_SCHULDVORDERING_REGEL
+
+CREATE TABLE ART46.MEETSTAAT_SCHULDVORDERING_REGEL
+(
+   SCHULDVORDERING_REGEL_ID int PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
+   OFFERTE_REGEL_ID int,
+   SCHULDVORDERINGID int NOT NULL,
+   AFNAMEBEDRAG float(53),
+   AFNAME float(53),
+   GECORRIGEERDAFNAME float(53),
+   GECORRIGEERDAFNAMEBEDRAG float(53),
+   BESCHRIJVING varchar(512),
+   OPMERKING varchar(512),
+   BTW_TARIEF int,
+   GECORRIGEERD_BTW_TARIEF int,
+   MEERWERKEN_EENHEIDSPRIJS float(53),
+   GECORRIGEERD_MEERWERKEN_EENHEIDSPRIJS float(53),
+   MEERWERKEN_TYPE char(10),
+   MEERWERKEN_EENHEID char(10),
+   VOORSTEL_DEELOPDRACHT_REGEL_ID int
+)
+;
+
+ALTER TABLE ART46.MEETSTAAT_SCHULDVORDERING_REGEL
+ADD CONSTRAINT FK_MSVR_OFFERTE_REGEL
+FOREIGN KEY (OFFERTE_REGEL_ID)
+REFERENCES ART46.OFFERTE_REGEL(ID)
+;
+
+ALTER TABLE ART46.MEETSTAAT_SCHULDVORDERING_REGEL
+ADD CONSTRAINT FK_MSVR_MEETSTAATREGEL_TYPE
+FOREIGN KEY (MEERWERKEN_TYPE)
+REFERENCES ART46.MEETSTAATREGEL_TYPE(TYPE)
+;
+
+ALTER TABLE ART46.MEETSTAAT_SCHULDVORDERING_REGEL
+ADD CONSTRAINT FK_D9JVFV92KQBVGR7OIC5YVGEYB
+FOREIGN KEY (SCHULDVORDERINGID)
+REFERENCES ART46.MEETSTAAT_SCHULDVORDERING(ID)
+;
+
+---------------------------------------------------------------------
+
+alter table ART46.VOORSTEL_DEELOPDRACHT_REGEL
+   add constraint FK_VDOR_MEETSTAAT_EENHEID foreign key (MEERWERKEN_EENHEID)
+      references ART46.MEETSTAAT_EENHEID (NAAM)
+      on delete restrict on update restrict
+;
+
+alter table ART46.OFFERTE_REGEL
+   add constraint FK_OFR_MEETSTAAT_EENHEID foreign key (EXTRA_REGEL_EENHEID)
+      references ART46.MEETSTAAT_EENHEID (NAAM)
+      on delete restrict on update restrict
+;
+
+ALTER TABLE ART46.MEETSTAAT_SCHULDVORDERING_REGEL
+    ADD CONSTRAINT FK_MSVR_MEETSTAAT_EENHEID FOREIGN KEY (MEERWERKEN_EENHEID)
+        REFERENCES ART46.MEETSTAAT_EENHEID (NAAM)
+        on delete restrict on update restrict
+;
+
+----------------------------------------------------------------------
+
+
+drop table ART46.VOORSTEL_DEELOPDRACHT_HISTORY;
+
+CREATE TABLE ART46.VOORSTEL_DEELOPDRACHT_HISTORY
+(
+  ID INT PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
+  VOORSTEL_DEELOPDRACHT_ID INT,
+  GEBRUIKER_ID INT,
+  DOSSIERHOUDER_ID VARCHAR(8),
+  DATUM TIMESTAMP,
+  STATUS VARCHAR(30),
+  MOTIVATIE VARCHAR(1024),
+  FOREIGN KEY ( DOSSIERHOUDER_ID ) REFERENCES ART46.DOSSIER_HOUDER ( DOSS_HDR_ID ),
+  FOREIGN KEY ( VOORSTEL_DEELOPDRACHT_ID ) REFERENCES ART46.VOORSTEL_DEELOPDRACHT ( ID )
+);
+
+ALTER TABLE ART46.VOORSTEL_DEELOPDRACHT_HISTORY
+    ADD CONSTRAINT FK_VDOH_DOSHDR FOREIGN KEY (DOSSIERHOUDER_ID)
+        REFERENCES ART46.DOSSIER_HOUDER ( DOSS_HDR_ID )
+        on delete restrict on update restrict
+;
+
+ALTER TABLE ART46.VOORSTEL_DEELOPDRACHT_HISTORY
+    ADD CONSTRAINT FK_VDOH_VOORSTEL_DEELOPDRACHT FOREIGN KEY (VOORSTEL_DEELOPDRACHT_ID)
+        REFERENCES ART46.VOORSTEL_DEELOPDRACHT ( ID )
+        on delete restrict on update restrict
+;
+
+
+ALTER TABLE ART46.VOORSTEL_DEELOPDRACHT_HISTORY
+    ADD CONSTRAINT FK_VDOH_GEBRUIKER FOREIGN KEY (GEBRUIKER_ID)
+        REFERENCES ART46.WEBLOKET_GEBRUIKER (ID)
+        on delete restrict on update restrict
+;
+
+ALTER TABLE ART46.VOORSTEL_DEELOPDRACHT_HISTORY
+    ADD CONSTRAINT FK_VDOH_STATUS FOREIGN KEY (status)
+        REFERENCES ART46.VOORSTEL_DEELOPDRACHT_STATUS(KEY)
+        on delete restrict on update restrict
+;
+
+
+
+
+
+-- deze versie van de wijzigingen in db registreren.
+insert into ART46.DB_VERSIE(DB_VERSIE) values ('4.22');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

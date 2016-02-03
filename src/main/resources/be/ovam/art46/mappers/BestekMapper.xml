@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.BestekMapper">
+
+
+    <select id="getNieuwBestekData" resultType="be.ovam.art46.model.BestekDO" parameterType="int" >
+    <![CDATA[
+        select
+              --(select max(bestek_id) + 1 from art46.bestek ) as bestek_id,
+              d.id as dossier_id,
+              d.dossier_type,
+              d.dossier_nr,
+              case when d.dossier_fase_id = 2 then 'J'
+                  else 'N'
+              end as raamcontract_jn,
+              1 as dienst_id,
+              2 as type_id,
+              21 as btw_tarief,
+              1 as procedure_id,
+              1 as fase_id,
+              'N' as screening_jn
+        from art46.v_dossier d
+        where d.id = #{id}
+    ]]>
+    </select>
+
+    <select id="getBestek" resultType="be.ovam.art46.model.BestekDO" parameterType="int" >
+        select
+            bestek_id,
+            bestek_nr,
+            dossier_id,
+            dossier_nr,
+            dossier_type,
+            type_id,
+            procedure_id,
+            fase_id,
+            dienst_id,
+            omschrijving,
+            commentaar,
+            btw_tarief,
+            start_d,
+            stop_d,
+            afsluit_d,
+            verlenging_s,
+            wbs_nr,
+            screening_jn,
+            screening_organisatie_id,
+            raamcontract_jn
+        from art46.v_bestek
+        where bestek_id= #{bestek_id}
+    </select>
+
+
+
+    <select id="getNieuwVastleggingsData" resultType="be.ovam.art46.model.AanvraagVastlegging" parameterType="string" >
+    <![CDATA[
+        SELECT bestek.*, bestek.wbs_nr wbsBestek, bestek.bestek_id bestekId, bestek_procedure.*, bestek_type.*, bestek_fase.*
+        FROM art46.BESTEK as bestek
+            LEFT JOIN ART46.BESTEK_PROCEDURE as bestek_procedure
+                ON bestek.procedure_id = bestek_procedure.procedure_id
+            LEFT JOIN ART46.BESTEK_TYPE as bestek_type
+                ON bestek.type_id = bestek_type.type_id
+            LEFT JOIN ART46.BESTEK_FASE as bestek_fase
+                ON bestek.fase_id = bestek_fase.fase_id
+        WHERE bestek.bestek_id = #{BESTEK_ID}
+    ]]>
+    </select>
+
+
+    <select id="besteksaldo_1" resultType="ciMap" parameterType="int" >
+        with vastlegging as (select sum(coalesce(spv.bedrag,0)) AS vastlegging
+                             from ART46.BESTEK_SAP_PROJECT absp
+                                    left outer join SAP.PROJECT_VASTLEGGING spv
+                                    on absp.project_id = spv.project_id
+                             where absp.bestek_id = #{bestek_id}
+                            )
+            , geraamd as (select sum(coalesce(bedrag, 0)) as geraamd
+                            from ART46.DEELOPDRACHT absp
+                            where bestek_id = #{bestek_id}
+                            )
+            , factuur as (select sum(coalesce(spv.bedrag, 0)) as  factuur
+                            from ART46.BESTEK_SAP_PROJECT absp
+                                    left outer join SAP.PROJECT_FACTUUR spv
+                                    on (absp.project_id = spv.project_id)
+                            where absp.bestek_id = #{bestek_id}
+                            )
+        select
+            vastlegging.vastlegging,
+            geraamd.geraamd,
+            vastlegging.vastlegging - geraamd.geraamd as geraamd_saldo,
+            factuur.factuur,
+            vastlegging.vastlegging - factuur.factuur as saldo,
+            b.bestek_id,
+            b.bestek_nr,
+            b.dossier_id,
+            d.raamcontract_jn
+        from
+            vastlegging, geraamd, factuur,
+            art46.bestek b
+              inner join art46.v_dossier d
+              on b.dossier_id = d.id
+              and b.bestek_id = #{bestek_id}
+    </select>
+    <select id="besteksaldo" resultType="ciMap" parameterType="int" >
+        select
+            b.bestek_id,
+            b.bestek_nr,
+            b.dossier_id,
+            b.raamcontract_jn,
+            b.initiele_vastlegging,
+            b.vastlegging,
+            b.geraamd,
+            b.vastlegging - b.geraamd as geraamd_saldo,
+            b.gefactureerd as factuur,
+            b.vastlegging - b.gefactureerd as saldo,
+            b.openstaand_gepland
+        from art46.v_ander_dossier_bestek_saldos b
+        where b.bestek_id = #{bestek_id}
+    </select>
+
+    <select id="getDossierId" resultType="int" parameterType="int">
+        SELECT b.dossier_id FROM art46.bestek b where b.bestek_id = #{bestekId}
+    </select>
+
+
+    <select id="deelopdrachtloaddossiers" resultType="ciMap" parameterType="map" >
+            select
+                da.dossier_b_l || case da.dossier_type when 'A' then ' (Afval)'
+                                                             else ' (Bodem)'
+                end dossier_b_l,
+                rtrim(cast(da.id as char(10))) || '_' || da.dossier_type dossier_id_l,
+                ade.dossier_id
+            from
+                ART46.V_DOSSIER da
+                    inner join ART46.DEELOPDRACHT ade
+                    on ade.dossier_id = da.id
+            where
+                ade.deelopdracht_id = #{deelopdracht_id}
+        union
+            select
+                da.dossier_b_l || case da.dossier_type when 'A' then ' (Afval)'
+                                                             else ' (Bodem)'
+                end dossier_b_l,
+                rtrim(cast(da.id as char(10))) || '_' || da.dossier_type dossier_id_l,
+                da.id dossier_id
+            from
+                ART46.V_DOSSIER da
+            where
+                da.doss_hdr_id in ( select doss_hdr_id
+                                    from ART46.DOSSIER_HOUDER
+                                    where 1 = 1
+                                        <if test='adminArt46_JN != "J"'>
+                                            and doss_hdr_id = #{doss_hdr_id}
+                                        </if>
+                                union
+                                    select doss_hdr_id
+                                    from ART46.DOSSIER_HOUDER
+                                    where vervanger = #{doss_hdr_id}
+                                )
+                and da.afsluit_d is null
+                and da.dossier_type in ('A','B')
+            order by 1
+    </select>
+
+    <sql id="planningsItemsVoor_prefix" >
+        select plv.lijn_id as value,
+            d.dossier_nr || ' - ' || d.dossier_b || ' (' || d.doss_hdr_id || ') ' ||
+                plv.fase_code || ' ' || coalesce(plv.fase_detail_code, '') || ' : ' || coalesce(plv.ig_bedrag, 0) || ' EUR' as label,
+            plv.dossier_id,
+            d.dossier_nr,
+            d.dossier_b,
+            d.doss_hdr_id,
+            plv.fase_code,
+            plv.fase_detail_code,
+            plv.ig_bedrag
+        from art46.planning_lijn_versie plv
+                inner join art46.v_dossier d
+                on plv.dossier_id = d.id
+            inner join art46.v_planning_fase pf
+            on plv.fase_code = pf.fase_code
+        where 1 = 1
+            and not exists (select *
+                        from art46.planning_lijn_versie plv2
+                        where plv.lijn_id = plv2.lijn_id
+                            and plv.planning_dossier_versie &lt; plv2.planning_dossier_versie)
+            and plv.deleted_jn = 'N'
+            and (pf.heeft_details_jn = 'N' or plv.fase_detail_code is not null)
+    </sql>
+
+    <select id="getPlanningsItemsVoorBestekVastleggingsAanvraag" resultType="ciMap" parameterType="map" >
+        <include refid="planningsItemsVoor_prefix"/>
+            and plv.DOSSIER_ID = (
+                select b.DOSSIER_ID
+                from art46.BESTEK b
+                where b.BESTEK_ID = #{bestekId}
+            )
+            and plv.contract_id is null  -- geen deelopdrachten
+            and  plv.LIJN_ID not in (Select avv.planningsitem
+                                     from art46.AANVRAAGVASTLEGGING avv
+                                     where avv.PLANNINGSITEM is not null
+                                        and avv.ID != #{aanvraagId})
+        order by 1
+    </select>
+
+    <select id="getPlanningsItemsVoorDeelOpdracht" resultType="ciMap" parameterType="map" >
+        <include refid="planningsItemsVoor_prefix"/>
+            and plv.CONTRACT_ID = (
+                    select b.DOSSIER_ID
+                    from art46.BESTEK b
+                    where b.BESTEK_ID = #{bestek_id})
+            and  plv.LIJN_ID not in (Select do.PLANNING_LIJN_ID
+                                     from art46.DEELOPDRACHT do
+                                     where do.PLANNING_LIJN_ID is not null and
+                                           do.DEELOPDRACHT_ID != #{deelopdracht_id})
+            and (pf.heeft_details_jn = 'N' or plv.FASE_DETAIL_CODE is not null)
+            order by 1
+    </select>
+
+
+
+    <select id="nietAfgeslotenDeelopdrachten" resultType="ciMap" >
+        with bestekken as (
+            select
+                ab.bestek_id,
+                ab.bestek_nr,
+                ab.dossier_id dossier_id_ander,
+                ad.dossier_b dossier_b_ander
+            from
+                ART46.V_DOSSIER ad
+                    inner join ART46.BESTEK ab
+                    on ad.id = ab.dossier_id
+            where
+                ad.RAAMCONTRACT_JN = 'J'
+        )
+        , vastlegging as (
+            select
+                sum(coalesce(spv.bedrag,0)) vastlegging, be.bestek_id
+            from
+                ART46.BESTEK_SAP_PROJECT absp
+            inner join bestekken be on (absp.bestek_id = be.bestek_id)
+            left outer join SAP.PROJECT_VASTLEGGING spv on (absp.project_id = spv.project_id)
+            group by be.bestek_id
+        )
+        , geraamd as (
+            select
+                sum(coalesce(bedrag, 0)) geraamd, be.bestek_id
+            from
+                ART46.DEELOPDRACHT absp,
+                bestekken be
+            where
+                absp.bestek_id = be.bestek_id
+            group by be.bestek_id
+        )
+        select
+            ado.doss_hdr_id,
+            be.*,
+            coalesce(vastlegging.vastlegging, 0) vastlegging,
+            coalesce(geraamd.geraamd, 0) geraamd,
+            coalesce(vastlegging.vastlegging, 0) - coalesce(geraamd.geraamd, 0) saldo,
+            ad.dossier_id,
+            ad.bedrag,
+            ad.voorstel_d,
+            ado.dossier_type,
+            ad.goedkeuring_bedrag,
+            ado.dossier_b_l dossier_l,
+            ad.deelopdracht_id,
+            ad.VOORSTEL_DEELOPDRACHT_ID,
+            pl.IG_BEDRAG igbedrag,
+            coalesce(char(ad.goedkeuring_d, eur), '') goedkeuring_d
+        from
+            bestekken be
+                inner join ART46.DEELOPDRACHT ad on ad.bestek_id = be.bestek_id
+                inner join ART46.V_DOSSIER ado on ad.dossier_id = ado.id
+                left outer join vastlegging on vastlegging.bestek_id = be.bestek_id
+                left outer join geraamd on geraamd.bestek_id = be.bestek_id
+                left outer join ART46.V_PLANNING_LIJN pl on pl.lijn_id = ad.PLANNING_LIJN_ID
+        where
+            ad.goedkeuring_d is null
+            and ad.AFSLUIT_D is null -- niet afgesloten deelopdracht
+        order by
+            dossier_b_ander, bestek_id
+    </select>
+
+    <select id="getBestekOffertesDD"  resultType="ciMap" parameterType="int" >
+        select
+            off.id as value,
+            off.inzender || ' (' || art46.float_format(coalesce(off.totaal_incl_btw, 0)) || ' EUR)' as label
+        from art46.offerte off
+        where 1 = 1
+            and off.BESTEK_ID = #{bestek_id}
+            and status= 'Toegewezen'
+    </select>
+
+</mapper>

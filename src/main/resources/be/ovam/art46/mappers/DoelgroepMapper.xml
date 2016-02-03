@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.DoelgroepMapper">
+
+    <cache/>
+
+    <select id="get_doelgroepen" resultType="ciMap">
+        select
+            doelgroep_type_id,
+            doelgroep_type_b
+        from  art46.doelgroep_type
+        order by doelgroep_type_b
+    </select>
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.DeelopdrachtBriefMapper">
+
+    <insert id="insert" parameterType="map">
+        insert into art46.DEELOPDRACHT_BRIEF
+        (BRIEF_ID, DEELOPDRACHT_ID)
+         values
+         (#{brief_id}, #{deelopdracht_id})
+    </insert>
+
+    <select id="brieven" parameterType="int" resultType="ciMap">
+        select b.brief_id,
+               b.brief_nr,
+               b.commentaar
+        from art46.brief b
+                inner join art46.deelopdracht_brief db
+                on b.brief_id = db.brief_id
+        where db.deelopdracht_id = #{deelopdrachtid}
+    </select>
+
+</mapper>

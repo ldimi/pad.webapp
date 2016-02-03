@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping schema="ART46">
+		
+	<sql-query name="raming.by.bestekId">
+		<return alias="raming" class="be.ovam.art46.model.DossierArt46Raming"/>
+		select
+			adr.raming_id {raming.raming_id},
+			adr.dossier_id {raming.dossier_id},
+			adr.dossier_type {raming.dossier_type},
+			adr.fase_id {raming.fase_id},
+			adr.prioriteit_id {raming.prioriteit_id},
+			adr.jaartal {raming.jaartal},
+			adr.maand {raming.maand},
+			adr.raming {raming.raming},
+			adr.budget_vastgelegd {raming.budget_vastgelegd},
+			adr.commentaar {raming.commentaar},
+			adr.afgesloten_s {raming.afgesloten_s}
+		from 
+			ART46.BESTEK ab,
+			ART46.v_DOSSIER ad,
+			ART46.DOSSIER_RAMING adr
+		where
+			ab.bestek_id = ? and
+			ab.dossier_id = ad.id and
+			ad.id = adr.dossier_id	
+	</sql-query>	
+		
+</hibernate-mapping>
+           
+        
+        

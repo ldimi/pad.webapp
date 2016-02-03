@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.PlanningFaseMapper">
+
+	<cache/>
+
+	<select id="getPlanningFaseList"  resultType="be.ovam.art46.model.planning.PlanningFaseDO">
+		select DOSSIER_TYPE,
+			  FASE_CODE,
+			  FASE_CODE_B,
+			  BUDGET_CODE
+		from art46.PLANNING_FASE
+		order by DOSSIER_TYPE, FASE_CODE
+	</select>
+
+	<insert id="insertPlanningFase" parameterType="be.ovam.art46.model.planning.PlanningFaseDO">
+		insert into art46.PLANNING_FASE (dossier_type, fase_code, fase_code_b, budget_code)
+		values
+		(#{dossier_type}, #{fase_code}, #{fase_code_b, jdbcType=VARCHAR}, #{budget_code, jdbcType=VARCHAR}) 
+	</insert>
+	
+	<update id="updatePlanningFase" parameterType="be.ovam.art46.model.planning.PlanningFaseDO">
+		update art46.PLANNING_FASE
+		set 
+			fase_code_b = #{fase_code_b, jdbcType=VARCHAR},
+			budget_code = #{budget_code, jdbcType=VARCHAR}
+		where
+			dossier_type = #{dossier_type} and
+			fase_code = #{fase_code}
+	</update>
+
+	<delete id="deletePlanningFase" parameterType="be.ovam.art46.model.planning.PlanningFaseDO">
+		delete from  art46.PLANNING_FASE
+		where dossier_type = #{dossier_type}
+			and fase_code = #{fase_code}
+	</delete>
+
+
+	<select id="getPlanningFaseDetailList"
+			resultType="be.ovam.art46.model.planning.PlanningFaseDetailDO"
+			parameterType="be.ovam.art46.model.planning.PlanningFaseDO">
+		select FASE_CODE,
+			  FASE_DETAIL_CODE,
+			  FASE_DETAIL_CODE_B
+		from art46.PLANNING_FASE_DETAIL
+		where FASE_CODE = #{fase_code}
+		order by FASE_CODE, FASE_DETAIL_CODE
+	</select>
+
+
+	<insert id="insertPlanningFaseDetail" parameterType="be.ovam.art46.model.planning.PlanningFaseDetailDO">
+		insert into art46.PLANNING_FASE_DETAIL (fase_code, fase_detail_code, fase_detail_code_b)
+		values
+		(#{fase_code}, #{fase_detail_code}, #{fase_detail_code_b, jdbcType=VARCHAR}) 
+	</insert>
+	
+	<update id="updatePlanningFaseDetail" parameterType="be.ovam.art46.model.planning.PlanningFaseDetailDO">
+		update art46.PLANNING_FASE_DETAIL
+		set 
+			fase_detail_code_b = #{fase_detail_code_b, jdbcType=VARCHAR}
+		where
+			fase_code = #{fase_code} and
+			fase_detail_code = #{fase_detail_code}
+	</update>
+
+	<delete id="deletePlanningFaseDetail" parameterType="be.ovam.art46.model.planning.PlanningFaseDetailDO">
+		delete from  art46.PLANNING_FASE_DETAIL
+		where fase_code = #{fase_code}
+			and fase_detail_code = #{fase_detail_code}
+	</delete>
+	
+</mapper>

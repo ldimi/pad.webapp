@@ -1,0 +1,15 @@
+{
+  "name": "pad_webapp",
+  "description": "Interne toepassing PAD",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "babel src/main/webapp/script/pad -d target/pad.webapp/script/pad_lib"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.3.17"
+  },
+  "babel": {
+    "presets": ["es2015"]
+  },
+  "license": "UNLICENSED"
+}

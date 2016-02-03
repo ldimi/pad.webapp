@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.JaarMijlpaalMapper">
+
+    <cache/>
+
+    <select id="getMijlpalenList"  resultType="ciMap" parameterType="map">
+        select jaar,
+               mijlpaal_d,
+               percentage
+        from ART46.JAARMIJLPAAL
+        where jaar = #{jaar}
+        order by MIJLPAAL_D
+    </select>
+
+    <select id="getMijlpalenProgrammaList"  resultType="ciMap" parameterType="int">
+        select jaar,
+               mijlpaal_d,
+               programma_code,
+               percentage
+        from ART46.JAARMIJLPAAL_PROGRAMMA
+        where jaar = #{jaar}
+        order by programma_code, mijlpaal_d
+    </select>
+
+</mapper>

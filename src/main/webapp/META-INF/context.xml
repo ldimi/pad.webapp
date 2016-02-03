@@ -1,0 +1,10 @@
+<Context className="org.apache.catalina.core.StandardContext"
+	cachingAllowed="true"
+	charsetMapperClass="org.apache.catalina.util.CharsetMapper" cookies="true"
+	crossContext="false" debug="0" displayName="pad" docBase="pad"
+	mapperClass="org.apache.catalina.core.StandardContextMapper" path="/pad"
+	privileged="false" reloadable="false" swallowOutput="false" useNaming="true"
+	wrapperClass="org.apache.catalina.core.StandardWrapper">	
+	<ResourceLink name="jdbc/BSPROD" global="bsprod" type="javax.sql.DataSource"/>	
+	
+</Context>

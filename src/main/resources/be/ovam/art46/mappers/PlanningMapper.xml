@@ -1,0 +1,959 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.PlanningMapper">
+
+    <insert id="insertPlanningDossierVersie"
+        parameterType="be.ovam.art46.model.planning.PlanningDossierVersieDO" >
+        <selectKey keyProperty="planning_versie" resultType="int" order="BEFORE">
+            select coalesce(max(planning_versie), 0) + 1
+            from art46.PLANNING_DOSSIER_VERSIE pdv
+            where pdv.DOSSIER_ID = #{dossier_id}
+        </selectKey>
+        INSERT INTO ART46.PLANNING_DOSSIER_VERSIE
+           (dossier_id,
+            planning_versie,
+            wijzig_user)
+        VALUES
+           (#{dossier_id},
+            #{planning_versie},
+            #{wijzig_user})
+    </insert>
+
+    <insert id="insertPlanningLijn" parameterType="be.ovam.art46.model.planning.PlanningLijnDO">
+        <selectKey keyProperty="lijn_id" resultType="int" order="BEFORE">
+            select coalesce(max(lijn_id), 0) + 1
+            from art46.PLANNING_LIJN
+        </selectKey>
+        INSERT INTO ART46.PLANNING_LIJN
+           (lijn_id,
+            wijzig_user)
+        VALUES
+           (#{lijn_id},
+            #{wijzig_user})
+    </insert>
+
+    <insert id="insertPlanningMarkering" parameterType="ciMap">
+        <selectKey keyProperty="markering_id" resultType="int" order="AFTER">
+            select max(markering_id)
+            from ART46.PLANNING_MARKERING
+            where omschrijving = #{omschrijving} and
+                  creatie_user = #{creatie_user}
+        </selectKey>
+        INSERT INTO ART46.PLANNING_MARKERING (OMSCHRIJVING, CREATIE_USER)
+        VALUES (#{omschrijving}, #{creatie_user})
+    </insert>
+
+    <insert id="insertPlanningDossierVersieMarkering" parameterType="ciMap">
+        INSERT INTO ART46.PLANNING_DOSSIER_VERSIE_MARKERING (DOSSIER_ID,PLANNING_VERSIE, MARKERING_ID)
+        (
+            select plv.DOSSIER_ID , max(plv.PLANNING_VERSIE), #{markering_id}
+            from art46.PLANNING_DOSSIER_VERSIE plv
+            group by plv.DOSSIER_ID
+        )
+    </insert>
+
+    <insert id="insertPlanningLijnVersie" parameterType="be.ovam.art46.model.planning.PlanningLijnDO">
+        INSERT INTO ART46.PLANNING_LIJN_VERSIE
+           (doss_hdr_id,
+            lijn_id,
+            planning_dossier_versie,
+            dossier_id,
+            dossier_type,
+            fase_code,
+            fase_detail_code,
+            actie_code,
+            contract_id,
+            contract_type,
+            igb_d,
+            ig_bedrag,
+            bestek_id,
+            commentaar,
+            deleted_jn,
+            wijzig_user)
+        VALUES
+           (#{doss_hdr_id},
+            #{lijn_id},
+            #{planning_dossier_versie},
+            #{dossier_id},
+            #{dossier_type},
+            #{fase_code},
+            #{fase_detail_code, jdbcType=VARCHAR},
+            #{actie_code, jdbcType=VARCHAR},
+            #{contract_id, jdbcType=INTEGER},
+            #{contract_type, jdbcType=VARCHAR},
+            #{igb_d, jdbcType=DATE},
+            #{ig_bedrag, jdbcType=INTEGER},
+            #{bestek_id, jdbcType=INTEGER},
+            #{commentaar, jdbcType=VARCHAR},
+            #{deleted_jn, jdbcType=VARCHAR},
+            #{wijzig_user})
+    </insert>
+
+    <sql id="plannings_lijn_details_select_from" >
+        select
+            d.doss_hdr_id,
+            pl.lijn_id,
+            pl.planning_dossier_versie,
+            pl.dossier_id,
+            d.dossier_nr,
+            d.gemeente_b as dossier_gemeente_b,
+            d.dossier_b,
+            pl.dossier_type,
+            d.raamcontract_jn as dossier_is_raamcontract_jn,
+            pl.fase_code,
+            pf.heeft_details_jn as fase_code_heeft_details_jn,
+            pl.fase_detail_code,
+            pl.actie_code,
+            pl.contract_id,
+            pl.contract_type,
+            case when pl.CONTRACT_ID is null then null
+                else contr.dossier_b
+            end as contract_b,
+            contr.dossier_nr as contract_nr,
+            contr.raamcontract_jn as contract_is_raamcontract_jn,
+            pl.bestek_id,
+            b.bestek_nr,
+            b.omschrijving as bestek_omschrijving,
+            pl.igb_d,
+            pl.ig_bedrag,
+            do.deelopdracht_id,
+            av.id as aanvraagvastlegging_id,
+            case when do.goedkeuring_d is not null then do.bedrag
+                  when sp.project_id is not null then sp.totaal_vastgelegd
+                  else null
+            end as ib_bedrag,
+            case when do.goedkeuring_d is not null then do.goedkeuring_d
+                  when sp.project_id is not null then date(sp.creatie_ts)
+                  else null
+            end as ibb_d,
+            sp.project_id as sap_project_id,
+            case when do.bestek_id is not null then do.bestek_id
+                  when av.bestekid is not null then av.bestekid
+                  else null
+            end as benut_bestek_id,
+            case when do.bestek_id is not null then dob.bestek_nr
+                  when av.bestekid is not null then avb.bestek_nr
+                  else null
+            end as benut_bestek_nr,
+            case when do.bestek_id is not null then dob.omschrijving
+                  when av.bestekid is not null then avb.omschrijving
+                  else null
+            end as benut_bestek_omschrijving,
+            pl.commentaar,
+            pl.deleted_jn,
+            'R' as status_crud
+        from art46.PLANNING_LIJN_VERSIE pl
+                left join art46.V_PLANNING_FASE pf
+                on pl.fase_code = pf.fase_code
+                    inner join art46.v_dossier d
+                    on pl.dossier_id = d.id
+                left join art46.v_dossier contr
+                on pl.contract_id = contr.id
+                    left join art46.BESTEK b
+                    on pl.BESTEK_ID = b.BESTEK_ID
+                left join art46.deelopdracht do
+                on pl.lijn_id = do.planning_lijn_id
+                      left join art46.bestek dob
+                      on do.bestek_id = dob.bestek_id
+                left join art46.AANVRAAGVASTLEGGING av
+                on pl.LIJN_ID = av.PLANNINGSITEM
+                        left join (select p.project_id,
+                                          p.aanvraagid,
+                                          p.creatie_ts,
+                                          sum(pv.bedrag) as totaal_vastgelegd
+                                   from sap.project p
+                                            inner join sap.project_vastlegging pv
+                                            on p.PROJECT_ID = pv.PROJECT_ID
+                                   where p.ACTIEF_S = 'J'
+                                   group by p.project_id,
+                                          p.aanvraagid,
+                                          p.creatie_ts
+                                   ) as sp
+                        on av.AANVRAAGID = sp.AANVRAAGID
+                left join art46.bestek avb
+                on av.bestekid = avb.bestek_id
+    </sql>
+
+    <sql id="plannings_lijn_details" >
+        <include refid="plannings_lijn_details_select_from"/>
+        where pl.DELETED_JN = 'N'
+            and pl.PLANNING_DOSSIER_VERSIE = (select max(plv2.planning_dossier_versie)
+                                      from art46.PLANNING_LIJN_VERSIE plv2
+                                      where pl.LIJN_ID = plv2.LIJN_ID
+                                      )
+    </sql>
+
+    <select id="getPlanningDetails"
+        resultType="be.ovam.art46.model.planning.PlanningLijnDO"
+        parameterType="be.ovam.art46.model.planning.ParamsDO"  >
+        with
+        alle_lijnen as (
+            select *
+            from art46.v_planning_lijn_details planl
+            where 1 = 1
+                <if test="doss_hdr_id != null">
+                    and planl.DOSS_HDR_ID = #{doss_hdr_id}
+                </if>
+                <if test="jaar != null">
+                    and year(planl.igb_d) = #{jaar}
+                </if>
+                <if test="dossier_id != null">
+                    and planl.dossier_id = #{dossier_id}
+                </if>
+                <if test='dossier_type == "NIET_X"'>
+                    and planl.DOSSIER_TYPE != 'X'
+                </if>
+                <if test='dossier_type == "X" or dossier_type == "A" or dossier_type == "B"'>
+                    and planl.DOSSIER_TYPE = #{dossier_type}
+                </if>
+                <if test='benut_jn == "N"' >
+                    and planl.ibb_d is null
+                </if>
+        )
+        select *
+        from alle_lijnen
+        <if test="jaar == null">
+            <!-- nieuwe lijnen voor ongeplande dossiers -->
+        union
+            select
+                d2.doss_hdr_id,
+                null as lijn_id,
+                0 as planning_dossier_versie,
+                d2.id as dossier_id,
+                d2.dossier_nr,
+                d2.gemeente_b as dossier_gemeente_b,
+                d2.DOSSIER_B,
+                d2.DOSSIER_TYPE,
+                d2.raamcontract_jn as dossier_is_raamcontract_jn,
+                null as FASE_CODE,
+                null as fase_code_heeft_details_jn,
+                null as FASE_DETAIL_CODE,
+                null as actie_code,
+                null as CONTRACT_ID,
+                null as CONTRACT_TYPE,
+                null as contract_b,
+                null as contract_nr,
+                null as contract_is_raamcontract_jn,
+                null as bestek_id,
+                null as bestek_nr,
+                null as bestek_omschrijving,
+                null as IGB_D,
+                null as ig_bedrag,
+                null as deelopdracht_id,
+                null as aanvraagvastlegging_id,
+                null as ib_bedrag,
+                null as ibb_d,
+                null as sap_project_id,
+                null as benut_bestek_id,
+                null as benut_bestek_nr,
+                null as benut_bestek_omschrijving,
+                null as commentaar,
+                'N' as deleted_jn,
+                'C' as status_crud
+            from art46.v_dossier d2
+            where 1 = 1
+                and d2.DOSS_HDR_ID = #{doss_hdr_id}
+                and d2.AFSLUIT_D is null
+                <if test='dossier_type == "NIET_X"'>
+                    <![CDATA[
+                    and d2.DOSSIER_TYPE <> 'X'
+                    ]]>
+                </if>
+                <if test='dossier_type == "X" or dossier_type == "A" or dossier_type == "B"'>
+                    and d2.DOSSIER_TYPE = #{dossier_type}
+                </if>
+                and d2.id not in (select dossier_id from alle_lijnen)
+                <if test="dossier_id != null">
+                    and d2.id = #{dossier_id}
+                </if>
+        </if>
+        order by dossier_gemeente_b, dossier_b, fase_code
+    </select>
+
+    <sql id="dossiersDDvelden">
+        select d.id as value,
+            case when d.afsluit_d is null then (d.dossier_nr || ' - ' ||  d.dossier_b_l || ' (' || d.dossier_type || ')' )
+                 else '- ' || d.dossier_nr || ' - ' ||  d.dossier_b_l || ' (' || d.dossier_type || ')' || ' AFGESLOTEN'
+            end as label,
+            d.dossier_nr,
+            d.dossier_b,
+            d.dossier_b_l,
+            d.dossier_type
+        from art46.v_dossier d
+    </sql>
+
+    <select id="getDossiersDDbyUid" resultType="ciMap" parameterType="string" >
+        <include refid="dossiersDDvelden"/>
+        where d.DOSS_HDR_ID = #{doss_hdr_id}
+            and d.DOSSIER_TYPE != 'X'
+        order by d.afsluit_d desc, d.dossier_type desc, d.dossier_b_l
+    </select>
+
+    <!-- Haalt een dropDownList op met maar 1 dossier -->
+    <select id="getDossiersDDbyDossierId" resultType="ciMap" parameterType="string" >
+        <include refid="dossiersDDvelden"/>
+        where d.id = #{dossier_id}
+    </select>
+
+    <select id="getRaamcontractenDDbyUid" resultType="ciMap" parameterType="string" >
+        <include refid="dossiersDDvelden"/>
+        where d.DOSS_HDR_ID = #{doss_hdr_id}
+            and d.DOSSIER_TYPE = 'X'
+            and d.DOSSIER_FASE_ID = 2
+        order by d.dossier_type desc, d.dossier_b_l
+    </select>
+
+    <select id="getGegroepeerdeOpdrachtenDDbyUid" resultType="ciMap" parameterType="string" >
+        <include refid="dossiersDDvelden"/>
+        <![CDATA[
+            where d.DOSS_HDR_ID = #{doss_hdr_id}
+                and d.DOSSIER_TYPE = 'X'
+                and d.DOSSIER_FASE_ID <> 2
+            order by d.dossier_type desc, d.dossier_b
+        ]]>
+    </select>
+
+    <select id="getFaseDD" resultType="ciMap" >
+        select pf.DOSSIER_TYPE,
+              pf.FASE_CODE as value,
+              pf.FASE_CODE as label,
+              pf.heeft_details_JN
+        from art46.V_PLANNING_FASE pf
+        order by pf.DOSSIER_TYPE, pf.FASE_CODE
+    </select>
+
+    <select id="getFaseDetailDD" resultType="ciMap" >
+        SELECT pfd.FASE_CODE,
+              pfd.FASE_DETAIL_CODE as value,
+              pfd.FASE_DETAIL_CODE as label
+        from art46.PLANNING_FASE_DETAIL pfd
+        order by pfd.FASE_CODE, pfd.FASE_DETAIL_CODE
+    </select>
+
+    <select id="getBudgetCodeDD" resultType="ciMap" >
+        select BUDGET_CODE as value,
+              BUDGET_CODE as label
+        from art46.BUDGET_CODE
+        order by budget_code
+    </select>
+
+
+    <select id="getMarkeringenDD" resultType="ciMap" >
+        select MARKERING_ID as value,
+              OMSCHRIJVING || ' (' || SMEG.OVAMDATE(date(CREATIE_TS)) || ')' as label
+        from art46.PLANNING_MARKERING
+        order by MARKERING_ID desc
+    </select>
+
+    <select id="getContractenDD" resultType="ciMap" parameterType="string" >
+        select value,
+            ( case
+                when type_ind = 0 then ''              -- eigen gegroepeerde opdrachten
+                when type_ind = 1 then '..'            -- gegroepeerde opdrachten van anderen
+                when type_ind = 2 then ''              -- raam contracten
+                when type_ind = 3 then '(GESLOTEN) '   -- afgesloten dossiers
+                else '???  '                           -- error
+              end || label) as label,
+              contract_nr,
+              contract_b,
+              contract_type,
+              raamcontract_jn
+        from (
+            select d.id as value,
+                (d.DOSSIER_NR || ' - ' || d.dossier_b) as label,
+                case when d.AFSLUIT_D is not null then 3
+                    when d.dossier_fase_id = 2 then 2           -- raam contracten
+                    when d.DOSS_HDR_ID = #{doss_hdr_id} then 0  -- eigen gegroepeerde opdrachten
+                    else 1                                      -- gegroepeerde opdrachten van anderen
+                end as type_ind,
+                d.dossier_nr as contract_nr,
+                d.dossier_b as contract_b,
+                d.dossier_type as contract_type,
+                d.raamcontract_jn
+            from art46.v_dossier d
+            where d.DOSSIER_TYPE = 'X'
+            order by  type_ind, d.dossier_b
+        )
+    </select>
+
+    <select id="getBestekkenByDossier" resultType="ciMap" parameterType="int" >
+        select bestek_id as value,
+               '(' || bestek_nr || ') ' ||
+               case when afsluit_d is not null then '(GESLOTEN) '
+                   else ''
+               end || omschrijving  as label,
+               bestek_nr,
+               omschrijving
+        from art46.Bestek
+        where dossier_id = #{dossier_id}
+              and wbs_nr is not null
+        order by afsluit_d desc, omschrijving
+    </select>
+
+    <select id="getOverzichtRaamcontract" resultType="ciMap" parameterType="int" >
+        <!-- per niet-afgesloten bestek wordt er een sommatie lijn opgebouwd.
+         -->
+        select *
+        from (
+            select
+                t.dossier_id as contract_id,
+                t.bestek_nr as group_id,
+                t.bestek_id,
+                t.bestek_nr,
+                t.omschrijving,
+                null as fase_code,
+                (coalesce(t.vastgelegd, 0) - coalesce(t.geraamd_deelopdr, 0)) as saldo_geraamd,
+                t.gepland_nt_geraamd as gepland,
+                (coalesce(t.vastgelegd, 0) - coalesce(t.geraamd_deelopdr, 0) - coalesce(t.gepland_nt_geraamd, 0)) as voorspeld_saldo
+            from (
+                    select
+                        b.dossier_id,
+                        b.bestek_id,
+                        b.bestek_nr,
+                        b.omschrijving,
+                        (select sum(coalesce(spv.bedrag,0)) AS vastlegging
+                         from ART46.BESTEK_SAP_PROJECT absp
+                                  left join sap.project sp
+                                  on absp.project_id = sp.project_id
+                                  and sp.actief_s = 'J'
+                              left join SAP.PROJECT_VASTLEGGING spv
+                              on sp.project_id = spv.project_id
+                         where absp.bestek_id = b.bestek_id
+                        ) as vastgelegd,
+                        --
+                        (select sum(coalesce(bedrag, 0)) as geraamd
+                         from ART46.DEELOPDRACHT absp
+                         where bestek_id = b.bestek_id
+                        ) as geraamd_deelopdr,
+                        --
+                        (select sum(coalesce(do.bedrag, pl.IG_BEDRAG, 0))
+                         from art46.V_PLANNING_LIJN pl
+                                left outer join art46.DEELOPDRACHT do
+                                on pl.LIJN_ID = do.PLANNING_LIJN_ID
+                         where pl.BESTEK_ID = b.bestek_id
+                                and pl.contract_id is not null
+                                 -- and year(pl.igb_d) &lt;=  year(current date)
+                                and do.DEELOPDRACHT_ID is null
+                        ) as gepland_nt_geraamd
+                    from art46.bestek b
+                    where
+                        b.afsluit_d is null
+                        and b.DOSSIER_ID = #{dossier_id}
+                ) as t
+            union
+            <!-- planningslijnen die niet aan een bestek gekoppeld zijn
+                    Deze worden gesommeerd per fase
+             -->
+            select
+                pl.contract_id,
+                'nieuw bestek '|| pl.FASE_CODE as group_id,
+                 null as bestek_id,
+                 null as bestek_nr,
+                 null as omschrijving,
+                 pl.fase_code,
+                 null as saldo_geraamd,
+                 sum(pl.ig_bedrag) as gepland,
+                 (- coalesce(sum(pl.ig_bedrag), 0)) as voorspeld_saldo
+            from  art46.V_PLANNING_LIJN pl
+                    left join art46.DEELOPDRACHT do
+                    on pl.LIJN_ID = do.PLANNING_LIJN_ID
+            where pl.CONTRACT_ID = #{dossier_id}
+                and pl.BESTEK_ID is null
+                and do.deelopdracht_id is null  -- niet gekoppeld met bestek via deelopdracht
+                 -- and year(pl.igb_d) &lt;=  year(current date)
+            group by pl.contract_id, pl.FASE_CODE
+        ) as T
+        order by T.gepland, T.group_id
+    </select>
+
+
+    <select id="getOpenstaandePlanningslijnenVoorBestek" resultType="ciMap" parameterType="int" >
+        select
+            pl.lijn_id,
+            b.bestek_id,
+            b.bestek_nr,
+            pl.dossier_id,
+            d.dossier_nr,
+            d.dossier_b_l,
+            d.doss_hdr_id,
+            d.dossier_type,
+            pl.igb_d,
+            smeg.ovamdate(pl.igb_d) as igb_ds,
+            pl.ig_bedrag
+        from  art46.bestek b
+                inner join art46.v_planning_lijn pl
+                on pl.bestek_id = b.bestek_id
+                and pl.contract_id is not null  <!-- alleen planningslijnen van deelopdrachten -->
+                    left join art46.v_dossier d
+                    on pl.dossier_id = d.id
+                left join art46.deelopdracht do
+                on pl.lijn_id = do.planning_lijn_id
+        where 1 = 1
+            and do.deelopdracht_id is null <!-- niet gekoppeld aan deelopdracht  -->
+            and b.bestek_id = #{bestek_id}
+    </select>
+
+
+    <select id="getDetailsVoorBestek" resultType="ciMap" parameterType="int" >
+        select *
+        from (
+            <!-- geplande deelopdrachten, nog niet gekoppeld met bestaande deelopdracht -->
+            select b.bestek_id, b.bestek_nr,
+                d.id as dossier_id,
+                d.dossier_nr,
+                d.dossier_b as dossier_b,
+                d.doss_hdr_id as doss_hdr_id,
+                pl.IGB_D,
+                pl.IG_BEDRAG,
+                do.bedrag
+            from  art46.bestek b
+                    inner join art46.V_PLANNING_LIJN pl
+                    on pl.BESTEK_ID = b.bestek_id
+                    and pl.contract_id is not null  <!-- alleen planningslijnen van deelopdrachten -->
+                        left join art46.v_dossier d
+                        on pl.dossier_id = d.id
+                    left join art46.DEELOPDRACHT do
+                    on pl.LIJN_ID = do.PLANNING_LIJN_ID
+            where 1 = 1
+                and do.DEELOPDRACHT_ID is null <!-- niet gekoppeld aan deelopdracht  -->
+                and b.bestek_id = #{bestek_id}
+            union
+            <!-- reeds aangemaakte deelopdrachten -->
+            select b.bestek_id, b.bestek_nr,
+                d1.id as dossier_id,
+                d1.dossier_nr,
+                d1.dossier_b as dossier_b,
+                d1.doss_hdr_id as doss_hdr_id,
+                pl.IGB_D,
+                pl.IG_BEDRAG,
+                do.bedrag
+            from  art46.bestek b
+                    inner join art46.DEELOPDRACHT do
+                    on do.BESTEK_ID = b.BESTEK_ID
+                inner join art46.v_dossier d1
+                on do.dossier_id = d1.id
+                    left join art46.V_PLANNING_LIJN pl
+                    on do.PLANNING_LIJN_ID = pl.LIJN_ID
+            where b.bestek_id = #{bestek_id}
+            ) as T
+        order by T.igb_d
+    </select>
+
+    <select id="getDetailsVoorFase" resultType="ciMap" parameterType="map" >
+        select d.dossier_nr,
+            d.dossier_b,
+            d.doss_hdr_id,
+            pl.igb_d,
+            pl.ig_bedrag
+        from art46.V_PLANNING_LIJN pl
+                left outer join art46.v_dossier d
+                on pl.dossier_id = d.id
+                    left join art46.DEELOPDRACHT do
+                    on pl.LIJN_ID = do.PLANNING_LIJN_ID
+        where pl.bestek_id is null
+            and pl.fase_code = #{fase_code}
+            and pl.contract_id = #{contract_id}
+            and do.deelopdracht_id is null  <!-- niet gekoppeld met bestek via deelopdracht -->
+        order by pl.igb_d
+    </select>
+
+    <!--
+        geeft een jaaroverzicht van budgetten per budget_code
+          parameter : jaar
+          - geeft vastgelegd budget per budget_code
+          - geeft gepland budget per budget_code
+    -->
+    <select id="getBudgetPerBudgetcode"
+        resultType="ciMap"
+        parameterType="map" >
+        select
+              cast(#{jaar} as integer) as jaar,
+              coalesce(jb.BUDGET_CODE, planl.budget_code, vastll.budget_code) as budget_code,
+              jb.budget,
+              jb.effectief_budget,
+              planl.gepland_bedrag_per_budgetcode,
+              vastll.vastgelegd_bedrag_per_budgetcode
+        from (select * from art46.JAARBUDGET where jaar = #{jaar}) as  jb
+             full outer join (select budget_code,
+                                    sum(bedrag) as gepland_bedrag_per_budgetcode
+                              from
+                                   (select coalesce(bc.budget_code, pf.budget_code) as budget_code,
+                                             coalesce(spv.bedrag, pl.IG_BEDRAG) as bedrag
+                                    FROM art46.V_PLANNING_LIJN_DETAILS pl
+                                           LEFT outer join art46.PLANNING_FASE pf
+                                           on pl.FASE_CODE = pf.FASE_CODE
+                                               left join sap.project_vastlegging spv
+                                               on pl.sap_project_id = spv.project_id
+                                                   left join art46.budget_code bc
+                                                   on spv.budgetair_artikel = bc.artikel_b
+                                    where 1 = 1
+                                        and year(pl.igb_d) = #{jaar}
+                                        and pl.contract_id is null)
+                              group by budget_code
+                             ) as planl
+             on planl.budget_code = jb.budget_code
+             full outer join (
+                        select bc.budget_code,
+                               sum(spv.bedrag) as vastgelegd_bedrag_per_budgetcode
+                        from sap.PROJECT_VASTLEGGING spv
+                                  left join art46.budget_code bc
+                                  on spv.budgetair_artikel = bc.artikel_b
+                        where 1 = 1
+                                and spv.BOEKJAAR = #{jaar}
+                         group by bc.budget_code
+                              ) as vastll
+             on vastll.budget_code = jb.budget_code
+        order by budget_code
+    </select>
+
+
+    <!--
+        geeft een jaaroverzicht van budgetten per programma_code
+          parameter : jaar
+          - geeft vastgelegd budget per programma_code
+          - geeft gepland budget per programma_code
+    -->
+    <select id="getBudgetPerProgrammacode"
+        resultType="ciMap"
+        parameterType="map" >
+            select
+                coalesce(jb.jaar,planl.jaar, vastl.jaar) as jaar,
+                coalesce(jb.programma_code, planl.programma_code, vastl.programma_code) as programma_code,
+                jb.budget,
+                planl.gepland_bedrag_per_programmacode,
+                vastl.vastgelegd_bedrag_per_programmacode
+            from (select * from art46.JAARBUDGET_PER_PROGRAMMA where jaar = #{jaar}) as  jb
+                 full outer join (
+                            select jaar,
+                                   programma_code,
+                                   sum(bedrag) as gepland_bedrag_per_programmacode
+                            from (
+                                   select year(pl.igb_d) as jaar,
+                                          coalesce(dh.programma_type_code, d.programma_code) as programma_code,
+                                          coalesce(spv.bedrag, pl.ig_bedrag) as bedrag
+                                   from art46.v_planning_lijn_details pl
+                                          left outer join art46.v_dossier d
+                                          on pl.dossier_id = d.id
+                                        left outer join art46.dossier_houder dh
+                                        on d.doss_hdr_id = dh.doss_hdr_id
+                                            left join sap.project_vastlegging spv
+                                            on pl.sap_project_id = spv.project_id
+                                   where 1 = 1
+                                        and year(pl.igb_d) = #{jaar}
+                                        and pl.contract_id is null
+                                  )
+                            group by jaar, programma_code
+                 ) as planl
+                 on planl.programma_code = jb.programma_code
+                 full outer join (
+                            select jaar,
+                                   programma_code,
+                                   sum(bedrag) as vastgelegd_bedrag_per_programmacode
+                            from (
+                                    select spv.BOEKJAAR as jaar,
+                                         coalesce(dh.programma_type_code, d.programma_code) as programma_code,
+                                         spv.bedrag
+                                    from sap.PROJECT_VASTLEGGING spv
+                                       left join art46.BESTEK_SAP_PROJECT bsp
+                                       on spv.PROJECT_ID = bsp.PROJECT_ID
+                                           left join art46.bestek b
+                                           on bsp.BESTEK_ID = b.bestek_id
+                                       left join art46.v_dossier d
+                                       on b.DOSSIER_ID = d.id
+                                           left join art46.dossier_houder dh
+                                           on d.doss_hdr_id = dh.doss_hdr_id
+                                    where 1 = 1
+                                          and spv.BOEKJAAR = #{jaar}
+                                  )
+                            group by jaar, programma_code
+                 ) as vastl
+                 on (vastl.programma_code = jb.programma_code or vastl.programma_code = planl.programma_code)
+            order by programma_code
+    </select>
+
+    <!-- geeft alle vastgelegde bedragen met de benuttings datum
+                (= benuttingen zonder de deelopdrachten)
+            parameters :
+                - jaar : zo kan er een grafiek met het verloop van vastgelegd budget over een jaar gegenereerd worden
+                - doss_hdr_id : om individueel budget te selecteren.
+                - programma_code: om programma budget te selecteren.
+     -->
+    <select id="getVastgelegdeBedragen"
+            resultType="ciMap"
+            parameterType="be.ovam.art46.controller.planning.jaar.ParamsDO" >
+        select spv.datum,
+               spv.bedrag
+        from sap.PROJECT_VASTLEGGING spv
+             left join art46.BESTEK_SAP_PROJECT bsp
+             on spv.PROJECT_ID = bsp.PROJECT_ID
+                     left join art46.bestek b
+                     on bsp.BESTEK_ID = b.bestek_id
+                 left join art46.v_dossier d
+                 on b.DOSSIER_ID = d.id
+                     left join art46.dossier_houder dh
+                     on d.doss_hdr_id = dh.doss_hdr_id
+        where 1 = 1
+            and spv.BOEKJAAR = #{jaar}
+            <if test='programma_code != null and programma_code != "TOTAAL"'>
+                and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
+                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                    )
+            </if>
+            <if test="doss_hdr_id != null">
+                and d.DOSS_HDR_ID = #{doss_hdr_id}
+            </if>
+        order by spv.datum
+    </select>
+
+    <!-- geeft alle geplande bedragen met de plannings datum
+            parameters :
+                - jaar : zo kan er een grafiek met het verloop van gepland budget over een jaar gegenereerd worden
+                - doss_hdr_id : om individueel budget te selecteren.
+                - programma_code: om programma budget te selecteren.
+     -->
+    <select id="getGeplandeBedragen"
+            resultType="ciMap"
+            parameterType="be.ovam.art46.model.planning.ParamsDO"  >
+        select pl.IGB_D as datum,
+               coalesce(spv.bedrag, pl.IG_BEDRAG) as bedrag
+        from art46.v_planning_lijn_details pl
+                left join art46.v_dossier d
+                on pl.dossier_id = d.id
+           LEFT outer join art46.DOSSIER_HOUDER dh
+           on pl.DOSS_HDR_ID = dh.DOSS_HDR_ID
+                left join sap.project_vastlegging spv
+                on pl.sap_project_id = spv.project_id
+        where 1 = 1
+            and pl.contract_id is null <!-- deelopdrachten niet meetellen. -->
+            and year(pl.igb_d) = #{jaar}
+            <if test='programma_code != null and programma_code != "TOTAAL"'>
+                and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
+                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                    )
+            </if>
+            <if test="doss_hdr_id != null">
+                and pl.DOSS_HDR_ID = #{doss_hdr_id}
+            </if>
+        order by igb_d
+    </select>
+
+    <!-- geeft alle geplande bedragen volgens een gegeven markering
+            parameters :
+                - jaar: zo kan er een grafiek met het verloop van gepland budget over een jaar gegenereerd worden
+                - doss_hdr_id : om individueel budget te selecteren.
+                - programma_code: om programma budget te selecteren.
+                - markering_id:
+     -->
+    <select id="getGemarkeerdePlanningBedragen"
+            resultType="ciMap"
+            parameterType="be.ovam.art46.model.planning.ParamsDO"  >
+        with
+        plannings_lijn as (
+            select pl.igb_d,
+                   pl.ig_bedrag,
+                   pl.dossier_id,
+                   pl.doss_hdr_id,
+                   pl.contract_id
+            from art46.v_planning_lijn_details_versie pl
+            where pl.deleted_jn = 'N'
+                  and pl.planning_dossier_versie = (select max(plv2.planning_dossier_versie)
+                                          from art46.planning_lijn_versie plv2
+                                          where plv2.lijn_id = pl.lijn_id
+                                                and plv2.planning_dossier_versie &lt;= (
+                                                                                select planning_versie
+                                                                                from art46.planning_dossier_versie_markering
+                                                                                where markering_id = #{markering_id}
+                                                                                     and dossier_id = pl.dossier_id
+                                                                             )
+                                        )
+                  and pl.contract_id is null <!-- deelopdrachten niet meetellen. -->
+                  and year(pl.igb_d) = #{jaar}
+                  <if test="doss_hdr_id != null">
+                      and pl.DOSS_HDR_ID = #{doss_hdr_id}
+                  </if>
+        )
+        select pl.IGB_D as datum,
+               pl.IG_BEDRAG as bedrag
+        from plannings_lijn pl
+                left join art46.v_dossier d
+                on pl.dossier_id = d.id
+           LEFT outer join art46.DOSSIER_HOUDER dh
+           on pl.DOSS_HDR_ID = dh.DOSS_HDR_ID
+        where 1 = 1
+            <if test='programma_code != null and programma_code != "TOTAAL"'>
+                and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
+                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                    )
+            </if>
+        order by igb_d
+    </select>
+
+
+    <select id="getDetailOverzichtGepland"
+        resultType="ciMap"
+        parameterType="be.ovam.art46.controller.planning.jaar.DetailOverzichtParamsDO" >
+        select pl.lijn_id,
+               pl.doss_hdr_id,
+               pl.dossier_nr,
+               pl.dossier_type,
+               pl.dossier_b,
+               pl.dossier_gemeente_b,
+               pl.fase_code,
+               coalesce(bc.budget_code, pf.budget_code) as budget_code,
+               bc.budget_code as budget_code_benut,
+               coalesce(dh.PROGRAMMA_TYPE_CODE, d.PROGRAMMA_CODE) as programma_code,
+               pl.contract_id,
+               case when pl.contract_id is null then null
+                    else 'JA'
+               end as deelopdracht_jn,
+               pl.IGB_D,
+               <!--
+                   Indien vastgelegd : wordt het gepland bedrag vervangen door het effectief vastgelegd bedrag.
+                   (nb: bij gesplitste vastlegging, wordt het gepland bedrag dus ook gesplitst weergegeven ...)
+               -->
+               case when spv.VOLGNUMMER is null then cast(pl.IG_BEDRAG as double)
+                    else cast(spv.bedrag as double)
+               end as ig_bedrag,
+               case when pl.contract_id is null then spv.datum
+                    else IBB_D
+               end as IBB_D,
+               case when pl.contract_id is null then cast(spv.bedrag as double)
+                    else pl.ib_bedrag
+               end as ib_bedrag,
+               spv.volgnummer
+        from art46.v_planning_lijn_details pl
+                left join art46.v_dossier d
+                on pl.dossier_id = d.id
+            LEFT join art46.DOSSIER_HOUDER dh
+            on pl.DOSS_HDR_ID = dh.DOSS_HDR_ID
+                LEFT join art46.PLANNING_FASE pf
+                on pl.FASE_CODE = pf.FASE_CODE
+            left join sap.project_vastlegging spv
+            on pl.sap_project_id = spv.project_id
+                left join art46.budget_code bc
+                on spv.budgetair_artikel = bc.artikel_b
+        where 1 = 1
+            <if test="dossier_type != null">
+                and pl.dossier_type = #{dossier_type}
+            </if>
+            <if test="doss_hdr_id != null">
+                and pl.DOSS_HDR_ID = #{doss_hdr_id}
+            </if>
+            <if test='programma_code != null and programma_code != "TOTAAL"'>
+                and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
+                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                    )
+            </if>
+            <if test="budget_code != null">
+                and (bc.budget_code = #{budget_code} OR
+                     (bc.budget_code is null and pf.budget_code = #{budget_code})
+                    )
+            </if>
+            <if test="fase_code != null">
+                and pl.fase_code = #{fase_code}
+            </if>
+            <if test='deelopdracht_jn == "J"'>
+                and pl.contract_id is not null
+            </if>
+            <if test='deelopdracht_jn == "N"'>
+                and pl.contract_id is null
+            </if>
+            <if test="gepland_van_d != null">
+                and pl.IGB_D &gt;= #{gepland_van_d}
+            </if>
+            <if test="gepland_tot_d != null">
+                and pl.IGB_D &lt;= #{gepland_tot_d}
+            </if>
+            <if test="benut_van_d != null">
+                and pl.IBB_D &gt;= #{benut_van_d}
+            </if>
+            <if test="benut_tot_d != null">
+                and pl.IBB_D &lt;= #{benut_tot_d}
+            </if>
+        order by pl.lijn_id, spv.datum
+    </select>
+
+    <select id="getDetailOverzichtVastgelegd"
+        resultType="ciMap"
+        parameterType="be.ovam.art46.controller.planning.jaar.DetailOverzichtParamsDO" >
+        select
+            pl.lijn_id,
+            d.DOSS_HDR_ID,
+            d.dossier_id as dossier_nr,
+             d.dossier_type,
+            d.dossier_b,
+            d.GEMEENTE_B as dossier_gemeente_b,
+            pl.fase_code,
+            bc.budget_code,
+            coalesce(dh.PROGRAMMA_TYPE_CODE, d.PROGRAMMA_CODE) as programma_code,
+            pl.CONTRACT_ID,
+            case when pl.contract_id is null then null
+                 else 'JA'
+            end as deelopdracht_jn,
+            pl.IGB_D,
+           <!--
+               gepland bedrag niet dubbel tellen indien er van twee vastleggingen gebruik gemaakt wordt
+           -->
+            case when (spv.VOLGNUMMER = 0 and spv.bedrag &gt;= 0)  then cast(pl.IG_BEDRAG as double)
+                 else null
+            end as ig_bedrag,
+            spv.DATUM as ibb_d,
+            cast(spv.bedrag as double) as ib_bedrag,
+            spv.volgnummer
+        from sap.PROJECT_VASTLEGGING spv
+                   inner join art46.BESTEK_SAP_PROJECT bsp
+                   on spv.PROJECT_ID = bsp.PROJECT_ID
+               left outer join art46.bestek b
+               on bsp.BESTEK_ID = b.bestek_id
+                   left outer join art46.V_dossier d
+                   on b.DOSSIER_ID = d.id
+               left outer join art46.dossier_houder dh
+               on d.DOSS_HDR_ID = dh.DOSS_HDR_ID
+                   left join art46.budget_code bc
+                   on spv.budgetair_artikel = bc.artikel_b
+               --
+               left outer join sap.project sp
+               on spv.PROJECT_ID = sp.PROJECT_ID
+                   left outer join art46.AANVRAAGVASTLEGGING av
+                   on sp.AANVRAAGID = av.AANVRAAGID
+               left outer join art46.V_PLANNING_LIJN pl
+               on av.PLANNINGSITEM = pl.LIJN_ID
+                   LEFT join art46.PLANNING_FASE pf
+                   on pl.FASE_CODE = pf.FASE_CODE
+        where 1 = 1
+            <if test="dossier_type != null">
+                and d.dossier_type = #{dossier_type}
+            </if>
+            <if test="doss_hdr_id != null">
+                and dh.DOSS_HDR_ID = #{doss_hdr_id}
+            </if>
+            <if test='programma_code != null and programma_code != "TOTAAL"'>
+                and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
+                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                    )
+            </if>
+            <if test="budget_code != null">
+                and bc.budget_code = #{budget_code}
+            </if>
+            <if test="fase_code != null">
+                and pl.fase_code = #{fase_code}
+            </if>
+            <if test="gepland_van_d != null">
+                and pl.IGB_D &gt;= #{gepland_van_d}
+            </if>
+            <if test="gepland_tot_d != null">
+                and pl.IGB_D &lt;= #{gepland_tot_d}
+            </if>
+            <if test="benut_van_d != null">
+                and spv.DATUM &gt;= #{benut_van_d}
+            </if>
+            <if test="benut_tot_d != null">
+                and spv.DATUM &lt;= #{benut_tot_d}
+            </if>
+        order by igb_d
+    </select>
+
+</mapper>

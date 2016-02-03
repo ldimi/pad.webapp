@@ -1,0 +1,81 @@
+
+--------------------------------------------------------------------;
+-- DOWN
+--------------------------------------------------------------------;
+
+ALTER TABLE SAP.PROJECT
+    alter column ACTIEF_S SET  NULL
+;
+
+call sysproc.admin_cmd('reorg table SAP.PROJECT')
+;
+
+ALTER TABLE SAP.PROJECT    
+    DROP CONSTRAINT FK_SPR_ACTIEF_S;
+
+
+DROP TRIGGER SAP.BU_PROJECT_AANVRAAGID_UNIEK;
+DROP TRIGGER SAP.BI_PROJECT_AANVRAAGID_UNIEK;
+
+CREATE TRIGGER SAP.BU_PROJECT_AANVRAAGID_UNIEK
+BEFORE UPDATE ON SAP.PROJECT
+REFERENCING NEW AS N OLD AS O
+FOR EACH ROW
+WHEN ((N.AANVRAAGID is not null AND (N.AANVRAAGID != O.AANVRAAGID OR O.AANVRAAGID is null) ) and
+      (N.AANVRAAGID in (select distinct AANVRAAGID from SAP.PROJECT)))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID is al gekoppeld aan een SAP.PROJECT'
+;
+
+CREATE TRIGGER SAP.BI_PROJECT_AANVRAAGID_UNIEK
+BEFORE INSERT ON SAP.PROJECT
+REFERENCING NEW AS N
+FOR EACH ROW
+WHEN (N.AANVRAAGID is not null and N.AANVRAAGID in (select distinct AANVRAAGID from SAP.PROJECT))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID is al gekoppeld aan een SAP.PROJECT'
+;
+
+
+delete from  ART46.DB_VERSIE
+where DB_VERSIE = '3.02.41';
+
+--------------------------------------------------------------------;
+-- UP
+--------------------------------------------------------------------;
+
+ALTER TABLE SAP.PROJECT
+    alter column ACTIEF_S drop not null
+;
+
+call sysproc.admin_cmd('reorg table SAP.PROJECT')
+;
+
+
+ALTER TABLE SAP.PROJECT    
+    ADD CONSTRAINT FK_SPR_ACTIEF_S FOREIGN KEY (ACTIEF_S)
+    REFERENCES ART46.JA_NEE_CODE(code);
+
+
+DROP TRIGGER SAP.BU_PROJECT_AANVRAAGID_UNIEK;
+
+CREATE TRIGGER SAP.BU_PROJECT_AANVRAAGID_UNIEK
+BEFORE UPDATE ON SAP.PROJECT
+REFERENCING NEW AS N OLD AS O
+FOR EACH ROW
+WHEN ((N.AANVRAAGID is not null AND (N.AANVRAAGID != O.AANVRAAGID OR O.AANVRAAGID is null) ) and
+      (N.AANVRAAGID in (select distinct AANVRAAGID from SAP.PROJECT WHERE ACTIEF_S = 'J')))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID is al gekoppeld aan een SAP.PROJECT'
+;
+
+DROP TRIGGER SAP.BI_PROJECT_AANVRAAGID_UNIEK;
+
+CREATE TRIGGER SAP.BI_PROJECT_AANVRAAGID_UNIEK
+BEFORE INSERT ON SAP.PROJECT
+REFERENCING NEW AS N
+FOR EACH ROW
+WHEN (N.AANVRAAGID is not null and N.AANVRAAGID in (select distinct AANVRAAGID from SAP.PROJECT WHERE ACTIEF_S = 'J'))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID is al gekoppeld aan een SAP.PROJECT'
+;
+
+
+-- deze versie van de wijzigingen in db registreren.
+insert into ART46.DB_VERSIE(DB_VERSIE) values ('3.02.41');

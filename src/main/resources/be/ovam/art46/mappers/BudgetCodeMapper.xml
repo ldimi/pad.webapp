@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.BudgetCodeMapper">
+
+	<cache/>
+
+	<select id="getBudgetCodeList"  resultType="ciMap">
+		select budget_code,
+			  budget_code_b,
+			  artikel_b
+		from art46.budget_code
+		order by budget_code
+	</select>
+
+	<update id="updateBudgetCode" parameterType="map">
+		update art46.BUDGET_CODE
+		set 
+			budget_code_b = #{budget_code_b},
+			artikel_b = #{artikel_b}
+		where budget_code = #{budget_code}
+	</update>
+
+	<insert id="insertBudgetCode" parameterType="map">
+		insert into art46.BUDGET_CODE
+		(budget_code, budget_code_b, artikel_b)
+		values
+		(#{budget_code}, #{budget_code_b}, #{artikel_b}) 
+	</insert>
+
+	<delete id="deleteBudgetCode" parameterType="string">
+		delete from  art46.BUDGET_CODE
+		where budget_code = #{budget_code}
+	</delete>
+	
+</mapper>

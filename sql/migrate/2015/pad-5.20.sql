@@ -1,0 +1,45 @@
+--------------------------------------------------------------------;
+-- DOWN
+--------------------------------------------------------------------;
+
+
+delete from  art46.db_versie
+where db_versie = '5.20';
+
+--------------------------------------------------------------------;
+-- UP
+--------------------------------------------------------------------;
+
+ALTER TABLE ART46.WEBLOKET_GEBRUIKER
+    ALTER COLUMN PASSWORD DROP NOT NULL;
+
+ALTER TABLE ART46.WEBLOKET_GEBRUIKER
+    ADD COLUMN laa_gebruiker VARCHAR(6) DEFAULT 0;
+CALL SYSPROC.ADMIN_CMD('REORG TABLE ART46.WEBLOKET_GEBRUIKER');
+
+RENAME TABLE ART46.DOSSIER_ONDERNEMING_ROL TO DOSSIER_ROL;
+CALL SYSPROC.ADMIN_CMD('REORG TABLE ART46.DOSSIER_ROL');
+
+ALTER TABLE ART46.WEBLOKET_GEBRUIKER_DOSSIER
+    ADD ROL VARCHAR(35);
+CALL SYSPROC.ADMIN_CMD('REORG TABLE ART46.WEBLOKET_GEBRUIKER_DOSSIER');
+
+CREATE TABLE ART46.DOSSIER_ABONNEE
+(
+  EMAIL_ADDRESS VARCHAR(120) NOT NULL,
+  DOSSIER_ID INT NOT NULL,
+  PRIMARY KEY (EMAIL_ADDRESS, DOSSIER_ID),
+  FOREIGN KEY (DOSSIER_ID) REFERENCES ART46.DOSSIER (ID)
+);
+
+CALL SYSPROC.ADMIN_CMD('REORG TABLE ART46.DOSSIER_ABONNEE');
+
+
+ALTER TABLE ART46.DOSSIER
+    ADD COLUMN WEBLOKET_NODE_REF VARCHAR(125);
+CALL SYSPROC.ADMIN_CMD('REORG TABLE ART46.DOSSIER');
+
+
+
+-- deze versie van de wijzigingen in db registreren.
+insert into art46.db_versie(db_versie) values ('5.20');

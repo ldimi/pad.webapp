@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+	<form-beans>
+        <form-bean type="be.ovam.art46.struts.actionform.EmptyForm"
+            name="emptyform" />
+		<form-bean type="be.ovam.art46.struts.actionform.ActieForm"
+			name="actieform" />
+		<form-bean type="be.ovam.art46.struts.actionform.DossierAfspraakForm"
+			name="dossierAfspraakform" />
+		<form-bean type="be.ovam.art46.struts.actionform.ActieSubTypeForm"
+			name="actiesubtypeform" />
+		<form-bean type="be.ovam.art46.struts.actionform.Art46BaseForm"
+			name="dossierkadastersform" />
+		<form-bean type="be.ovam.art46.struts.actionform.DossierBOAForm"
+			name="dossierboaform" />
+		<form-bean type="be.ovam.art46.struts.actionform.DossierJDForm"
+			name="dossierjdform" />
+		<form-bean type="be.ovam.art46.struts.actionform.DossierZoekForm"
+			name="dossierzoekform" />
+		<form-bean type="be.ovam.art46.struts.actionform.DossierKadasterForm"
+			name="setdateform" />
+		<form-bean type="be.ovam.art46.struts.actionform.LijstForm"
+			name="lijstenform" />
+		<form-bean type="be.ovam.art46.struts.actionform.PlanningLijstForm"
+			name="planninglijstform" />
+		<form-bean type="be.ovam.art46.struts.actionform.PlanningGoedkeuringForm"
+			name="planninglijstgoedkeuringform" />
+		<form-bean type="be.ovam.art46.struts.actionform.Art46SelectForm"
+			name="art46selectform" />
+
+
+		<form-bean type="be.ovam.art46.struts.actionform.DossierArt46Form"
+			name="dossierart46form" />
+		<form-bean type="be.ovam.art46.struts.actionform.DossierAfvalPersoonForm"
+			name="dossierafvalpersoonform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.AdresTypeForm"
+			name="adrestypeform" />
+		<form-bean type="be.ovam.art46.struts.actionform.ActieTypeForm"
+			name="actietypeform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.AdresForm"
+			name="adresform" />
+		<form-bean type="be.ovam.art46.struts.actionform.AdresZoekForm"
+			name="adreszoekform" />
+		<form-bean type="be.ovam.art46.struts.actionform.AdresContactForm"
+			name="adrescontactform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.BriefForm"
+			name="briefform" />
+		<form-bean type="be.ovam.art46.struts.actionform.BriefZoekForm"
+			name="briefzoekform" />
+		<form-bean type="be.ovam.art46.struts.actionform.BriefFilterForm"
+			name="brieffilterform" />
+		<form-bean type="be.ovam.art46.struts.actionform.BriefDossierForm"
+			name="briefdossierform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.BestekVastleggingForm"
+			name="bestekvastleggingform" />
+		<form-bean
+			type="be.ovam.art46.struts.actionform.schuldvordering.SchuldvorderingSelectForm"
+			name="schuldvorderingselectform" />
+		<form-bean
+			type="be.ovam.art46.struts.actionform.schuldvordering.SchuldvorderingLijstForm"
+			name="schuldvorderinglijstform" />
+		<form-bean type="be.ovam.art46.struts.actionform.DossierBestekProjectForm"
+			name="dossierbestekprojectform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.DeelopdrachtLijstForm"
+			name="deelopdrachtlijstform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.SAPFactuurDossierForm"
+			name="sapfactuurdossierform" />
+		<form-bean type="be.ovam.art46.struts.actionform.BudgetairArtikelForm"
+			name="budgetairartikelform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.UsersForm"
+			name="usersform" />
+		<form-bean type="be.ovam.art46.struts.actionform.ActieZoekForm"
+			name="actiezoekform" />
+		<form-bean type="be.ovam.art46.struts.actionform.ArchiefForm"
+			name="archiefform" />
+		<form-bean type="be.ovam.art46.struts.actionform.ArchiefZoekForm"
+			name="archiefzoekform" />
+		<form-bean type="be.ovam.art46.struts.actionform.ActieJDZoekForm"
+			name="actiejdzoekform" />
+
+
+		<form-bean type="be.ovam.art46.struts.actionform.ActieFilterForm"
+			name="actiesfilterform" />
+		<form-bean type="be.ovam.art46.struts.actionform.PagingForm"
+			name="pagingform" />
+		<form-bean type="be.ovam.art46.struts.actionform.SearchForm"
+			name="searchform" />
+
+		<form-bean type="be.ovam.art46.struts.actionform.QueryForm"
+			name="queryform" />
+
+        <form-bean type="be.ovam.art46.struts.actionform.DossierFZSelectForm"
+            name="dossierfzsselectform" />
+	</form-beans>
+
+	<action-mappings>
+
+        <action path="/dummyAction" type="be.ovam.art46.struts.action.DummyAction">
+            <forward redirect="false" path="emptyPage" name="success" />
+        </action>
+
+		<action path="/dossierdetailsArt46"
+			type="be.ovam.art46.struts.action.DossierArt46LoadAction"
+            input="dossierdetails" 
+            >
+		</action>
+
+		<action path="/reload"
+			type="org.apache.struts.tiles.actions.ReloadDefinitionsAction"
+			forward="index" />
+
+		<action path="/query" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="queryform" input="querydetails">
+			<forward redirect="false" path="querydetails" name="view" />
+			<forward redirect="false" path="querydetails" name="read" />
+			<forward redirect="false" path="querydetails" name="save" />
+			<forward redirect="false" path="querydetails" name="error" />
+			<forward redirect="true" path="/querylijst.do" name="delete" />
+			<forward redirect="false" path="/querylijst.do" name="errordelete" />
+		</action>
+
+        <action path="/querylijst" type="be.ovam.art46.struts.action.query.LaadQueryLijstAction">
+            <forward redirect="true" path="querylijst" name="success" />
+            <forward redirect="false" path="querylijst" name="error" />
+        </action>
+
+		<action path="/queryexecute" type="be.ovam.art46.struts.action.QueryExecuteAction"
+			validate="true" scope="request" name="queryform" input="querydetails">
+			<forward redirect="false" path="queryresult" name="success" />
+			<forward redirect="false" path="queryresult" name="error" />
+		</action>
+
+		<action path="/queryexecuteview" forward="queryresult" />
+
+		<action path="/actietypelijst" forward="actietypelijst" />
+
+		<action path="/actietype" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="actietypeform" input="actietypedetails">
+			<forward redirect="false" path="actietypedetails" name="view" />
+			<forward redirect="false" path="actietypedetails" name="read" />
+			<forward redirect="false" path="actietypedetails" name="save" />
+			<forward redirect="false" path="actietypedetails" name="error" />
+			<forward redirect="true" path="/actietypelijst.do" name="delete" />
+			<forward redirect="false" path="/actietypelijst.do" name="errordelete" />
+		</action>
+
+		<action path="/actiesubtype" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="actiesubtypeform" input="actiesubtypedetails">
+			<forward redirect="false" path="actiesubtypedetails" name="view" />
+			<forward redirect="false" path="actiesubtypedetails" name="read" />
+			<forward redirect="false" path="/actietype.do?crudAction=read"
+				name="save" />
+			<forward redirect="false" path="actiesubtypedetails" name="error" />
+			<forward redirect="false" path="/actietype.do?crudAction=read"
+				name="delete" />
+			<forward redirect="false" path="/actietype.do?crudAction=read"
+				name="errordelete" />
+		</action>
+
+		<action path="/actie" type="be.ovam.art46.struts.action.ActieCrudAction"
+			validate="true" scope="request" name="actieform" input="actiedetails">
+			<forward redirect="false" path="actiedetails" name="view" />
+			<forward redirect="false" path="actiedetails" name="read" />
+			<forward redirect="false" path="actiedetails" name="save" />
+			<forward redirect="false" path="actiedetails" name="error" />
+			<forward redirect="false" path="actiedetails" name="delete" />
+			<forward redirect="false" path="actiedetails" name="errordelete" />
+			<forward redirect="true" path="/dossierdetails.do?selectedtab=Planning"
+				name="forwardivs" />
+			<forward redirect="false"
+				path="/dossierjd.do?crudAction=read&amp;popup=yes&amp;useForward=false"
+				name="forwardjd" />
+			<forward redirect="true"
+				path="/dossierdetails.do?selectedtab=Planning" name="forwardafval" />
+		</action>
+
+		<action path="/dossierAfspraak" type="be.ovam.art46.struts.action.ActieCrudAction"
+			validate="true" scope="request" name="dossierAfspraakform" input="dossierafspraakdetails">
+			<forward redirect="false" path="dossierafspraakdetails" name="view" />
+			<forward redirect="false" path="dossierafspraakdetails" name="read" />
+			<forward redirect="false" path="dossierafspraakdetails" name="save" />
+			<forward redirect="false" path="dossierafspraakdetails" name="error" />
+			<forward redirect="true"
+				path="/dossierdetails.do?selectedtab=Project%20Fiche" name="delete" />
+		</action>
+
+		<action path="/actielijstview" forward="actielijstview" />
+
+		<action path="/actiezoekresult"
+			type="be.ovam.art46.struts.action.ActieZoekResultAction" name="actiezoekform"
+			scope="session">
+			<forward redirect="true" path="/actielijstview.do" name="success" />
+			<forward redirect="false" path="actielijstview" name="error" />
+		</action>
+
+		<action path="/lijstjdactiestview" forward="lijstjdacties" />
+
+		<action path="/actiejdzoekresult"
+			type="be.ovam.art46.struts.action.ActieJDZoekResultAction" name="actiejdzoekform"
+			scope="session">
+			<forward redirect="true" path="/lijstjdactiestview.do" name="success" />
+			<forward redirect="false" path="lijstjdacties" name="error" />
+		</action>
+
+		<action path="/lijstjdactiesfilter" type="be.ovam.art46.struts.action.base.FilterAction"
+			name="actiesfilterform" scope="request">
+			<forward path="lijstjdacties" name="success" />
+		</action>
+
+		<action path="/budgetairartikellijstview" forward="budgetairartikellijst" />
+
+		<action path="/budgetairartikellijst" type="be.ovam.art46.struts.action.DummyAction">
+			<forward redirect="true" path="budgetairartikellijst" name="success" />
+			<forward redirect="false" path="budgetairartikellijst" name="error" />
+		</action>
+
+		<action path="/budgetairartikel" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="budgetairartikelform" input="budgetairartikeldetails">
+			<forward redirect="false" path="budgetairartikeldetails"
+				name="view" />
+			<forward redirect="false" path="budgetairartikeldetails"
+				name="read" />
+			<forward redirect="false" path="/budgetairartikellijst.do"
+				name="save" />
+			<forward redirect="false" path="budgetairartikeldetails"
+				name="error" />
+			<forward redirect="false" path="/budgetairartikellijst.do"
+				name="delete" />
+			<forward redirect="false" path="/budgetairartikellijst.do"
+				name="errordelete" />
+		</action>
+
+		<action path="/adrestypelijstview" forward="adrestypelijst" />
+
+		<action path="/adrestypelijst" forward="adrestypelijst" />
+
+		<action path="/adrestype" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="adrestypeform" input="adrestypedetails">
+			<forward redirect="false" path="adrestypedetails" name="view" />
+			<forward redirect="false" path="adrestypedetails" name="read" />
+			<forward redirect="false" path="/adrestypelijst.do" name="save" />
+			<forward redirect="false" path="adrestypedetails" name="error" />
+			<forward redirect="false" path="/adrestypelijst.do" name="delete" />
+			<forward redirect="false" path="/adrestypelijst.do" name="errordelete" />
+		</action>
+
+		<action path="/archief" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="archiefform" input="archief">
+			<forward redirect="false" path="archief" name="view" />
+			<forward redirect="false" path="archief" name="read" />
+			<forward redirect="false" path="archief" name="save" />
+			<forward redirect="false" path="archief" name="error" />
+			<forward redirect="true" path="/dossierdetails.do?selectedtab=Archief" name="delete" />
+			<forward redirect="true" path="/dossierdetails.do?selectedtab=Archief"	name="errordelete" />
+		</action>
+
+		<action path="/archieflijstview" forward="archieflijstview" />
+
+		<action path="/archiefzoekresult"
+			type="be.ovam.art46.struts.action.ArchiefZoekResultAction" name="archiefzoekform"
+			scope="session">
+			<forward redirect="true" path="/archieflijstview.do" name="success" />
+			<forward redirect="false" path="archieflijstview" name="error" />
+		</action>
+
+		<action path="/lijsten" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="lijstenform" input="lijstendetails">
+			<forward redirect="false" path="lijstendetails" name="view" />
+			<forward redirect="false" path="lijstendetails" name="read" />
+			<forward redirect="false" path="/lijstenoverzicht.do" name="save" />
+			<forward redirect="false" path="lijstendetails" name="error" />
+			<forward redirect="false" path="/lijstenoverzicht.do" name="delete" />
+			<forward redirect="false" path="/lijstenoverzicht.do" name="errordelete" />
+		</action>
+
+		<action path="/dossierjd" type="be.ovam.art46.struts.action.DossierJDCrudAction"
+			validate="true" scope="request" name="dossierjdform" input="dossierjddetails">
+			<forward redirect="false" path="dossierjddetails" name="view" />
+			<forward redirect="false" path="dossierjddetails" name="read" />
+			<forward redirect="false" path="dossierjddetails" name="save" />
+			<forward redirect="false" path="dossierjddetails" name="error" />
+			<forward redirect="true" path="/dossierdetails.do?selectedtab=JD"
+				name="delete" />
+			<forward redirect="false" path="dossierjddetails" name="errordelete" />
+		</action>
+
+		<action path="/lijstnietafgeslotendeelopdrachtenview" forward="lijstnietafgeslotendeelopdrachten" />
+
+		<action path="/lijstnietafgeslotendeelopdrachten"
+			type="be.ovam.art46.struts.action.LijstNietAfgeslotenDeelopdrachten">
+			<forward path="lijstnietafgeslotendeelopdrachten" name="success" />
+		</action>
+
+		<action path="/lijstnietafgeslotendeelopdrachtensave"
+			type="be.ovam.art46.struts.action.LijstNietAfgeslotenDeelopdrachtenSave"
+			name="deelopdrachtlijstform" scope="request" validate="true"
+			input="lijstnietafgeslotendeelopdrachten">
+			<forward redirect="true" path="/lijstnietafgeslotendeelopdrachten.do"
+				name="success" />
+			<forward redirect="false" path="/lijstnietafgeslotendeelopdrachten.do"
+				name="error" />
+		</action>
+
+		<action path="/lijstindicatorenview" forward="lijstindicatoren"
+			name="lijstenform" scope="session" />
+
+		<action path="/lijstindicatoren" type="be.ovam.art46.struts.action.LijstIndicatoren"
+			name="lijstenform" scope="session">
+			<forward redirect="true" path="/lijstindicatorenview.do"
+				name="success" />
+			<forward redirect="false" path="lijstindicatoren" name="error" />
+		</action>
+
+
+		<action path="/dossierdetails" type="be.ovam.art46.struts.action.DossierArt46LoadAction" >
+		</action>
+
+		<action path="/adreszoek" forward="adreszoek" name="adreszoekform"
+			scope="session" />
+
+		<action path="/adreszoekresult"
+			type="be.ovam.art46.struts.action.AdresZoekResultAction" name="adreszoekform"
+			scope="session">
+			<forward redirect="false" path="/adreslijstview.do" name="success" />
+			<forward redirect="false" path="adreszoek" name="error" />
+		</action>
+
+        <action path="/adreslijstview" forward="adreslijst" />
+
+        <action path="/contactzoek" forward="contactzoek" name="adreszoekform"
+            scope="session" />
+
+        <action path="/contactzoekresult"
+            type="be.ovam.art46.struts.action.ContactZoekResultAction" name="adreszoekform"
+            scope="session">
+            <forward redirect="false" path="/contactlijstview.do" name="success" />
+            <forward redirect="false" path="contactzoek" name="error" />
+        </action>
+
+        <action path="/contactlijstview" forward="contactlijst" />
+
+
+		<action path="/adresnieuw" name="adresform" scope="request"
+			forward="adresdetails" validate="false" />
+
+		<action path="/adres" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="adresform" input="adresdetails">
+			<forward redirect="false" path="adresdetails" name="view" />
+			<forward redirect="false" path="adresdetails" name="read" />
+			<forward redirect="false" path="adresdetails" name="save" />
+			<forward redirect="false" path="adresdetails" name="error" />
+			<forward redirect="false" path="/s/adres/zoek" name="delete" />
+            <forward redirect="false" path="/s/adres/lijst" name="errordelete" />
+		</action>
+
+		<action path="/adrescontactdetailsview" name="adrescontactform"
+			scope="request" forward="adrescontactdetails" validate="false" />
+
+		<action path="/adrescontact" type="be.ovam.art46.struts.action.base.CrudAction"
+			validate="true" scope="request" name="adrescontactform" input="adrescontactdetails">
+			<forward redirect="false" path="adrescontactdetails" name="view" />
+			<forward redirect="false" path="adrescontactdetails" name="read" />
+			<forward redirect="false" path="/adres.do?crudAction=read"
+				name="save" />
+			<forward redirect="false" path="adrescontactdetails" name="error" />
+			<forward redirect="false" path="/adres.do?crudAction=read"
+				name="delete" />
+			<forward redirect="false" path="/adres.do?crudAction=read"
+				name="errordelete" />
+		</action>
+
+
+
+
+
+		<!-- TODO -->
+
+		<action path="/lijstschuldvorderingsave"
+			type="be.ovam.art46.struts.action.schuldvordering.SchuldvorderinglijstSaveAction"
+			validate="true" input="lijstschuldvorderingen" scope="request"
+			name="schuldvorderinglijstform">
+			<forward redirect="true" path="/lijstschuldvorderingselect.do"
+				name="success" />
+			<forward redirect="false" path="/lijstschuldvorderingselect.do"
+				name="error" />
+		</action>
+
+		<action path="/lijstschuldvorderingselect"
+			type="be.ovam.art46.struts.action.LijstSchuldvorderingAction"
+			validate="false" scope="session" name="schuldvorderingselectform">
+			<forward redirect="true" path="/lijstschuldvorderingenview.do"
+				name="success" />
+			<forward redirect="false" path="lijstschuldvorderingen" name="error" />
+		</action>
+
+		<action path="/dossiersfzselect" type="be.ovam.art46.struts.action.base.ForwardAction"
+			validate="false" scope="session" name="dossierfzsselectform">
+			<forward redirect="false" path="/dossiersfzivs.do" name="dossiersfzivs" />
+			<forward redirect="false" path="/dossiersfzall.do" name="dossiersfzall" />
+		</action>
+
+        <action path="/dossiersfzivs" type="be.ovam.art46.struts.action.dossier.fz.LaadDossiersFzIVSAction">
+            <forward redirect="false" path="lijstdossiersfz" name="success" />
+            <forward redirect="false" path="lijstdossiersfz" name="error" />
+        </action>
+
+ 
+        <action path="/dossiersfzall" type="be.ovam.art46.struts.action.dossier.fz.LaadDossiersFzAllAction">
+            <forward redirect="false" path="lijstdossiersfz" name="success" />
+            <forward redirect="false" path="lijstdossiersfz" name="error" />
+        </action>
+
+
+
+		<action path="/dossierbestekprojectview" name="dossierbestekprojectform"
+			scope="session" type="be.ovam.art46.struts.action.DummyAction">
+			<forward redirect="false" path="dossierbestekprojectview"
+				name="success" />
+		</action>
+
+		<action path="/dossierbestekprojectcolumn" name="dossierbestekprojectform"
+			scope="session" type="be.ovam.art46.struts.action.DummyAction">
+			<forward redirect="false" path="dossierbestekprojectview"
+				name="success" />
+		</action>
+
+		<action path="/dossierbestekprojectcolumnall" name="dossierbestekprojectform"
+			scope="session" type="be.ovam.art46.struts.action.DummyAction">
+			<forward redirect="false" path="dossierbestekprojectview"
+				name="success" />
+		</action>
+
+		<action path="/dossierbestekprojectzoekresult"
+			type="be.ovam.art46.struts.action.DossierBestekProjectZoekResultAction"
+			name="dossierbestekprojectform" scope="session">
+			<forward redirect="false" path="dossierbestekprojectview"
+				name="success" />
+			<forward redirect="false" path="dossierbestekprojectview"
+				name="error" />
+		</action>
+
+        <action path="/bestekadressave" type="be.ovam.art46.struts.action.bestek.AdresSaveAction"
+            validate="false">
+            <forward redirect="false" path="/stopsearch.do" name="success" />
+        </action>
+
+		<action path="/dossierart46zoek" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="request" name="dossierzoekform">
+			<forward redirect="false" path="dossierart46zoek" name="success" />
+		</action>
+
+		<action path="/dossierart46zoekresultview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="request" name="dossierzoekform">
+			<forward redirect="true" path="dossierart46zoekresult" name="success" />
+		</action>
+
+		<action path="/dossierart46zoekresult"
+			type="be.ovam.art46.struts.action.DossierArt46ZoekAction" validate="false"
+			scope="request" name="dossierzoekform" input="dossierart46zoek">
+			<forward redirect="false" path="/dossierart46zoekresultview.do"
+				name="success" />
+			<forward redirect="false" path="dossierart46zoek" name="error" />
+		</action>
+
+
+		<action path="/dossierdetailsafvalpersonen" type="be.ovam.art46.struts.action.dossier.LaadContactLijstAction"
+			validate="false" scope="session" name="dossierart46form">
+			<forward redirect="false" path="dossierdetailsafvalpersonen"
+				name="success" />
+			<forward redirect="false" path="dossierdetailsafvalpersonen"
+				name="error" />
+		</action>
+
+		<action path="/dossierdetailsfacturensave"
+			type="be.ovam.art46.struts.action.DossierDetailsFacturenSaveAction"
+			name="sapfactuurdossierform">
+			<forward redirect="true"
+				path="/dossierdetails.do?selectedtab=Facturen" name="success" />
+			<forward redirect="false"
+				path="/dossierdetails.do?selectedtab=Facturen" name="error" />
+		</action>
+
+
+
+		<action path="/indexview" forward="index" />
+
+		<action path="/dossierlijst" type="be.ovam.art46.struts.action.DossierlijstAction">
+			<forward redirect="true" path="/indexview.do" name="success" />
+			<forward redirect="false" path="index" name="error" />
+		</action>
+
+		<action path="/index" type="be.ovam.art46.struts.action.IndexAction">
+			<forward redirect="true" path="/indexview.do" name="success" />
+			<forward redirect="true" path="/briefzoek.do" name="success_empty" />
+			<forward redirect="false" path="index" name="error" />
+		</action>
+
+		<action path="/lijstschuldvorderingenview" forward="lijstschuldvorderingen" />
+
+		<action path="/kadasterzoek" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="kadasterzoek" name="success" />
+		</action>
+
+        <action path="/sapprojectdetails" type="be.ovam.art46.struts.action.sapproject.LaadSapProjectDetailsAction"
+            validate="false" scope="request">
+            <forward redirect="false" path="sapprojectdetails" name="success" />
+            <forward redirect="false" path="sapprojectdetails" name="error" />
+        </action>
+
+		<action path="/deelopdrachtlijstschuldvordering" type="be.ovam.art46.struts.action.deelopdracht.LaadSchuldvorderingLijstAction">
+			<forward redirect="false" path="deelopdrachtlijstschuldvordering"
+				name="success" />
+			<forward redirect="false" path="deelopdrachtlijstschuldvordering"
+				name="error" />
+		</action>
+
+
+
+
+		<action path="/lijstafgeslotendossiers" type="be.ovam.art46.struts.action.dossier.LaadAfgeslotenDossierLijstAction">
+			<forward redirect="true" path="lijstafgeslotendossiers" name="success" />
+			<forward redirect="false" path="lijstafgeslotendossiers" name="error" />
+		</action>
+
+		<action path="/lijstafgeslotendossiersview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="lijstafgeslotendossiers" name="success" />
+		</action>
+
+
+		<action path="/kadasterdetails" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="false" path="kadasterdetails" name="success" />
+		</action>
+
+		<action path="/kadasterdetailsopname" type="be.ovam.art46.struts.action.kadaster.LaadDetailsOpnameAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="false" path="kadasterdetailsopname" name="success" />
+			<forward redirect="false" path="kadasterdetailsopname" name="error" />
+		</action>
+
+		<action path="/kadasterdetailspublicatie" type="be.ovam.art46.struts.action.kadaster.LaadDetailsPublicatieAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="false" path="kadasterdetailspublicatie" name="success" />
+			<forward redirect="false" path="kadasterdetailspublicatie" name="error" />
+		</action>
+
+		<action path="/kadasterzoekresult" type="be.ovam.art46.struts.action.kadaster.KadasterZoekAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="/kadasterzoekresultview.do"	name="success" />
+			<forward redirect="false" path="kadasterzoek" name="error" />
+		</action>
+
+		<action path="/kadasterzoekresultview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="kadasterzoekresult" name="success" />
+		</action>
+
+
+		<action path="/addremovedossierkadasters"
+			type="be.ovam.art46.struts.action.AddRemoveDossierKadastersVoorAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="/dossierdetails.do?selectedtab=Opname"
+				name="success_dossierdetail" />
+			<forward redirect="false" path="/dossierdetails.do?selectedtab=Opname"
+				name="error_dossierdetail" />
+			<forward redirect="true" path="/kadasterdetails.do" name="success_kadasterdetail" />
+			<forward redirect="false" path="/kadasterdetails.do" name="error_kadaster_detail" />
+		</action>
+
+		<action path="/dossierkadastertypeset"
+			type="be.ovam.art46.struts.action.DossierKadasterTypeSetAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="/dossierdetails.do?selectedtab=Opname"
+				name="success_dossierdetail" />
+			<forward redirect="false" path="/dossierdetails.do?selectedtab=Opname"
+				name="error_dossierdetail" />
+			<forward redirect="true" path="/kadasterdetails.do" name="success_kadasterdetail" />
+			<forward redirect="true" path="/kadasterdetails.do" name="error_kadaster_detail" />
+		</action>
+
+		<action path="/removedossierkadasters"
+			type="be.ovam.art46.struts.action.RemoveDossierKadastersVoorAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="/lijstopnameselect.do" name="success" />
+			<forward redirect="true" path="/lijstopnameselect.do" name="error" />
+		</action>
+
+		<action path="/updatedossierkadasters"
+			type="be.ovam.art46.struts.action.UpdateDossierKadastersVoorAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="/lijstopnameselect.do" name="success_opname" />
+			<forward redirect="false" path="/lijstopnameselect.do" name="error_opname" />
+			<forward redirect="true" path="/lijstvoorgoedkselect.do"
+				name="success_goedk" />
+			<forward redirect="false" path="/lijstvoorgoedkselect.do"
+				name="error_goedk" />
+		</action>
+
+		<action path="/lijstindex" forward="lijstindex" />
+
+		<action path="/lijstopnameselect" type="be.ovam.art46.struts.action.base.ForwardAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstopnamekadaster.do" name="kadaster" />
+			<forward redirect="true" path="/lijstopnamedossier.do" name="dossier" />
+		</action>
+
+
+		<action path="/lijstopnamekadaster" type="be.ovam.art46.struts.action.artikel46.LaadLijstOpnameKadasterAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstopnameview.do" name="success" />
+			<forward redirect="false" path="lijstopname" name="error" />
+		</action>
+
+		<action path="/lijstopnamedossier" type="be.ovam.art46.struts.action.artikel46.LaadLijstOpnameDossierAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstopnameview.do" name="success" />
+			<forward redirect="false" path="lijstopname" name="error" />
+		</action>
+
+        <action path="/dummyAction2" type="be.ovam.art46.struts.action.DummyAction"
+            validate="false" name="setdateform"  scope="request">
+            <forward redirect="false" path="lijstopname" name="success" />
+        </action>
+
+
+		<action path="/lijstopnameview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="request" name="dossierkadastersform">
+			<forward redirect="false" path="lijstopname" name="success" />
+		</action>
+
+		<action path="/lijstvoorgoedkselect" type="be.ovam.art46.struts.action.base.ForwardAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstvoorgoedkkadaster.do"
+				name="kadaster" />
+			<forward redirect="true" path="/lijstvoorgoedkdossier.do"
+				name="dossier" />
+		</action>
+
+		<action path="/lijstvoorgoedkkadaster" type="be.ovam.art46.struts.action.artikel46.LaadLijstVoorGoedkeuringKadasterAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstvoorgoedkview.do" name="success" />
+			<forward redirect="false" path="lijstvoorgoedk" name="error" />
+		</action>
+
+		<action path="/lijstvoorgoedkdossier" type="be.ovam.art46.struts.action.artikel46.LaadLijstVoorGoedkeuringDossierAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstvoorgoedkview.do" name="success" />
+			<forward redirect="false" path="lijstvoorgoedk" name="error" />
+		</action>
+
+		<action path="/lijstvoorgoedkpersoon" type="be.ovam.art46.struts.action.artikel46.LaadLijstVoorGoedkPersoonAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="false" path="lijstvoorgoedkpersoon" name="success" />
+			<forward redirect="false" path="lijstvoorgoedkpersoon" name="error" />
+		</action>
+
+		<action path="/lijstvoorgoedkview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="false" path="lijstvoorgoedk" name="success" />
+		</action>
+
+		<action path="/lijstvoorgoedkdate" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="setdateform">
+			<forward redirect="true" path="lijstvoorgoedkdate" name="success" />
+		</action>
+
+		<action path="/setgoedkeuringsdatum"
+			type="be.ovam.art46.struts.action.SetGoedkeuringsDatumAction"
+			validate="true" scope="session" name="setdateform" input="lijstvoorgoedkdate">
+			<forward redirect="true" path="/lijstvoorgoedkselect.do"
+				name="success" />
+			<forward redirect="false" path="lijstvoorgoedkdate" name="error" />
+			<forward redirect="false" path="lijstvoorgoedk" name="warn" />
+		</action>
+
+		<action path="/lijstnagoedkselect" type="be.ovam.art46.struts.action.base.ForwardAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstnagoedkkadaster.do"
+				name="kadaster" />
+			<forward redirect="true" path="/lijstnagoedkdossier.do" name="dossier" />
+		</action>
+
+		<action path="/lijstnagoedkkadaster" type="be.ovam.art46.struts.action.artikel46.LaadLijstNaGoedkeuringKadasterAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstnagoedkview.do" name="success" />
+			<forward redirect="false" path="lijstnagoedk" name="error" />
+		</action>
+
+		<action path="/lijstnagoedkdossier" type="be.ovam.art46.struts.action.artikel46.LaadLijstNaGoedkeuringDossierAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstnagoedkview.do" name="success" />
+			<forward redirect="false" path="lijstnagoedk" name="error" />
+		</action>
+
+		<action path="/lijstnagoedkview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="false" path="lijstnagoedk" name="success" />
+		</action>
+
+		<action path="/lijstnagoedkdate" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="setdateform">
+			<forward redirect="true" path="lijstnagoedkdate" name="success" />
+		</action>
+
+		<action path="/setpublicatiedatum"
+			type="be.ovam.art46.struts.action.SetPublicatieDatumAction" validate="true"
+			scope="session" name="setdateform" input="lijstnagoedkdate">
+			<forward redirect="true" path="/lijstnagoedkselect.do" name="success" />
+			<forward redirect="false" path="lijstnagoedkdate" name="error" />
+		</action>
+
+		<action path="/removedossierkadastersna"
+			type="be.ovam.art46.struts.action.RemoveDossierKadastersNaAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="/lijstnagoedkselect.do" name="success" />
+			<forward redirect="true" path="/lijstnagoedkselect.do" name="error" />
+		</action>
+
+		<action path="/lijstnapubselect" type="be.ovam.art46.struts.action.base.ForwardAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstnapubkadaster.do" name="kadaster" />
+			<forward redirect="true" path="/lijstnapubdossier.do" name="dossier" />
+		</action>
+
+		<action path="/lijstnapubkadaster" type="be.ovam.art46.struts.action.artikel46.LaadLijstNaPublicatieKadasterAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstnapubview.do" name="success" />
+			<forward redirect="false" path="lijstnapub" name="error" />
+		</action>
+
+		<action path="/lijstnapubdossier" type="be.ovam.art46.struts.action.artikel46.LaadLijstNaPublicatieDossierAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="/lijstnapubview.do" name="success" />
+			<forward redirect="false" path="lijstnapub" name="error" />
+		</action>
+
+		<action path="/lijstnapubview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="dossierkadastersform">
+			<forward redirect="true" path="lijstnapub" name="success" />
+		</action>
+
+		<action path="/lijsthistoriek" type="be.ovam.art46.struts.action.artikel46.LaadLijstHistoriekAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="false" path="lijsthistoriek" name="success" />
+			<forward redirect="false" path="lijsthistoriek" name="error" />
+		</action>
+
+		<action path="/lijsthistoriekview" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="art46selectform">
+			<forward redirect="true" path="lijsthistoriek" name="success" />
+		</action>
+
+		<action path="/lijstenoverzicht" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="lijstenform">
+			<forward redirect="false" path="lijstenoverzicht" name="success" />
+			<forward redirect="false" path="lijstenoverzicht" name="error" />
+		</action>
+
+		<!-- Afval -->
+
+		<!-- Paging -->
+		<action path="/setpaging" type="be.ovam.art46.struts.action.DummyAction"
+			validate="false" scope="session" name="pagingform">
+			<forward redirect="false" path="/WEB-INF/pages/layouts/redirect.jsp"
+				name="success" />
+		</action>
+
+		<!-- Module Beheer -->
+
+
+
+		<action path="/briefuploadview" forward="briefupload" name="briefform"
+			scope="session" validate="false" input="briefupload" />
+
+		<action path="/briefupload" type="be.ovam.art46.struts.action.BriefUploadAction"
+			name="briefform" validate="false" scope="session" input="briefupload">
+			<forward redirect="true" path="briefupload" name="success" />
+			<forward redirect="false" path="briefupload" name="error" />
+		</action>
+
+
+
+
+		<action path="/briefzoek" forward="briefzoek" />
+
+		<action path="/briefzoekadres" name="briefform" scope="session"
+			forward="adreszoek" validate="false" />
+
+		<action path="/briefdetailsview" name="briefform" scope="session"
+			forward="briefdetails" validate="false" />
+
+		<action path="/briefnieuw" type="be.ovam.art46.struts.action.BriefNieuwAction"
+			name="briefform" scope="session" validate="false">
+			<forward redirect="true" path="/briefdetailsview.do" name="success" />
+		</action>
+
+		<action path="/briefdetails"
+			type="be.ovam.art46.struts.action.BriefDetailsLoadAction" name="briefform"
+			validate="false" scope="session" input="briefdetails">
+			<forward redirect="false" path="/briefdetailsview.do" name="success" />
+			<forward redirect="false" path="/briefdetailsview.do" name="error" />
+		</action>
+
+		<action path="/briefloadadres" type="be.ovam.art46.struts.action.BriefLoadAdresAction"
+			name="briefform" validate="false" scope="session" input="briefdetails">
+			<forward redirect="true" path="/stopsearch.do" name="success" />
+			<forward redirect="false" path="/adreslijstview.do" name="error" />
+		</action>
+
+		<action path="/briefloaddossier"
+			type="be.ovam.art46.struts.action.BriefLoadDossierAction" name="briefform"
+			validate="false" scope="session" input="briefdetails">
+			<forward redirect="true" path="/stopsearch.do" name="success" />
+		</action>
+
+		<action path="/briefdetailssave"
+			type="be.ovam.art46.struts.action.BriefDetailsSaveAction" name="briefform"
+			validate="true" scope="session" input="briefdetails">
+            <forward redirect="true" path="/briefdetails.do" name="success" />
+			<forward redirect="false" path="briefdetails" name="error" />
+		</action>
+
+		<action path="/briefdetailsdelete"
+			type="be.ovam.art46.struts.action.BriefDetailsDeleteAction" name="briefform"
+			validate="false" scope="session">
+			<forward redirect="true" path="/briefzoek.do" name="success" />
+			<forward redirect="false" path="/briefdetailsview.do" name="error" />
+		</action>
+
+		<action path="/brieflijst" forward="brieflijst" />
+
+		<action path="/brieflijstfilter" type="be.ovam.art46.struts.action.base.FilterAction"
+			name="brieffilterform" scope="request" validate="false">
+			<forward path="brieflijst" name="success" />
+		</action>
+
+		<action path="/briefzoekresult"
+			type="be.ovam.art46.struts.action.BriefZoekResultAction" name="briefzoekform"
+			scope="request" input="briefzoek">
+			<forward redirect="true" path="/brieflijst.do" name="success" />
+			<forward redirect="false" path="briefzoek" name="error" />
+		</action>
+
+		<action path="/startnieuwdossier" forward="startnieuwdossier" />
+
+		<action path="/nieuwdossier"
+			type="be.ovam.art46.struts.action.NieuwDossierAction" name="briefdossierform"
+			scope="request" validate="false">
+			<forward redirect="true" path="/s/dossier/afval/nieuw" name="success_afval" />
+			<forward redirect="true" path="/s/dossier/ander/nieuw" name="success_ander" />
+			<forward redirect="true" path="/s/dossier/zoek" name="success_bodem" />
+		</action>
+
+		<action path="/startsearch"
+			type="be.ovam.art46.struts.action.base.StartSearchAction" name="searchform"
+			scope="session">
+			
+			<forward redirect="false" path="/adreszoek.do" name="success_briefadres" />
+			
+            <forward redirect="false" path="/contactzoek.do" name="success_zoek_contact" />
+			
+			<forward redirect="false" path="/dossierart46zoek.do" name="success_briefdossieralle" />
+		</action>
+
+		<action path="/stopsearch" forward="/WEB-INF/pages/util/stopSearch.jsp"
+			name="searchform" scope="session" />
+
+	</action-mappings>
+
+	<controller contentType="text/html; charset=UTF-8"/>
+       
+	<message-resources parameter="application" />
+
+	<!-- <plug-in className="org.apache.struts.tiles.TilesPlugin"> <set-property 
+		property="definitions-config" value="/WEB-INF/tiles-defs.xml" /> </plug-in> -->
+	<plug-in className="org.apache.struts.tiles.TilesPlugin">
+		<set-property property="definitions-debug" value="2" />
+		<set-property property="definitions-parser-details"
+			value="2" />
+		<set-property property="definitions-parser-validate"
+			value="true" />
+		<set-property property="moduleAware" value="true" />
+		<set-property property="definitions-config" value="/WEB-INF/dimensions-config.xml" />
+		<set-property property="definitions-factory-class"
+			value="com.free2be.dimensions.tiles.ConfigurableFactorySet" />
+	</plug-in>
+
+
+
+	<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+		<set-property property="pathnames"
+			value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml" />
+	</plug-in>
+
+	<plug-in className="be.ovam.art46.struts.plugin.LoadPlugin" />
+
+</struts-config>
+

@@ -1,0 +1,62 @@
+
+# log4j.properties zijn op tomcat server niveau te configureren
+#    - in war mag geen log4j.properties bestand voorkomen (op classpath)
+#    - in web.xml wordt be.ovam.web.util.servlet.Log4jInitServlet geconfigureerd
+#    - in context.xml wordt via een system property 'ovam.log4j.file'  de log configuratie gedefinieerd.  
+
+## de rest is een voorbeeld van configuratie
+
+# Rootlogger logt op INFO niveau naar twee appenders
+####################################################
+log4j.rootLogger=INFO, A1, SERVLOG
+
+# appender A1 schrijft naar console
+###################################
+log4j.appender.A1=org.apache.log4j.ConsoleAppender
+log4j.appender.A1.layout=org.apache.log4j.PatternLayout
+log4j.appender.A1.layout.ConversionPattern=%d{ABSOLUTE} %-5p %c %x - %m%n
+
+# appender A2 schrijft naar console
+###################################
+log4j.appender.A2=org.apache.log4j.ConsoleAppender
+log4j.appender.A2.layout=org.apache.log4j.PatternLayout
+log4j.appender.A2.layout.ConversionPattern=%-4r %-5p %c{2} %x - %m%n
+
+# appender SERVLOG schrijft naar file server.log, server.log.1 , ....
+#####################################################################
+log4j.appender.SERVLOG.File=${catalina.base}/logs/server.log
+log4j.appender.SERVLOG=org.apache.log4j.RollingFileAppender
+log4j.appender.SERVLOG.layout=org.apache.log4j.PatternLayout
+log4j.appender.SERVLOG.layout.ConversionPattern=%d %-5p %c %x - %m%n
+log4j.appender.SERVLOG.MaxFileSize=1MB
+log4j.appender.SERVLOG.MaxBackupIndex=2
+log4j.appender.SERVLOG.append=true
+#log4j.rootCategory=ALL, SERVLOG
+
+# Definitie van log  niveau per package
+################################################
+
+#log4j.logger.be = ALL, A2
+log4j.logger.be = INFO
+log4j.logger.be.ovam.art46.security = WARN
+
+log4j.logger.be.ovam.art46.mappers = DEBUG
+log4j.logger.be.ovam.scheepvaart.mappers = DEBUG
+log4j.logger.be.ovam.util.mybatis.mappers = DEBUG
+#log4j.logger.be.ovam.art46.mappers = DEBUG, A2
+#log4j.additivity.be.ovam.art46.mappers=false
+
+log4j.logger.org = WARN
+#log4j.logger.org.springframework = ALL
+#log4j.logger.org.apache = WARN
+log4j.logger.org.mybatis = WARN
+
+log4j.logger.org.hibernate= INFO
+log4j.logger.org.hibernate.SQL=TRACE
+log4j.logger.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+log4j.logger.com = WARN
+log4j.logger.javax = WARN
+log4j.logger.java = WARN
+
+log4j.logger.jdbc.sqlonly = ALL

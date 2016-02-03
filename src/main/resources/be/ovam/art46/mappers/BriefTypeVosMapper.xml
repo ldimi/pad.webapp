@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.BriefTypeVosMapper">
+
+    <cache/>
+
+    <select id="getBriefTypeVosList"  resultType="ciMap">
+        select type_id,
+               rtrim(type_b) as type_b
+        from art46.brief_type_vos
+        order by type_id
+    </select>
+
+    <update id="updateBriefTypeVos" parameterType="map">
+        update art46.brief_type_vos
+        set
+            type_b = #{type_b}
+        where type_id = #{type_id}
+    </update>
+
+    <insert id="insertBriefTypeVos" parameterType="map">
+        insert into art46.brief_type_vos (type_id, type_b)
+        values
+        (#{type_id}, #{type_b})
+    </insert>
+
+    <delete id="deleteBriefTypeVos" parameterType="int">
+        delete from  art46.brief_type_vos
+        where type_id = #{type_id}
+    </delete>
+
+</mapper>

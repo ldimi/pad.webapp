@@ -1,0 +1,9 @@
+
+# deze file wordt niet gebruikt
+# Indien log4j in classpath zit wordt,
+# er automatisch naar log4j configuratie overgeschakeld.
+#   zie --> log4j.properties.readme
+
+# handlers = org.apache.juli.FileHandler, java.util.logging.ConsoleHandler
+
+	

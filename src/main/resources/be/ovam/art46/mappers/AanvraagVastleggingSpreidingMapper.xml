@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="be.ovam.art46.mappers.AanvraagVastleggingSpreidingMapper">
+    <select id="getAll" resultType="ciMap" parameterType="int">
+        select * from Art46.AANVRAAGVASTLEGGINGSPREIDING where AANVRAAGID = #{aanvraagId} order by JAAR
+    </select>
+
+    <insert id="insert" parameterType="map">
+        INSERT INTO Art46.AANVRAAGVASTLEGGINGSPREIDING (aanvraagid , jaar, bedrag)VALUES (#{aanvraagId}, #{jaar}, #{bedrag})
+    </insert>
+    <update id="update" parameterType="map">
+        UPDATE Art46.AANVRAAGVASTLEGGINGSPREIDING SET bedrag = #{bedrag} where  (AANVRAAGID = #{aanvraagId} and jaar= #{jaar})
+    </update>
+    <delete id="delete" parameterType="be.ovam.art46.model.Spreiding">
+        DELETE FROM Art46.AANVRAAGVASTLEGGINGSPREIDING where  (AANVRAAGID = #{aanvraagid} and jaar= #{jaar})
+    </delete>
+
+</mapper>

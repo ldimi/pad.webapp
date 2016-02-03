@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.ActieMapper">
+
+
+    <select id="getActieZoekResult" parameterType="be.ovam.art46.struts.actionform.ActieZoekForm" resultType="ciMap">
+        with
+        dossier as (
+            select ad.dossier_b,
+                   ad.id dossier_id,
+                   ad.dossier_id_boa,
+                   ad.doss_hdr_id,
+                   ad.dossier_fase_id,
+                   ad.nis_id ,
+                   ad.dossier_type,
+                   ad.programma_code
+            from art46.v_dossier ad
+            where 1 = 1
+            <if test="dossier_id != null">
+                and ad.dossier_nr = #{dossier_id}
+            </if>
+        ),
+        acties as 
+        (
+            select 
+                ad.*, aba.bestek_id, aba.actie_id, aba.actie_type_id, aba.actie_d, aba.realisatie_d, aba.commentaar, aba.stop_d, aba.rate, aba.actie_sub_type_id  
+            from 
+                ART46.BESTEK_ACTIE aba	
+                    inner join ART46.BESTEK ab
+                    on aba.bestek_id = ab.bestek_id
+                inner join dossier ad
+                on ab.dossier_id = ad.dossier_id 
+            union 
+            select 
+                ad.*, -1 bestek_id ,ada.actie_id, ada.actie_type_id, ada.actie_d, ada.realisatie_d, ada.commentaar, ada.stop_d, ada.rate, ada.actie_sub_type_id  
+            from 
+                ART46.DOSSIER_ACTIE ada 
+                    inner join DOSSIER ad
+                    on ada.dossier_id = ad.dossier_id
+            union 
+            select 
+                ad.*, -2 bestek_id, -1 actie_id, -1 actie_type_id, d.eindverklaring_d  actie_d, d.eindverklaring_d realisatie_d, 'Eindverklaring' commentaar, d.eindverklaring_d stop_d, 0 rate, 0 actie_sub_type_id  
+            from 
+                SMEG.RS_DOSSIER_VIEW d 
+                    inner join DOSSIER ad
+                    on d.dossier_id = ad.dossier_id_boa
+            where d.eindverklaring_d is not null
+        ) 
+        select 
+            aat.actie_type_b,
+            coalesce(og.gemeente_b, '') || ' - ' ||  a.dossier_b dossier_l,
+            a.*,
+            adf.fase_b,
+            a.dossier_type || ' - ' || adf.fase_s as dossier_fase_b,
+            ast.actie_sub_type_b,
+            <![CDATA[
+            case when realisatie_d is not null then 'green'
+                 else (case when stop_d < current date then 'red'
+                            else (case when ((days(stop_d) - days(current date)) < 15) then 'yellow'
+                                       else ''
+                                  end)
+                       end)
+            end status 
+            ]]>
+        from  acties a 
+                left outer join ART46.ACTIE_TYPE aat on (aat.actie_type_id= a.actie_type_id)
+                left outer join ART46.ACTIE_SUB_TYPE ast on a.actie_sub_type_id = ast.actie_sub_type_id
+                left outer join SMEG.OVAM_GEMEENTE_VIEW og on (a.nis_id = og.nis_id) 
+                left outer join ART46.DOSSIER_FASE adf on (adf.fase_id = a.dossier_fase_id)
+        where 1=1				 
+            <if test='jaar_actie_d != null and jaar_actie_d != "-1"'>
+                and year(a.actie_d) = #{jaar_actie_d}
+            </if>
+            <if test='jaar_realisatie_d != null and jaar_realisatie_d != "-1"'>
+                and year(a.realisatie_d) = #{jaar_realisatie_d}
+            </if>
+            <if test='doss_hdr_id != null'>
+                and a.doss_hdr_id = #{doss_hdr_id}
+            </if>
+            <if test='dossier_fase_id != null and dossier_fase_id != "-1"'>
+                and a.dossier_fase_id = #{dossier_fase_id}
+            </if>
+            <if test='programma_code != null and programma_code != "-1"'>
+                and a.programma_code = #{programma_code}
+            </if>
+            <if test='actie_type_id != null'>
+                and a.actie_type_id = #{actie_type_id}
+            </if>
+            <if test='dossier_type != null and dossier_type != ""'>
+                and a.dossier_type = #{dossier_type}
+            </if>
+            <if test='actie_sub_type_id != null'>
+                and a.actie_sub_type_id = #{actie_sub_type_id}
+            </if>
+            <if test='ander_s != "1"'>
+                and a.actie_type_id not in (12,22)
+            </if>
+            <if test='lijst_id != null and lijst_id != "-1"'>
+                and  a.dossier_id in (select dossier_id from ART46.NA_GOEDK where lijst_id = #{lijst_id} ) 
+            </if>
+            <if test='ingebrekestelling_s == "1"'>
+                and aat.ingebreke_s = '1'
+            </if>
+            <if test='actie_sub_type == "1"'>
+                and (a.actie_sub_type_id = 0 or a.actie_sub_type_id is null)
+            </if>
+         order by dossier_l, stop_d desc
+    </select>
+ 
+    <select id="getActieJDZoekResult" parameterType="be.ovam.art46.struts.actionform.ActieJDZoekForm" resultType="ciMap">
+         select 
+            dja.*,
+            dj.doss_hdr_id,
+            dj.dossier_b,
+            ad.id,
+            ad.dossier_id_boa,
+            dj.commentaar,
+            ad.nis_id,
+            aat.actie_type_b,
+            oa.ambtenaar_b 
+        from 
+            ART46.DOSSIER_JD_ACTIE dja 
+                inner join ART46.DOSSIER_JD dj on (dj.dossier_id_jd = dja.dossier_id) 
+                inner join ART46.OVAM_AMBTENAAR_VIEW oa on (oa.ambtenaar_id = dj.doss_hdr_id) 
+                inner join ART46.ACTIE_TYPE aat on (aat.actie_type_id = dja.actie_type_id) 
+                inner join	ART46.v_DOSSIER ad on (ad.id = dj.dossier_id and ad.dossier_type = 'B')
+        where 1=1 
+            <if test='jaar_actie_d != null'>
+                and year(dja.actie_d) = #{jaar_actie_d} 
+            </if>
+            <if test='jaar_dossier_d != null'>
+                and substr(ad.dossier_id,1,2) = #{jaar_dossier_d} 
+            </if>
+            <if test='doss_hdr_id != null'>
+                and dj.doss_hdr_id = #{doss_hdr_id} 
+            </if>
+            <if test='actie_type_id != null'>
+                and dja.actie_type_id = #{actie_type_id} 
+            </if>
+        order by actie_d desc
+    </select>
+    
+</mapper>

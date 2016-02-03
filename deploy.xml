@@ -1,0 +1,63 @@
+<project name="pad2.webapp" basedir="." default="main">	
+
+    <target name="dodeploy_exploded">
+    	<echo>touching ${basedir}/target/pad.webapp/WEB-INF/web.xml</echo>
+    	<touch file="${basedir}/target/pad.webapp/WEB-INF/web.xml"/>
+    </target>
+
+    <target name="copy_pad_koen">
+        <copy todir="C:\tomcat\apache-tomcat-7.0.42\webapps\pad">
+            <fileset dir="./target/pad.webapp"/>
+        </copy>
+        <touch file="C:\tomcat\apache-tomcat-7.0.42\webapps\pad\WEB-INF\web.xml"/>
+    </target>
+
+    <target name="copy_web">
+    	<echo>copy pad.webapp script</echo>
+		<copy todir="./target/pad.webapp/resources/js">
+			<fileset dir="./src/main/webapp/resources/js"/>
+		</copy>
+    	
+        <echo>copy pad.webapp style</echo>
+		<copy todir="./target/pad.webapp/resources/css">
+			<fileset dir="./src/main/webapp/resources/css"/>
+		</copy>
+    	
+        <echo>copy pad.webapp pages</echo>
+		<copy todir="./target/pad.webapp/WEB-INF/pages">
+			<fileset dir="./src/main/webapp/WEB-INF/pages"/>
+		</copy>
+
+        <echo>copy pad.webapp mappers</echo>
+    	<copy todir="./target/pad.webapp/WEB-INF/classes/be/ovam/art46/mappers">
+            <fileset dir="./src/main/resources/be/ovam/art46/mappers"/>
+        </copy>
+    	
+        <!--
+        <echo>copy pad.webapp classes</echo>
+    	<copy todir="./target/pad.webapp/WEB-INF/classes">
+            <fileset dir="./target/classes">
+    			<include name="**/*.class"/>
+            </fileset>
+        </copy>
+        -->
+    	
+    </target>
+
+
+    <target name="prepare-package" >
+    	<echo>${maven.build.timestamp}</echo>
+        <copy todir="./target/pad.webapp/resources/js/${maven.build.timestamp}">
+    	    <fileset dir="./src/main/webapp/resources/js"/>
+    	</copy>
+        <move todir="./target/pad.webapp/resources/js/${maven.build.timestamp}">
+    	    <fileset dir="./target/pad.webapp/resources/js">
+                <include name="common/**/*.*"/>
+            </fileset>
+    	</move>
+        <deltree dir="./target/pad.webapp/resources/js/common"/>
+    </target>
+    
+    <target name="main" depends="dodeploy_exploded"/>
+
+</project>

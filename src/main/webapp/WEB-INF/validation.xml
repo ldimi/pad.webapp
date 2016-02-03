@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE form-validation PUBLIC
+          "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1.3//EN"
+          "http://jakarta.apache.org/commons/dtds/validator_1_1_3.dtd">
+
+<form-validation>
+	
+	<global>
+    	<constant>
+			<constant-name>dateFormat</constant-name>
+			<constant-value>dd.MM.yyyy</constant-value>
+		</constant>
+	</global>
+
+	
+	<formset>
+		
+		<form name="queryform">          
+			<field property="query_b" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Naam" resource="false"/>
+            </field>
+			<field property="query_l" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Query" resource="false"/>
+            </field>		
+        </form>	
+		
+		<form name="lijstenform">          
+			<field property="lijst_b" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Lijst naam" resource="false"/>
+            </field>		
+        </form>	
+		
+		<form name="actiesubtypeform">          
+			<field property="actie_sub_type_b" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Beschrijving" resource="false"/>
+            </field>		
+        </form>	
+		
+		<form name="actieform">          
+			<field property="actie_type_id" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Type" resource="false"/>
+            </field>
+			<field property="stop_d" depends="required, date">				
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Datum gepland van" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>			
+			<field property="realisatie_d" depends="date">							
+				<arg0 key="Datum gerealiseerd" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>
+			<field property="actie_d" depends="date">							
+				<arg0 key="Datum gepland tot" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>			
+        </form>		
+		
+		<form name="actietypeform">
+			<field property="actie_type_b" depends="required">				
+				<msg key="error.required.field" name="required"/>	
+				<arg0 key="beschrijving" resource="false"/>										
+            </field>          										
+        </form>	
+		
+		<form name="adrestypeform">
+			<field property="adrestype_b" depends="required">				
+				<msg key="error.required.field" name="required"/>	
+				<arg0 key="Adrestype" resource="false"/>										
+            </field>          										
+        </form>	
+					
+		<form name="budgetairartikelform">
+			<field property="artikel_b" depends="required">				
+				<msg key="error.required.field" name="required"/>	
+				<arg0 key="Budgetair Artikel" resource="false"/>										
+            </field>          										
+        </form>		
+		
+
+        <form name="dossierboaform">          
+			<field property="dossier_b" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Titel" resource="false"/>
+            </field>	
+			<field property="eindverklaring_d" depends="date">
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+				<arg0 key="Datum eindverklaring" resource="false"/>
+            </field>		
+			<field property="conform_bbo_d" depends="date">
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+				<arg0 key="BBO conform" resource="false"/>
+            </field>
+			<field property="conform_bsp_d" depends="date">
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+				<arg0 key="BSP conform" resource="false"/>
+            </field>
+        </form>
+				
+		<form name="dossierart46form">
+			<field property="afsluit_d" depends="date">							
+				<arg0 key="Datum" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>	
+        </form>
+		
+		<form name="dossierart46actieform">          
+			<field property="actie_d" depends="required, date">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Datum" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>	
+			<field property="realisatie_d" depends="date">							
+				<arg0 key="Realistiedatum" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>					
+        </form>
+		
+		<form name="ramingform">     
+			<field property="raming" depends="mask,required">
+				<var>
+					<var-name>mask</var-name>
+					<var-value>^\d{1,3}(\.?\d{3})*,?(\d{1,2})?$</var-value>
+				</var>
+				<msg key="error.required.field" name="required"/>
+				<msg key="error.number.format" name="mask"/>
+				<arg0 key="Raming " resource="false"/>
+			</field>     
+			<field property="budget_vastgelegd" depends="mask">
+				<var>
+					<var-name>mask</var-name>
+					<var-value>^\d{1,3}(\.?\d{3})*,?(\d{1,2})?$</var-value>
+				</var>
+				<msg key="error.number.format" name="mask"/>
+				<arg0 key="Budget " resource="false"/>
+			</field>			
+        </form>
+		
+		<form name="dossierjdform">          
+			<field property="dossier_id" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Dossier nummer JD" resource="false"/>				
+            </field>
+			<field property="dossier_b" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Titel" resource="false"/>				
+            </field>
+        </form>		
+		
+		<form name="archiefform">          
+			<field property="archief_d" depends="required, date">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Datum" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>	
+			<field property="plaats" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Plaats" resource="false"/>				
+            </field>
+			<!--field property="archief_nr" depends="required,integer">
+				<msg key="error.number.format" name="integer"/>	
+				<msg key="error.required.field" name="required"/>			
+				<arg0 key="Archiefnr." resource="false"/>							
+            </field-->	
+        </form>
+		
+		<form name="planninglijstgoedkeuringform">          
+			<field property="datumGoedkeuring" depends="required, date">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Datum goedkeuring" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>					
+        </form>
+		
+		<form name="dossierzoekform">          
+			<field property="dossier_id_boa" depends="integer">
+				<msg key="error.number.format" name="integer"/>				
+				<arg0 key="Dossier nummer BB" resource="false"/>							
+            </field>					
+        </form>
+		
+		<form name="adresform">          
+			<field property="naam" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Naam" resource="false"/>
+            </field>
+			 <field property="email" depends="email">
+       			<msg key="error.number.format" name="email"/>				
+				<arg0 key="email" resource="false"/>
+			</field>
+        </form>
+		
+		<form name="adrescontactform">          
+			<field property="naam" depends="required">
+				<msg key="error.required.field" name="required"/>				
+				<arg0 key="Naam" resource="false"/>
+            </field>
+			 <field property="email" depends="email">
+       			<msg key="error.number.format" name="email"/>				
+				<arg0 key="email" resource="false"/>
+			</field>
+        </form>
+		
+		<form name="setdateform">          
+			<field property="goedkeuring_d" depends=" date">				
+				<arg0 key="Datum goedkeuring" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>
+			<field property="publicatie_d" depends=" date">				
+				<arg0 key="Datum publicatie" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>				
+        </form>
+
+        <form name="briefform">          
+            <field property="qr_code" depends="integer">              
+                <arg0 key="QR-code" resource="false"/>
+                <msg key="error.number.format" name="integer"/>
+            </field>
+       </form>
+		
+		<form name="briefzoekform">          
+			<field property="inschrijf_d_van" depends=" date">				
+				<arg0 key="Datum van inschrijving" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>
+			<field property="inschrijf_d_tot" depends=" date">				
+				<arg0 key="Datum van inschrijving" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>	
+			<field property="in_d_van" depends=" date">				
+				<arg0 key="Datum stuk" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>
+			<field property="in_d_tot" depends=" date">				
+				<arg0 key="Datum stuk" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>	
+			<field property="uit_d_van" depends=" date">				
+				<arg0 key="Datum uit" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>
+			<field property="uit_d_tot" depends=" date">				
+				<arg0 key="Datum uit" resource="false"/>
+				<msg key="error.date.format" name="date"/>
+				<var>
+					<var-name>datePattern</var-name>
+					<var-value>${dateFormat}</var-value>
+				</var>
+            </field>				
+        </form>
+	</formset>
+
+</form-validation>

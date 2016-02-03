@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="be.ovam.art46.mappers.AanvraagVastleggingBrievenMapper">
+
+
+    <select id="getAll" resultType="ciMap" parameterType="int">
+		SELECT 
+		        avb.AANVRAAGID,
+		        br.BRIEF_ID,
+		        br.BRIEF_NR,
+		        br.BETREFT,
+		        br.DMS_ID,
+		        br.COMMENTAAR
+		from Art46.AANVRAAGVASTLEGGINGBRIEVEN avb
+		LEFT JOIN ART46.BRIEF br on br.brief_id = avb.briefid
+		where avb.AANVRAAGID = #{aanvraagId}
+    </select>
+
+    <select id="getBrief" resultType="ciMap" parameterType="int">
+        SELECT 
+                null as aanvraagid,
+                br.BRIEF_ID,
+                br.BRIEF_NR,
+                br.BETREFT,
+                br.DMS_ID,
+                br.COMMENTAAR
+        from ART46.BRIEF br
+        where br.brief_id = #{brief_id}
+    </select>
+
+
+    <insert id="insert" parameterType="map">
+        INSERT INTO Art46.AANVRAAGVASTLEGGINGBRIEVEN (aanvraagid , briefid) VALUES (#{aanvraagId}, #{briefId})
+    </insert>
+
+    <delete id="delete" parameterType="be.ovam.art46.model.OptioneelBestand">
+        DELETE FROM Art46.AANVRAAGVASTLEGGINGBRIEVEN where  (AANVRAAGID = #{aanvraagid} and BRIEFID = #{brief_id})
+    </delete>
+
+</mapper>

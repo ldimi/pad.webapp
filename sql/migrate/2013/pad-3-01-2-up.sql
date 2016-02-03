@@ -1,0 +1,20 @@
+
+CREATE TRIGGER ART46.BI_DOSSIER_FASE_ID NO CASCADE
+BEFORE INSERT ON ART46.DOSSIER
+REFERENCING NEW AS new_row FOR EACH ROW MODE DB2SQL
+BEGIN
+  IF new_row.DOSSIER_TYPE = 'X' THEN
+    SET new_row.DOSSIER_FASE_ID = 0;
+  ELSEIF new_row.DOSSIER_TYPE = 'A' THEN
+    SET new_row.DOSSIER_FASE_ID = 4;
+  ELSEIF new_row.DOSSIER_TYPE = 'B' THEN
+    SET new_row.DOSSIER_FASE_ID = 13;
+  ELSE
+    SET new_row.DOSSIER_FASE_ID = 13;
+  END IF;
+END
+#
+
+
+-- deze versie van de wijzigingen in db registreren.
+insert into ART46.DB_VERSIE(DB_VERSIE) values ('3.01.2')#

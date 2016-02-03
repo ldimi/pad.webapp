@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.ProjectMapper">
+
+    <select id="getProject" parameterType="string" resultType="be.ovam.art46.model.Project">
+        select
+            pr.project_id,
+            bsp.bestek_id,
+            pr.credit_totaal,
+            pr.debet_totaal,
+            pr.initieel_bedrag,
+            pr.initieel_acht_nr,
+            pr.boekjaar,
+            pr.wbs_nr
+        from sap.PROJECT pr
+                left join art46.BESTEK_SAP_PROJECT bsp
+                on bsp.PROJECT_ID = pr.PROJECT_ID
+        where pr.PROJECT_ID = #{PROJECT_ID}
+    </select>
+
+    <update id="updateProject" parameterType="be.ovam.art46.model.Project">
+        update sap.PROJECT
+        set
+            credit_totaal = #{credit_totaal},
+            debet_totaal = #{debet_totaal},
+            initieel_bedrag = #{initieel_bedrag},
+            initieel_acht_nr = #{initieel_acht_nr},
+            boekjaar = #{boekjaar},
+            wbs_nr = #{wbs_nr}
+        where project_id = #{project_id}
+    </update>
+
+    <select id="getDossierBestekProject" parameterType="be.ovam.art46.struts.actionform.DossierBestekProjectForm"
+            resultType="ciMap">
+        <![CDATA[
+        with factuur_ander_totaal as (
+            select
+                sum(spf.bedrag) totaal_ander_factuur, adspf.dossier_id
+            from
+                ART46.DOSSIER_SAP_PROJECT_FACTUUR adspf
+                    inner join SAP.PROJECT_FACTUUR spf
+                    on adspf.project_id = spf.project_id
+                    and adspf.factuur_id = spf.factuur_id
+            group by adspf.dossier_id
+        ),
+        factuur_totaal_dossier as
+        (
+            select
+                sum(spf.bedrag) totaal, ab.dossier_id
+            from
+                art46.bestek ab
+                    inner join art46.bestek_sap_project absp
+                    on ab.bestek_id = absp.bestek_id
+                inner join SAP.PROJECT_FACTUUR spf
+                on absp.project_id = spf.project_id
+            group by
+                ab.dossier_id
+        ),
+        factuur_totaal_project as
+        (
+            select
+                coalesce(sum(spf.bedrag), 0) totaal_factuur, spf.project_id
+            from
+                SAP.PROJECT_FACTUUR spf
+                    inner join ART46.BESTEK_SAP_PROJECT absp
+                    on spf.project_id = absp.project_id
+            group by
+                spf.project_id
+        )
+        select
+            ad.id,
+            sp.project_id,
+            spv.vastlegging_id,
+            abf.fase_b as "bestek_fase",
+            abp.procedure_b as "bestek_procedure",
+            abt.type_b as "bestek_type",
+            coalesce(fat.totaal_ander_factuur,0) + coalesce(ftd.totaal,0) as "totaal_ander_factuur",
+            coalesce(og.gemeente_b, '') || ' ' || ad.dossier_b as "dossier_l",
+            ad.dossier_nr as dossier_id,
+            ad.dossier_id_boa,
+            ad.doss_hdr_id,
+            ad.dossier_type,
+            ad.programma_code,
+            ab.bestek_nr,
+            ab.type_id,
+            ab.omschrijving,
+            ab.procedure_id,
+            ab.fase_id,
+            (select min(coalesce(aa.naam, '') || ' ' || coalesce(aa.voornaam, '') )
+            from ART46.ADRES aa
+                    inner join art46.BESTEK_ADRES ba
+                    on aa.ADRES_ID = ba.adres_id
+                    and ba.bestek_id = ab.bestek_id) as opdrachthouder,
+            spv.budgetair_artikel,
+            coalesce(spv.bedrag, 0) as "bedrag",
+            spv.datum,
+            coalesce(ftp.totaal_factuur , 0) as "totaal_factuur"
+        from
+            ART46.V_DOSSIER ad
+                left outer join ART46.BESTEK ab on ad.id = ab.dossier_id
+                left outer join ART46.BESTEK_TYPE abt on ab.type_id = abt.type_id
+                left outer join ART46.BESTEK_PROCEDURE abp on ab.procedure_id = abp.procedure_id
+                left outer join ART46.BESTEK_FASE abf on ab.fase_id = abf.fase_id
+                left outer join ART46.BESTEK_SAP_PROJECT absp on absp.bestek_id = ab.bestek_id
+                left outer join SAP.PROJECT sp on absp.project_id = sp.project_id
+                left outer join SMEG.OVAM_GEMEENTE_VIEW og on ad.nis_id = og.nis_id
+                left outer join factuur_totaal_project ftp on sp.project_id = ftp.project_id
+                left outer join factuur_ander_totaal fat on ad.id = fat.dossier_id
+                left outer join factuur_totaal_dossier ftd on ad.id = ftd.dossier_id
+            left outer join SAP.PROJECT_VASTLEGGING spv
+            on sp.project_id = spv.project_id
+        where
+            (ab.bestek_id is not null or (ab.bestek_id is null and (coalesce(fat.totaal_ander_factuur,0) + coalesce(ftd.totaal,0) > 0)))
+        ]]>
+        <if test='inclusiefAfgesloten != "1" '>
+            and ad.afsluit_d is null
+        </if>
+        <if test='dossier_type != null'>
+            and ad.dossier_type = #{dossier_type}
+        </if>
+        <if test='doss_hdr_id != null'>
+            and ad.doss_hdr_id = #{doss_hdr_id}
+        </if>
+        <if test='vastlegging_van_datum != null'>
+            <![CDATA[
+            and spv.datum >=  #{vastlegging_van_datum}
+            ]]>
+        </if>
+        <if test='vastlegging_tot_datum != null'>
+            <![CDATA[
+            and spv.datum <=  #{vastlegging_tot_datum}
+            ]]>
+        </if>
+        <if test='bestek_jaar != null and bestek_jaar != "-1"'>
+            and substr(ab.bestek_nr,3,2) = #{bestek_jaar}
+        </if>
+        <if test='fase_id != null and fase_id != "-1"'>
+            and ab.fase_id = #{fase_id}
+        </if>
+        <if test='programma_code != null'>
+            and ad.programma_code = #{programma_code}
+        </if>
+        <if test='artikel_id != null'>
+            and spv.budgetair_artikel = #{artikel_id}
+        </if>
+    </select>
+
+
+    <select id="getOrdonannceringLijst" parameterType="map"
+            resultType="be.ovam.art46.model.VastleggingOrdonanceringLijstDO">
+
+
+        with facturen as (
+        select
+        sum(bedrag) totaal_facturen ,project_id, year(factuur_d) jaar
+        from
+        SAP.PROJECT_FACTUUR
+        group by project_id, year(factuur_d) )
+        select
+            d.ID,
+            d.dossier_nr as dossier_id,
+            d.DOSSIER_B,
+            og.GEMEENTE_B,
+            d.DOSS_HDR_ID,
+            d.DOSSIER_TYPE,
+            b.BESTEK_ID,
+            b.BESTEK_NR,
+            p.PROJECT_ID,
+            pv.VASTLEGGING_ID,
+            pv.DATUM,
+            b.AFSLUIT_D,
+            p.SPREIDING_VALIDATIE_TS,
+            p.SPREIDING_VALIDATIE_UID,
+            (select totaal_facturen from facturen f where f.project_id = p.PROJECT_ID and f.jaar = #{jaar} ) as gefactureerd,
+            (select po.BEDRAG FROM sap.SPREIDING po where po.JAAR =#{jaar}and po.PROJECT_ID = p.PROJECT_ID) as vekVoorzien,
+            dh.PROGRAMMA_TYPE_CODE as programma,
+            d.doss_hdr_id
+        from art46.BESTEK_SAP_PROJECT bsp
+        left join art46.BESTEK b on b.BESTEK_ID = bsp.BESTEK_ID
+        left join sap.PROJECT p on p.PROJECT_ID = bsp.PROJECT_ID
+        left join sap.PROJECT_VASTLEGGING pv on p.PROJECT_ID = pv.PROJECT_ID and p.INITIEEL_ACHT_NR = pv.VASTLEGGING_ID
+        left join art46.v_DOSSIER d on d.ID = b.DOSSIER_ID
+        left join art46.DOSSIER_HOUDER dh on d.DOSS_HDR_ID = dh.DOSS_HDR_ID
+        left join smeg.OVAM_GEMEENTE_VIEW og on d.NIS_ID = og.NIS_ID
+        where pv.DATUM &lt;=#{eindDatum} and (b.AFSLUIT_D &gt;= #{startDatum} or b.AFSLUIT_D is null)
+
+        <if test='doss_hdr_id != null'>
+            and d.doss_hdr_id = #{doss_hdr_id}
+        </if>
+
+
+        <if test='programma != null'>
+            and dh.PROGRAMMA_TYPE_CODE = #{programma}
+        </if>
+
+        <if test='budgettair_artikel != null'>
+            and p.BUDGETAIR_ARTIKEL = #{budgettair_artikel}
+        </if>
+
+
+        <if test='startValidatie != null'>
+            and p.SPREIDING_VALIDATIE_TS &gt; #{startValidatie}
+        </if>
+
+        <if test='eindValidatie != null'>
+            and p.SPREIDING_VALIDATIE_TS &lt; #{eindValidatie}
+        </if>
+
+
+    </select>
+
+
+    <select id="getFactuurTotalen" parameterType="map" resultType="be.ovam.art46.sap.model.SpreidingDTO">
+
+
+                    select sum(bedrag) gefactureerd ,year(factuur_d) as jaar ,project_id
+                    from
+                        SAP.PROJECT_FACTUUR		 where PROJECT_ID = #{projectId}
+                    group by project_id, year(factuur_d)
+
+
+
+    </select>
+
+
+    <select id="getInitialValues" parameterType="map" resultType="be.ovam.art46.sap.model.Spreiding">
+
+
+                    select sum(bedrag) gefactureerd ,year(factuur_d) as jaar ,project_id
+                    from
+                        SAP.PROJECT_FACTUUR		 where PROJECT_ID = #{projectId}
+                    group by project_id, year(factuur_d)
+    </select>
+
+
+    <select id="getBestekDossier" parameterType="map" resultType="ciMap">
+        select b.bestek_nr,
+               b.OMSCHRIJVING,
+               d.DOSSIER_B,
+               d.dossier_nr as dossier_id
+        from ART46.BESTEK b
+            inner join art46.BESTEK_SAP_PROJECT bsp on b.BESTEK_ID = bsp.BESTEK_ID
+                inner join art46.v_dossier d on d.id = b.dossier_id
+        where bsp.PROJECT_ID=#{projectId}
+    </select>
+
+    <select id="getSAPProjectByBestekId" parameterType="int" resultType="ciMap">
+        select
+            sp.project_id,
+            sp.project_b
+        from
+            ART46.BESTEK_SAP_PROJECT absp
+                inner join SAP.PROJECT sp
+                on absp.project_id = sp.project_id
+        where
+            absp.bestek_id = #{bestek_id}
+    </select>
+
+
+
+    <select id="getSapProjectLijst" parameterType="string" resultType="ciMap">
+        select
+            project_id,
+            project_b,
+            budgetair_artikel,
+            budgetair_artikel_b,
+            schuldeiser,
+            contactpersoon
+        from SAP.PROJECT
+        where project_id = #{projectId}
+    </select>
+
+    <select id="getSapProjectFactuurLijst" parameterType="string" resultType="ciMap">
+        select
+            spf.PROJECT_ID,
+            spf.FACTUUR_ID,
+            spf.VOLGNUMMER,
+            spf.BEDRAG,
+            spf.FACTUUR_D,
+            spf.BETAAL_D,
+            ad.dossier_nr as dossier_id
+        from SAP.PROJECT_FACTUUR spf
+                left outer join ART46.DOSSIER_SAP_PROJECT_FACTUUR adspf
+                on spf.project_id = adspf.project_id
+                and spf.factuur_id = adspf.factuur_id
+            left outer join ART46.v_dossier ad
+            on adspf.dossier_id = ad.id
+        where spf.project_id = #{projectId}
+        order by volgnummer
+    </select>
+
+    <select id="getSapProjectVastleggingLijst" parameterType="string" resultType="ciMap">
+        select
+            spv.vastlegging_id, spv.bedrag, spv.datum
+        from SAP.PROJECT_VASTLEGGING spv
+        where spv.project_id = #{projectId}
+        order by project_id, volgnummer
+    </select>
+
+    <select id="getSapProjectOrdonnanceringLijst" parameterType="string" resultType="ciMap">
+        select
+            spo.volgnummer, spo.jaar, spo.waarde
+        from SAP.PROJECT_ORDONNANCERING spo
+        where spo.project_id = #{projectId}
+        order by project_id, volgnummer
+    </select>
+
+
+
+</mapper>

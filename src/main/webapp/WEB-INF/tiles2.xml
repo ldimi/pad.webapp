@@ -1,0 +1,604 @@
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+        
+        
+<tiles-definitions>
+
+    <definition name="baseDef"
+                template="/WEB-INF/pages/layouts/mainlayout2.jsp">
+        <put-attribute name="title" value=""/>
+        <put-attribute name="menu" value="/WEB-INF/pages/layouts/menu2.jsp"/>
+        <put-attribute name="body" value=""/>
+    </definition>
+
+    <definition name="baseDefSluis"
+                template="/WEB-INF/pages/layouts/mainlayout2.jsp">
+        <put-attribute name="title" value=""/>
+        <put-attribute name="menu" value="/WEB-INF/pages/layouts/menuSluis.jsp"/>
+        <put-attribute name="body" value=""/>
+    </definition>
+
+    <definition name="jsView" extends="baseDef">
+        <put-attribute name="title" expression="${requestScope.title}"/>
+        <put-attribute name="menuId" expression="${requestScope.menuId}"/>
+        <put-attribute name="body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+
+    <!--
+    -->
+    <definition name="noMenu.jsView" template="/WEB-INF/pages/layouts/jsView.jsp" >
+        <put-attribute name="title" expression="${requestScope.title}"/>
+        <put-attribute name="menuId" expression="${requestScope.menuId}"/>
+    </definition>
+
+    <definition name="sluis.jsView" extends="baseDefSluis">
+        <put-attribute name="customHeadIncl" value="/WEB-INF/pages/layouts/headInclBootstrap.jsp"/>
+        <put-attribute name="title" expression="${requestScope.title}"/>
+        <put-attribute name="menuId" expression="${requestScope.menuId}"/>
+        <put-attribute name="body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+
+    <definition name="pageView" extends="baseDef">
+        <put-attribute name="title" expression="${requestScope.title}"/>
+        <put-attribute name="menuId" expression="${requestScope.menuId}"/>
+        <put-attribute name="body" expression="/WEB-INF/pages/${requestScope.page}"/>
+    </definition>
+
+    <definition name="baseDefNoMenu"
+                template="/WEB-INF/pages/layouts/mainlayoutForLogin.jsp">
+        <put-attribute name="title" value=""/>
+        <put-attribute name="body" value=""/>
+    </definition>
+
+    <definition name="error-view" extends="baseDefNoMenu">
+        <put-attribute name="title" value="Error"/>
+        <put-attribute name="menuId" value="m_inloggen"/>
+        <put-attribute name="body" value="/WEB-INF/pages/layouts/error.jsp"/>
+    </definition>
+
+    <definition name="ajaxError" template="/WEB-INF/pages/layouts/ajaxError.jsp">
+    </definition>
+
+    <definition name="afkeurenAntwoordBriefSchuldvordering" extends="baseDef">
+        <put-attribute name="title" value="Schuldvorderingen"/>
+        <put-attribute name="menuId" value=""/>
+        <put-attribute name="body" value="/WEB-INF/pages/budget/afkeurenAntwoordBriefSchuldvordering.jsp"/>
+    </definition>
+    <definition name="laadJS" template="/WEB-INF/pages/layouts/laadJS.jsp"/>
+    <definition name="laadJSzonderSlickgrid" template="/WEB-INF/pages/layouts/laadJSzonderSlickgrid.jsp"/>
+
+    <definition name="testrunner" template="/WEB-INF/pages/layouts/testrunner.jsp"/>
+    
+    <!-- ******************** -->
+    <!-- Taken                -->
+    <!-- ******************** -->
+
+    <definition name="tescannenschuldvorderingen" extends="baseDef">
+        <put-attribute name="title" value="Scan Schuldvorderingen"/>
+        <put-attribute name="menuId" value="m_taken.scanSchuldvordering"/>
+        <put-attribute name="body" value="/WEB-INF/pages/taken/tescannenschuldvorderingen.jsp"/>
+    </definition>
+    
+    <definition name="teprintenschuldvorderingen" extends="baseDef">
+        <put-attribute name="title" value="Print Schuldvorderingen"/>
+        <put-attribute name="menuId" value="m_taken.printSchuldvordering"/>
+        <put-attribute name="body" value="/WEB-INF/pages/taken/teprintenschuldvorderingen.jsp"/>
+    </definition>
+
+    <definition name="tekeurenschuldvorderingen" extends="baseDef">
+        <put-attribute name="title" value="Keur Schuldvorderingen"/>
+        <put-attribute name="menuId" value="m_taken.keurSchuldvordering"/>
+        <put-attribute name="body" value="/WEB-INF/pages/taken/tekeurenschuldvorderingen.jsp"/>
+    </definition>
+
+
+    <!-- Planning Individueel -->
+    <!-- ******************** -->
+
+    <definition name="planning.individueel.baseDef" extends="baseDef">
+        <put-attribute name="title" value="Planning"/>
+        <put-attribute name="menuId" value="m_planning.individueel"/>
+        <put-attribute name="body" value="/WEB-INF/pages/planning/individueel/tabsLayout.jsp"/>
+    </definition>
+
+    <definition name="planning.individueel.bodemEnAfval" extends="planning.individueel.baseDef">
+        <put-attribute name="tab_selected" value="Planning dossiers"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/bodemEnAfval.jsp"/>
+    </definition>
+
+    <definition name="planning.individueel.raamcontracten" extends="planning.individueel.baseDef">
+        <put-attribute name="tab_selected" value="Planning raamcontracten"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/raamcontracten.jsp"/>
+    </definition>
+
+    <definition name="planning.individueel.gegroepeerdeOpdrachten" extends="planning.individueel.baseDef">
+        <put-attribute name="tab_selected" value="Planning groepcontracten"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/gegroepeerdeOpdrachten.jsp"/>
+    </definition>
+
+    <definition name="planning.individueel.takenlijst" extends="planning.individueel.baseDef">
+        <put-attribute name="tab_selected" value="Takenlijst"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/takenlijst.jsp"/>
+    </definition>
+
+    <definition name="planning.individueel.grafieken.jsView" extends="planning.individueel.baseDef">
+        <put-attribute name="tab_selected" value="Grafieken"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+
+    <!-- Planning Jaar -->
+    <!-- ******************** -->
+
+    <definition name="planning.jaar.baseDef" extends="baseDef">
+        <put-attribute name="title" value="Planning"/>
+        <put-attribute name="menuId" value="m_planning.jaar"/>
+        <put-attribute name="body" value="/WEB-INF/pages/planning/jaar/tabsLayout.jsp"/>
+    </definition>
+
+    <definition name="planning.jaar.overzichtbudgetten" extends="planning.jaar.baseDef">
+        <put-attribute name="tab_selected" value="Overzicht budgetten"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/jaar/overzichtBudgetten.jsp"/>
+    </definition>
+
+    <definition name="planning.jaar.detailoverzicht.gepland" extends="planning.jaar.baseDef">
+        <put-attribute name="tab_selected" value="Detailoverzicht_gepland"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/jaar/detailoverzichtgepland.jsp"/>
+    </definition>
+
+    <definition name="planning.jaar.detailoverzicht.vastgelegd" extends="planning.jaar.baseDef">
+        <put-attribute name="tab_selected" value="Detailoverzicht_vastgelegd"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/jaar/detailoverzichtvastgelegd.jsp"/>
+    </definition>
+
+    <!-- Adressen -->
+    <!-- ******** -->
+
+    <definition name="adres.zoek" extends="baseDef">
+        <put-attribute name="title" value="Adressen"/>
+        <put-attribute name="menuId" value="m_briefwisseling.zoekAdres"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/zoek.jsp"/>
+    </definition>
+
+    <definition name="adres.zoek.result" extends="baseDef">
+        <put-attribute name="title" value="Adressen"/>
+        <put-attribute name="menuId" value="m_briefwisseling.zoekAdres"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/adreslijst2.jsp"/>
+    </definition>
+
+    <!-- Dossier Zoeken -->
+    <!-- ************** -->
+
+    <definition name="dossier.zoek" extends="baseDef">
+        <put-attribute name="title" value="Zoek Dossier"/>
+        <put-attribute name="menuId" value="m_test.zoekDossier"/>
+        <put-attribute name="body" value="/WEB-INF/pages/dossier/zoek.jsp"/>
+    </definition>
+
+
+	<definition name="dossier.zoek.result" extends="baseDef">
+    	<put-attribute name="title" value="Zoek dossier"/>
+    	<put-attribute name="menuId" value="m_dossier.zoeken" />
+    	<put-attribute name="body" value="/WEB-INF/pages/dossier/dossierzoekresult.jsp"/>
+    </definition>
+
+
+    <!-- Beheer -->
+    <!-- ****** -->
+
+    <definition name="beheer.planningfaselijst" extends="baseDef">
+        <put-attribute name="title" value="Beheer Planning fasen"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.planningfasen"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/planningfaselijst.jsp"/>
+    </definition>
+
+    <definition name="beheer.budgetcodelijst" extends="baseDef">
+        <put-attribute name="title" value="Beheer Budgetcodes"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.budgetcodes"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/budgetcodelijst.jsp"/>
+    </definition>
+
+    <definition name="beheer.briefTypeVosLijst" extends="baseDef">
+        <put-attribute name="title" value="Beheer Brieftypes VOS"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.briefTypesVos"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/briefTypeVosLijst.jsp"/>
+    </definition>
+
+    <definition name="beheer.briefAardLijst" extends="baseDef">
+        <put-attribute name="title" value="Beheer Briefaard"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.briefAard"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/briefAardLijst.jsp"/>
+    </definition>
+
+    <definition name="beheer.jaarbudget" extends="baseDef">
+        <put-attribute name="title" value="Beheer Jaarbudget"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.jaarbudget"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/jaarbudgetlijst.jsp"/>
+    </definition>
+
+    <definition name="beheer.meetstaat.templates" extends="baseDef">
+        <put-attribute name="title" value="Beheer meetstaat templates"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.meetstaat.templates"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/meetstaatTemplates.jsp"/>
+    </definition>
+
+    <definition name="beheer.meetstaat.template" extends="baseDef">
+        <put-attribute name="title" value="Beheer meetstaat template"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.meetstaat.templates"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/meetstaatTemplate.jsp"/>
+    </definition>
+    <definition name="beheer.meetstaat.eenheden" extends="baseDef">
+        <put-attribute name="title" value="Beheer meetstaat eenheden"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.meetstaat.eenheden"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/meetstaatEenheden.jsp"/>
+    </definition>
+
+    <definition name="beheer.generatebarcode" extends="baseDef">
+        <put-attribute name="title" value="Beheer genereer barcode"/>
+        <put-attribute name="menuId" value="m_toepassingsbeheer.generatebarcode"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/generatebarcode.jsp"/>
+    </definition>
+
+   
+    <!-- DOSSIER -->
+    <!-- ****** -->
+
+    <definition name="dossier.baseDef" extends="baseDef">
+        <put-attribute name="title" value="Dossier"/>
+        <put-attribute name="menuId" value="m_dossier.zoeken"/>
+        <put-attribute name="body" value="/WEB-INF/pages/dossier/tabsLayout.jsp"/>
+    </definition>
+
+
+    <definition name="dossier.basis.jsView" extends="dossier.baseDef">
+        <put-attribute name="customHeadIncl" value="/WEB-INF/pages/layouts/headInclBootstrap.jsp"/>
+        <put-attribute name="tab_selected" value="Basis"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+   
+    <definition name="dossier.contact" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Contact"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/contactlijst.jsp"/>
+    </definition>
+    
+    <definition name="dossier.jd" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="JD"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/dossierlijstjd.jsp"/>
+    </definition>
+    
+    <definition name="dossier.opname" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Opname"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/opnamelijst.jsp"/>
+    </definition>
+
+    <definition name="dossier.publicatie" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Publicatie"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/publicatielijst.jsp"/>
+    </definition>
+
+    <definition name="dossier.brieven" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Brieven"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/briefHierarchy.jsp"/>
+    </definition>
+
+    <definition name="dossier.planning" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Planning"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/planninglijst.jsp"/>
+    </definition>
+
+    <definition name="dossier.bestek" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Bestek"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/besteklijst.jsp"/>
+    </definition>
+
+    <definition name="dossier.facturen" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Facturen"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/factuurlijst.jsp"/>
+    </definition>
+
+    <definition name="dossier.archief" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Archief"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/archieflijst.jsp"/>
+    </definition>
+
+    <definition name="dossier.projectfiche" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Projectfiche"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/financieleinfo.jsp"/>
+    </definition>
+
+    <definition name="dossier.toegangwebloket.jsView" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Toegang webloket"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+
+
+
+    <!-- BESTEK -->
+    <!-- ****** -->
+
+    <definition name="bestek.baseDef" extends="baseDef">
+        <put-attribute name="title" value="Bestek"/>
+        <put-attribute name="menuId" value="m_bestek.individueel"/>
+        <put-attribute name="body" value="/WEB-INF/pages/budget/tabsBestekLayout.jsp"/>
+    </definition>
+
+
+    <definition name="bestek.basisgegevens.jsView" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Basisgegevens"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+        <put-attribute name="sub_tab_selected" value=""/>
+        <put-attribute name="sub_tab_body" value=""/>
+    </definition>
+
+    <definition name="bestek.acties" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Acties"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/bestekactielijst.jsp"/>
+        <put-attribute name="sub_tab_selected" value=""/>
+        <put-attribute name="sub_tab_body" value=""/>
+    </definition>
+
+    <definition name="bestek.opdrachthouders" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Opdrachthouders"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/bestekadressen.jsp"/>
+        <put-attribute name="sub_tab_selected" value=""/>
+        <put-attribute name="sub_tab_body" value=""/>
+    </definition>
+
+    <definition name="bestek.meetstaat.baseDef" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Meetstaat"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/tabsBestekMeetstaatLayout.jsp"/>
+    </definition>
+
+    <definition name="bestek.schuldvorderingen.baseDef" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Schuldvorderingen"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/tabsBestekSchuldvorderingenLayout.jsp"/>
+    </definition>
+
+    <definition name="bestek.deelopdrachten.baseDef" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Deelopdrachten"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/tabsBestekDeelopdrachtenLayout.jsp"/>
+    </definition>
+
+    <definition name="bestek.deelopdrachten" extends="bestek.deelopdrachten.baseDef">
+        <put-attribute name="sub_tab_selected" value="deelopdrachten"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekdeelopdrachtlijst.jsp"/>
+    </definition>
+    <definition name="bestek.deelopdracht.voorstellen" extends="bestek.deelopdrachten.baseDef">
+        <put-attribute name="sub_tab_selected" value="voorstellen"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekdeelopdrachtvoorstellenlijst.jsp"/>
+    </definition>
+    <definition name="bestek.deelopdracht.voorstel" extends="bestek.deelopdrachten.baseDef">
+        <put-attribute name="sub_tab_selected" value="voorstellen"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/voorstelDeelOpdracht.jsp"/>
+    </definition>
+    <definition name="bestek.deelopdracht.voorstelmail" extends="bestek.deelopdrachten.baseDef">
+        <put-attribute name="sub_tab_selected" value="voorstellen"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/mail/mail.jsp"/>
+    </definition>
+
+    <definition name="bestek.meetstaat.meetstaat" extends="bestek.meetstaat.baseDef">
+        <put-attribute name="sub_tab_selected" value="Meetstaat"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekmeetstaat.jsp"/>
+    </definition>
+
+    <definition name="bestek.meetstaat.raming" extends="bestek.meetstaat.baseDef">
+        <put-attribute name="sub_tab_selected" value="Raming"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekmeetstaatraming.jsp"/>
+    </definition>
+    <definition name="bestek.meetstaat.offertes" extends="bestek.meetstaat.baseDef">
+        <put-attribute name="sub_tab_selected" value="Offertes"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekmeetstaatoffertes.jsp"/>
+    </definition>
+
+    <definition name="bestek.meetstaat.offerte" extends="bestek.meetstaat.baseDef">
+        <put-attribute name="sub_tab_selected" value="Offertes"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekmeetstaatofferte.jsp"/>
+    </definition>
+
+    <definition name="bestek.meetstaat.offerte.overzicht.schuldvorderingen" extends="bestek.schuldvorderingen.baseDef">
+        <put-attribute name="sub_tab_selected" value="overzichtSchuldvorderingen"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/overzichtSchuldvorderingen.jsp"/>
+    </definition>
+
+    <definition name="bestek.individueel.vastleggingen" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Vastleggingen"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/bestekvastleggingenlijst.jsp"/>
+        <put-attribute name="sub_tab_selected" value=""/>
+        <put-attribute name="sub_tab_body" value=""/>
+    </definition>
+
+    <definition name="bestek.schuldvorderingen" extends="bestek.schuldvorderingen.baseDef">
+        <put-attribute name="sub_tab_selected" value="schuldvorderingen"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekschuldvorderinglijst.jsp"/>
+    </definition>
+
+    <definition name="bestek.meetstaat.aanvraag.schuldvordering" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Schuldvorderingen"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/asv.jsp"/>
+        <put-attribute name="sub_tab_selected" value=""/>
+        <put-attribute name="sub_tab_body" value=""/>
+    </definition>
+
+
+    <definition name="bestek.planning" extends="bestek.baseDef">
+        <put-attribute name="tab_selected" value="Planning"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/budget/bestekplanning.jsp"/>
+        <put-attribute name="sub_tab_selected" value=""/>
+        <put-attribute name="sub_tab_body" value=""/>
+    </definition>
+
+
+    <!-- Overzichtslijst ordonnancering -->
+
+    <definition name="lijsten.VEK" extends="baseDef">
+        <put-attribute name="title" value="VEK overzicht"/>
+        <put-attribute name="menuId" value="m_planning.vek"/>
+        <put-attribute name="body" value="/WEB-INF/pages/lijsten/VEKoverzichtslijst.jsp"/>
+    </definition>
+
+    <!-- Login formulier -->
+
+
+    <definition name="loginform" extends="baseDefNoMenu">
+        <put-attribute name="title" value="Inloggen"/>
+        <put-attribute name="menuId" value="m_inloggen"/>
+        <put-attribute name="body" value="/WEB-INF/pages/security/loginform.jsp"/>
+    </definition>
+
+
+    <definition name="accessDenied" extends="baseDefNoMenu">
+        <put-attribute name="title" value="Inloggen"/>
+        <put-attribute name="menuId" value="m_inloggen"/>
+        <put-attribute name="body" value="/WEB-INF/pages/security/accessDenied.jsp"/>
+    </definition>
+
+    <!-- TEST -->
+    <!-- ****** -->
+
+    <definition name="test" extends="baseDef">
+        <put-attribute name="title" value="Test pagina"/>
+        <put-attribute name="menuId" value="m_test"/>
+        <put-attribute name="body" value="/WEB-INF/pages/test/test.jsp"/>
+    </definition>
+
+
+    <definition name="baseDefPopup" template="/WEB-INF/pages/layouts/popup2.jsp">
+        <put-attribute name="body" value="/"/>
+    </definition>
+
+    <definition name="bestek.actie.wijzig" extends="baseDefPopup">
+        <put-attribute name="titleKey" value="actie.title"/>
+        <put-attribute name="body" value="/WEB-INF/pages/budget/bestekactiedetails.jsp"/>
+    </definition>
+
+    <!-- Adres -->
+    <definition name="adres.nieuw" extends="baseDef">
+        <put-attribute name="title" value="Nieuw Adres"/>
+        <put-attribute name="menuId" value="m_nieuwadres"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/adrestest.jsp"/>
+    </definition>
+
+    <!-- AdresBeheer -->
+    <definition name="adres.beheer" extends="baseDef">
+        <put-attribute name="title" value="Adressen beheer"/>
+        <put-attribute name="menuId" value="m_adressenBeheer"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/adressenBeheer.jsp"/>
+    </definition>
+
+
+    <!--      <definition name="adres.controle" extends="baseDef"> -->
+    <!--         <put-attribute name="title" value="Adressen controle"/> -->
+    <!--         <put-attribute name="menuId" value="m_adressencontrole" /> -->
+    <!--         <put-attribute name="body" value="/WEB-INF/pages/beheer/adressencontrole.jsp" /> -->
+    <!--     </definition> -->
+
+    <!--      <definition name="adres.controle.resultaat" extends="baseDef"> -->
+    <!--         <put-attribute name="title" value="Adressen controle"/> -->
+    <!--         <put-attribute name="menuId" value="m_adressencontrole" /> -->
+    <!--         <put-attribute name="body" value="/WEB-INF/pages/beheer/adressencontroleresultaat.jsp" /> -->
+    <!--     </definition> -->
+
+    <!--     <definition name="adres.controle.selectiedubbels" extends="baseDef"> -->
+    <!--     <put-attribute name="title" value="Geselecteerde dubbele adressen"/> -->
+    <!--     <put-attribute name="menuId" value="m_geselecteerde_dubbele_adressen"/> -->
+    <!--         <put-attribute name="body" value="/WEB-INF/pages/beheer/adrescontroleselectiedubbels.jsp" /> -->
+    <!--     </definition> -->
+
+    <definition name="adres.nieuwadresformulier" extends="baseDef">
+        <put-attribute name="title" value="Nieuw Adres"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.nieuwadres"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/nieuwadresformulier.jsp"/>
+    </definition>
+
+    <definition name="rechtspersoon.nieuwrechtspersoonformulier" extends="baseDef">
+        <put-attribute name="title" value="Nieuwe Rechtspersoon"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.nieuwrechtspersoonformulier"/>
+        <put-attribute name="body" value="/WEB-INF/pages/rechtspersoon/nieuwrechtspersoonformulier.jsp"/>
+    </definition>
+
+    <definition name="contactpersoon.nieuwcontactpersoonformulier" extends="baseDef">
+        <put-attribute name="title" value="Nieuwe contactpersoon"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.nieuwcontactpersoonformulier"/>
+        <put-attribute name="body" value="/WEB-INF/pages/contactpersoon/nieuwcontactpersoonformulier.jsp"/>
+    </definition>
+
+
+    <definition name="rechtspersoon.rechtspersoon_adresLink" extends="baseDef">
+        <put-attribute name="title" value="Link een adres aan de rechtspersoon"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.rechtspersoon_adresLink"/>
+        <put-attribute name="body" value="/WEB-INF/pages/rechtspersoon/rechtspersoon_adresLink.jsp"/>
+    </definition>
+
+
+    <definition name="adres.adres_rechtspersoonLink" extends="baseDef">
+        <put-attribute name="title" value="link adressen aan Rechtspersoon"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.adres_rechtspersoonLink"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/adres_rechtspersoonLink.jsp"/>
+    </definition>
+
+    <definition name="rechtspersoon.rechtspersoonzoeken" extends="baseDef">
+        <put-attribute name="title" value="zoek Rechtspersoon"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.zoekrechtspersoon"/>
+        <put-attribute name="body" value="/WEB-INF/pages/rechtspersoon/rechtspersoonzoeken.jsp"/>
+    </definition>
+
+    <definition name="adres.adreszoeken" extends="baseDef">
+        <put-attribute name="title" value="zoek Adres"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.zoekadres"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/adreszoeken.jsp"/>
+    </definition>
+
+
+    <definition name="adres.success" extends="baseDef">
+        <put-attribute name="title" value="success"/>
+        <put-attribute name="menuId" value="m_success"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/success.jsp"/>
+    </definition>
+
+    <definition name="adres.adrespersoonlink" extends="baseDef">
+        <put-attribute name="title" value="Link adres en persoon"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.adrespersoonlink"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/adrespersoonlink.jsp"/>
+    </definition>
+
+    <definition name="adres.corrigeeradressen" extends="baseDef">
+        <put-attribute name="title" value="Corrigeer onvolledige adressen"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.corrigeeronvolledigeadressen"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/corrigeeradressen.jsp"/>
+    </definition>
+
+    <!--        <definition name="adres.corrigeer" extends="baseDef"> -->
+    <!--         <put-attribute name="title" value="Corrigeer onvolledige adressen"/> -->
+    <!--         <put-attribute name="menuId" value="m_adressenBeheer.corrigeeronvolledigeadressen" /> -->
+    <!--         <put-attribute name="body" value="/WEB-INF/pages/adres/corrigeeradressen.jsp" /> -->
+    <!--     </definition> -->
+
+    <definition name="beheer.rechtspersoonbeheer" extends="baseDef">
+        <put-attribute name="title" value="Beheer rechtspersonen"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.rechtspersoonbeheer"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/rechtspersoonbeheer.jsp"/>
+    </definition>
+    <definition name="beheer.qrbrievenzonderscan" extends="baseDef">
+        <put-attribute name="title" value="Te scannen inkomende brieven"/>
+        <put-attribute name="menuId" value="m_briefwisseling.qrbrievenzonderscan"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/qrbrievenzonderscan.jsp"/>
+    </definition>
+    <definition name="beheer.gegenereerdeBrieven" extends="baseDef">
+        <put-attribute name="title" value="Te scannen uitgaande brieven"/>
+        <put-attribute name="menuId" value="m_briefwisseling.gegenereerdeBrieven"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/gegenereerdeBrieven.jsp"/>
+    </definition>
+
+    <definition name="zoeken.beheer" extends="baseDef">
+        <put-attribute name="title" value="Zoeken"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.zoeken"/>
+        <put-attribute name="body" value="/WEB-INF/pages/beheer/zoekenbeheer.jsp"/>
+    </definition>
+
+
+    <definition name="adres.consolideeradressen" extends="baseDef">
+        <put-attribute name="title" value="consolideer dubbele adressen"/>
+        <put-attribute name="menuId" value="m_adressenBeheer.consolideerdubbeleadressen"/>
+        <put-attribute name="body" value="/WEB-INF/pages/adres/consolideeradressen.jsp"/>
+    </definition>
+
+</tiles-definitions>

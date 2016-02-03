@@ -1,0 +1,87 @@
+--------------------------------------------------------------------;
+-- DOWN
+--------------------------------------------------------------------;
+
+
+CREATE TRIGGER SAP.BU_PROJECT_AANVRAAGID_BESTAAT
+BEFORE UPDATE ON SAP.PROJECT
+REFERENCING NEW AS N OLD AS O
+FOR EACH ROW
+WHEN ((N.AANVRAAGID is not null AND (N.AANVRAAGID != O.AANVRAAGID OR O.AANVRAAGID is null) ) and
+      (N.AANVRAAGID not in (select distinct AANVRAAGID from ART46.AANVRAAGVASTLEGGING where AANVRAAGID is not null)))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID bestaat niet in ART46.AANVRAAGVASTLEGGING'
+;
+
+CREATE TRIGGER SAP.BI_PROJECT_AANVRAAGID_BESTAAT
+BEFORE INSERT ON SAP.PROJECT
+REFERENCING NEW AS N
+FOR EACH ROW
+WHEN (N.AANVRAAGID is not null and
+      N.AANVRAAGID not in (select distinct AANVRAAGID from ART46.AANVRAAGVASTLEGGING where AANVRAAGID is not null))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID bestaat niet in ART46.AANVRAAGVASTLEGGING'
+;
+
+
+CREATE TRIGGER SAP.BU_PROJECT_AANVRAAGID_UNIEK
+BEFORE UPDATE ON SAP.PROJECT
+REFERENCING NEW AS N OLD AS O
+FOR EACH ROW
+WHEN ((N.AANVRAAGID is not null AND (N.AANVRAAGID != O.AANVRAAGID OR O.AANVRAAGID is null) ) and
+      (N.AANVRAAGID in (select distinct AANVRAAGID from SAP.PROJECT)))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID is al gekoppeld aan een SAP.PROJECT'
+;
+
+CREATE TRIGGER SAP.BI_PROJECT_AANVRAAGID_UNIEK
+BEFORE INSERT ON SAP.PROJECT
+REFERENCING NEW AS N
+FOR EACH ROW
+WHEN (N.AANVRAAGID is not null and N.AANVRAAGID in (select distinct AANVRAAGID from SAP.PROJECT))
+       SIGNAL SQLSTATE '75000' SET MESSAGE_TEXT='AANVRAAGID is al gekoppeld aan een SAP.PROJECT'
+;
+
+
+
+delete from  ART46.DB_VERSIE
+where DB_VERSIE = '4.25';
+
+--------------------------------------------------------------------;
+-- UP
+--------------------------------------------------------------------;
+
+DROP TRIGGER SAP.BU_PROJECT_AANVRAAGID_BESTAAT;
+DROP TRIGGER SAP.BI_PROJECT_AANVRAAGID_BESTAAT;
+
+DROP TRIGGER SAP.BU_PROJECT_AANVRAAGID_UNIEK;
+DROP TRIGGER SAP.BI_PROJECT_AANVRAAGID_UNIEK;
+
+
+-- deze versie van de wijzigingen in db registreren.
+insert into ART46.DB_VERSIE(DB_VERSIE) values ('4.25');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

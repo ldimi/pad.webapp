@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.DossierOverdrachtMapper">
+
+    <select id="getOverdrachtHistoriek" parameterType="map" resultType="cimap">
+        with overdrachten_historiek as (
+            select
+                doh.*
+            from art46.v_dossier_overdracht_historiek doh
+            where 1 = 1
+                <if test="overdracht_id != null">
+                    and doh.overdracht_id = #{overdracht_id}
+                </if>
+                <if test="dossier_id_boa != null">
+                    and doh.dossier_id_boa = #{dossier_id_boa}
+                </if>
+                <if test="dossier_b != null">
+                    and doh.dossier_b = #{dossier_b}
+                </if>
+        )
+        select
+            doso.overdracht_id,
+            doso.versie_nr,
+            doso.dossier_id,
+            doso.dossier_type,
+            dos.gemeente_b,
+            coalesce(dos.dossier_b, doso.dossier_b, sd.naam) as dossier_omschrijving,
+            doso.dossier_id_boa,
+            dos.dossier_nr,
+            df.fase_b,
+            rg.rechtsgrond_b,
+            dt.doelgroep_type_b,
+            doso.timing_jaar,
+            doso.timing_maand,
+            doso.prioriteits_index,
+            doso.commentaar,
+            be.bestek_nr as screen_bestek_omschrijving,
+            doso.status_start_d,
+            doso_status.omschrijving as status_b,
+            doso.deleted_jn,
+            dos.doss_hdr_id
+        from overdrachten_historiek doso
+                inner join art46.dossier_overdracht_status doso_status
+                on doso.status = doso_status.code
+            left join smeg.dossier sd
+            on doso.DOSSIER_ID_BOA = sd.dossier_id
+                left join art46.v_dossier dos
+                on doso.DOSSIER_ID = dos.id
+            left join art46.dossier_rechtsgrond rg
+            on dos.dossier_type = rg.dossier_type
+            and dos.rechtsgrond_code = rg.rechtsgrond_code
+                left join art46.dossier_fase df
+                on dos.dossier_type = df.dossier_type
+                and dos.dossier_fase_id = df.fase_id
+            left join art46.doelgroep_type dt
+            on dos.doelgroep_type_id = dt.doelgroep_type_id
+                left join art46.bestek be
+                on doso.screen_bestek_id = be.bestek_id
+        order by doso.overdracht_id, doso.versie_nr
+    </select>
+
+
+    <select id="getSmegDataByDossierIdBoa" parameterType="int" resultType="ciMap">
+        select
+            sd.id                   as smeg_id,
+            sd.naam                 as smeg_naam,
+
+            dos.id                  as ivs_id,
+            dos.dossier_nr          as ivs_dossier_nr,
+            dos.dossier_b           as ivs_dossier_b,
+            dos.rechtsgrond_code    as ivs_rechtsgrond_code,
+            dos.nis_id              as ivs_nis_id,
+            dos.doss_hdr_id         as ivs_doss_hdr_id,
+            dos.dossier_fase_id     as ivs_dossier_fase_id,
+            dos.programma_code      as ivs_programma_code,
+
+            doso.overdracht_id
+        from smeg.dossier sd
+                left join art46.v_dossier dos
+                on sd.dossier_id = dos.dossier_id_boa
+             left join art46.DOSSIER_OVERDRACHT doso
+             on sd.dossier_id = doso.dossier_id_boa
+             and doso.deleted_jn = 'N'
+        where sd.dossier_id = #{dossier_id_boa}
+    </select>
+
+    <select id="getOverdrachtStatussenDD"  resultType="ciMap">
+        select code as value,
+               omschrijving as label
+        from art46.DOSSIER_OVERDRACHT_STATUS
+        order by volg_nr
+    </select>
+
+    <select id="getOverdrachtsFiches" resultType="ciMap" parameterType="int">
+        select dt.OMSCHRIJVING, doc.DMS_EDIT_URL
+        from smeg.dossier dos
+                inner join smeg.BUNDEL_BUNDEL bb
+                on dos.id = bb.PARENT_BUNDEL_ID
+            inner  join smeg.DOCUMENT doc
+            on bb.CHILD_BUNDEL_ID = doc.ID
+                inner join SMEG_REF.DOCUMENTTYPE dt
+                on doc.TYPE_ID = dt.ID
+        WHERE
+            dt.code in ('CODE2003')
+            and dos.DOSSIER_ID = #{dossier_id_boa}
+    </select>
+
+    <insert id="registreerOverdrachtsFichesBijBestemmeling">
+        insert into art46.DOSSIER_OVERDRACHT
+        (versie_nr, dossier_type, dossier_id, status_start_d, status, deleted_jn)
+            select
+                1, 'B', ados.id, current date, 'registrati', 'N'
+            from smeg.dossier dos
+                    inner join smeg.BUNDEL_BUNDEL bb
+                    on dos.id = bb.PARENT_BUNDEL_ID
+                inner  join smeg.DOCUMENT doc
+                on bb.CHILD_BUNDEL_ID = doc.ID
+                    inner join SMEG_REF.DOCUMENTTYPE dt
+                    on doc.TYPE_ID = dt.ID
+                inner join art46.dossier ados
+                on dos.dossier_id = ados.dossier_id_boa
+                    left join smeg_ref.DOCUMENTSTATUS docs
+                    on doc.STATUS_ID = docs.ID
+                left join art46.DOSSIER_OVERDRACHT doso
+                on dos.dossier_id = doso.DOSSIER_ID_BOA
+            WHERE 1 = 1
+                and dt.code in ('CODE2003')      -- Overdrachtsfiche dossier BB naar IVS  handhaving
+                and doc.STATUS_ID = 38           -- nota bij bestemmeling
+                and doso.OVERDRACHT_ID is null   -- bestaat nog niet als overdracht.
+    </insert>
+
+</mapper>
