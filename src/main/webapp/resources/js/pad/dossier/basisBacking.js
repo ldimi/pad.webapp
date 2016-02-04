@@ -141,31 +141,16 @@ define([
 
             bodemPanel = function (ctrl) {
                 return m("fieldset", [
-                    m("legend", "Dossierdetails Bodem"),
-                    m(".col-md-6", [
-                        m(".row.form-group", [
-                            m(".col-md-3", m("label","Dossier")),
-                            m(".col-md-9", ff.input("dossier_id_boa", {readOnly: true}))
-                        ]),
-                        m(".row.form-group", [
-                            m(".col-md-3", m("label","Titel")),
-                            m(".col-md-9", ff.input("smeg_naam", {readOnly : true}))
-                        ]),
-                        m(".row.form-group", [
-                            m(".col-md-12",
-                                m("a",
-                                    {href: _G_.model.mistralUrl + "?detailId=" + ctrl.dossier.get("smeg_id")},
-                                    "Dossier bodem: " + ctrl.dossier.get("smeg_naam")
-                            ))
-                        ])
+                    m(".row.form-group", [
+                        m(".col-md-12",
+                            m("a",
+                                {href: _G_.model.mistralUrl + "?detailId=" + ctrl.dossier.get("smeg_id")},
+                                "Dossier bodem: " + ctrl.dossier.get("smeg_naam") + " ( " + ctrl.dossier.get("dossier_id_boa") + " )"
+                        ))
                     ]),
-                    m(".col-md-6", [
-                        m(".row.form-group", [
-                            m(".col-md-12", m("label","Commentaar Bodem"))
-                        ]),
-                        m(".row.form-group", [
-                            m(".col-md-12", ff.textarea("commentaar_bodem", {rows: 4 }))
-                        ])
+                    m(".row.form-group", [
+                        m(".col-md-2", m("label","Commentaar Bodem")),
+                        m(".col-md-10", ff.textarea("commentaar_bodem", {rows: 2}))
                     ])
                 ]);
             };
