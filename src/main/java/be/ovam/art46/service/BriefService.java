@@ -201,7 +201,7 @@ public class BriefService {
 
     public boolean updateBriefAfterUpload(Brief brief, String dmsId, String fileName) throws Exception {
         Dossier dossier = (Dossier) dossierDAO.getObject(Dossier.class, brief.getDossier_id());
-        String folderName = ALFRESCO_URL + dossier.getDossier_id().substring(0, 2) + "/" + dossier.getDossier_id();
+        String folderName = ALFRESCO_URL + dossier.getDossier_nr().substring(0, 2) + "/" + dossier.getDossier_nr();
         if (brief.getCategorie_id() == 5) {
             folderName = folderName + "/Scans";
         }
@@ -261,7 +261,7 @@ public class BriefService {
         Integer volgNr = briefDAO.getVolgnummer(schuldvordering.getBestek().getDossier_id());
         doc.setVolgnummer(volgNr);
         doc.setLtst_wzg_d(new Timestamp(System.currentTimeMillis()));
-        doc.setBrief_nr(briefDAO.generateBriefNr(doc, schuldvordering.getBestek().getDossier().getDossier_id()));
+        doc.setBrief_nr(briefDAO.generateBriefNr(doc, schuldvordering.getBestek().getDossier().getDossier_nr()));
         if (schuldvordering.getAanvraagSchuldvordering() != null && schuldvordering.getAanvraagSchuldvordering().getOfferte() != null && schuldvordering.getAanvraagSchuldvordering().getOfferte().getBrief() != null) {
             doc.setAdres_id(schuldvordering.getAanvraagSchuldvordering().getOfferte().getBrief().getAdres_id());
             doc.setContact_id(schuldvordering.getAanvraagSchuldvordering().getOfferte().getBrief().getContact_id());
@@ -425,7 +425,7 @@ public class BriefService {
 
         scanDto.setBriefId(brief.getBrief_id());
         Dossier dossier = dossierService.getDossier(brief.getDossier_id());
-        String folderName = BriefService.getAlfrescoUrl() + dossier.getDossier_id().substring(0, 2) + "/" + dossier.getDossier_id() + "/"
+        String folderName = BriefService.getAlfrescoUrl() + dossier.getDossier_nr().substring(0, 2) + "/" + dossier.getDossier_nr() + "/"
                 + briefDAO.getBriefCategorie(5).get("brief_categorie_b");
         scanDto.setDmsFolder(folderName);
         return scanDto;
@@ -440,7 +440,7 @@ public class BriefService {
         }
 
         Dossier dossier = dossierService.getDossier(brief.getDossier_id());
-        String folderName = BriefService.getAlfrescoUrl() + dossier.getDossier_id().substring(0, 2) + "/" + dossier.getDossier_id();
+        String folderName = BriefService.getAlfrescoUrl() + dossier.getDossier_nr().substring(0, 2) + "/" + dossier.getDossier_nr();
         if (brief.getDms_id() != null) {
             if ((code + ".pdf").equals(brief.getDms_filename())) {
                 folderName = brief.getDms_folder();

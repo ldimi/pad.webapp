@@ -215,7 +215,7 @@ public class BestekService {
 
     public void addControle(Long bestekId, MultipartFile multipartFile) throws Exception {
         Bestek bestek = getBestek(bestekId);
-        String dossier_nr = bestek.getDossier().getDossier_id();
+        String dossier_nr = bestek.getDossier().getDossier_nr();
         String path = "/Toepassingen/ivs/" + dossier_nr.substring(0, 2) + "/" + dossier_nr + "/" + bestekId;
         File tmpFile = File.createTempFile("upload" + UUID.randomUUID().toString(), "tmp");
         multipartFile.transferTo(tmpFile);

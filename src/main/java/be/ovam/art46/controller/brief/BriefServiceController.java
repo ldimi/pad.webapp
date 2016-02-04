@@ -79,7 +79,7 @@ public class BriefServiceController {
 		}
         
 		brief.setDossier_id(dossierId);
-		brief.setDossier_nr(dossier.getDossier_id());
+		brief.setDossier_nr(dossier.getDossier_nr());
         
 		if (categorieId != null && categorieId.intValue() != 0) {
 			brief.setCategorie_id(categorieId.toString());
@@ -185,7 +185,7 @@ public class BriefServiceController {
 
 		Dossier dossier = dossierService.getDossier(brief.getDossier_id());
 		
-        String folderName = BriefService.getAlfrescoUrl() + dossier.getDossier_id().substring(0, 2) + "/" + dossier.getDossier_id() + "/Scans";
+        String folderName = BriefService.getAlfrescoUrl() + dossier.getDossier_nr().substring(0, 2) + "/" + dossier.getDossier_nr() + "/Scans";
                 
 		scan.setDmsFolder(folderName);
 		return scan;

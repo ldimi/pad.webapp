@@ -1,10 +1,8 @@
 package be.ovam.art46.controller.brief;
 
-import be.ovam.art46.model.BriefOpmerking;
 import be.ovam.art46.service.EsbService;
 import be.ovam.art46.service.schuldvordering.SchuldvorderingService;
 import be.ovam.dms.alfresco.DmsUserAlfresco;
-import be.ovam.util.rest.RestTemplate;
 import be.ovam.web.Response;
 import be.ovam.util.mybatis.SqlSession;
 
@@ -19,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -44,32 +40,30 @@ public class BriefController {
     private String dmsUser = System.getProperty("ovam.dms.user");
     private String dmsPass = System.getProperty("ovam.dms.pass");
 
-	@RequestMapping(value = "/dossier/{dossier_id}/dms/oplaad", method = RequestMethod.GET)
-	public String getDmsObject(@PathVariable String dossier_id, Model model) throws Exception {
+	@RequestMapping(value = "/dossier/{dossier_nr}/dms/oplaad", method = RequestMethod.GET)
+	public String getDmsObject(@PathVariable String dossier_nr, Model model) throws Exception {
 		
-		String superFolder = dossier_id.substring(0, 2);
+		String superFolder = dossier_nr.substring(0, 2);
 		
 		String host = dmsUrl.substring(7);
 		
 /*
         RestTemplate restTemplate = new RestTemplate(host, 80, dmsUser, dmsPass);
 
-        URI uri = new URI(dmsUrl + "/service/be/ovam/pad/createOplaadDir_2?dossier_id=" + dossier_id);
+        URI uri = new URI(dmsUrl + "/service/be/ovam/pad/createOplaadDir_2?dossier_id=" + dossier_nr);
         String result = restTemplate.getForObject(uri, String.class);
 */
-        String to = "/Toepassingen/ivs/" + superFolder + "/" + dossier_id + "/Oplaad";
+        String to = "/Toepassingen/ivs/" + superFolder + "/" + dossier_nr + "/Oplaad";
         String from = "/Toepassingen/ivs/template_oplaad/";
         esbService.copy(from, to, dmsUser);
         
-/*        logger.info("Resultaat van createOplaadDir: " + result);*/
-		
-		return "redirect:" + dmsUrl + "/share/page/repository#filter=path%7C%2FToepassingen%2Fivs%2F" + superFolder + "%2F" + dossier_id + "%2FOplaad"; // + "&page=1";
+		return "redirect:" + dmsUrl + "/share/page/repository#filter=path%7C%2FToepassingen%2Fivs%2F" + superFolder + "%2F" + dossier_nr + "%2FOplaad"; // + "&page=1";
 	}
 
-    @RequestMapping(value = "/dossier/{dossier_id}/dms/webloket", method = RequestMethod.GET)
-    public String getDmsObjectWebloket(@PathVariable String dossier_id, Model model) throws Exception {
-        String superFolder = dossier_id.substring(0, 2);
-        return "redirect:" + dmsUrl + "/share/page/repository#filter=path%7C%2FToepassingen%2Fivs%2F" + superFolder + "%2F" + dossier_id + "%2FWEBLOKET"; // + "&page=1";
+    @RequestMapping(value = "/dossier/{dossier_nr}/dms/webloket", method = RequestMethod.GET)
+    public String getDmsObjectWebloket(@PathVariable String dossier_nr, Model model) throws Exception {
+        String superFolder = dossier_nr.substring(0, 2);
+        return "redirect:" + dmsUrl + "/share/page/repository#filter=path%7C%2FToepassingen%2Fivs%2F" + superFolder + "%2F" + dossier_nr + "%2FWEBLOKET"; // + "&page=1";
     }
 	
     @RequestMapping(value = "/brief/{brief_id}/schuldvordering/verwijder/{vordering_id}", method = RequestMethod.GET)

@@ -31,7 +31,7 @@ public class DossierWebloketService {
         Dossier dossier = dossierArt46Dao.get(id);
         if(StringUtils.isEmpty(dossier.getWebloketNodeRef())) {
             // Alfresco: copieren van template folder naar dossier
-            String dossier_nr = dossier.getDossier_id();
+            String dossier_nr = dossier.getDossier_nr();
             
             String to = "/Toepassingen/ivs/" + dossier_nr.substring(0, 2) + "/" + dossier_nr + "/WEBLOKET";
             String from = "/Toepassingen/ivs/template_webloket/";

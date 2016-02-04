@@ -27,7 +27,7 @@ public class DossierDAO extends BaseDAO {
 	public void saveObject(Object object) throws Exception {
 		if (object instanceof Dossier) {
 			Dossier dossier = (Dossier) object;
-			if (dossier.getDossier_id() == null || dossier.getDossier_id().length() == 0 || dossier.getDossier_id().startsWith("_")) {
+			if (dossier.getDossier_nr() == null || dossier.getDossier_nr().length() == 0 || dossier.getDossier_nr().startsWith("_")) {
 				if ("X".equals(dossier.getDossier_type())) {			
 				    throw new RuntimeException("Aanmaken van nieuw dossier moet via DossierService gebeuren.");
 				} else {

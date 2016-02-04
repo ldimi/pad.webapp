@@ -22,7 +22,7 @@ public class BriefLoadDossierAction extends Action {
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, ActionErrors errors) throws Exception {
 		BriefForm briefForm = (BriefForm) form;			
 		Dossier dossier = (Dossier) dossierDAO.getDossierById(briefForm.getDossier_id());
-		briefForm.setDossier_nr(dossier.getDossier_id());
+		briefForm.setDossier_nr(dossier.getDossier_nr());
 		briefForm.setDossier_type_ivs(dossier.getDossier_type());
 		briefForm.setDossier_hdr_ivs(dossier.getDoss_hdr_id());
 		briefForm.setDossier_b_ivs(dossier.getDossier_b());		
