@@ -38,6 +38,12 @@ public class DossierService {
     
 	public DossierDO saveDossier(Map dossier) throws Exception {
         
+        // We verwachten dat de 'id' in de key 'dossier_id' zit
+        //                      'dossier_id' in de key 'dossier_nr' zit.
+        // (dossier_id in tabel is zeer ongelukkige naam, en hoop ik te verwijderen.)
+        
+        // een paar checks op problemen te detecteren.
+        
         Integer id = (Integer) dossier.get("id");
         String dossier_type = (String) dossier.get("dossier_type");
         String dossier_id = (String) dossier.get("dossier_id");
