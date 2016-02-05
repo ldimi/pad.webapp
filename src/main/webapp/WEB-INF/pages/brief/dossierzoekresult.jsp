@@ -16,13 +16,13 @@
                 <display:column property="gemeente_b" title="Fusiegemeente" sortable="true" />
                 <display:column property="adres" title="Adres"/>
                 <display:column property="dossier_b" title="Dossiernaam IVS" sortable="true"/>
-                <display:column property="dossier_id" title="Dossiernr IVS" sortable="true" media="xml csv excel" />
-                <display:column title="Dossiernr IVS" sortable="true" sortProperty="dossier_id" class="center" media="html" >
+                <display:column property="dossier_nr" title="Dossiernr IVS" sortable="true" media="xml csv excel" />
+                <display:column title="Dossiernr IVS" sortable="true" sortProperty="dossier_nr" class="center" media="html" >
                     <logic:equal parameter="popup" value="yes">
-                        <bean:write name="dossier" property="dossier_id"/>
+                        <bean:write name="dossier" property="dossier_nr"/>
                     </logic:equal>
                     <logic:notEqual parameter="popup" value="yes">
-                        <html:link action="dossierdetailsArt46.do?selectedtab=Basis" paramId="id" paramName="dossier" paramProperty="id"><bean:write name="dossier" property="dossier_id"/></html:link>
+                        <html:link action="dossierdetailsArt46.do?selectedtab=Basis" paramId="id" paramName="dossier" paramProperty="id"><bean:write name="dossier" property="dossier_nr"/></html:link>
                     </logic:notEqual>
                 </display:column>
                 <display:column property="dossier_type" sortable="true" class="center"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
@@ -23,33 +23,33 @@
                 and ad.dossier_nr = #{dossier_id}
             </if>
         ),
-        acties as 
+        acties as
         (
-            select 
-                ad.*, aba.bestek_id, aba.actie_id, aba.actie_type_id, aba.actie_d, aba.realisatie_d, aba.commentaar, aba.stop_d, aba.rate, aba.actie_sub_type_id  
-            from 
-                ART46.BESTEK_ACTIE aba	
+            select
+                ad.*, aba.bestek_id, aba.actie_id, aba.actie_type_id, aba.actie_d, aba.realisatie_d, aba.commentaar, aba.stop_d, aba.rate, aba.actie_sub_type_id
+            from
+                ART46.BESTEK_ACTIE aba
                     inner join ART46.BESTEK ab
                     on aba.bestek_id = ab.bestek_id
                 inner join dossier ad
-                on ab.dossier_id = ad.dossier_id 
-            union 
-            select 
-                ad.*, -1 bestek_id ,ada.actie_id, ada.actie_type_id, ada.actie_d, ada.realisatie_d, ada.commentaar, ada.stop_d, ada.rate, ada.actie_sub_type_id  
-            from 
-                ART46.DOSSIER_ACTIE ada 
+                on ab.dossier_id = ad.dossier_id
+            union
+            select
+                ad.*, -1 bestek_id ,ada.actie_id, ada.actie_type_id, ada.actie_d, ada.realisatie_d, ada.commentaar, ada.stop_d, ada.rate, ada.actie_sub_type_id
+            from
+                ART46.DOSSIER_ACTIE ada
                     inner join DOSSIER ad
                     on ada.dossier_id = ad.dossier_id
-            union 
-            select 
-                ad.*, -2 bestek_id, -1 actie_id, -1 actie_type_id, d.eindverklaring_d  actie_d, d.eindverklaring_d realisatie_d, 'Eindverklaring' commentaar, d.eindverklaring_d stop_d, 0 rate, 0 actie_sub_type_id  
-            from 
-                SMEG.RS_DOSSIER_VIEW d 
+            union
+            select
+                ad.*, -2 bestek_id, -1 actie_id, -1 actie_type_id, d.eindverklaring_d  actie_d, d.eindverklaring_d realisatie_d, 'Eindverklaring' commentaar, d.eindverklaring_d stop_d, 0 rate, 0 actie_sub_type_id
+            from
+                SMEG.RS_DOSSIER_VIEW d
                     inner join DOSSIER ad
                     on d.dossier_id = ad.dossier_id_boa
             where d.eindverklaring_d is not null
-        ) 
-        select 
+        )
+        select
             aat.actie_type_b,
             coalesce(og.gemeente_b, '') || ' - ' ||  a.dossier_b dossier_l,
             a.*,
@@ -63,14 +63,14 @@
                                        else ''
                                   end)
                        end)
-            end status 
+            end status
             ]]>
-        from  acties a 
+        from  acties a
                 left outer join ART46.ACTIE_TYPE aat on (aat.actie_type_id= a.actie_type_id)
                 left outer join ART46.ACTIE_SUB_TYPE ast on a.actie_sub_type_id = ast.actie_sub_type_id
-                left outer join SMEG.OVAM_GEMEENTE_VIEW og on (a.nis_id = og.nis_id) 
+                left outer join SMEG.OVAM_GEMEENTE_VIEW og on (a.nis_id = og.nis_id)
                 left outer join ART46.DOSSIER_FASE adf on (adf.fase_id = a.dossier_fase_id)
-        where 1=1				 
+        where 1=1
             <if test='jaar_actie_d != null and jaar_actie_d != "-1"'>
                 and year(a.actie_d) = #{jaar_actie_d}
             </if>
@@ -99,7 +99,7 @@
                 and a.actie_type_id not in (12,22)
             </if>
             <if test='lijst_id != null and lijst_id != "-1"'>
-                and  a.dossier_id in (select dossier_id from ART46.NA_GOEDK where lijst_id = #{lijst_id} ) 
+                and  a.dossier_id in (select dossier_id from ART46.NA_GOEDK where lijst_id = #{lijst_id} )
             </if>
             <if test='ingebrekestelling_s == "1"'>
                 and aat.ingebreke_s = '1'
@@ -109,9 +109,9 @@
             </if>
          order by dossier_l, stop_d desc
     </select>
- 
+
     <select id="getActieJDZoekResult" parameterType="be.ovam.art46.struts.actionform.ActieJDZoekForm" resultType="ciMap">
-         select 
+         select
             dja.*,
             dj.doss_hdr_id,
             dj.dossier_b,
@@ -120,27 +120,27 @@
             dj.commentaar,
             ad.nis_id,
             aat.actie_type_b,
-            oa.ambtenaar_b 
-        from 
-            ART46.DOSSIER_JD_ACTIE dja 
-                inner join ART46.DOSSIER_JD dj on (dj.dossier_id_jd = dja.dossier_id) 
-                inner join ART46.OVAM_AMBTENAAR_VIEW oa on (oa.ambtenaar_id = dj.doss_hdr_id) 
-                inner join ART46.ACTIE_TYPE aat on (aat.actie_type_id = dja.actie_type_id) 
+            oa.ambtenaar_b
+        from
+            ART46.DOSSIER_JD_ACTIE dja
+                inner join ART46.DOSSIER_JD dj on (dj.dossier_id_jd = dja.dossier_id)
+                inner join ART46.OVAM_AMBTENAAR_VIEW oa on (oa.ambtenaar_id = dj.doss_hdr_id)
+                inner join ART46.ACTIE_TYPE aat on (aat.actie_type_id = dja.actie_type_id)
                 inner join	ART46.v_DOSSIER ad on (ad.id = dj.dossier_id and ad.dossier_type = 'B')
-        where 1=1 
+        where 1=1
             <if test='jaar_actie_d != null'>
-                and year(dja.actie_d) = #{jaar_actie_d} 
+                and year(dja.actie_d) = #{jaar_actie_d}
             </if>
             <if test='jaar_dossier_d != null'>
-                and substr(ad.dossier_id,1,2) = #{jaar_dossier_d} 
+                and substr(ad.dossier_nr,1,2) = #{jaar_dossier_d}
             </if>
             <if test='doss_hdr_id != null'>
-                and dj.doss_hdr_id = #{doss_hdr_id} 
+                and dj.doss_hdr_id = #{doss_hdr_id}
             </if>
             <if test='actie_type_id != null'>
-                and dja.actie_type_id = #{actie_type_id} 
+                and dja.actie_type_id = #{actie_type_id}
             </if>
         order by actie_d desc
     </select>
-    
+
 </mapper>

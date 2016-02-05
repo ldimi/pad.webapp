@@ -158,10 +158,5 @@ define(
             $('#overzichtsWrapper').removeClass('hidden');
         }
 
-        /*        function onReady() {
-         alert('test ik was hier')
-         $('#VekOverzichtsWrapper').removeClass('hidden');
-         }*/
-
         return OverzichtPagina;
     });

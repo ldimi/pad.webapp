@@ -227,7 +227,7 @@ public class ExportVekService {
 
                     VastleggingOrdonanceringLijstDO vastleggingOrdonanceringLijstDO = dtoMap.get(project.getProjectId());
 
-                    addCell(projectrow, 4,  vastleggingOrdonanceringLijstDO.getDossier_id(), null);
+                    addCell(projectrow, 4,  vastleggingOrdonanceringLijstDO.getDossier_nr(), null);
                     addCell(projectrow, 5,  vastleggingOrdonanceringLijstDO.getDoss_hdr_id(), null);
                     addCell(projectrow, 6,  vastleggingOrdonanceringLijstDO.getProgramma(), null);
 
@@ -365,7 +365,7 @@ public class ExportVekService {
             addCellGetal(projectrow, 1, project.getBoekjaar() , null);
             addCellGetal(projectrow, 2,  Double.parseDouble( project.getProjectId()), null);
             addCell(projectrow, 3,  project.getWbsNr(), null);
-            addCell(projectrow, 4,  vastleggingOrdonanceringLijstDO.getDossier_id(), null);
+            addCell(projectrow, 4,  vastleggingOrdonanceringLijstDO.getDossier_nr(), null);
             addCell(projectrow, 5,  vastleggingOrdonanceringLijstDO.getDoss_hdr_id(), null);
             addCell(projectrow, 6,  vastleggingOrdonanceringLijstDO.getProgramma(), null);
 

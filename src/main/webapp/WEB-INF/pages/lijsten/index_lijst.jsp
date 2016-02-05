@@ -15,8 +15,8 @@
                 <display:column property="gemeente_b" title="Fusiegemeente" sortable="true" media="html csv excel pdf xml"/>
                 <display:column property="dossier_b" title="Titel" sortable="true" media="html csv excel pdf xml"/>
 
-                <display:column title="Dossiernummer" sortable="true" sortProperty="dossier_id" class="center" media="html">
-                    <a href="/pad/s/dossier/<bean:write name="dossier" property="id"/>/basis"/><bean:write name="dossier" property="dossier_id"/></a>
+                <display:column title="Dossiernummer" sortable="true" sortProperty="dossier_nr" class="center" media="html">
+                    <a href="/pad/s/dossier/<bean:write name="dossier" property="id"/>/basis"/><bean:write name="dossier" property="dossier_nr"/></a>
                 </display:column>
                 <display:column title="Dossiernummer" property="dossier_id" media="csv excel pdf xml" />
 

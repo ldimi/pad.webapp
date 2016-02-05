@@ -6,7 +6,7 @@ import java.util.Date;
 public class VastleggingOrdonanceringLijstDO {
 
     private Integer id;
-    private String dossier_id;
+    private String dossier_nr;
     private String dossier_b;
     private String gemeente_b;
     private String dossier_type;
@@ -35,12 +35,12 @@ public class VastleggingOrdonanceringLijstDO {
         this.id = id;
     }
 
-    public String getDossier_id() {
-        return dossier_id;
+    public String getDossier_nr() {
+        return dossier_nr;
     }
 
-    public void setDossier_id(String dossier_id) {
-        this.dossier_id = dossier_id;
+    public void setDossier_nr(String dossier_nr) {
+        this.dossier_nr = dossier_nr;
     }
 
     public String getDossier_b() {

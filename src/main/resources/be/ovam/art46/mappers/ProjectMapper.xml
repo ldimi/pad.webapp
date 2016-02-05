@@ -79,8 +79,6 @@
             abt.type_b as "bestek_type",
             coalesce(fat.totaal_ander_factuur,0) + coalesce(ftd.totaal,0) as "totaal_ander_factuur",
             coalesce(og.gemeente_b, '') || ' ' || ad.dossier_b as "dossier_l",
-            ad.dossier_nr as dossier_id,
-            ad.dossier_id_boa,
             ad.doss_hdr_id,
             ad.dossier_type,
             ad.programma_code,
@@ -161,7 +159,7 @@
         group by project_id, year(factuur_d) )
         select
             d.ID,
-            d.dossier_nr as dossier_id,
+            d.dossier_nr,
             d.DOSSIER_B,
             og.GEMEENTE_B,
             d.DOSS_HDR_ID,

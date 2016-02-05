@@ -180,8 +180,8 @@
             do.deelopdracht_nr as omschrijving,
             do.dossier_nr || ' : ' || do.dossier_b_l as extra_info,
             's/bestek/' || do.bestek_id || '/deelopdrachten/' || do.deelopdracht_id as link,
-            null as uiterste_eind_d,
-            null as termijn
+            cast(null as date) as uiterste_eind_d,
+            cast(null as int) as termijn
         from art46.v_deelopdracht do
         where 1 = 1
             and do.afsluit_d is null

@@ -30,7 +30,7 @@
             <display:table class="lijst width1000" id="dossier" name="requestScope.dossiersfz" requestURI="/dossiersfzselect.do"  pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
                 <display:column title="Dossiernr. BB" property="dossier_id_boa" class="center" href="./dossierdetailsArt46.do?selectedtab=Basis" paramId="id" paramProperty="id"/>
                 <display:column title="Dossiertitel BB" property="dossier_b"/>
-                <display:column title="Dossiernr. IVS" property="dossier_id" class="center"/>
+                <display:column title="Dossiernr. IVS" property="dossier_nr" class="center"/>
                 <display:column title="Fusiegemeente" sortable="true">
                     <html:select name="dossier" property="nis_id" styleClass="input" disabled="true">
                         <html:option value=""/>

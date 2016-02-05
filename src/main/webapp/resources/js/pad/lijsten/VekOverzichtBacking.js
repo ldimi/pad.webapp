@@ -464,7 +464,7 @@ define(
                             {name: 'project_id', type: 'string'},
                             {name: 'vastlegging_id', type: 'string'},
                             {name: 'bestek_nr', type: 'string' }
-                            ,{name: 'dossier_id', type: 'string' }
+                            ,{name: 'dossier_nr', type: 'string' }
                             ,{name: 'dossier_b', type: 'string' }
 
                             ,{name: 'gemeente_b', type: 'string' }
@@ -580,7 +580,7 @@ define(
 
                                                     {
                                                         text : "dossier nr",
-                                                        datafield : "dossier_id",
+                                                        datafield : "dossier_nr",
                                                         width : 100
                                                     },
                                                     {

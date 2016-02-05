@@ -54,7 +54,7 @@
 
                         <display:column title="Dossiernaam IVS" property="dossier_l" class="center" sortable="true" media="html csv excel pdf xml"/>
 
-                        <display:column title="Dossiernr. IVS" property="dossier_id" class="center" sortable="true" media="html csv excel pdf xml"/>
+                        <display:column title="Dossiernr. IVS" property="dossier_nr" class="center" sortable="true" media="html csv excel pdf xml"/>
 
                         <display:column title="Programma" property="programma_code" class="center" sortable="true" media="html csv excel pdf xml" />
 

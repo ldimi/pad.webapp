@@ -120,7 +120,7 @@
         )
         select
             d.id,
-            d.dossier_nr as dossier_id,
+            d.dossier_nr,
             d.dossier_id_boa,
             d.dossier_b_l as dossier_l,
             sd.naam as dossier_b_boa,
@@ -205,7 +205,7 @@
     <select id="getDossiersByDossHdr" parameterType="string" resultType="ciMap">
         select
             ad.ID,
-            ad.DOSSIER_NR as dossier_id,
+            ad.DOSSIER_NR,
             ad.DOSSIER_B,
             ad.NIS_ID,
             ad.GEMEENTE_B,
@@ -239,7 +239,7 @@
     <sql id="dossier_zoek_sql" >
         select distinct
             d.id,
-            d.dossier_nr as dossier_id,
+            d.dossier_nr,
             d.sap_project_nr,
             d.dossier_b,
             sd.naam as dossier_b_boa,
@@ -424,7 +424,7 @@
             <when test='dossier_type != "A" and dossier_type != "X"'>
                 select
                     r.id,
-                    r.dossier_id,
+                    r.dossier_nr,
                     r.sap_project_nr,
                     r.dossier_b,
                     r.dossier_b_boa,
@@ -454,7 +454,7 @@
                         on r.dossier_id_boa = o.dossier_id
                 group by
                     r.id,
-                    r.dossier_id,
+                    r.dossier_nr,
                     r.sap_project_nr,
                     r.dossier_b,
                     r.dossier_b_boa,
@@ -472,7 +472,7 @@
             <otherwise>
                 select
                     r.id,
-                    r.dossier_id,
+                    r.dossier_nr,
                     r.sap_project_nr,
                     r.dossier_b,
                     r.dossier_b_boa,
@@ -926,7 +926,7 @@
             ad.id,
             do.dossier_id dossier_id_boa,
             do.dossier_b,
-            ad.dossier_nr as dossier_id,
+            ad.dossier_nr,
             ad.dossier_b
             dossier_b_ivs,
             ad.doss_hdr_id,
