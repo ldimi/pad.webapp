@@ -320,7 +320,7 @@
 </table>
 
 <div style="margin-top: 30px;">
-    <a href='/pad/s/dossier/${dossierart46form.dossier_id}/dms/oplaad' target="_blank" >naar Alfresco oplaad folder</a><br/>
-    <a href='/pad/s/dossier/${dossierart46form.dossier_id}/dms/webloket' target="_blank" >naar Alfresco webloket folder</a>
+    <a href='/pad/s/dossier/${dossierart46form.dossier_nr}/dms/oplaad' target="_blank" >naar Alfresco oplaad folder</a><br/>
+    <a href='/pad/s/dossier/${dossierart46form.dossier_nr}/dms/webloket' target="_blank" >naar Alfresco webloket folder</a>
 </div>
 

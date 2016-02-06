@@ -34,7 +34,7 @@
                     d.dossier_nr,
                     d.dossier_b_l as dossier_b,
                     case when sv.DEELOPDRACHT_ID is null then coalesce(br.auteur_id, d.DOSS_HDR_ID)
-                         else dod.DOSS_HDR_ID
+                         else dodos.DOSS_HDR_ID
                     end as uitvoerder,
                     coalesce(br.BRIEF_NR, art46.schuldvordering_nr(vordering_id)) as omschrijving,
                     b.bestek_nr || ': ' || coalesce(b.omschrijving, '') as extra_info,
@@ -56,8 +56,8 @@
                         on b.dossier_id = d.id
                     left join art46.DEELOPDRACHT do
                     on sv.DEELOPDRACHT_ID = do.DEELOPDRACHT_ID
-                        left join art46.v_DOSSIER dod
-                        on do.DOSSIER_ID = dod.id
+                        left join art46.v_DOSSIER dodos
+                        on do.DOSSIER_ID = dodos.id
                 where sv.acceptatie_D is null
                     and sv.afgekeurd_jn != 'J'
                     and sv.status != 'IN OPMAAK'

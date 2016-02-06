@@ -96,16 +96,16 @@
 
     <select id="getOverdrachtsFiches" resultType="ciMap" parameterType="int">
         select dt.OMSCHRIJVING, doc.DMS_EDIT_URL
-        from smeg.dossier dos
+        from smeg.dossier sd
                 inner join smeg.BUNDEL_BUNDEL bb
-                on dos.id = bb.PARENT_BUNDEL_ID
+                on sd.id = bb.PARENT_BUNDEL_ID
             inner  join smeg.DOCUMENT doc
             on bb.CHILD_BUNDEL_ID = doc.ID
                 inner join SMEG_REF.DOCUMENTTYPE dt
                 on doc.TYPE_ID = dt.ID
         WHERE
             dt.code in ('CODE2003')
-            and dos.DOSSIER_ID = #{dossier_id_boa}
+            and sd.DOSSIER_ID = #{dossier_id_boa}
     </select>
 
     <insert id="registreerOverdrachtsFichesBijBestemmeling">
@@ -113,19 +113,19 @@
         (versie_nr, dossier_type, dossier_id, status_start_d, status, deleted_jn)
             select
                 1, 'B', ados.id, current date, 'registrati', 'N'
-            from smeg.dossier dos
+            from smeg.dossier sd
                     inner join smeg.BUNDEL_BUNDEL bb
-                    on dos.id = bb.PARENT_BUNDEL_ID
+                    on sd.id = bb.PARENT_BUNDEL_ID
                 inner  join smeg.DOCUMENT doc
                 on bb.CHILD_BUNDEL_ID = doc.ID
                     inner join SMEG_REF.DOCUMENTTYPE dt
                     on doc.TYPE_ID = dt.ID
                 inner join art46.dossier ados
-                on dos.dossier_id = ados.dossier_id_boa
+                on sd.dossier_id = ados.dossier_id_boa
                     left join smeg_ref.DOCUMENTSTATUS docs
                     on doc.STATUS_ID = docs.ID
                 left join art46.DOSSIER_OVERDRACHT doso
-                on dos.dossier_id = doso.DOSSIER_ID_BOA
+                on sd.dossier_id = doso.DOSSIER_ID_BOA
             WHERE 1 = 1
                 and dt.code in ('CODE2003')      -- Overdrachtsfiche dossier BB naar IVS  handhaving
                 and doc.STATUS_ID = 38           -- nota bij bestemmeling

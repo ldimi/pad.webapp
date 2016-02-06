@@ -882,8 +882,8 @@
         select
             pl.lijn_id,
             d.DOSS_HDR_ID,
-            d.dossier_id as dossier_nr,
-             d.dossier_type,
+            d.dossier_nr,
+            d.dossier_type,
             d.dossier_b,
             d.GEMEENTE_B as dossier_gemeente_b,
             pl.fase_code,
