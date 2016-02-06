@@ -118,7 +118,7 @@ public class SluisService {
             dos.put("dossier_b", overdracht.getDossier_b());
             
         }
-        dos.put("dossier_id", overdracht.getDossier_nr()); // null ingeval van insert
+        dos.put("dossier_nr", overdracht.getDossier_nr()); // null ingeval van insert
         dos.put("dossier_type", overdracht.getDossier_type());
         dos.put("nis_id", overdracht.getNis_id());
         dos.put("doss_hdr_id", overdracht.getDoss_hdr_id());
