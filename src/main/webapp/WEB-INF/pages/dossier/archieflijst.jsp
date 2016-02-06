@@ -4,7 +4,7 @@
 <%@ taglib uri="/tags/struts-bean" prefix="bean" %>
 <%@ taglib uri="/tags/display-tags" prefix="display" %>
 
-<logic:notEmpty name="dossierart46form" property="dossier_id" scope="session">
+<logic:notEmpty name="dossierart46form" property="dossier_nr" scope="session">
     <table>
         <tr>
             <td>
@@ -33,6 +33,6 @@
         </tr>
     </table>
 </logic:notEmpty>
-<logic:empty name="dossierart46form" property="dossier_id" scope="session">
+<logic:empty name="dossierart46form" property="dossier_nr" scope="session">
     Enkel aan een IVS dossier kan er een archief gekoppeld worden.
 </logic:empty>

@@ -351,8 +351,8 @@
         <if test="doelgroep_type_id != null">
             and d.doelgroep_type_id = #{doelgroep_type_id}
         </if>
-        <if test="dossier_id != null">
-            and d.dossier_nr like #{dossier_id} || '%'
+        <if test="dossier_nr != null">
+            and d.dossier_nr like #{dossier_nr} || '%'
         </if>
         <if test="dossier_id_boa != null">
             and d.dossier_id_boa = #{dossier_id_boa}
@@ -606,8 +606,8 @@
                 <if test="dossier_id_boa != null">
                         and d.dossier_id_boa = #{dossier_id_boa}
                 </if>
-                <if test="dossier_id != null">
-                        and d.dossier_nr like '%' || #{dossier_id} || '%'
+                <if test="dossier_nr != null">
+                        and d.dossier_nr like '%' || #{dossier_nr} || '%'
                 </if>
                 <if test="sap_project_nr != null">
                         and d.sap_project_nr like '%' || #{sap_project_nr} || '%'

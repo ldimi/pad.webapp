@@ -4,7 +4,7 @@ import org.apache.struts.validator.ValidatorForm;
 
 public class DossierZoekForm extends ValidatorForm {
 
-    private String dossier_id = null;
+    private String dossier_nr = null;
     private String dossier_id_boa = null;
     private String dossier_id_jd = null;
 
@@ -190,12 +190,12 @@ public class DossierZoekForm extends ValidatorForm {
         this.dossier_b = dossier_b;
     }
 
-    public String getDossier_id() {
-        return dossier_id;
+    public String getDossier_nr() {
+        return dossier_nr;
     }
 
-    public void setDossier_id(String dossier_id) {
-        this.dossier_id = dossier_id;
+    public void setDossier_nr(String dossier_nr) {
+        this.dossier_nr = dossier_nr;
     }
 
     public String getDossier_id_boa() {

@@ -55,7 +55,7 @@ public class DossierDAO extends BaseDAO {
 	}
 	
 	private Dossier getDossierByNr(String dossier_id) throws Exception {		
-		return (Dossier) findFirstByNamedQuery("dossierIVS.by.dossieridIVS", dossier_id);
+		return (Dossier) findFirstByNamedQuery("dossierIVS.by.dossierNr", dossier_id);
 	}
 	
 	public Dossier getDossierById(Integer id) throws Exception {

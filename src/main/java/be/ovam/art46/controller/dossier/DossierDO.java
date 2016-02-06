@@ -9,7 +9,7 @@ public class DossierDO implements Serializable{
 	private static final long serialVersionUID = 50460355623282696L;
 	
 	private Integer id;
-	private String dossier_id;
+	private String dossier_nr;
 	private Integer dossier_id_boa;
     private String smeg_naam;
 	private Integer smeg_id;
@@ -43,15 +43,6 @@ public class DossierDO implements Serializable{
     private String rechtsgrond_code;
     private Integer doelgroep_type_id;
 	    
-    public String getDossier_nr() {
-        return dossier_id;
-    }
-
-    public void setDossier_nr(String dossier_id) {
-        this.dossier_id = dossier_id;
-    }
-
-    
     
     public Integer getId() {
         return id;
@@ -61,12 +52,12 @@ public class DossierDO implements Serializable{
         this.id = id;
     }
 
-    public String getDossier_id() {
-        return dossier_id;
+    public String getDossier_nr() {
+        return dossier_nr;
     }
 
-    public void setDossier_id(String dossier_id) {
-        this.dossier_id = dossier_id;
+    public void setDossier_nr(String dossier_nr) {
+        this.dossier_nr = dossier_nr;
     }
 
     public Integer getDossier_id_boa() {

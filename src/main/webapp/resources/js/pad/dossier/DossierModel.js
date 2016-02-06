@@ -11,7 +11,7 @@ define([
     DossierModel = Model.extend({
         meta: Model.buildMeta([
             { name: "id", type: "int" },
-            { name: "dossier_id" },
+            { name: "dossier_nr" },
             { name: "dossier_id_boa", type: "int" },
             { name: "smeg_naam" },
             { name: "smeg_id", type: "int" },

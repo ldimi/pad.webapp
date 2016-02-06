@@ -147,7 +147,7 @@ define([
                                 m("tr", [
                                     m("td", "Dossier nummer IVS"),
                                     m("td", [
-                                        ff.input("dossier_id", {class: "input"})
+                                        ff.input("dossier_nr", {class: "input"})
                                     ]),
                                     m("td", "Dossierhouder IVS"),
                                     m("td", [

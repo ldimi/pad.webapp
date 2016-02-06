@@ -98,7 +98,7 @@ define([
                     (dossier_type === 'B') ? m("legend", "Dossierdetails IVS") : m(".row", {style: {height: "15px"}}),
                     m(".row.form-group", [
                         m(".col-md-2", m("label","Dossiernummer IVS")),
-                        m(".col-md-4", ff.input("dossier_id", {readOnly : true})),
+                        m(".col-md-4", ff.input("dossier_nr", {readOnly : true})),
                         m(".col-md-2", m("label","SAP projectNr")),
                         m(".col-md-4", ff.input("sap_project_nr", {readOnly : true}))
                     ]),

@@ -39,7 +39,7 @@
                             Dossier nummer IVS
                         </td>
                         <td>
-                            <html:text property="dossier_id" styleClass="input" />
+                            <html:text property="dossier_nr" styleClass="input" />
                         </td>
                         <td>
                             Dossierhouder IVS

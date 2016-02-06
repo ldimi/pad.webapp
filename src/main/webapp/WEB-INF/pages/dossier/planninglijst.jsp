@@ -108,7 +108,7 @@
         </div>
     </c:if>
     
-    <logic:notEmpty name="dossierart46form" property="dossier_id" scope="session">
+    <logic:notEmpty name="dossierart46form" property="dossier_nr" scope="session">
         <div class="planning"  style="width: 1080px; margin-top: 30px;">
             <strong>Acties</strong>
             <tiles:insert definition="actielijst">

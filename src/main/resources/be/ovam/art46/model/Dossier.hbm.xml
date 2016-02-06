@@ -42,8 +42,8 @@
 	<query name="dossierIVS.by.dossieridBoa">
     	from be.ovam.pad.model.Dossier d where d.dossier_id_boa = ?
     </query>    
-	<query name="dossierIVS.by.dossieridIVS">
-    	from be.ovam.pad.model.Dossier d where d.dossier_id = ?
+	<query name="dossierIVS.by.dossierNr">
+    	from be.ovam.pad.model.Dossier d where d.dossier_nr = ?
     </query> 
 	<query name="dossierIVS.by.dossierid">
     	from be.ovam.pad.model.Dossier d where d.id = ?

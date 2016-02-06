@@ -15,7 +15,7 @@ public class DossierArt46Form extends CrudActionForm {
 
 	private static final long serialVersionUID = 50460355623282696L;
 	
-	private String dossier_id;
+	private String dossier_nr;
 	private String dossier_id_boa;
 	private String doss_hdr_id;
 	private String dossier_b;
@@ -111,7 +111,7 @@ public class DossierArt46Form extends CrudActionForm {
     
 	public void clearForm() {
 		id = null;
-		dossier_id = null;
+		dossier_nr = null;
 		dossier_id_boa = null;
 		doss_hdr_id = null;
 		dossier_b = null;
@@ -195,12 +195,12 @@ public class DossierArt46Form extends CrudActionForm {
 		this.deelgemeente = deelgemeente;
 	}
 
-	public String getDossier_id() {
-		return dossier_id;
+	public String getDossier_nr() {
+		return dossier_nr;
 	}
 
-	public void setDossier_id(String dossier_id) {
-		this.dossier_id = dossier_id;
+	public void setDossier_nr(String dossier_nr) {
+		this.dossier_nr = dossier_nr;
 	}
 
 	public String getLand() {
@@ -264,7 +264,7 @@ public class DossierArt46Form extends CrudActionForm {
 	}
 
 	public Serializable getCrudId() {
-		return dossier_id;
+		return dossier_nr;
 	}
 
 	public String getAanpak_onderzocht_l() {

@@ -36,7 +36,7 @@ public class BasisDossierController {
         }
 
         model.addAttribute("dossier", dossierDO);
-        model.addAttribute("custom_title", "Dossier " + dossierDO.getDossier_id() + " (" + dossierDO.getDossier_type() + ")");
+        model.addAttribute("custom_title", "Dossier " + dossierDO.getDossier_nr() + " (" + dossierDO.getDossier_type() + ")");
 
         DossierDO dossier_in_session = (DossierDO) session.getAttribute("dossier");
         
@@ -98,7 +98,7 @@ public class BasisDossierController {
         }
         
         model.addAttribute("dossier", dossierDO);
-        model.addAttribute("custom_title", "Dossier " + dossierDO.getDossier_id() + " (" + dossierDO.getDossier_type() + ")");
+        model.addAttribute("custom_title", "Dossier " + dossierDO.getDossier_nr() + " (" + dossierDO.getDossier_type() + ")");
         
     }
 

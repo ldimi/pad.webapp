@@ -4,7 +4,7 @@
 <%@ taglib uri="/tags/struts-bean" prefix="bean" %>
 <%@ taglib uri="/tags/display-tags" prefix="display" %>
 
-<logic:notEmpty name="dossierart46form" property="dossier_id" scope="session">
+<logic:notEmpty name="dossierart46form" property="dossier_nr" scope="session">
     <br/>
     <div class="planning">
         <strong>Open bestekken </strong>
@@ -117,6 +117,6 @@
         </table>
     </div>
 </logic:notEmpty>
-<logic:empty name="dossierart46form" property="dossier_id" scope="session">
+<logic:empty name="dossierart46form" property="dossier_nr" scope="session">
     Enkel aan een IVS dossier kan er een bestek gekoppeld worden.
 </logic:empty>
