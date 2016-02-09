@@ -108,14 +108,14 @@
             cast(#{vordering_d} as date) as vordering_d,
             (cast(#{vordering_d} as date) + 30 days) as uiterste_verific_d,
             (cast(#{vordering_d} as date) + 61 days) as uiterste_d,
-            d.dossier_type,
+            dos.dossier_type,
             'N' as afgekeurd_jn,
             'INGEDIEND' as status
         from art46.brief br
                 left outer join art46.bestek b
                 on br.bestek_id = b.bestek_id
-            left outer join art46.v_dossier d
-            on b.dossier_id = d.id
+            left outer join art46.v_dossier dos
+            on b.dossier_id = dos.id
         where 1 = 1
             and  br.brief_id = #{brief_id}
     </select>
@@ -167,7 +167,7 @@
         from (
             select
                 do.deelopdracht_id,
-                d.dossier_b_l,
+                dos.dossier_b_l,
                 do.GOEDKEURING_D,
                 do.bedrag,
                 (coalesce(do.bedrag, 0) - (select coalesce(sum(sv2.goedkeuring_bedrag), 0)
@@ -179,8 +179,8 @@
                                         )
                 ) as saldo   <!-- saldo op de deelopdracht , ZONDER bedrag van de gegeven schuldvordering -->
             from ART46.DEELOPDRACHT do
-                    inner join ART46.V_DOSSIER d
-                    on do.dossier_id = d.id
+                    inner join ART46.V_DOSSIER dos
+                    on do.dossier_id = dos.id
             where
                 do.bestek_id = #{bestek_id}
             ) as t
@@ -250,16 +250,16 @@
             sv.afgekeurd_jn,
             b.dossier_id,
             b.bestek_nr,
-            d.dossier_type,
-            d.dossier_b,
-            d.programma_code,
-            d.doss_hdr_id
+            dos.dossier_type,
+            dos.dossier_b,
+            dos.programma_code,
+            dos.doss_hdr_id
         from
             ART46.SCHULDVORDERING sv
               inner join ART46.BESTEK b
               on sv.bestek_id = b.bestek_id
-            inner join ART46.v_DOSSIER d
-            on b.dossier_id = d.id
+            inner join ART46.v_DOSSIER dos
+            on b.dossier_id = dos.id
         where 1 = 1
             and sv.status != 'IN OPMAAK'
             <if test="forward == 'lijstschuldvorderingenbetaald'">
@@ -269,10 +269,10 @@
                 and sv.betaal_d is null and sv.afgekeurd_jn != 'J'
             </if>
             <if test='programma_code != null'>
-                and d.programma_code = #{programma_code}
+                and dos.programma_code = #{programma_code}
             </if>
             <if test="doss_hdr_id != null">
-                and d.doss_hdr_id = #{doss_hdr_id}
+                and dos.doss_hdr_id = #{doss_hdr_id}
             </if>
         order by sv.vordering_d desc
     </select>

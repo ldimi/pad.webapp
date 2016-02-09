@@ -10,10 +10,10 @@
     <![CDATA[
         select
               --(select max(bestek_id) + 1 from art46.bestek ) as bestek_id,
-              d.id as dossier_id,
-              d.dossier_type,
-              d.dossier_nr,
-              case when d.dossier_fase_id = 2 then 'J'
+              dos.id as dossier_id,
+              dos.dossier_type,
+              dos.dossier_nr,
+              case when dos.dossier_fase_id = 2 then 'J'
                   else 'N'
               end as raamcontract_jn,
               1 as dienst_id,
@@ -22,8 +22,8 @@
               1 as procedure_id,
               1 as fase_id,
               'N' as screening_jn
-        from art46.v_dossier d
-        where d.id = #{id}
+        from art46.v_dossier dos
+        where dos.id = #{id}
     ]]>
     </select>
 
@@ -96,12 +96,12 @@
             b.bestek_id,
             b.bestek_nr,
             b.dossier_id,
-            d.raamcontract_jn
+            dos.raamcontract_jn
         from
             vastlegging, geraamd, factuur,
             art46.bestek b
-              inner join art46.v_dossier d
-              on b.dossier_id = d.id
+              inner join art46.v_dossier dos
+              on b.dossier_id = dos.id
               and b.bestek_id = #{bestek_id}
     </select>
     <select id="besteksaldo" resultType="ciMap" parameterType="int" >
@@ -128,28 +128,28 @@
 
     <select id="deelopdrachtloaddossiers" resultType="ciMap" parameterType="map" >
             select
-                da.dossier_b_l || case da.dossier_type when 'A' then ' (Afval)'
+                dos.dossier_b_l || case dos.dossier_type when 'A' then ' (Afval)'
                                                              else ' (Bodem)'
                 end dossier_b_l,
-                rtrim(cast(da.id as char(10))) || '_' || da.dossier_type dossier_id_l,
+                rtrim(cast(dos.id as char(10))) || '_' || dos.dossier_type dossier_id_l,
                 ade.dossier_id
             from
-                ART46.V_DOSSIER da
+                ART46.V_DOSSIER dos
                     inner join ART46.DEELOPDRACHT ade
-                    on ade.dossier_id = da.id
+                    on ade.dossier_id = dos.id
             where
                 ade.deelopdracht_id = #{deelopdracht_id}
         union
             select
-                da.dossier_b_l || case da.dossier_type when 'A' then ' (Afval)'
+                dos.dossier_b_l || case dos.dossier_type when 'A' then ' (Afval)'
                                                              else ' (Bodem)'
                 end dossier_b_l,
-                rtrim(cast(da.id as char(10))) || '_' || da.dossier_type dossier_id_l,
-                da.id dossier_id
+                rtrim(cast(dos.id as char(10))) || '_' || dos.dossier_type dossier_id_l,
+                dos.id dossier_id
             from
-                ART46.V_DOSSIER da
+                ART46.V_DOSSIER dos
             where
-                da.doss_hdr_id in ( select doss_hdr_id
+                dos.doss_hdr_id in ( select doss_hdr_id
                                     from ART46.DOSSIER_HOUDER
                                     where 1 = 1
                                         <if test='adminArt46_JN != "J"'>
@@ -160,25 +160,25 @@
                                     from ART46.DOSSIER_HOUDER
                                     where vervanger = #{doss_hdr_id}
                                 )
-                and da.afsluit_d is null
-                and da.dossier_type in ('A','B')
+                and dos.afsluit_d is null
+                and dos.dossier_type in ('A','B')
             order by 1
     </select>
 
     <sql id="planningsItemsVoor_prefix" >
         select plv.lijn_id as value,
-            d.dossier_nr || ' - ' || d.dossier_b || ' (' || d.doss_hdr_id || ') ' ||
+            dos.dossier_nr || ' - ' || dos.dossier_b || ' (' || dos.doss_hdr_id || ') ' ||
                 plv.fase_code || ' ' || coalesce(plv.fase_detail_code, '') || ' : ' || coalesce(plv.ig_bedrag, 0) || ' EUR' as label,
             plv.dossier_id,
-            d.dossier_nr,
-            d.dossier_b,
-            d.doss_hdr_id,
+            dos.dossier_nr,
+            dos.dossier_b,
+            dos.doss_hdr_id,
             plv.fase_code,
             plv.fase_detail_code,
             plv.ig_bedrag
         from art46.planning_lijn_versie plv
-                inner join art46.v_dossier d
-                on plv.dossier_id = d.id
+                inner join art46.v_dossier dos
+                on plv.dossier_id = dos.id
             inner join art46.v_planning_fase pf
             on plv.fase_code = pf.fase_code
         where 1 = 1
@@ -227,13 +227,13 @@
                 ab.bestek_id,
                 ab.bestek_nr,
                 ab.dossier_id dossier_id_ander,
-                ad.dossier_b dossier_b_ander
+                dos.dossier_b dossier_b_ander
             from
-                ART46.V_DOSSIER ad
+                ART46.V_DOSSIER dos
                     inner join ART46.BESTEK ab
-                    on ad.id = ab.dossier_id
+                    on dos.id = ab.dossier_id
             where
-                ad.RAAMCONTRACT_JN = 'J'
+                dos.RAAMCONTRACT_JN = 'J'
         )
         , vastlegging as (
             select
@@ -255,17 +255,17 @@
             group by be.bestek_id
         )
         select
-            ado.doss_hdr_id,
+            dos.doss_hdr_id,
             be.*,
             coalesce(vastlegging.vastlegging, 0) vastlegging,
             coalesce(geraamd.geraamd, 0) geraamd,
             coalesce(vastlegging.vastlegging, 0) - coalesce(geraamd.geraamd, 0) saldo,
-            ad.dossier_id,
+            ad.dossier_nr,
             ad.bedrag,
             ad.voorstel_d,
-            ado.dossier_type,
+            dos.dossier_type,
             ad.goedkeuring_bedrag,
-            ado.dossier_b_l dossier_l,
+            dos.dossier_b_l dossier_l,
             ad.deelopdracht_id,
             ad.VOORSTEL_DEELOPDRACHT_ID,
             pl.IG_BEDRAG igbedrag,
@@ -273,7 +273,7 @@
         from
             bestekken be
                 inner join ART46.DEELOPDRACHT ad on ad.bestek_id = be.bestek_id
-                inner join ART46.V_DOSSIER ado on ad.dossier_id = ado.id
+                inner join ART46.V_DOSSIER dos on ad.dossier_id = dos.id
                 left outer join vastlegging on vastlegging.bestek_id = be.bestek_id
                 left outer join geraamd on geraamd.bestek_id = be.bestek_id
                 left outer join ART46.V_PLANNING_LIJN pl on pl.lijn_id = ad.PLANNING_LIJN_ID

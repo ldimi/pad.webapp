@@ -31,9 +31,9 @@
                 select
                     10 as taak_type_nr,
                     'schuldvordering goedkeuren' as taak,
-                    d.dossier_nr,
-                    d.dossier_b_l as dossier_b,
-                    case when sv.DEELOPDRACHT_ID is null then coalesce(br.auteur_id, d.DOSS_HDR_ID)
+                    dos.dossier_nr,
+                    dos.dossier_b_l as dossier_b,
+                    case when sv.DEELOPDRACHT_ID is null then coalesce(br.auteur_id, dos.DOSS_HDR_ID)
                          else dodos.DOSS_HDR_ID
                     end as uitvoerder,
                     coalesce(br.BRIEF_NR, art46.schuldvordering_nr(vordering_id)) as omschrijving,
@@ -52,8 +52,8 @@
                         left join ART46.BRIEF br on sv.brief_id = br.brief_id
                     inner join ART46.BESTEK b
                     on sv.bestek_id = b.bestek_id
-                        inner join ART46.V_DOSSIER d
-                        on b.dossier_id = d.id
+                        inner join ART46.V_DOSSIER dos
+                        on b.dossier_id = dos.id
                     left join art46.DEELOPDRACHT do
                     on sv.DEELOPDRACHT_ID = do.DEELOPDRACHT_ID
                         left join art46.v_DOSSIER dodos
@@ -148,24 +148,24 @@
         select
             60 as taak_type_nr,
             'voorstel beoordelen' as taak,
-            d.dossier_nr,
-            d.dossier_b_l as dossier_b,
-            d.DOSS_HDR_ID as uitvoerder,
+            dos.dossier_nr,
+            dos.dossier_b_l as dossier_b,
+            dos.DOSS_HDR_ID as uitvoerder,
             art46.VOORSTEL_DEELOPDRACHT_NR(vd.id) || ', inzender : ' || of.INZENDER as omschrijving,
             b.bestek_nr || ': ' || coalesce(b.omschrijving, '') as extra_info,
             's/bestek/' || of.BESTEK_Id || '/voorstel/' || vd.ID as link,
             (date(vd.AANVRAAG_DATUM) + 30 days) as uiterste_eind_d,
             (days(date(vd.AANVRAAG_DATUM)) + 30 - days(current date)) as termijn
         from art46.VOORSTEL_DEELOPDRACHT vd
-                left  join art46.v_dossier d
-                on vd.DOSSIER_ID = d.id
+                left  join art46.v_dossier dos
+                on vd.DOSSIER_ID = dos.id
             left join art46.OFFERTE of
             on vd.OFFERTE_ID = of.ID
                 left join art46.BESTEK b
                 on of.BESTEK_ID = b.BESTEK_ID
         WHERE 1 = 1
             and vd.status = 'BEOORDELEN'
-            and d.DOSS_HDR_ID = #{doss_hdr_id}
+            and dos.DOSS_HDR_ID = #{doss_hdr_id}
     </select>
 
     <select id="get_taken_deelopdrachtGoedkeuren"
@@ -199,8 +199,8 @@
             br.brief_id as taak_key,
             'inkomende brief' as taak,
             'green' as kleur,
-            d.dossier_nr,
-            d.dossier_b_l as dossier_b,
+            dos.dossier_nr,
+            dos.dossier_b_l as dossier_b,
             cast(null as char) as uitvoerder,
             br.brief_nr as omschrijving,
             br.dms_folder || '/' || br.dms_filename as dms_file,
@@ -210,8 +210,8 @@
             (date(coalesce(br.in_d, br.inschrijf_d)) + 30 days) as uiterste_eind_d,
             (days(date(coalesce(br.in_d, br.inschrijf_d))) + bra.TERMIJN - days(current date)) as termijn
         from art46.brief br
-                left  join art46.v_dossier d
-                on br.DOSSIER_ID = d.id
+                left  join art46.v_dossier dos
+                on br.DOSSIER_ID = dos.id
              inner join art46.brief_aard bra
              on br.IN_AARD_ID = bra.BRIEF_AARD_ID
                 left join art46.schuldvordering sv
@@ -236,8 +236,8 @@
             case when br.opmerking_afd_hfd is null then null
                  else 'red'
             end as kleur,
-            d.dossier_nr,
-            d.dossier_b_l as dossier_b,
+            dos.dossier_nr,
+            dos.dossier_b_l as dossier_b,
             cast(null as char) as uitvoerder,
             br.brief_nr as omschrijving,
             br.dms_folder || '/' || br.dms_filename as dms_file,
@@ -250,8 +250,8 @@
             (date(coalesce(br.in_d, br.inschrijf_d)) + 30 days) as uiterste_eind_d,
             (days(date(coalesce(br.in_d, br.inschrijf_d))) + bra.TERMIJN - days(current date)) as termijn
         from art46.brief br
-                left  join art46.v_dossier d
-                on br.DOSSIER_ID = d.id
+                left  join art46.v_dossier dos
+                on br.DOSSIER_ID = dos.id
              inner join art46.brief_aard bra
              on br.IN_AARD_ID = bra.BRIEF_AARD_ID
                 left join art46.schuldvordering sv
@@ -264,7 +264,7 @@
             and (bra.CONTROLE_AFDELINGSHOOFD_JN = 'N' or
                  (bra.CONTROLE_AFDELINGSHOOFD_JN = 'J' and br.CHECK_AFD_HFD_D is not null))
             and (br.auteur_id = #{doss_hdr_id} or
-                 (br.auteur_id is null and d.DOSS_HDR_ID = #{doss_hdr_id})
+                 (br.auteur_id is null and dos.DOSS_HDR_ID = #{doss_hdr_id})
                  )
         fetch first 200 rows only
     </select>

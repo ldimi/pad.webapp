@@ -45,7 +45,7 @@
 
     <select id="getDetailsOpnameLijst" parameterType="string" resultType="ciMap">
         select distinct
-            ad.id,
+            dos.id,
             kd.DOSSIER_ID_BOA,
             kd.KADASTER_ID,
             kd.ARTIKEL_ID,
@@ -55,18 +55,18 @@
             a.ARTIKEL_B,
             rka.KADASTER_AFD_B,
             SUBSTR(kd.KADASTER_ID,6) KADASTER_ID_SH,
-            case adk.ONSCHULDIGE_EIG_S when '1' then ad.ID
+            case adk.ONSCHULDIGE_EIG_S when '1' then dos.ID
                                        else NULL
             end as ONSCHULDIGE_EIG_S,
-            case adk.INGEBREKE_STEL_S when '1' then ad.ID
+            case adk.INGEBREKE_STEL_S when '1' then dos.ID
                                       else NULL
             end as INGEBREKE_STEL_S
         from
             SMEG.RS_KADASTER_VIEW k
                 inner join ART46.V_DOSSIER_KADASTER as kd
                 on kd.kadaster_id = k.kadaster_id
-            inner join ART46.V_DOSSIER ad on (kd.ID = ad.ID)
-            inner join SMEG.DOSSIER d on (d.DOSSIER_ID = ad.DOSSIER_ID_BOA)
+            inner join ART46.V_DOSSIER dos on (kd.ID = dos.ID)
+            inner join SMEG.DOSSIER d on (d.DOSSIER_ID = dos.DOSSIER_ID_BOA)
             inner join ART46.RS_KADASTER_AFD_VIEW rka
             on k.kadaster_afd_id = rka.kadaster_afd_id
                 left outer join ART46.DOS_KAD_TYPE adk
@@ -80,8 +80,8 @@
 
     <select id="getDetailsPublicatieLijst" parameterType="string" resultType="ciMap">
         select
-            ad.ID,
-            ad.DOSSIER_ID_BOA,
+            dos.ID,
+            dos.DOSSIER_ID_BOA,
             a.KADASTER_ID,
             GOEDKEURING_D,
             PUBLICATIE_D,
@@ -93,8 +93,8 @@
             d.DOSSIER_B
         from
             ART46.NA_GOEDK a
-                inner join ART46.V_DOSSIER ad
-                on a.DOSSIER_ID = ad.id
+                inner join ART46.V_DOSSIER dos
+                on a.DOSSIER_ID = dos.id
                     inner join OVAM.ARTIKEL oa
                     on a.ARTIKEL_ID = oa.ARTIKEL_ID
                 inner join ART46.LIJST al
@@ -102,7 +102,7 @@
                     inner join SMEG.RS_KADASTER_AFD_VIEW ka
                     on SUBSTR(a.KADASTER_ID,1,5) = ka.KADASTER_AFD_ID
                 inner join SMEG.RS_DOSSIER_VIEW d
-                on ad.DOSSIER_ID_BOA = d.DOSSIER_ID
+                on dos.DOSSIER_ID_BOA = d.DOSSIER_ID
         where
             a.KADASTER_ID = #{kadaster_id}
         order by al.LIJST_B, oa.ARTIKEL_B, ka.KADASTER_AFD_B, KADASTER_ID_SH

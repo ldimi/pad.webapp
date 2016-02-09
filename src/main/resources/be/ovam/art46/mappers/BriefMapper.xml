@@ -49,12 +49,12 @@
             ac.NAAM contact_naam,
             --
             br.dossier_id,
-            d.dossier_nr dossier_nr,
-            d.dossier_type dossier_type_ivs,
-            d.doss_hdr_id dossier_hdr_ivs,
-            d.dossier_b dossier_b_ivs,
-            d.dossier_id_boa,
-            d.nis_id,
+            dos.dossier_nr,
+            dos.dossier_type dossier_type_ivs,
+            dos.doss_hdr_id dossier_hdr_ivs,
+            dos.dossier_b dossier_b_ivs,
+            dos.dossier_id_boa,
+            dos.nis_id,
             --
             sv.vordering_id,
             case when sv.AFGEKEURD_JN = 'J' then 'J'
@@ -69,8 +69,8 @@
                     left join art46.adres_contact ac
                     on br.adres_id = ac.adres_id
                     and br.contact_id = ac.contact_id
-             left join art46.v_dossier d
-             on br.dossier_id = d.id
+             left join art46.v_dossier dos
+             on br.dossier_id = dos.id
                 left join art46.schuldvordering sv
                 on br.brief_id = sv.brief_id
          where br.brief_id = #{briefid}
@@ -207,7 +207,7 @@
                 parent.BRIEF_CATEGORIE_ID not in (select CHILD_BRIEF_CATEGORIE_ID from ART46.BRIEF_CATEGORIE_BRIEF_CATEGORIE)
                 and not (parent.BRIEF_CATEGORIE_ID = 18 and
                          exists (select id
-                               from art46.v_dossier d
+                               from art46.v_dossier dos
                                where d.dossier_type != 'X'
                                  and d.id = #{dossier_id})
                          )

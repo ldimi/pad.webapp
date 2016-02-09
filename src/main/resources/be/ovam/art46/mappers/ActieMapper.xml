@@ -9,44 +9,44 @@
     <select id="getActieZoekResult" parameterType="be.ovam.art46.struts.actionform.ActieZoekForm" resultType="ciMap">
         with
         dossier as (
-            select ad.dossier_b,
-                   ad.id dossier_id,
-                   ad.dossier_id_boa,
-                   ad.doss_hdr_id,
-                   ad.dossier_fase_id,
-                   ad.nis_id ,
-                   ad.dossier_type,
-                   ad.programma_code
-            from art46.v_dossier ad
+            select dos.dossier_b,
+                   dos.id dossier_id,
+                   dos.dossier_id_boa,
+                   dos.doss_hdr_id,
+                   dos.dossier_fase_id,
+                   dos.nis_id ,
+                   dos.dossier_type,
+                   dos.programma_code
+            from art46.v_dossier dos
             where 1 = 1
             <if test="dossier_id != null">
-                and ad.dossier_nr = #{dossier_id}
+                and dos.dossier_nr = #{dossier_id}
             </if>
         ),
         acties as
         (
             select
-                ad.*, aba.bestek_id, aba.actie_id, aba.actie_type_id, aba.actie_d, aba.realisatie_d, aba.commentaar, aba.stop_d, aba.rate, aba.actie_sub_type_id
+                dossier.*, aba.bestek_id, aba.actie_id, aba.actie_type_id, aba.actie_d, aba.realisatie_d, aba.commentaar, aba.stop_d, aba.rate, aba.actie_sub_type_id
             from
                 ART46.BESTEK_ACTIE aba
                     inner join ART46.BESTEK ab
                     on aba.bestek_id = ab.bestek_id
-                inner join dossier ad
-                on ab.dossier_id = ad.dossier_id
+                inner join dossier
+                on ab.dossier_id = dossier.dossier_id
             union
             select
-                ad.*, -1 bestek_id ,ada.actie_id, ada.actie_type_id, ada.actie_d, ada.realisatie_d, ada.commentaar, ada.stop_d, ada.rate, ada.actie_sub_type_id
+                dossier.*,.*, -1 bestek_id ,ada.actie_id, ada.actie_type_id, ada.actie_d, ada.realisatie_d, ada.commentaar, ada.stop_d, ada.rate, ada.actie_sub_type_id
             from
                 ART46.DOSSIER_ACTIE ada
-                    inner join DOSSIER ad
-                    on ada.dossier_id = ad.dossier_id
+                    inner join DOSSIER
+                    on ada.dossier_id = dossier.dossier_id
             union
             select
-                ad.*, -2 bestek_id, -1 actie_id, -1 actie_type_id, d.eindverklaring_d  actie_d, d.eindverklaring_d realisatie_d, 'Eindverklaring' commentaar, d.eindverklaring_d stop_d, 0 rate, 0 actie_sub_type_id
+                dossier.*,.*, -2 bestek_id, -1 actie_id, -1 actie_type_id, d.eindverklaring_d  actie_d, d.eindverklaring_d realisatie_d, 'Eindverklaring' commentaar, d.eindverklaring_d stop_d, 0 rate, 0 actie_sub_type_id
             from
                 SMEG.RS_DOSSIER_VIEW d
-                    inner join DOSSIER ad
-                    on d.dossier_id = ad.dossier_id_boa
+                    inner join DOSSIER
+                    on d.dossier_id = dossier.dossier_id_boa
             where d.eindverklaring_d is not null
         )
         select
@@ -115,10 +115,10 @@
             dja.*,
             dj.doss_hdr_id,
             dj.dossier_b,
-            ad.id,
-            ad.dossier_id_boa,
+            dos.id,
+            dos.dossier_id_boa,
             dj.commentaar,
-            ad.nis_id,
+            dos.nis_id,
             aat.actie_type_b,
             oa.ambtenaar_b
         from
@@ -126,13 +126,13 @@
                 inner join ART46.DOSSIER_JD dj on (dj.dossier_id_jd = dja.dossier_id)
                 inner join ART46.OVAM_AMBTENAAR_VIEW oa on (oa.ambtenaar_id = dj.doss_hdr_id)
                 inner join ART46.ACTIE_TYPE aat on (aat.actie_type_id = dja.actie_type_id)
-                inner join	ART46.v_DOSSIER ad on (ad.id = dj.dossier_id and ad.dossier_type = 'B')
+                inner join	ART46.v_DOSSIER dos on (dos.id = dj.dossier_id and dos.dossier_type = 'B')
         where 1=1
             <if test='jaar_actie_d != null'>
                 and year(dja.actie_d) = #{jaar_actie_d}
             </if>
             <if test='jaar_dossier_d != null'>
-                and substr(ad.dossier_nr,1,2) = #{jaar_dossier_d}
+                and substr(dos.dossier_nr,1,2) = #{jaar_dossier_d}
             </if>
             <if test='doss_hdr_id != null'>
                 and dj.doss_hdr_id = #{doss_hdr_id}

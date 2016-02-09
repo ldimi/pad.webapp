@@ -94,15 +94,15 @@
 
     <sql id="plannings_lijn_details_select_from" >
         select
-            d.doss_hdr_id,
+            dos.doss_hdr_id,
             pl.lijn_id,
             pl.planning_dossier_versie,
             pl.dossier_id,
-            d.dossier_nr,
-            d.gemeente_b as dossier_gemeente_b,
-            d.dossier_b,
+            dos.dossier_nr,
+            dos.gemeente_b as dossier_gemeente_b,
+            dos.dossier_b,
             pl.dossier_type,
-            d.raamcontract_jn as dossier_is_raamcontract_jn,
+            dos.raamcontract_jn as dossier_is_raamcontract_jn,
             pl.fase_code,
             pf.heeft_details_jn as fase_code_heeft_details_jn,
             pl.fase_detail_code,
@@ -148,8 +148,8 @@
         from art46.PLANNING_LIJN_VERSIE pl
                 left join art46.V_PLANNING_FASE pf
                 on pl.fase_code = pf.fase_code
-                    inner join art46.v_dossier d
-                    on pl.dossier_id = d.id
+                    inner join art46.v_dossier dos
+                    on pl.dossier_id = dos.id
                 left join art46.v_dossier contr
                 on pl.contract_id = contr.id
                     left join art46.BESTEK b
@@ -219,15 +219,15 @@
             <!-- nieuwe lijnen voor ongeplande dossiers -->
         union
             select
-                d2.doss_hdr_id,
+                dos2.doss_hdr_id,
                 null as lijn_id,
                 0 as planning_dossier_versie,
-                d2.id as dossier_id,
-                d2.dossier_nr,
-                d2.gemeente_b as dossier_gemeente_b,
-                d2.DOSSIER_B,
-                d2.DOSSIER_TYPE,
-                d2.raamcontract_jn as dossier_is_raamcontract_jn,
+                dos2.id as dossier_id,
+                dos2.dossier_nr,
+                dos2.gemeente_b as dossier_gemeente_b,
+                dos2.DOSSIER_B,
+                dos2.DOSSIER_TYPE,
+                dos2.raamcontract_jn as dossier_is_raamcontract_jn,
                 null as FASE_CODE,
                 null as fase_code_heeft_details_jn,
                 null as FASE_DETAIL_CODE,
@@ -253,66 +253,66 @@
                 null as commentaar,
                 'N' as deleted_jn,
                 'C' as status_crud
-            from art46.v_dossier d2
+            from art46.v_dossier dos2
             where 1 = 1
-                and d2.DOSS_HDR_ID = #{doss_hdr_id}
-                and d2.AFSLUIT_D is null
+                and dos2.DOSS_HDR_ID = #{doss_hdr_id}
+                and dos2.AFSLUIT_D is null
                 <if test='dossier_type == "NIET_X"'>
                     <![CDATA[
-                    and d2.DOSSIER_TYPE <> 'X'
+                    and dos2.DOSSIER_TYPE <> 'X'
                     ]]>
                 </if>
                 <if test='dossier_type == "X" or dossier_type == "A" or dossier_type == "B"'>
-                    and d2.DOSSIER_TYPE = #{dossier_type}
+                    and dos2.DOSSIER_TYPE = #{dossier_type}
                 </if>
-                and d2.id not in (select dossier_id from alle_lijnen)
+                and dos2.id not in (select dossier_id from alle_lijnen)
                 <if test="dossier_id != null">
-                    and d2.id = #{dossier_id}
+                    and dos2.id = #{dossier_id}
                 </if>
         </if>
         order by dossier_gemeente_b, dossier_b, fase_code
     </select>
 
     <sql id="dossiersDDvelden">
-        select d.id as value,
-            case when d.afsluit_d is null then (d.dossier_nr || ' - ' ||  d.dossier_b_l || ' (' || d.dossier_type || ')' )
-                 else '- ' || d.dossier_nr || ' - ' ||  d.dossier_b_l || ' (' || d.dossier_type || ')' || ' AFGESLOTEN'
+        select dos.id as value,
+            case when dos.afsluit_d is null then (dos.dossier_nr || ' - ' ||  dos.dossier_b_l || ' (' || dos.dossier_type || ')' )
+                 else '- ' || dos.dossier_nr || ' - ' ||  dos.dossier_b_l || ' (' || dos.dossier_type || ')' || ' AFGESLOTEN'
             end as label,
-            d.dossier_nr,
-            d.dossier_b,
-            d.dossier_b_l,
-            d.dossier_type
-        from art46.v_dossier d
+            dos.dossier_nr,
+            dos.dossier_b,
+            dos.dossier_b_l,
+            dos.dossier_type
+        from art46.v_dossier dos
     </sql>
 
     <select id="getDossiersDDbyUid" resultType="ciMap" parameterType="string" >
         <include refid="dossiersDDvelden"/>
-        where d.DOSS_HDR_ID = #{doss_hdr_id}
-            and d.DOSSIER_TYPE != 'X'
-        order by d.afsluit_d desc, d.dossier_type desc, d.dossier_b_l
+        where dos.DOSS_HDR_ID = #{doss_hdr_id}
+            and dos.DOSSIER_TYPE != 'X'
+        order by dos.afsluit_d desc, dos.dossier_type desc, dos.dossier_b_l
     </select>
 
     <!-- Haalt een dropDownList op met maar 1 dossier -->
     <select id="getDossiersDDbyDossierId" resultType="ciMap" parameterType="string" >
         <include refid="dossiersDDvelden"/>
-        where d.id = #{dossier_id}
+        where dos.id = #{dossier_id}
     </select>
 
     <select id="getRaamcontractenDDbyUid" resultType="ciMap" parameterType="string" >
         <include refid="dossiersDDvelden"/>
-        where d.DOSS_HDR_ID = #{doss_hdr_id}
-            and d.DOSSIER_TYPE = 'X'
-            and d.DOSSIER_FASE_ID = 2
-        order by d.dossier_type desc, d.dossier_b_l
+        where dos.DOSS_HDR_ID = #{doss_hdr_id}
+            and dos.DOSSIER_TYPE = 'X'
+            and dos.DOSSIER_FASE_ID = 2
+        order by dos.dossier_type desc, dos.dossier_b_l
     </select>
 
     <select id="getGegroepeerdeOpdrachtenDDbyUid" resultType="ciMap" parameterType="string" >
         <include refid="dossiersDDvelden"/>
         <![CDATA[
-            where d.DOSS_HDR_ID = #{doss_hdr_id}
-                and d.DOSSIER_TYPE = 'X'
-                and d.DOSSIER_FASE_ID <> 2
-            order by d.dossier_type desc, d.dossier_b
+            where dos.DOSS_HDR_ID = #{doss_hdr_id}
+                and dos.DOSSIER_TYPE = 'X'
+                and dos.DOSSIER_FASE_ID <> 2
+            order by dos.dossier_type desc, dos.dossier_b
         ]]>
     </select>
 
@@ -362,20 +362,20 @@
               contract_type,
               raamcontract_jn
         from (
-            select d.id as value,
-                (d.DOSSIER_NR || ' - ' || d.dossier_b) as label,
-                case when d.AFSLUIT_D is not null then 3
-                    when d.dossier_fase_id = 2 then 2           -- raam contracten
-                    when d.DOSS_HDR_ID = #{doss_hdr_id} then 0  -- eigen gegroepeerde opdrachten
+            select dos.id as value,
+                (dos.DOSSIER_NR || ' - ' || dos.dossier_b) as label,
+                case when dos.AFSLUIT_D is not null then 3
+                    when dos.dossier_fase_id = 2 then 2           -- raam contracten
+                    when dos.DOSS_HDR_ID = #{doss_hdr_id} then 0  -- eigen gegroepeerde opdrachten
                     else 1                                      -- gegroepeerde opdrachten van anderen
                 end as type_ind,
-                d.dossier_nr as contract_nr,
-                d.dossier_b as contract_b,
-                d.dossier_type as contract_type,
-                d.raamcontract_jn
-            from art46.v_dossier d
-            where d.DOSSIER_TYPE = 'X'
-            order by  type_ind, d.dossier_b
+                dos.dossier_nr as contract_nr,
+                dos.dossier_b as contract_b,
+                dos.dossier_type as contract_type,
+                dos.raamcontract_jn
+            from art46.v_dossier dos
+            where dos.DOSSIER_TYPE = 'X'
+            order by  type_ind, dos.dossier_b
         )
     </select>
 
@@ -476,10 +476,10 @@
             b.bestek_id,
             b.bestek_nr,
             pl.dossier_id,
-            d.dossier_nr,
-            d.dossier_b_l,
-            d.doss_hdr_id,
-            d.dossier_type,
+            dos.dossier_nr,
+            dos.dossier_b_l,
+            dos.doss_hdr_id,
+            dos.dossier_type,
             pl.igb_d,
             smeg.ovamdate(pl.igb_d) as igb_ds,
             pl.ig_bedrag
@@ -487,8 +487,8 @@
                 inner join art46.v_planning_lijn pl
                 on pl.bestek_id = b.bestek_id
                 and pl.contract_id is not null  <!-- alleen planningslijnen van deelopdrachten -->
-                    left join art46.v_dossier d
-                    on pl.dossier_id = d.id
+                    left join art46.v_dossier dos
+                    on pl.dossier_id = dos.id
                 left join art46.deelopdracht do
                 on pl.lijn_id = do.planning_lijn_id
         where 1 = 1
@@ -502,10 +502,10 @@
         from (
             <!-- geplande deelopdrachten, nog niet gekoppeld met bestaande deelopdracht -->
             select b.bestek_id, b.bestek_nr,
-                d.id as dossier_id,
-                d.dossier_nr,
-                d.dossier_b as dossier_b,
-                d.doss_hdr_id as doss_hdr_id,
+                dos.id as dossier_id,
+                dos.dossier_nr,
+                dos.dossier_b as dossier_b,
+                dos.doss_hdr_id as doss_hdr_id,
                 pl.IGB_D,
                 pl.IG_BEDRAG,
                 do.bedrag
@@ -513,8 +513,8 @@
                     inner join art46.V_PLANNING_LIJN pl
                     on pl.BESTEK_ID = b.bestek_id
                     and pl.contract_id is not null  <!-- alleen planningslijnen van deelopdrachten -->
-                        left join art46.v_dossier d
-                        on pl.dossier_id = d.id
+                        left join art46.v_dossier dos
+                        on pl.dossier_id = dos.id
                     left join art46.DEELOPDRACHT do
                     on pl.LIJN_ID = do.PLANNING_LIJN_ID
             where 1 = 1
@@ -523,18 +523,18 @@
             union
             <!-- reeds aangemaakte deelopdrachten -->
             select b.bestek_id, b.bestek_nr,
-                d1.id as dossier_id,
-                d1.dossier_nr,
-                d1.dossier_b as dossier_b,
-                d1.doss_hdr_id as doss_hdr_id,
+                dos1.id as dossier_id,
+                dos1.dossier_nr,
+                dos1.dossier_b as dossier_b,
+                dos1.doss_hdr_id as doss_hdr_id,
                 pl.IGB_D,
                 pl.IG_BEDRAG,
                 do.bedrag
             from  art46.bestek b
                     inner join art46.DEELOPDRACHT do
                     on do.BESTEK_ID = b.BESTEK_ID
-                inner join art46.v_dossier d1
-                on do.dossier_id = d1.id
+                inner join art46.v_dossier dos1
+                on do.dossier_id = dos1.id
                     left join art46.V_PLANNING_LIJN pl
                     on do.PLANNING_LIJN_ID = pl.LIJN_ID
             where b.bestek_id = #{bestek_id}
@@ -543,14 +543,14 @@
     </select>
 
     <select id="getDetailsVoorFase" resultType="ciMap" parameterType="map" >
-        select d.dossier_nr,
-            d.dossier_b,
-            d.doss_hdr_id,
+        select dos.dossier_nr,
+            dos.dossier_b,
+            dos.doss_hdr_id,
             pl.igb_d,
             pl.ig_bedrag
         from art46.V_PLANNING_LIJN pl
-                left outer join art46.v_dossier d
-                on pl.dossier_id = d.id
+                left outer join art46.v_dossier dos
+                on pl.dossier_id = dos.id
                     left join art46.DEELOPDRACHT do
                     on pl.LIJN_ID = do.PLANNING_LIJN_ID
         where pl.bestek_id is null
@@ -632,13 +632,13 @@
                                    sum(bedrag) as gepland_bedrag_per_programmacode
                             from (
                                    select year(pl.igb_d) as jaar,
-                                          coalesce(dh.programma_type_code, d.programma_code) as programma_code,
+                                          coalesce(dh.programma_type_code, dos.programma_code) as programma_code,
                                           coalesce(spv.bedrag, pl.ig_bedrag) as bedrag
                                    from art46.v_planning_lijn_details pl
-                                          left outer join art46.v_dossier d
-                                          on pl.dossier_id = d.id
+                                          left outer join art46.v_dossier dos
+                                          on pl.dossier_id = dos.id
                                         left outer join art46.dossier_houder dh
-                                        on d.doss_hdr_id = dh.doss_hdr_id
+                                        on dos.doss_hdr_id = dh.doss_hdr_id
                                             left join sap.project_vastlegging spv
                                             on pl.sap_project_id = spv.project_id
                                    where 1 = 1
@@ -654,17 +654,17 @@
                                    sum(bedrag) as vastgelegd_bedrag_per_programmacode
                             from (
                                     select spv.BOEKJAAR as jaar,
-                                         coalesce(dh.programma_type_code, d.programma_code) as programma_code,
+                                         coalesce(dh.programma_type_code, dos.programma_code) as programma_code,
                                          spv.bedrag
                                     from sap.PROJECT_VASTLEGGING spv
                                        left join art46.BESTEK_SAP_PROJECT bsp
                                        on spv.PROJECT_ID = bsp.PROJECT_ID
                                            left join art46.bestek b
                                            on bsp.BESTEK_ID = b.bestek_id
-                                       left join art46.v_dossier d
-                                       on b.DOSSIER_ID = d.id
+                                       left join art46.v_dossier dos
+                                       on b.DOSSIER_ID = dos.id
                                            left join art46.dossier_houder dh
-                                           on d.doss_hdr_id = dh.doss_hdr_id
+                                           on dos.doss_hdr_id = dh.doss_hdr_id
                                     where 1 = 1
                                           and spv.BOEKJAAR = #{jaar}
                                   )
@@ -691,19 +691,19 @@
              on spv.PROJECT_ID = bsp.PROJECT_ID
                      left join art46.bestek b
                      on bsp.BESTEK_ID = b.bestek_id
-                 left join art46.v_dossier d
-                 on b.DOSSIER_ID = d.id
+                 left join art46.v_dossier dos
+                 on b.DOSSIER_ID = dos.id
                      left join art46.dossier_houder dh
-                     on d.doss_hdr_id = dh.doss_hdr_id
+                     on dos.doss_hdr_id = dh.doss_hdr_id
         where 1 = 1
             and spv.BOEKJAAR = #{jaar}
             <if test='programma_code != null and programma_code != "TOTAAL"'>
                 and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
-                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                      (dh.PROGRAMMA_TYPE_CODE is null and dos.PROGRAMMA_CODE = #{programma_code})
                     )
             </if>
             <if test="doss_hdr_id != null">
-                and d.DOSS_HDR_ID = #{doss_hdr_id}
+                and dos.DOSS_HDR_ID = #{doss_hdr_id}
             </if>
         order by spv.datum
     </select>
@@ -720,8 +720,8 @@
         select pl.IGB_D as datum,
                coalesce(spv.bedrag, pl.IG_BEDRAG) as bedrag
         from art46.v_planning_lijn_details pl
-                left join art46.v_dossier d
-                on pl.dossier_id = d.id
+                left join art46.v_dossier dos
+                on pl.dossier_id = dos.id
            LEFT outer join art46.DOSSIER_HOUDER dh
            on pl.DOSS_HDR_ID = dh.DOSS_HDR_ID
                 left join sap.project_vastlegging spv
@@ -731,7 +731,7 @@
             and year(pl.igb_d) = #{jaar}
             <if test='programma_code != null and programma_code != "TOTAAL"'>
                 and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
-                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                      (dh.PROGRAMMA_TYPE_CODE is null and dos.PROGRAMMA_CODE = #{programma_code})
                     )
             </if>
             <if test="doss_hdr_id != null">
@@ -778,14 +778,14 @@
         select pl.IGB_D as datum,
                pl.IG_BEDRAG as bedrag
         from plannings_lijn pl
-                left join art46.v_dossier d
-                on pl.dossier_id = d.id
+                left join art46.v_dossier dos
+                on pl.dossier_id = dos.id
            LEFT outer join art46.DOSSIER_HOUDER dh
            on pl.DOSS_HDR_ID = dh.DOSS_HDR_ID
         where 1 = 1
             <if test='programma_code != null and programma_code != "TOTAAL"'>
                 and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
-                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                      (dh.PROGRAMMA_TYPE_CODE is null and dos.PROGRAMMA_CODE = #{programma_code})
                     )
             </if>
         order by igb_d
@@ -804,7 +804,7 @@
                pl.fase_code,
                coalesce(bc.budget_code, pf.budget_code) as budget_code,
                bc.budget_code as budget_code_benut,
-               coalesce(dh.PROGRAMMA_TYPE_CODE, d.PROGRAMMA_CODE) as programma_code,
+               coalesce(dh.PROGRAMMA_TYPE_CODE, dos.PROGRAMMA_CODE) as programma_code,
                pl.contract_id,
                case when pl.contract_id is null then null
                     else 'JA'
@@ -825,8 +825,8 @@
                end as ib_bedrag,
                spv.volgnummer
         from art46.v_planning_lijn_details pl
-                left join art46.v_dossier d
-                on pl.dossier_id = d.id
+                left join art46.v_dossier dos
+                on pl.dossier_id = dos.id
             LEFT join art46.DOSSIER_HOUDER dh
             on pl.DOSS_HDR_ID = dh.DOSS_HDR_ID
                 LEFT join art46.PLANNING_FASE pf
@@ -844,7 +844,7 @@
             </if>
             <if test='programma_code != null and programma_code != "TOTAAL"'>
                 and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
-                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                      (dh.PROGRAMMA_TYPE_CODE is null and dos.PROGRAMMA_CODE = #{programma_code})
                     )
             </if>
             <if test="budget_code != null">
@@ -881,14 +881,14 @@
         parameterType="be.ovam.art46.controller.planning.jaar.DetailOverzichtParamsDO" >
         select
             pl.lijn_id,
-            d.DOSS_HDR_ID,
-            d.dossier_nr,
-            d.dossier_type,
-            d.dossier_b,
-            d.GEMEENTE_B as dossier_gemeente_b,
+            dos.DOSS_HDR_ID,
+            dos.dossier_nr,
+            dos.dossier_type,
+            dos.dossier_b,
+            dos.GEMEENTE_B as dossier_gemeente_b,
             pl.fase_code,
             bc.budget_code,
-            coalesce(dh.PROGRAMMA_TYPE_CODE, d.PROGRAMMA_CODE) as programma_code,
+            coalesce(dh.PROGRAMMA_TYPE_CODE, dos.PROGRAMMA_CODE) as programma_code,
             pl.CONTRACT_ID,
             case when pl.contract_id is null then null
                  else 'JA'
@@ -908,10 +908,10 @@
                    on spv.PROJECT_ID = bsp.PROJECT_ID
                left outer join art46.bestek b
                on bsp.BESTEK_ID = b.bestek_id
-                   left outer join art46.V_dossier d
-                   on b.DOSSIER_ID = d.id
+                   left outer join art46.V_dossier dos
+                   on b.DOSSIER_ID = dos.id
                left outer join art46.dossier_houder dh
-               on d.DOSS_HDR_ID = dh.DOSS_HDR_ID
+               on dos.DOSS_HDR_ID = dh.DOSS_HDR_ID
                    left join art46.budget_code bc
                    on spv.budgetair_artikel = bc.artikel_b
                --
@@ -925,14 +925,14 @@
                    on pl.FASE_CODE = pf.FASE_CODE
         where 1 = 1
             <if test="dossier_type != null">
-                and d.dossier_type = #{dossier_type}
+                and dos.dossier_type = #{dossier_type}
             </if>
             <if test="doss_hdr_id != null">
                 and dh.DOSS_HDR_ID = #{doss_hdr_id}
             </if>
             <if test='programma_code != null and programma_code != "TOTAAL"'>
                 and ( dh.PROGRAMMA_TYPE_CODE = #{programma_code} OR
-                      (dh.PROGRAMMA_TYPE_CODE is null and d.PROGRAMMA_CODE = #{programma_code})
+                      (dh.PROGRAMMA_TYPE_CODE is null and dos.PROGRAMMA_CODE = #{programma_code})
                     )
             </if>
             <if test="budget_code != null">

@@ -26,7 +26,7 @@
             date(do.creatie_ts) as creatie_d,
             do.ander_raamcontract_jn as raamcontract_jn,
             do.ander_dossier_id,
-            d.dossier_id as ander_dossier_nr,
+            d.dossier_nr as ander_dossier_nr,
             d.dossier_b_l as ander_dossier_b_l,
             do.ander_doss_hdr_id
         from art46.v_deelopdracht do

@@ -43,7 +43,7 @@ public class DossierDAO extends BaseDAO {
 	}
 	
 	public DynaBean getActieInfo(Integer actietype, Integer dossierId) throws Exception {
-		return findFirstByDynaBeans("select oa.*, ac.* from ART46.OVAM_AMBTENAAR_VIEW oa, ART46.V_DOSSIER ad, ART46.DOSSIER_ACTIE ac where ad.doss_hdr_id = oa.ambtenaar_id and ac.actie_type_id = ? and ad.id = ?", new Integer[] {actietype, dossierId});		
+		return findFirstByDynaBeans("select oa.*, ac.* from ART46.OVAM_AMBTENAAR_VIEW oa, ART46.V_DOSSIER dos, ART46.DOSSIER_ACTIE ac where dos.doss_hdr_id = oa.ambtenaar_id and ac.actie_type_id = ? and dos.id = ?", new Integer[] {actietype, dossierId});		
 	}
 	
 	public List<Dossier> getIvsDossiers(String doss_hdr_id) {

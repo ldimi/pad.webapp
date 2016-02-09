@@ -34,8 +34,8 @@ public class DossierKadasterDAO extends BaseDAO {
 	private static String sqlInsertDossierKadasterType = "insert into ART46.DOS_KAD_TYPE (DOSSIER_ID, KADASTER_ID, ONSCHULDIGE_EIG_S, INGEBREKE_STEL_S) values (?,?,?,?) ";
 	private static String sqlInsertKadasterDossierType = "insert into ART46.DOS_KAD_TYPE (KADASTER_ID, DOSSIER_ID, ONSCHULDIGE_EIG_S, INGEBREKE_STEL_S) values (?,?,?,?) ";
 	private static String sqlSelectNGOld = "select * from ART46.NA_GOEDK where DOSSIER_ID=? and KADASTER_ID=? and LIJST_ID=?";	
-	private static String sqlCheckBBO= "select rd.dossier_id from art46.v_dossier ad inner join SMEG.RS_DOSSIER_VIEW rd on (rd.dossier_id = ad.dossier_id_boa) where rd.conform_bbo_d is not null and ad.id = ?";
-	private static String sqlCheckBSP= "select rd.dossier_id from art46.v_dossier ad inner join SMEG.RS_DOSSIER_VIEW rd on (rd.dossier_id = ad.dossier_id_boa) where rd.conform_bsp_d is not null and ad.id = ?";
+	private static String sqlCheckBBO= "select rd.dossier_id from art46.v_dossier dos inner join SMEG.RS_DOSSIER_VIEW rd on (rd.dossier_id = dos.dossier_id_boa) where rd.conform_bbo_d is not null and dos.id = ?";
+	private static String sqlCheckBSP= "select rd.dossier_id from art46.v_dossier dos inner join SMEG.RS_DOSSIER_VIEW rd on (rd.dossier_id = dos.dossier_id_boa) where rd.conform_bsp_d is not null and dos.id = ?";
 
 		
 	

@@ -21,12 +21,12 @@
 			adr.afgesloten_s {raming.afgesloten_s}
 		from 
 			ART46.BESTEK ab,
-			ART46.v_DOSSIER ad,
+			ART46.v_DOSSIER dos,
 			ART46.DOSSIER_RAMING adr
 		where
 			ab.bestek_id = ? and
-			ab.dossier_id = ad.id and
-			ad.id = adr.dossier_id	
+			ab.dossier_id = dos.id and
+			dos.id = adr.dossier_id	
 	</sql-query>	
 		
 </hibernate-mapping>

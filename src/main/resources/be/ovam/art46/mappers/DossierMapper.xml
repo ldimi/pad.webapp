@@ -84,15 +84,15 @@
         select
             b.bestek_nr
         from
-            dossier d
+            dossier
                 inner join ART46.BESTEK b
-                on d.ID = b.DOSSIER_ID
+                on dossier.ID = b.DOSSIER_ID
         union
         select
             b.bestek_nr
-        from DOSSIER d
+        from DOSSIER
             inner join art46.DEELOPDRACHT do
-            on d.id = do.DOSSIER_ID
+            on dossier.id = do.DOSSIER_ID
                 inner join art46.bestek b
                 on do.BESTEK_ID = b.BESTEK_ID
     </select>
@@ -119,38 +119,38 @@
             </if>
         )
         select
-            d.id,
-            d.dossier_nr,
-            d.dossier_id_boa,
-            d.dossier_b_l as dossier_l,
+            dos.id,
+            dos.dossier_nr,
+            dos.dossier_id_boa,
+            dos.dossier_b_l as dossier_l,
             sd.naam as dossier_b_boa,
-            d.programma_code,
-            d.AANPAK_ONDERZOCHT_S,
+            dos.programma_code,
+            dos.AANPAK_ONDERZOCHT_S,
             case when (max(b.bestek_id) is null and max(do.bestek_id) is null) then null
                  else '1'
             end as aanpak_s
-        from art46.v_dossier d
+        from art46.v_dossier dos
                 inner join smeg.DOSSIER sd
-                on d.dossier_id_boa = sd.dossier_id
+                on dos.dossier_id_boa = sd.dossier_id
             inner join lijst l
-            on d.id = l.dossier_id
+            on dos.id = l.dossier_id
                 left join art46.BESTEK b
-                on d.id = b.DOSSIER_ID
+                on dos.id = b.DOSSIER_ID
             left join art46.DEELOPDRACHT do
-            on d.id = do.DOSSIER_ID
+            on dos.id = do.DOSSIER_ID
         where 1 =1
             <if test="programma_code != null">
-                and d.programma_code = #{programma_code}
+                and dos.programma_code = #{programma_code}
             </if>
-        group by d.id, d.dossier_nr, d.dossier_id_boa, d.dossier_b_l, sd.naam, d.programma_code, d.AANPAK_ONDERZOCHT_S
+        group by dos.id, dos.dossier_nr, dos.dossier_id_boa, dos.dossier_b_l, sd.naam, dos.programma_code, dos.AANPAK_ONDERZOCHT_S
     </select>
 
 
     <select id="getDataForSap" parameterType="int" resultType="map">
     <![CDATA[
         select
-            trim(d.dossier_nr) as IVS_NUMBER,
-            trim(substr(d.dossier_b, 1, 30)) as IVS_DESCRIPTION ,
+            trim(dos.dossier_nr) as IVS_NUMBER,
+            trim(substr(dos.dossier_b, 1, 30)) as IVS_DESCRIPTION ,
             trim(substr(ik.NAAM_1, 1, 30)) as IVS_RESPONSABLE,
 
             trim(char(smegd.dossier_id)) as BODEM_NUMBER,
@@ -160,9 +160,9 @@
             trim(substr(jur.DOSSIER_ID_JD, 1, 15)) as JD_NUMBER,
             trim(substr(jur.DOSSIER_B, 1, 30)) as JD_DESCRIPTION,
             trim(substr(jk.NAAM_1, 1, 30)) as JD_RESPONSABLE,
-            d.dossier_type
-        from art46.v_dossier d
-                      left JOIN SMEG.KLANT_AMBTENAAR ika on d.DOSS_HDR_ID = ika.UID
+            dos.dossier_type
+        from art46.dossier dos
+                      left JOIN SMEG.KLANT_AMBTENAAR ika on dos.DOSS_HDR_ID = ika.UID
                       left join SMEG.KLANT ik  ON ika.id = ik.id
                left join (
                         select distinct DOSSIER_ID, DOSSIER_ID_JD, DOSSIER_B, DOSS_HDR_ID
@@ -179,53 +179,53 @@
                                 and djd.AARD_ID = 8 ) as T
                         where T.number = 1
                         ) as jur
-                on d.id = jur.DOSSIER_ID
+                on dos.id = jur.DOSSIER_ID
                       left JOIN SMEG.KLANT_AMBTENAAR jka on jur.DOSS_HDR_ID = jka.UID
                       left join SMEG.KLANT jk  ON jka.id = jk.id
             left join SMEG.DOSSIER smegd
-            on d.DOSSIER_ID_BOA  = smegd.dossier_id
-            and d.DOSSIER_ID_BOA <> 0
+            on dos.DOSSIER_ID_BOA  = smegd.dossier_id
+            and dos.DOSSIER_ID_BOA <> 0
                 left join (
                          select v.dossier_id, v.ambtenaar_id, ROW_NUMBER() OVER(PARTITION BY v.dossier_id) as number
                            from art46.V_DOSSIERHOUDERS_BOA v
-                                inner join art46.v_dossier d
-                                on v.dossier_id  = d.DOSSIER_ID_BOA
-                                and d.id =  #{id}
+                                inner join art46. d
+                                on v.dossier_id  = dos.DOSSIER_ID_BOA
+                                and dos.id =  #{id}
                            ) as smegdh
-                on smegdh.dossier_id = d.DOSSIER_ID_BOA
+                on smegdh.dossier_id = dos.DOSSIER_ID_BOA
                 and smegdh.number = 1
                       left JOIN SMEG.KLANT_AMBTENAAR bka on smegdh.ambtenaar_id = bka.UID
                       left join SMEG.KLANT bk  ON bka.id = bk.id
         where 1 = 1
-           and d.dossier_b is not null
-           and d.id = #{id}
+           and dos.dossier_b is not null
+           and dos.id = #{id}
     ]]>
     </select>
 
     <select id="getDossiersByDossHdr" parameterType="string" resultType="ciMap">
         select
-            ad.ID,
-            ad.DOSSIER_NR,
-            ad.DOSSIER_B,
-            ad.NIS_ID,
-            ad.GEMEENTE_B,
-            ad.DOSSIER_TYPE,
-            case when exists (select b.bestek_id from art46.bestek b where b.dossier_id  = ad.id) then 'Ja'
-                 when exists (select do.deelopdracht_id from art46.deelopdracht do where do.dossier_id = ad.id and do.bestek_id is not null) then 'Ja'
+            dos.ID,
+            dos.DOSSIER_NR,
+            dos.DOSSIER_B,
+            dos.NIS_ID,
+            dos.GEMEENTE_B,
+            dos.DOSSIER_TYPE,
+            case when exists (select b.bestek_id from art46.bestek b where b.dossier_id  = dos.id) then 'Ja'
+                 when exists (select do.deelopdracht_id from art46.deelopdracht do where do.dossier_id = dos.id and do.bestek_id is not null) then 'Ja'
                  else 'Nee'
             end as opgestart_jn,
-            coalesce(ad.dossier_id_boa,0) DOSSIER_ID_BOA,
+            coalesce(dos.dossier_id_boa,0) DOSSIER_ID_BOA,
             adf.FASE_ID,
             coalesce(adf.FASE_S, '') fase_s,
             coalesce(adf.FASE_B, '') fase_b
-        from ART46.V_DOSSIER ad
+        from ART46.V_DOSSIER dos
                 left outer join SMEG.OVAM_GEMEENTE_VIEW ka
-                on ka.nis_id = ad.nis_id
+                on ka.nis_id = dos.nis_id
             left outer join ART46.DOSSIER_FASE adf
-            on ad.DOSSIER_FASE_ID = adf.FASE_ID
+            on dos.DOSSIER_FASE_ID = adf.FASE_ID
         where
-            ad.afsluit_d is null and
-            ad.DOSS_HDR_ID in ( select DOSS_HDR_ID
+            dos.afsluit_d is null and
+            dos.DOSS_HDR_ID in ( select DOSS_HDR_ID
                             from ART46.DOSSIER_HOUDER
                             where DOSS_HDR_ID = #{DOSS_HDR_ID}
                             union
@@ -238,35 +238,35 @@
 
     <sql id="dossier_zoek_sql" >
         select distinct
-            d.id,
-            d.dossier_nr,
-            d.sap_project_nr,
-            d.dossier_b,
+            dos.id,
+            dos.dossier_nr,
+            dos.sap_project_nr,
+            dos.dossier_b,
             sd.naam as dossier_b_boa,
-            d.dossier_id_boa,
-            d.nis_id,
-            d.doss_hdr_id,
+            dos.dossier_id_boa,
+            dos.nis_id,
+            dos.doss_hdr_id,
             coalesce(k.naam_1, '') doss_hdr_naam,
-            d.programma_code,
-            d.rechtsgrond_code,
-            d.doelgroep_type_b,
-            d.gemeente_b,
-            d.dossier_type,
+            dos.programma_code,
+            dos.rechtsgrond_code,
+            dos.doelgroep_type_b,
+            dos.gemeente_b,
+            dos.dossier_type,
             art46dossier.adres
         from
-            ART46.V_DOSSIER d
+            ART46.V_DOSSIER dos
 
                 inner join art46.dossier art46dossier
-                on d.id = art46dossier.id
+                on dos.id = art46dossier.id
 
                 left join SMEG.DOSSIER sd
-                on sd.dossier_id = d.dossier_id_boa
+                on sd.dossier_id = dos.dossier_id_boa
 
 
 
             <if test=" project_id != null || bestek_nr != null || aanpak_s != null">
                 inner join ART46.BESTEK b
-                on d.id = b.dossier_id
+                on dos.id = b.dossier_id
                 <!-- aanpak_s = 1 :  dossier opgestart als er een bestek aan gekoppeld is -->
                 <if test="bestek_nr != null">
                     and b.bestek_nr = #{bestek_nr}
@@ -279,13 +279,13 @@
             </if>
 
             left join smeg.klant_ambtenaar ka
-            on d.doss_hdr_id = ka.uid
+            on dos.doss_hdr_id = ka.uid
                 left join smeg.klant k
                 on ka.id = k.id
 
             <if test="dossier_id_jd != null || doss_hdr_id_jd != null">
                 inner join juridisch.juridisch_dossier jjd
-                on d.id = jjd.ART46_DOSSIER_ID
+                on dos.id = jjd.ART46_DOSSIER_ID
                 <if test="dossier_id_jd != null">
                     and jjd.volgnummer like #{dossier_id_jd} || '%'
                 </if>
@@ -299,13 +299,13 @@
             <if test='dossier_type != "A" and dossier_type != "X"'>
                 <if test="doss_hdr_id_boa != null or adres != null">
                     left join ART46.V_SMEG_DOSSIER_ONDERZOEK o
-                    on d.dossier_id_boa = o.dossier_id
+                    on dos.dossier_id_boa = o.dossier_id
                 </if>
             </if>
 
             <if test='ob_s == "1" || ig_s == "1"' >
                 inner join ART46.DOS_KAD_TYPE dkt
-                on d.id = dkt.dossier_id
+                on dos.id = dkt.dossier_id
                 <if test='ob_s == "1"' >
                     and dkt.onschuldige_eig_s = #{ob_s}
                 </if>
@@ -317,7 +317,7 @@
 
             <if test='(historiek_lijst_id != null)  or (art46_lijst_id != null) '>
                 inner join art46.na_goedk ang
-                on d.id = ang.dossier_id
+                on dos.id = ang.dossier_id
 
                 <if test='historiek_lijst_id != null'>
                 and ang.lijst_id = #{historiek_lijst_id}
@@ -337,50 +337,50 @@
 
         where 1 = 1
         <if test="dossier_type != null">
-            and d.dossier_type = #{dossier_type}
+            and dos.dossier_type = #{dossier_type}
         </if>
         <if test="rechtsgrond_code != null">
-            and d.rechtsgrond_code = #{rechtsgrond_code}
+            and dos.rechtsgrond_code = #{rechtsgrond_code}
         </if>
         <if test='dossier_fase_id != null and dossier_fase_id != "0"  and dossier_fase_id != "13"  and dossier_fase_id != "17"'>
-            and d.dossier_fase_id = #{dossier_fase_id}
+            and dos.dossier_fase_id = #{dossier_fase_id}
         </if>
         <if test="programma_code != null">
-            and d.programma_code = #{programma_code}
+            and dos.programma_code = #{programma_code}
         </if>
         <if test="doelgroep_type_id != null">
-            and d.doelgroep_type_id = #{doelgroep_type_id}
+            and dos.doelgroep_type_id = #{doelgroep_type_id}
         </if>
         <if test="dossier_nr != null">
-            and d.dossier_nr like #{dossier_nr} || '%'
+            and dos.dossier_nr like #{dossier_nr} || '%'
         </if>
         <if test="dossier_id_boa != null">
-            and d.dossier_id_boa = #{dossier_id_boa}
+            and dos.dossier_id_boa = #{dossier_id_boa}
         </if>
         <if test="sap_project_nr != null">
-            and d.sap_project_nr like '%' || #{sap_project_nr} || '%'
+            and dos.sap_project_nr like '%' || #{sap_project_nr} || '%'
         </if>
         <if test="dossier_b != null">
-            and UPPER(d.dossier_b) like '%' || UPPER(#{dossier_b}) || '%'
+            and UPPER(dos.dossier_b) like '%' || UPPER(#{dossier_b}) || '%'
         </if>
         <if test="doss_hdr_id != null">
-            and d.doss_hdr_id = #{doss_hdr_id}
+            and dos.doss_hdr_id = #{doss_hdr_id}
         </if>
 
         <if test='raamcontract_J_N == "J"'>
-            and d.DOSSIER_FASE_ID = 2
+            and dos.DOSSIER_FASE_ID = 2
         </if>
         <if test='raamcontract_J_N == "N"'>
             <![CDATA[
-            and d.DOSSIER_FASE_ID <> 2
+            and dos.DOSSIER_FASE_ID <> 2
             ]]>
         </if>
 
         <if test="nis_id != null">
-            and d.nis_id = #{nis_id}
+            and dos.nis_id = #{nis_id}
         </if>
         <if test="provincie != null">
-            and d.nis_id like #{provincie} || '____'
+            and dos.nis_id like #{provincie} || '____'
         </if>
 
         <choose>
@@ -391,8 +391,8 @@
                     </if>
                 </if>
                 <if test="adres != null">
-                     and ( (d.dossier_type = 'B' and UPPER(o.adres) like ('%' || UPPER(#{adres}) || '%') ) OR
-                           (d.dossier_type != 'B' and UPPER(art46dossier.adres) like ('%' || UPPER(#{adres}) || '%') )
+                     and ( (dos.dossier_type = 'B' and UPPER(o.adres) like ('%' || UPPER(#{adres}) || '%') ) OR
+                           (dos.dossier_type != 'B' and UPPER(art46dossier.adres) like ('%' || UPPER(#{adres}) || '%') )
                          )
                 </if>
             </when>
@@ -404,13 +404,13 @@
         </choose>
 
         <if test='incl_afgesloten_s == null || incl_afgesloten_s != "1"'>
-                and d.afsluit_d is null
+                and dos.afsluit_d is null
         </if>
         <if test='ivs_s != null and ivs_s == "1"' >
-                and d.dossier_nr not like '+_%' escape '+'
+                and dos.dossier_nr not like '+_%' escape '+'
         </if>
         <if test="aanpak_onderzocht_s != null">
-                and d.aanpak_onderzocht_s = '1'
+                and dos.aanpak_onderzocht_s = '1'
         </if>
         fetch first 1001 rows only
     </sql>
@@ -498,28 +498,28 @@
         with
             result as (
                 SELECT distinct
-                    d.id,
+                    dos.id,
                     sd.dossier_id as dossier_id_boa,
                     sd.naam as dossier_b_boa,
-                    coalesce(d.dossier_nr, '') dossier_nr,
-                    coalesce(d.sap_project_nr, '') sap_project_nr,
-                    coalesce(d.dossier_b, '') dossier_b,
-                    d.nis_id,
-                    d.programma_code,
-                    d.rechtsgrond_code,
+                    coalesce(dos.dossier_nr, '') dossier_nr,
+                    coalesce(dos.sap_project_nr, '') sap_project_nr,
+                    coalesce(dos.dossier_b, '') dossier_b,
+                    dos.nis_id,
+                    dos.programma_code,
+                    dos.rechtsgrond_code,
                     coalesce(k.naam_1, '') doss_hdr_naam,
                     case count(ang.dossier_id) + count(avg.dossier_id)
                         when 0 then 0
                         else 1
                     end lijst_art46,
                     max(o.adres) as adres
-                FROM art46.v_dossier d
+                FROM art46.v_dossier dos
                         left join SMEG.DOSSIER sd
-                        on sd.dossier_id = d.dossier_id_boa
+                        on sd.dossier_id = dos.dossier_id_boa
 
                 <if test='ob_s == "1" || ig_s == "1"' >
                     inner join ART46.DOS_KAD_TYPE dkt
-                    on d.id = dkt.dossier_id
+                    on dos.id = dkt.dossier_id
                     <if test='ob_s == "1"' >
                         and dkt.onschuldige_eig_s = '1'
                     </if>
@@ -531,7 +531,7 @@
                 <choose>
                     <when test="doss_hdr_id_boa != null || adres != null">
                         inner join ART46.V_SMEG_DOSSIER_ONDERZOEK o
-                        on d.dossier_id_boa = o.dossier_id
+                        on dos.dossier_id_boa = o.dossier_id
                         <if test="doss_hdr_id_boa != null">
                              and o.doss_hdr_id = #{doss_hdr_id_boa}
                         </if>
@@ -541,13 +541,13 @@
                     </when>
                     <otherwise>
                         left outer join ART46.V_SMEG_DOSSIER_ONDERZOEK o
-                        on d.dossier_id_boa = o.dossier_id
+                        on dos.dossier_id_boa = o.dossier_id
                     </otherwise>
                 </choose>
 
                 <if test="dossier_id_jd != null || doss_hdr_id_jd != null">
                     inner join juridisch.juridisch_dossier jjd
-                    on d.id = jjd.ART46_DOSSIER_ID
+                    on dos.id = jjd.ART46_DOSSIER_ID
                     <if test="dossier_id_jd != null">
                         and jjd.volgnummer like #{dossier_id_jd} || '%'
                     </if>
@@ -561,13 +561,13 @@
 
 
                     left join art46.na_goedk ang
-                    on d.id = ang.dossier_id
+                    on dos.id = ang.dossier_id
 
                     left join art46.voor_goedk avg
-                    on d.id = avg.dossier_id
+                    on dos.id = avg.dossier_id
 
                     left join smeg.klant_ambtenaar ka
-                    on d.doss_hdr_id = ka.uid
+                    on dos.doss_hdr_id = ka.uid
                         left join smeg.klant k
                         on ka.id = k.id
 
@@ -575,7 +575,7 @@
                 WHERE 1 = 1
                     <!-- als het dossier al een IVS dossier is, moeten de dossiers zonder smeg-link toch getoond worden -->
                     and (sd.dossier_id is not null OR
-                         d.dossier_b is not null)
+                         dos.dossier_b is not null)
 
                 <if test='historiek_lijst_id != null and historiek_lijst_id != "0"'>
                     and ang.lijst_id = #{historiek_lijst_id}
@@ -595,67 +595,67 @@
 
 
                 <if test="dossier_type != null">
-                        and d.dossier_type = #{dossier_type}
+                        and dos.dossier_type = #{dossier_type}
                 </if>
                 <if test="nis_id != null">
-                        and d.nis_id = #{nis_id}
+                        and dos.nis_id = #{nis_id}
                 </if>
                 <if test="provincie != null">
-                        and d.nis_id like #{provincie} || '____'
+                        and dos.nis_id like #{provincie} || '____'
                 </if>
                 <if test="dossier_id_boa != null">
-                        and d.dossier_id_boa = #{dossier_id_boa}
+                        and dos.dossier_id_boa = #{dossier_id_boa}
                 </if>
                 <if test="dossier_nr != null">
-                        and d.dossier_nr like '%' || #{dossier_nr} || '%'
+                        and dos.dossier_nr like '%' || #{dossier_nr} || '%'
                 </if>
                 <if test="sap_project_nr != null">
-                        and d.sap_project_nr like '%' || #{sap_project_nr} || '%'
+                        and dos.sap_project_nr like '%' || #{sap_project_nr} || '%'
                 </if>
                 <if test="doss_hdr_id != null">
-                        and d.doss_hdr_id = #{doss_hdr_id}
+                        and dos.doss_hdr_id = #{doss_hdr_id}
                 </if>
                 <if test="dossier_b != null">
-                        and UPPER(d.dossier_b) like '%' || UPPER(#{dossier_b}) || '%'
+                        and UPPER(dos.dossier_b) like '%' || UPPER(#{dossier_b}) || '%'
                 </if>
                 <if test="aanpak_onderzocht_s != null">
-                        and d.aanpak_onderzocht_s = '1'
+                        and dos.aanpak_onderzocht_s = '1'
                 </if>
                 <if test="aanpak_s != null">
-                        and d.aanpak_s = '1'
+                        and dos.aanpak_s = '1'
                 </if>
                 <if test='ivs_s != null and ivs_s == "1"' >
-                        and d.dossier_nr not like '+_%' escape '+'
+                        and dos.dossier_nr not like '+_%' escape '+'
                 </if>
                 <if test="programma_code != null">
-                        and d.programma_code = #{programma_code}
+                        and dos.programma_code = #{programma_code}
                 </if>
                 <if test="rechtsgrond_code != null">
-                        and d.rechtsgrond_code = #{rechtsgrond_code}
+                        and dos.rechtsgrond_code = #{rechtsgrond_code}
                 </if>
 
                 <if test="dossier_fase_id != null and dossier_fase_id != '0'  and dossier_fase_id != '13'  and dossier_fase_id != '17'">
-                        and d.dossier_fase_id = #{dossier_fase_id}
+                        and dos.dossier_fase_id = #{dossier_fase_id}
                 </if>
                 <if test="doelgroep_type_id != null">
-                        and d.doelgroep_type_id = #{doelgroep_type_id}
+                        and dos.doelgroep_type_id = #{doelgroep_type_id}
                 </if>
 
 
                 <if test='incl_afgesloten_s == null || incl_afgesloten_s != "1"'>
-                        and d.afsluit_d is null
+                        and dos.afsluit_d is null
                 </if>
 
                 group by
-                    d.id,
+                    dos.id,
                     sd.dossier_id,
                     sd.naam,
-                    d.dossier_nr,
-                    d.sap_project_nr,
-                    d.dossier_b,
-                    d.nis_id,
-                    d.programma_code,
-                    d.rechtsgrond_code,
+                    dos.dossier_nr,
+                    dos.sap_project_nr,
+                    dos.dossier_b,
+                    dos.nis_id,
+                    dos.programma_code,
+                    dos.rechtsgrond_code,
                     k.naam_1
             )
             select distinct
@@ -681,32 +681,32 @@
 
     <select id="getAfgeslotenDossiersLijst" resultType="ciMap">
         select
-            d.id,
+            dos.id,
             sd.dossier_id,
             sd.naam as dossier_b,
-            d.afsluit_d,
-            d.dossier_nr as dossier_nr,
-            d.dossier_b as dossier_b_ivs,
+            dos.afsluit_d,
+            dos.dossier_nr as dossier_nr,
+            dos.dossier_b as dossier_b_ivs,
             g.naam as "gemeente_b",
             min(ng.publicatie_d) eerste_pub_d,
-            coalesce((days(d.afsluit_d) - days(min(ng.publicatie_d))), 0) aantal_dagen
+            coalesce((days(dos.afsluit_d) - days(min(ng.publicatie_d))), 0) aantal_dagen
         from smeg.dossier sd
-                inner join art46.v_dossier d
-                on sd.dossier_id = d.dossier_id_boa
+                inner join art46.v_dossier dos
+                on sd.dossier_id = dos.dossier_id_boa
             left outer join ART46.NA_GOEDK ng
-            on d.id = ng.dossier_id
+            on dos.id = ng.dossier_id
                 left outer join SMEG_REF.CRAB_GEMEENTE g
-                on d.nis_id = g.nis_id
+                on dos.nis_id = g.nis_id
         where
-            d.afsluit_d is not null
+            dos.afsluit_d is not null
             and ng.publicatie_d is not null
         group by
-            d.id,
+            dos.id,
             sd.dossier_id,
             sd.naam,
-            d.afsluit_d,
-            d.dossier_nr,
-            d.dossier_b,
+            dos.afsluit_d,
+            dos.dossier_nr,
+            dos.dossier_b,
             g.naam
         order by sd.DOSSIER_ID
      </select>
@@ -923,20 +923,20 @@
             from smeg.rs_DOSS_VERBINTENIS_view
         )
         select
-            ad.id,
+            dos.id,
             do.dossier_id dossier_id_boa,
             do.dossier_b,
-            ad.dossier_nr,
-            ad.dossier_b
+            dos.dossier_nr,
+            dos.dossier_b
             dossier_b_ivs,
-            ad.doss_hdr_id,
-            ad.nis_id,
-            ad.doss_hdr_id
+            dos.doss_hdr_id,
+            dos.nis_id,
+            dos.doss_hdr_id
         from dossier_fz fz
                 inner join SMEG.RS_DOSSIER_VIEW do
                 on fz.dossier_id = do.dossier_id
-            left outer join ART46.V_DOSSIER ad
-            on do.dossier_id = ad.dossier_id_boa
+            left outer join ART46.V_DOSSIER dos
+            on do.dossier_id = dos.dossier_id_boa
     </sql>
 
     <select id="getDossiersFzAll" resultType="ciMap">
@@ -946,8 +946,8 @@
     <select id="getDossiersFzIVS" resultType="ciMap">
         <include refid="dossiersFz_sql"/>
         where
-            ad.id is not null and
-            ad.dossier_id not like '+_%' escape '+'
+            dos.id is not null and
+            dos.dossier_nr not like '+_%' escape '+'
     </select>
 
     <select id="getDetailsArchiefLijst" parameterType="int" resultType="ciMap">
@@ -955,12 +955,12 @@
             aa.*,
             oad.DIENST_ID
         from ART46.ARCHIEF aa
-                inner join ART46.V_DOSSIER ad
-                on aa.dossier_id = ad.id
+                inner join ART46.V_DOSSIER dos
+                on aa.dossier_id = dos.id
             left outer join SMEG.ART46_AMBTENAAR_DIENST_VIEW oad
-            on oad.ambtenaar_id = ad.doss_hdr_id
+            on oad.ambtenaar_id = dos.doss_hdr_id
         where
-        ad.id = #{id}
+        dos.id = #{id}
         order by aa.archief_d
     </select>
 
@@ -969,19 +969,19 @@
         (
          select b.bestek_id,
                 0 as deelopdracht
-         from ART46.V_DOSSIER d
+         from ART46.V_DOSSIER dos
                 inner join art46.bestek b
-                on d.id = b.dossier_id
-         where d.id = #{id}
+                on dos.id = b.dossier_id
+         where dos.id = #{id}
          union
          select b.bestek_id,
                 1 as deelopdracht
-         from ART46.V_DOSSIER d
+         from ART46.V_DOSSIER dos
                 inner join ART46.DEELOPDRACHT do
-                on d.id = do.dossier_id
+                on dos.id = do.dossier_id
             inner join art46.bestek b
             on do.bestek_id = b.bestek_id
-         where d.id = #{id}
+         where dos.id = #{id}
         )
         select
             b.dossier_id,
@@ -1023,7 +1023,7 @@
 
     <select id="getOpnameLijst" parameterType="int" resultType="ciMap">
             select distinct
-                ad.id,
+                dos.id,
                 dk.COMMENTAAR_VOOR COMMENTAAR_SH,
                 ka.KADASTER_AFD_B,
                 SUBSTR(k.KADASTER_ID,6) KADASTER_ID_SH,
@@ -1040,11 +1040,11 @@
                                          else NULL
                 end as INGEBREKE_STEL_S
             from
-                ART46.V_DOSSIER ad
-                    inner join SMEG.RS_DOSSIER_VIEW d
-                    on ad.dossier_id_boa = d.dossier_id
+                ART46.V_DOSSIER dos
+                    inner join SMEG.RS_DOSSIER_VIEW rs_dos
+                    on dos.dossier_id_boa = rs_dos.dossier_id
                 inner join ART46.V_DOSSIER_KADASTER as dk
-                on ad.ID = dk.id
+                on dos.ID = dk.id
                     left outer join art46.ARTIKEL a
                     on dk.ARTIKEL_ID = a.ARTIKEL_ID
                 left outer join ART46.DOS_KAD_TYPE ao
@@ -1055,7 +1055,7 @@
                 inner join art46.RS_KADASTER_AFD_VIEW ka
                 on k.KADASTER_AFD_ID = ka.KADASTER_AFD_ID
             where
-                ad.ID = #{id}
+                dos.ID = #{id}
             order by ka.kadaster_afd_b
     </select>
 
@@ -1143,15 +1143,15 @@
 
     <select id="getFacturenDossiersLijst" parameterType="int" resultType="ciMap">
         select distinct
-            coalesce(og.gemeente_b, '') || ' ' || coalesce(ad.dossier_b, '') || case ad.dossier_type when 'A' then '(Afval)'
+            coalesce(og.gemeente_b, '') || ' ' || coalesce(dos.dossier_b, '') || case dos.dossier_type when 'A' then '(Afval)'
                                                                                                      when 'B' then '(Bodem)'
                                                                                                      else ' (Ander)'
             end dossier_l,
-            ad.id
+            dos.id
         from ART46.BESTEK ab
             inner join ART46.DEELOPDRACHT ade on ab.bestek_id = ade.bestek_id
-                inner join ART46.V_DOSSIER ad on ad.id = ade.dossier_id
-            inner join SMEG.OVAM_GEMEENTE_VIEW og on ad.nis_id = og.nis_id
+                inner join ART46.V_DOSSIER dos on dos.id = ade.dossier_id
+            inner join SMEG.OVAM_GEMEENTE_VIEW og on dos.nis_id = og.nis_id
         where
             ab.DOSSIER_ID = #{id}
         order by 1
@@ -1160,17 +1160,17 @@
     <select id="getArchiefZoekResult" parameterType="be.ovam.art46.struts.actionform.ArchiefZoekForm" resultType="ciMap" >
         select
             aa.*,
-            ad.doss_hdr_id,
-            ad.dossier_type,
-            ad.dossier_nr as dossier_nr,
+            dos.doss_hdr_id,
+            dos.dossier_type,
+            dos.dossier_nr as dossier_nr,
             oa.DIENST_ID
         from
             art46.archief aa
-                inner join art46.v_dossier ad on (aa.dossier_id = ad.id)
-            left outer join SMEG.ART46_AMBTENAAR_DIENST_VIEW oa on (oa.ambtenaar_id = ad.doss_hdr_id)
+                inner join art46.v_dossier dos on (aa.dossier_id = dos.id)
+            left outer join SMEG.ART46_AMBTENAAR_DIENST_VIEW oa on (oa.ambtenaar_id = dos.doss_hdr_id)
         where 1=1
             <if test='doss_hdr_id != null'>
-                and ad.doss_hdr_id = #{doss_hdr_id}
+                and dos.doss_hdr_id = #{doss_hdr_id}
             </if>
             <if test='dossier_id != null and dossier_id != -1'>
                 and aa.dossier_id = #{dossier_id}
