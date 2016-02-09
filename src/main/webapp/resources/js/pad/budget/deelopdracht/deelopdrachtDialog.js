@@ -96,8 +96,17 @@ define([
                 }
             } else {
                 // raamcontract
-                if (this.deelopdracht.checkOpnieuwGoedkeuren()) {
-                    this.deelopdracht.set("goedkeuring_d", null);
+                if (ctrl.deelopdracht.get("ander_doss_hdr_id") !== ctrl.deelopdracht.get("current_doss_hdr_id")) {
+                    if (this.deelopdracht.checkOpnieuwGoedkeuren()) {
+                        this.deelopdracht.set("goedkeuring_d", null);
+                    }
+                } else {
+                    // raamcontract beheerder is aan het editeren.
+                    if (this.deelopdracht.get("goedkeuring_d")) {
+                        this.deelopdracht.set("goedkeuring_bedrag", this.deelopdracht.get("bedrag"));
+                    } else {
+                        this.deelopdracht.set("goedkeuring_bedrag", null);
+                    }
                 }
             }
 
