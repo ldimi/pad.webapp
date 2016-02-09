@@ -86,6 +86,8 @@ define([
             if (this.deelopdracht.get("afsluit_d")) {
                 this.deelopdracht.set("bedrag", this.deelopdracht.get("schuldvordering_bedrag"));
             }
+
+
             if (this.deelopdracht.get("raamcontract_jn") === 'N') {
                 if (this.deelopdracht.get("goedkeuring_d")) {
                     this.deelopdracht.set("goedkeuring_bedrag", this.deelopdracht.get("bedrag"));
@@ -98,6 +100,9 @@ define([
                     this.deelopdracht.set("goedkeuring_d", null);
                 }
             }
+
+
+
 
             if (this.deelopdracht.get("status_crud") === 'C') {
                 action = "insert";

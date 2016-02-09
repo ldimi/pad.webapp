@@ -260,7 +260,7 @@
             coalesce(vastlegging.vastlegging, 0) vastlegging,
             coalesce(geraamd.geraamd, 0) geraamd,
             coalesce(vastlegging.vastlegging, 0) - coalesce(geraamd.geraamd, 0) saldo,
-            ad.dossier_nr,
+            ad.dossier_id,
             ad.bedrag,
             ad.voorstel_d,
             dos.dossier_type,
