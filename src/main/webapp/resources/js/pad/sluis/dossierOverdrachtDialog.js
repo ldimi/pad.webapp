@@ -115,6 +115,9 @@ define([
                     if (!_G_.model.isAdminArt46) {
                         return true;
                     }
+                    if ("status" === veldNaam ) {
+                        return (ctrl.item.get("status_crud") === 'C');
+                    }
                     if (ctrl.item.get_ivs_dossier_jn() === 'J') {
                         return true;
                     }
@@ -126,9 +129,6 @@ define([
                     }
                     if ("screen_bestek_id" === veldNaam) {
                         return (ctrl.item.get("status") === 'registrati');
-                    }
-                    if ("status" === veldNaam ) {
-                        return (ctrl.item.get("status_crud") === 'C');
                     }
                     return false;
                 }

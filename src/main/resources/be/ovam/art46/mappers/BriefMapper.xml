@@ -208,8 +208,8 @@
                 and not (parent.BRIEF_CATEGORIE_ID = 18 and
                          exists (select id
                                from art46.v_dossier dos
-                               where d.dossier_type != 'X'
-                                 and d.id = #{dossier_id})
+                               where dos.dossier_type != 'X'
+                                 and dos.id = #{dossier_id})
                          )
         union
             select
@@ -225,9 +225,9 @@
                 on (koppeling.PARENT_BRIEF_CATEGORIE_ID = parent.BRIEF_CATEGORIE_ID)
             where not (child.BRIEF_CATEGORIE_ID = 18 and
                        exists (select id
-                               from art46.v_dossier d
-                               where d.dossier_type != 'X'
-                                 and d.id = #{dossier_id})
+                               from art46.v_dossier dos
+                               where dos.dossier_type != 'X'
+                                 and dos.id = #{dossier_id})
                       )
         order by 1
     </select>

@@ -39,6 +39,7 @@ define([
             }, {
                 name: "fase_id",
                 type: "int",
+                min: -1,
                 required: true
             }, {
                 name: "dienst_id",

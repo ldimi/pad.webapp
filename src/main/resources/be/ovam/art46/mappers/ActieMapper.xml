@@ -35,14 +35,14 @@
                 on ab.dossier_id = dossier.dossier_id
             union
             select
-                dossier.*,.*, -1 bestek_id ,ada.actie_id, ada.actie_type_id, ada.actie_d, ada.realisatie_d, ada.commentaar, ada.stop_d, ada.rate, ada.actie_sub_type_id
+                dossier.*, -1 bestek_id ,ada.actie_id, ada.actie_type_id, ada.actie_d, ada.realisatie_d, ada.commentaar, ada.stop_d, ada.rate, ada.actie_sub_type_id
             from
                 ART46.DOSSIER_ACTIE ada
                     inner join DOSSIER
                     on ada.dossier_id = dossier.dossier_id
             union
             select
-                dossier.*,.*, -2 bestek_id, -1 actie_id, -1 actie_type_id, d.eindverklaring_d  actie_d, d.eindverklaring_d realisatie_d, 'Eindverklaring' commentaar, d.eindverklaring_d stop_d, 0 rate, 0 actie_sub_type_id
+                dossier.*, -2 bestek_id, -1 actie_id, -1 actie_type_id, d.eindverklaring_d  actie_d, d.eindverklaring_d realisatie_d, 'Eindverklaring' commentaar, d.eindverklaring_d stop_d, 0 rate, 0 actie_sub_type_id
             from
                 SMEG.RS_DOSSIER_VIEW d
                     inner join DOSSIER
