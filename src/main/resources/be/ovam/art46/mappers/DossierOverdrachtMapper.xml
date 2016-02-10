@@ -111,7 +111,7 @@
     <insert id="registreerOverdrachtsFichesBijBestemmeling">
         insert into art46.DOSSIER_OVERDRACHT
         (versie_nr, dossier_type, dossier_id, status_start_d, status, deleted_jn)
-            select
+            select distinct
                 1, 'B', ados.id, current date, 'registrati', 'N'
             from smeg.dossier sd
                     inner join smeg.BUNDEL_BUNDEL bb
@@ -125,7 +125,7 @@
                     left join smeg_ref.DOCUMENTSTATUS docs
                     on doc.STATUS_ID = docs.ID
                 left join art46.DOSSIER_OVERDRACHT doso
-                on sd.dossier_id = doso.DOSSIER_ID_BOA
+                on ados.id = doso.DOSSIER_ID
             WHERE 1 = 1
                 and dt.code in ('CODE2003')      -- Overdrachtsfiche dossier BB naar IVS  handhaving
                 and doc.STATUS_ID = 38           -- nota bij bestemmeling
