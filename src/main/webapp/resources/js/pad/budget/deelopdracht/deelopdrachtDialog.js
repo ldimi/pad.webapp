@@ -96,7 +96,7 @@ define([
                 }
             } else {
                 // raamcontract
-                if (ctrl.deelopdracht.get("ander_doss_hdr_id") !== ctrl.deelopdracht.get("current_doss_hdr_id")) {
+                if (this.deelopdracht.get("ander_doss_hdr_id") !== this.deelopdracht.get("current_doss_hdr_id")) {
                     if (this.deelopdracht.checkOpnieuwGoedkeuren()) {
                         this.deelopdracht.set("goedkeuring_d", null);
                     }

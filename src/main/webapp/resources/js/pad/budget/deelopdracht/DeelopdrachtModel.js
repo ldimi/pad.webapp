@@ -65,8 +65,7 @@ define([
             if (this.hasChanged("dossier_id")) {
                 this.attributes.planning_lijn_id = null;
             }
-
-
+            
             //custom validatie voor plannings item : verplicht vanaf 2014
             if( this.get("planning_lijn_id") === null &&
                 !window._G_isAdminArt46  &&
