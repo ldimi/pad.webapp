@@ -63,10 +63,12 @@ alter table art46.dossier
 
 update art46.dossier dos
 set (
+        rechtsgrond_code,
         timing_jaar, timing_maand,
         bbo_prijs, bbo_looptijd, bsp_jn, bsp_prijs, bsp_looptijd, bsw_prijs, bsw_looptijd,
         actueel_risico_id, beleidsmatig_risico_id, integratie_risico_id, potentieel_risico_id, prioriteits_index
     ) = (select 
+        rechtsgrond_code,
         timing_jaar, timing_maand,
         bbo_prijs, bbo_looptijd, bsp_jn, bsp_prijs, bsp_looptijd, bsw_prijs, bsw_looptijd,
         actueel_risico_id, beleidsmatig_risico_id, integratie_risico_id, potentieel_risico_id, prioriteits_index
