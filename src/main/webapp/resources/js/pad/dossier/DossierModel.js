@@ -2,8 +2,9 @@
 /*global define: false, Slick: false, $: false, _:  false, m: false, alert: false, _G_ */
 
 define([
-    "ov/Model"
-], function (Model) {
+    "ov/Model",
+    "common/dropdown/dossier/screening/risicos",
+], function (Model, risicos) {
     'use strict';
 
     var DossierModel;
@@ -42,7 +43,27 @@ define([
             { name: "doelgroep_type_id", type: "int" },
 
             { name: "smeg_naam" },
-            { name: "commentaar_bodem" }
+            { name: "commentaar_bodem" },
+
+            { name: "timing_jaar", type: "int" , min: 2000, max: 2050 },
+            { name: "timing_maand", type: "int" , min: 1, max: 12},
+
+            { name: "bbo_prijs", type: "int" },
+            { name: "bbo_looptijd", type: "int" },
+            { name: "bsp_jn" },
+            { name: "bsp_prijs", type: "int" },
+            { name: "bsp_looptijd", type: "int" },
+            { name: "bsw_prijs", type: "int" },
+            { name: "bsw_looptijd", type: "int" },
+
+            { name: "actueel_risico_id", type: "int" },
+            { name: "beleidsmatig_risico_id", type: "int" },
+            { name: "integratie_risico_id", type: "int" },
+            { name: "potentieel_risico_id", type: "int" },
+            { name: "prioriteits_index", type: "double" },
+            { name: "prioriteits_formule" },
+
+            { name: "overdracht_id", type: "int" }
         ]),
 
         enforceInvariants: function () {
@@ -66,7 +87,31 @@ define([
                 }
             }
 
+            this._invariant_timing();
+            this._invariant_prioriteits_index();
+
+        },
+
+        _invariant_timing: function () {
+            if (this.get("timing_jaar") === null && this.get("timing_maand") !== null) {
+                this.validationError.timing_jaar = "verplicht veld indien maand ingevuld.";
+            }
+        },
+
+        _invariant_prioriteits_index: function () {
+            var prioriteit;
+            prioriteit = risicos.calcPrioriteit(
+                this.get("actueel_risico_id"),
+                this.get("beleidsmatig_risico_id"),
+                this.get("integratie_risico_id"),
+                this.get("potentieel_risico_id")
+            );
+
+            this.attributes.prioriteits_index = prioriteit.index;
+            this.attributes.prioriteits_formule = prioriteit.formule;
         }
+
+
 
     });
 

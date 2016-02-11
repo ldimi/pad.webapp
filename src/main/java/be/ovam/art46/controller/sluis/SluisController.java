@@ -68,7 +68,7 @@ public class  SluisController {
 
         model.addAttribute("screening_prioriteit_gewichten", sql.selectList("screening_prioriteit_gewichten"));
         
-        model.addAttribute("isAdminArt46", Application.INSTANCE.isUserInRole("adminArt46"));
+        model.addAttribute("isAdminSluis", Application.INSTANCE.isUserInRole("adminSluis"));
         model.addAttribute("currentDate", new Date());
     }
 
@@ -181,7 +181,7 @@ public class  SluisController {
     @RequestMapping(value = "/sluis/overdracht/maakZip", method = RequestMethod.POST)
     public
     @ResponseBody
-    Response save(@RequestBody Integer dossier_id) throws Exception {
+    Response maakZip(@RequestBody Integer dossier_id) throws Exception {
         sluisService.maakZip(dossier_id);
         return new Response(true);
     }

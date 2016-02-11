@@ -77,9 +77,9 @@ define([
             grid = new GridComp({
                 el: el,
                 model: DossierOverdrachtModel,
-                editBtn: window._G_.model.isAdminArt46,
-                newBtn: window._G_.model.isAdminArt46,
-                deleteBtn: window._G_.model.isAdminArt46,
+                editBtn: window._G_.model.isAdminSluis,
+                newBtn: window._G_.model.isAdminSluis,
+                deleteBtn: window._G_.model.isAdminSluis,
                 exportCsv: true,
                 exportCsvFileName: "overdrachten.csv",
                 onEditClicked: function (item) {

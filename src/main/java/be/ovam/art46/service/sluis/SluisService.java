@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Service
@@ -106,26 +107,16 @@ public class SluisService {
 
     
     private Map<String, Object> buildDossierMap(DossierOverdrachtDto.OverdrachtDto overdracht) throws RuntimeException {
-        Map<String, Object> dos = new HashMap<String, Object>();
-        
-        dos.put("id", overdracht.getDossier_id()); // null ingeval van insert
         
         if ("naar_ivs".equals(overdracht.getStatus())) {
             String dossier_b = overdracht.getDossier_b();
             if (dossier_b == null || dossier_b.length() == 0) {
                 throw new RuntimeException("Dossier_b moet ingevuld zijn om een ivs dossier aan te maken.");
             }
-            dos.put("dossier_b", overdracht.getDossier_b());
-            
-        }
-        dos.put("dossier_nr", overdracht.getDossier_nr()); // null ingeval van insert
-        dos.put("dossier_type", overdracht.getDossier_type());
-        dos.put("nis_id", overdracht.getNis_id());
-        dos.put("doss_hdr_id", overdracht.getDoss_hdr_id());
-        dos.put("rechtsgrond_code", overdracht.getRechtsgrond_code());
-        dos.put("dossier_fase_id", overdracht.getDossier_fase_id());
-        dos.put("programma_code", overdracht.getProgramma_code());
-        dos.put("doelgroep_type_id", overdracht.getDoelgroep_type_id());
+        } 
+        
+        BeanMap dos = new BeanMap(overdracht);
+        
         return dos;     
     }
 

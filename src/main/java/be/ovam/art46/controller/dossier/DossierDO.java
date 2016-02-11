@@ -42,7 +42,25 @@ public class DossierDO implements Serializable{
 	private String programma_code;
     private String rechtsgrond_code;
     private Integer doelgroep_type_id;
-	    
+	
+    private Integer timing_jaar;
+    private Integer timing_maand;
+
+    private Integer bbo_prijs;
+    private Integer bbo_looptijd;
+    private String bsp_jn;
+    private Integer bsp_prijs;
+    private Integer bsp_looptijd;
+    private Integer bsw_prijs;
+    private Integer bsw_looptijd;
+
+    private Integer actueel_risico_id;
+    private Integer beleidsmatig_risico_id;
+    private Integer integratie_risico_id;
+    private Integer potentieel_risico_id;
+    private Double prioriteits_index;
+    
+    private Integer overdracht_id;
     
     public Integer getId() {
         return id;
@@ -290,6 +308,126 @@ public class DossierDO implements Serializable{
 
     public void setDossier_b_l(String dossier_b_l) {
         this.dossier_b_l = dossier_b_l;
+    }
+
+    public Integer getTiming_jaar() {
+        return timing_jaar;
+    }
+
+    public void setTiming_jaar(Integer timing_jaar) {
+        this.timing_jaar = timing_jaar;
+    }
+
+    public Integer getTiming_maand() {
+        return timing_maand;
+    }
+
+    public void setTiming_maand(Integer timing_maand) {
+        this.timing_maand = timing_maand;
+    }
+
+    public Integer getBbo_prijs() {
+        return bbo_prijs;
+    }
+
+    public void setBbo_prijs(Integer bbo_prijs) {
+        this.bbo_prijs = bbo_prijs;
+    }
+
+    public Integer getBbo_looptijd() {
+        return bbo_looptijd;
+    }
+
+    public void setBbo_looptijd(Integer bbo_looptijd) {
+        this.bbo_looptijd = bbo_looptijd;
+    }
+
+    public String getBsp_jn() {
+        return bsp_jn;
+    }
+
+    public void setBsp_jn(String bsp_jn) {
+        this.bsp_jn = bsp_jn;
+    }
+
+    public Integer getBsp_prijs() {
+        return bsp_prijs;
+    }
+
+    public void setBsp_prijs(Integer bsp_prijs) {
+        this.bsp_prijs = bsp_prijs;
+    }
+
+    public Integer getBsp_looptijd() {
+        return bsp_looptijd;
+    }
+
+    public void setBsp_looptijd(Integer bsp_looptijd) {
+        this.bsp_looptijd = bsp_looptijd;
+    }
+
+    public Integer getBsw_prijs() {
+        return bsw_prijs;
+    }
+
+    public void setBsw_prijs(Integer bsw_prijs) {
+        this.bsw_prijs = bsw_prijs;
+    }
+
+    public Integer getBsw_looptijd() {
+        return bsw_looptijd;
+    }
+
+    public void setBsw_looptijd(Integer bsw_looptijd) {
+        this.bsw_looptijd = bsw_looptijd;
+    }
+
+    public Integer getActueel_risico_id() {
+        return actueel_risico_id;
+    }
+
+    public void setActueel_risico_id(Integer actueel_risico_id) {
+        this.actueel_risico_id = actueel_risico_id;
+    }
+
+    public Integer getBeleidsmatig_risico_id() {
+        return beleidsmatig_risico_id;
+    }
+
+    public void setBeleidsmatig_risico_id(Integer beleidsmatig_risico_id) {
+        this.beleidsmatig_risico_id = beleidsmatig_risico_id;
+    }
+
+    public Integer getIntegratie_risico_id() {
+        return integratie_risico_id;
+    }
+
+    public void setIntegratie_risico_id(Integer integratie_risico_id) {
+        this.integratie_risico_id = integratie_risico_id;
+    }
+
+    public Integer getPotentieel_risico_id() {
+        return potentieel_risico_id;
+    }
+
+    public void setPotentieel_risico_id(Integer potentieel_risico_id) {
+        this.potentieel_risico_id = potentieel_risico_id;
+    }
+
+    public Double getPrioriteits_index() {
+        return prioriteits_index;
+    }
+
+    public void setPrioriteits_index(Double prioriteits_index) {
+        this.prioriteits_index = prioriteits_index;
+    }
+
+    public Integer getOverdracht_id() {
+        return overdracht_id;
+    }
+
+    public void setOverdracht_id(Integer overdracht_id) {
+        this.overdracht_id = overdracht_id;
     }
 
 }

@@ -112,7 +112,7 @@ define([
         ff = fhf.get().setModel(ctrl.item).setShowErrors(ctrl.showErrors())
             .setDefaultAttrs({
                 readOnly: function (veldNaam) {
-                    if (!_G_.model.isAdminArt46) {
+                    if (!_G_.model.isAdminSluis) {
                         return true;
                     }
                     if ("status" === veldNaam ) {
@@ -332,7 +332,7 @@ define([
                 ])
             ),
             m(".floatRightContainer",
-                (_G_.model.isAdminArt46) ? [
+                (_G_.model.isAdminSluis) ? [
                     m("button", {onclick: _.bind(ctrl.bewaar, ctrl)}, "Bewaar"),
                     m("button", {onclick: _.bind(ctrl.close, ctrl)}, "annuleer"),
                     (ctrl.item.get("dossier_id_boa") !== null && ctrl.item.isValid("dossier_id_boa"))
@@ -340,7 +340,7 @@ define([
                         : null,
                     (ctrl.item.get("zip_d") !== null)
                         ? m("a", {href: _G_.model.dmsUrl + "/share/page/repository#filter=path|" +
-                                        "/Toepassingen/Mistral2/Dossier_screening/".replace(/\//g, "%2F") + 
+                                        "/Toepassingen/Mistral2/Dossier_screening/".replace(/\//g, "%2F") +
                                         ctrl.item.str("dossier_id_boa") , target: "_blank"},
                                  "naar zip folder")
                         : null

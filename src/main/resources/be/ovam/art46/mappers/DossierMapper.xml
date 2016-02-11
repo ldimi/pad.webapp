@@ -39,12 +39,30 @@
                 dos.wbs_ivs_nr,
                 dos.programma_code,
                 dos.rechtsgrond_code,
-                dos.doelgroep_type_id
+                dos.doelgroep_type_id,
+                dos.timing_jaar,
+                dos.timing_maand,
+                dos.bbo_prijs,
+                dos.bbo_looptijd,
+                dos.bsp_jn,
+                dos.bsp_prijs,
+                dos.bsp_looptijd,
+                dos.bsw_prijs,
+                dos.bsw_looptijd,
+                dos.actueel_risico_id,
+                dos.beleidsmatig_risico_id,
+                dos.integratie_risico_id,
+                dos.potentieel_risico_id,
+                dos.prioriteits_index,
+                doso.overdracht_id
         from art46.v_dossier dos
                     inner join art46.dossier ados
                     on dos.id = ados.id
              left join smeg.dossier smegdos
              on dos.dossier_id_boa = smegdos.dossier_id
+                   left join art46.dossier_overdracht doso
+                   on dos.id = doso.dossier_id
+                   and doso.deleted_jn = 'N'
         where 1 = 1
     </sql>
 

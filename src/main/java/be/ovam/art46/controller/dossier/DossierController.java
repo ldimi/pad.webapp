@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -132,7 +131,16 @@ public class DossierController extends BasisDossierController {
         model.addAttribute("fusiegemeenten", DDH.getFusiegemeenten()); 
         model.addAttribute("programmaTypes", DDH.getProgrammaTypes());
         model.addAttribute("doelgroepen_dd", DDH.getDoelgroepen_dd());
-       
+
+        if (!"X".equals(dossierDO.getDossier_type())) {
+            model.addAttribute("screening_actueel_risico_dd", sqlSession.selectList("screening_actueel_risico_dd"));
+            model.addAttribute("screening_beleidsmatig_risico_dd", sqlSession.selectList("screening_beleidsmatig_risico_dd"));
+            model.addAttribute("screening_integratie_risico_dd", sqlSession.selectList("screening_integratie_risico_dd"));
+            model.addAttribute("screening_potentieel_risico_dd", sqlSession.selectList("screening_potentieel_risico_dd"));
+
+            model.addAttribute("screening_prioriteit_gewichten", sqlSession.selectList("screening_prioriteit_gewichten"));
+        }
+
         if (dossierDO.getId() != null) {
             if ("B".equals(dossierDO.getDossier_type())) {
                 model.addAttribute("dossierAdressen", sqlSession.selectList("getDossierAdressen", dossierDO.getId()));
