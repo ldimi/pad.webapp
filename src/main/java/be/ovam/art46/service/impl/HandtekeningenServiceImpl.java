@@ -20,6 +20,7 @@ public class HandtekeningenServiceImpl extends EsbCacheService implements Handte
     }
 
 
+    @Override
     public String handtekenningBeschikbaar() throws ExecutionException {
         if(StringUtils.isEmpty(getNoderefHandtekening())){
             return "U kan geen schuldvordering brieven beoordelen er is geen handtekening beschikbaar.";
@@ -27,10 +28,12 @@ public class HandtekeningenServiceImpl extends EsbCacheService implements Handte
         return StringUtils.EMPTY;
     }
 
+    @Override
     public IImageProvider getHandtekenning() throws ExecutionException {
         byte[] body = documentAsStreamCacheForFileName.get(Application.INSTANCE.getUser_id() + ".jpg");
         return new ByteArrayImageProvider(body);
     }
+    @Override
     public IImageProvider getDraft() throws ExecutionException {
         byte[] body = documentAsStreamCacheForFileName.get(DRAFT + ".jpg");
         return new ByteArrayImageProvider(body);

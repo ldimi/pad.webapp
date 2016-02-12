@@ -108,14 +108,20 @@ public class SluisService {
     
     private Map<String, Object> buildDossierMap(DossierOverdrachtDto.OverdrachtDto overdracht) throws RuntimeException {
         
+        BeanMap doso = new BeanMap(overdracht);
+        Map<String, Object> dos = new HashMap(doso);
+        
         if ("naar_ivs".equals(overdracht.getStatus())) {
             String dossier_b = overdracht.getDossier_b();
             if (dossier_b == null || dossier_b.length() == 0) {
                 throw new RuntimeException("Dossier_b moet ingevuld zijn om een ivs dossier aan te maken.");
             }
-        } 
-        
-        BeanMap dos = new BeanMap(overdracht);
+        } else {
+            // indien geen ivs dossier moet dossier_b leeg gemaakt worden, anders wordt ivs-nummer aangemaakt
+            if (overdracht.getDossier_nr() == null || overdracht.getDossier_nr().startsWith("_")) {
+                dos.remove("dossier_b");
+            }
+        }
         
         return dos;     
     }
