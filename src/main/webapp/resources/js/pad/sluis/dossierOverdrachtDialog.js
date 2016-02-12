@@ -118,17 +118,11 @@ define([
                     if ("status" === veldNaam ) {
                         return (ctrl.item.get("status_crud") === 'C');
                     }
-                    if (ctrl.item.get_ivs_dossier_jn() === 'J') {
-                        return true;
-                    }
                     if (_.contains(["status_start_d", "prioriteits_index"], veldNaam) ) {
                         return true;
                     }
                     if (_.contains(["dossier_type", "dossier_id_boa"], veldNaam) ) {
                         return (ctrl.item.get("status_crud") !== 'C');
-                    }
-                    if ("screen_bestek_id" === veldNaam) {
-                        return (ctrl.item.get("status") === 'registrati');
                     }
                     return false;
                 }

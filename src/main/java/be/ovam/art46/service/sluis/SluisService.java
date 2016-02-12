@@ -86,8 +86,10 @@ public class SluisService {
 
     
     private void  updateIvsDossier(DossierOverdrachtDto.OverdrachtDto overdracht) throws Exception {
-        Map<String, Object> dos = buildDossierMap(overdracht);
-        dossierService.saveDossier(dos);     
+        if (overdracht.getIvs_dirty()) {
+            Map<String, Object> dos = buildDossierMap(overdracht);
+            sqlSession.updateInTable("art46", "dossier", dos);
+        }
     }
 
     private void insert_ivs_afval_dossier(DossierOverdrachtDto.OverdrachtDto overdracht) throws Exception {
@@ -122,6 +124,8 @@ public class SluisService {
                 dos.remove("dossier_b");
             }
         }
+        
+        dos.remove("commentaar"); //commentaar is een veld van overdracht.
         
         return dos;     
     }

@@ -3,7 +3,7 @@
 
 define([
     "ov/Model",
-    "common/dropdown/dossier/screening/risicos",
+    "common/dropdown/dossier/screening/risicos"
 ], function (Model, risicos) {
     'use strict';
 
@@ -81,13 +81,13 @@ define([
                      this.get("conform_bsp_d") !== null ||
                      this.get("eindverklaring_d") !== null ||
                      this.get("commentaar") !== null ||
-                     this.get("aanpak_onderzocht_s") !== null ||
                      this.get("aanpak_onderzocht_l") !== null    ) {
                     this.validationError.dossier_b = 'verplicht veld';
                 }
             }
 
             this._invariant_timing();
+            this._invariant_bsp_jn();
             this._invariant_prioriteits_index();
 
         },
@@ -95,6 +95,16 @@ define([
         _invariant_timing: function () {
             if (this.get("timing_jaar") === null && this.get("timing_maand") !== null) {
                 this.validationError.timing_jaar = "verplicht veld indien maand ingevuld.";
+            }
+        },
+
+        _invariant_bsp_jn: function () {
+            // raming BSP en BSW mogen aleen waarden bevatten indien bsp_jn =  'J'
+            if (this.get("bsp_jn") !== 'J') {
+                this.attributes.bsp_prijs = null;
+                this.attributes.bsp_looptijd = null;
+                this.attributes.bsw_prijs = null;
+                this.attributes.bsw_looptijd = null;
             }
         },
 

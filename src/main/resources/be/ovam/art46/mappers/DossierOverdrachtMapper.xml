@@ -82,7 +82,7 @@
                 left join art46.v_dossier dos
                 on sd.dossier_id = dos.dossier_id_boa
              left join art46.DOSSIER_OVERDRACHT doso
-             on sd.dossier_id = doso.dossier_id_boa
+             on dos.id = doso.dossier_id
              and doso.deleted_jn = 'N'
         where sd.dossier_id = #{dossier_id_boa}
     </select>

@@ -8,11 +8,14 @@ define([
     "dropdown/dossierhouders",
     "dropdown/programmaTypes",
     "dropdown/fusiegemeenten",
+    "common/dropdown/ja_nee_dd",
+    "common/dropdown/maanden_dd",
     "common/dropdown/dossier/doelgroepen_dd",
     "common/dropdown/dossier/screening/risicos",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
-], function (DossierModel, rechtsgronden, fasen, dossierhouders, programmaTypes, fusiegemeenten, doelgroepen_dd,
+], function (DossierModel, rechtsgronden, fasen, dossierhouders, programmaTypes, fusiegemeenten,
+             ja_nee_dd, maanden_dd, doelgroepen_dd,
              risicos, ajax, fhf) {
     'use strict';
 
@@ -181,31 +184,58 @@ define([
                     ])
                 ]),
                 (dossier_type !== 'X') ?
-                    m("fieldset", [
-                        m("legend", ""),
-                        m(".row.form-group", [
-                            m(".col-md-2", m("label","Actueel risico")),
-                            m(".col-md-4",  ff.select("actueel_risico_id", risicos.actueel_dd)),
-                            m(".col-md-2", m("label","Beleidsmatige prioriteit")),
-                            m(".col-md-4", ff.select("beleidsmatig_risico_id", risicos.beleidsmatig_dd))
+                    [
+                        m("fieldset", [
+                            m("legend", m.trust("&nbsp;")),
+                            m(".row.form-group", [
+                                m(".col-md-2", m("label","Actueel risico")),
+                                m(".col-md-4",  ff.select("actueel_risico_id", risicos.actueel_dd)),
+                                m(".col-md-2", m("label","Beleidsmatige prioriteit")),
+                                m(".col-md-4", ff.select("beleidsmatig_risico_id", risicos.beleidsmatig_dd))
+                            ]),
+                            m(".row.form-group", [
+                                m(".col-md-2", m("label","Integratie")),
+                                m(".col-md-4", ff.select("integratie_risico_id", risicos.integratie_dd)),
+                                m(".col-md-2", m("label","Potentieel risico")),
+                                m(".col-md-4", ff.select("potentieel_risico_id", risicos.potentieel_dd))
+                            ]),
+                            m(".row.form-group", [
+                                m(".col-md-2", m("label","Timing integratie: jaar")),
+                                m(".col-md-1", ff.input("timing_jaar")),
+                                m(".col-md-1", m("label","maand")),
+                                m(".col-md-1", ff.select("timing_maand", maanden_dd)),
+                                m(".col-md-1"),
+                                m(".col-md-2", m("label","Prioriteits index")),
+                                m(".col-md-1", ff.input("prioriteits_index", {readOnly: true})),
+                                m(".col-md-3", ctrl.dossier.get("prioriteits_formule"))
+                            ])
                         ]),
-                        m(".row.form-group", [
-                            m(".col-md-2", m("label","Integratie")),
-                            m(".col-md-4", ff.select("integratie_risico_id", risicos.integratie_dd)),
-                            m(".col-md-2", m("label","Potentieel risico")),
-                            m(".col-md-4", ff.select("potentieel_risico_id", risicos.potentieel_dd))
-                        ]),
-                        m(".row.form-group", [
-                            m(".col-md-2", m("label","Timing integratie: jaar")),
-                            m(".col-md-1", ff.input("timing_jaar")),
-                            m(".col-md-1", m("label","maand")),
-                            m(".col-md-1", ff.input("timing_maand")),
-                            m(".col-md-1"),
-                            m(".col-md-2", m("label","Prioriteits index")),
-                            m(".col-md-1", ff.input("prioriteits_index", {readOnly: true})),
-                            m(".col-md-3", ctrl.dossier.get("prioriteits_formule"))
+                        m("fieldset", [
+                            m("legend", m.trust("&nbsp;")),
+                            m(".row.form-group", [
+                                m(".col-md-2", m("label","Raming BBO: prijs")),
+                                m(".col-md-1", ff.input("bbo_prijs")),
+                                m(".col-md-1", m("label", "Looptijd (maanden)")),
+                                m(".col-md-1", ff.input("bbo_looptijd"))
+                            ]),
+                            m(".row.form-group", [
+                                m(".col-md-2", m("label","met BSP?")),
+                                m(".col-md-1",ff.select("bsp_jn", ja_nee_dd))
+                            ]),
+                            (ctrl.dossier.get("bsp_jn") === 'J') ?
+                                m(".row.form-group", [
+                                    m(".col-md-2", m("label","Raming BSP: prijs")),
+                                    m(".col-md-1", ff.input("bsp_prijs")),
+                                    m(".col-md-1", m("label", "Looptijd (maanden)")),
+                                    m(".col-md-1", ff.input("bsp_looptijd")),
+                                    m(".col-md-1"),
+                                    m(".col-md-2", m("label","Raming BSW: prijs")),
+                                    m(".col-md-1", ff.input("bsw_prijs")),
+                                    m(".col-md-1", m("label", "Looptijd (maanden)")),
+                                    m(".col-md-1", ff.input("bsw_looptijd"))
+                                ]) : null
                         ])
-                    ]) : null,
+                    ]: null,
                 ((_G_.model.isAdminIVS || _G_.model.isAdminArt46) ) ?
                     m(".row.col-md-12.floatRightContainer",[
                         m("button.btn.btn-primary.btn-sm", {onclick: _.bind(ctrl.bewaar, ctrl)}, "Wijzigingen opslaan")
