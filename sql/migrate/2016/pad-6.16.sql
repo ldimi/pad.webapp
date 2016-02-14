@@ -85,4 +85,4 @@ drop view ART46.V_DOSSIER_OVERDRACHT_HISTORIEK;create view art46.v_dossier_overd
 
 
 -- deze versie van de wijzigingen in db registreren.
-insert into art46.db_versie(db_versie) values ('6.15');
+insert into art46.db_versie(db_versie) values ('6.16');
