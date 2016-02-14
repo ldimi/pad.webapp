@@ -304,7 +304,7 @@ define([
                     m(".col-xs-2", {style: {width: "13%"}}, "Commentaar:"),
                     m(".col-xs-10", {style: {width: "87%"}},
                         ff.textarea("commentaar", {
-                            rows: 3,
+                            rows: 2,
                             maxlength: 500,
                             style: {width: "100%"}
                         })

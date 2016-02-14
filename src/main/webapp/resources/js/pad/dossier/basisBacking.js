@@ -60,6 +60,9 @@ define([
             ff = fhf.get().setModel(ctrl.dossier).setShowErrors(ctrl.showErrors())
                     .setDefaultAttrs({
                         "readOnly": function (attrName) {
+                            if (attrName === "commentaar_bodem") {
+                                return false;
+                            }
                             if (_G_.model.isAdminIVS || _G_.model.isAdminArt46) {
                                 if (ctrl.dossier.get("dossier_type") === 'B' &&
                                     ctrl.dossier.get("dossier_nr").indexOf('_') === 0 &&
@@ -175,11 +178,11 @@ define([
                         (dossier_type === 'B') ?
                             m(".col-md-6.nopadding", [
                                 m(".col-md-12", ff.checkbox("aanpak_onderzocht_s", "Integratie onderzocht" , "1", "0")),
-                                m(".col-md-12", ff.textarea("aanpak_onderzocht_l", {rows: 4}))
+                                m(".col-md-12", ff.textarea("aanpak_onderzocht_l", {rows: 3}))
                             ]) : null,
                         m(".col-md-6.nopadding", [
                             m(".col-md-12", m("label","Commentaar")),
-                            m(".col-md-12",ff.textarea("commentaar", {rows: 4}))
+                            m(".col-md-12",ff.textarea("commentaar", {rows: 3}))
                         ])
                     ])
                 ]),
@@ -202,9 +205,8 @@ define([
                             m(".row.form-group", [
                                 m(".col-md-2", m("label","Timing integratie: jaar")),
                                 m(".col-md-1", ff.input("timing_jaar")),
-                                m(".col-md-1", m("label","maand")),
+                                m(".col-md-2", m("label","maand")),
                                 m(".col-md-1", ff.select("timing_maand", maanden_dd)),
-                                m(".col-md-1"),
                                 m(".col-md-2", m("label","Prioriteits index")),
                                 m(".col-md-1", ff.input("prioriteits_index", {readOnly: true})),
                                 m(".col-md-3", ctrl.dossier.get("prioriteits_formule"))
@@ -215,7 +217,7 @@ define([
                             m(".row.form-group", [
                                 m(".col-md-2", m("label","Raming BBO: prijs")),
                                 m(".col-md-1", ff.input("bbo_prijs")),
-                                m(".col-md-1", m("label", "Looptijd (maanden)")),
+                                m(".col-md-2", m("label", "Looptijd (maanden)")),
                                 m(".col-md-1", ff.input("bbo_looptijd"))
                             ]),
                             m(".row.form-group", [
@@ -226,12 +228,11 @@ define([
                                 m(".row.form-group", [
                                     m(".col-md-2", m("label","Raming BSP: prijs")),
                                     m(".col-md-1", ff.input("bsp_prijs")),
-                                    m(".col-md-1", m("label", "Looptijd (maanden)")),
+                                    m(".col-md-2", m("label", "Looptijd (maanden)")),
                                     m(".col-md-1", ff.input("bsp_looptijd")),
-                                    m(".col-md-1"),
                                     m(".col-md-2", m("label","Raming BSW: prijs")),
                                     m(".col-md-1", ff.input("bsw_prijs")),
-                                    m(".col-md-1", m("label", "Looptijd (maanden)")),
+                                    m(".col-md-2", m("label", "Looptijd (maanden)")),
                                     m(".col-md-1", ff.input("bsw_looptijd"))
                                 ]) : null
                         ])
