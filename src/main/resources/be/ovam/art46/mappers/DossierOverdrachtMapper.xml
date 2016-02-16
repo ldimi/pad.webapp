@@ -14,28 +14,19 @@
                 <if test="overdracht_id != null">
                     and doh.overdracht_id = #{overdracht_id}
                 </if>
-                <if test="dossier_id_boa != null">
-                    and doh.dossier_id_boa = #{dossier_id_boa}
-                </if>
-                <if test="dossier_b != null">
-                    and doh.dossier_b = #{dossier_b}
-                </if>
         )
         select
             doso.overdracht_id,
             doso.versie_nr,
             doso.dossier_id,
             doso.dossier_type,
+            dos.dossier_id_boa,
             dos.gemeente_b,
             coalesce(dos.dossier_b, doso.dossier_b, sd.naam) as dossier_omschrijving,
-            doso.dossier_id_boa,
             dos.dossier_nr,
             df.fase_b,
             rg.rechtsgrond_b,
             dt.doelgroep_type_b,
-            doso.timing_jaar,
-            doso.timing_maand,
-            doso.prioriteits_index,
             doso.commentaar,
             be.bestek_nr as screen_bestek_omschrijving,
             doso.status_start_d,
@@ -45,10 +36,10 @@
         from overdrachten_historiek doso
                 inner join art46.dossier_overdracht_status doso_status
                 on doso.status = doso_status.code
-            left join smeg.dossier sd
-            on doso.DOSSIER_ID_BOA = sd.dossier_id
-                left join art46.v_dossier dos
-                on doso.DOSSIER_ID = dos.id
+            left join art46.v_dossier dos
+            on doso.DOSSIER_ID = dos.id
+                left join smeg.dossier sd
+                on dos.DOSSIER_ID_BOA = sd.dossier_id
             left join art46.dossier_rechtsgrond rg
             on dos.dossier_type = rg.dossier_type
             and dos.rechtsgrond_code = rg.rechtsgrond_code
@@ -59,6 +50,13 @@
             on dos.doelgroep_type_id = dt.doelgroep_type_id
                 left join art46.bestek be
                 on doso.screen_bestek_id = be.bestek_id
+        where 1 = 1
+            <if test="dossier_id_boa != null">
+                and dos.dossier_id_boa = #{dossier_id_boa}
+            </if>
+            <if test="dossier_b != null">
+                and dos.dossier_b = #{dossier_b}
+            </if>
         order by doso.overdracht_id, doso.versie_nr
     </select>
 
