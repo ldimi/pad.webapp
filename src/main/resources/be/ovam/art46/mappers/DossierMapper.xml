@@ -206,7 +206,7 @@
                 left join (
                          select v.dossier_id, v.ambtenaar_id, ROW_NUMBER() OVER(PARTITION BY v.dossier_id) as number
                            from art46.V_DOSSIERHOUDERS_BOA v
-                                inner join art46. d
+                                inner join art46.dossier dos
                                 on v.dossier_id  = dos.DOSSIER_ID_BOA
                                 and dos.id =  #{id}
                            ) as smegdh
