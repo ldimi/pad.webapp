@@ -3,9 +3,10 @@
 
 define([
     "ov/Model",
+    "common/dossier/ActiviteitenManager",
     "common/dossier/InstrumentenManager",
     "common/dropdown/dossier/screening/risicos"
-], function (Model, InstrumentenManager, risicos) {
+], function (Model, ActiviteitenManager, InstrumentenManager, risicos) {
     'use strict';
 
     var DossierModel;
@@ -14,6 +15,7 @@ define([
         constructor: function (dossierData) {
             Model.call(this, dossierData.dossier);
 
+            this.initActiviteitenCollection(dossierData.verontreinigende_activiteiten);
             this.initInstrumentenCollection(dossierData.instrumenten);
         },
         meta: Model.buildMeta([
@@ -71,6 +73,12 @@ define([
 
             { name: "overdracht_id", type: "int" }
         ]),
+
+        initActiviteitenCollection: function(activiteit_lijst) {
+            activiteit_lijst = activiteit_lijst || [];
+            this.activiteitenManager = new ActiviteitenManager(activiteit_lijst, this.get("dossier_id"), this.get("dossier_type"));
+            this.attributes.activiteit_type_id_lijst = this.activiteitenManager.getActiviteit_type_id_lijst();
+        },
 
         initInstrumentenCollection: function(instrument_lijst) {
             instrument_lijst = instrument_lijst || [];
@@ -136,12 +144,16 @@ define([
             this.attributes.prioriteits_formule = prioriteit.formule;
         },
 
-        _invariant_instrumenten: function () {
-            if (!this.instrumentenManager) {
-                // initialisatie van instrumenten is nog niet gebeurd.
-                return;
+        _invariant_activiteiten: function () {
+            if (this.activiteitenManager) {
+                this.activiteitenManager.setActiviteit_type_id_lijst(this.get("activiteit_type_id_lijst"));
             }
-            this.instrumentenManager.setInstrument_type_id_lijst(this.get("instrument_type_id_lijst"));
+        },
+
+        _invariant_instrumenten: function () {
+            if (this.instrumentenManager) {
+                this.instrumentenManager.setInstrument_type_id_lijst(this.get("instrument_type_id_lijst"));
+            }
         }
 
     });

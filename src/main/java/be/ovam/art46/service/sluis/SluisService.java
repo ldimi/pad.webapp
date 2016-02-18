@@ -1,7 +1,7 @@
 package be.ovam.art46.service.sluis;
 
 import be.ovam.art46.controller.dossier.DossierDO;
-import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDto;
+import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDTO;
 import be.ovam.art46.service.dossier.DossierService;
 import be.ovam.art46.util.Application;
 import be.ovam.pad.service.BasisDossierOverdrachtService;
@@ -37,9 +37,9 @@ public class SluisService {
     
 
     
-    public void save(DossierOverdrachtDto dossierOverdrachtDto) throws Exception  {
+    public void save(DossierOverdrachtDTO dossierOverdrachtDto) throws Exception  {
         
-        DossierOverdrachtDto.OverdrachtDto overdracht = dossierOverdrachtDto.getOverdracht();
+        DossierOverdrachtDTO.OverdrachtDto overdracht = dossierOverdrachtDto.getOverdracht();
         
         if ("C".equals(overdracht.getStatus_crud()) ) {
             insert(overdracht);
@@ -58,7 +58,7 @@ public class SluisService {
         
     }
     
-    public void insert(DossierOverdrachtDto.OverdrachtDto overdracht) throws Exception  {
+    public void insert(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception  {
         overdracht.setVersie_nr(1);
         overdracht.setStatus("registrati");
         overdracht.setWijzig_user(Application.INSTANCE.getUser_id());
@@ -74,7 +74,7 @@ public class SluisService {
         sqlSession.insertInTable("art46", "dossier_overdracht", overdracht);
     }
 
-    public void update(DossierOverdrachtDto.OverdrachtDto overdracht) throws Exception {
+    public void update(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception {
         
         overdracht.setVersie_nr(overdracht.getVersie_nr() + 1);
         overdracht.setWijzig_user(Application.INSTANCE.getUser_id());
@@ -85,14 +85,14 @@ public class SluisService {
     }
 
     
-    private void  updateIvsDossier(DossierOverdrachtDto.OverdrachtDto overdracht) throws Exception {
+    private void  updateIvsDossier(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception {
         if (overdracht.getIvs_dirty()) {
             Map<String, Object> dos = buildDossierMap(overdracht);
             sqlSession.updateInTable("art46", "dossier", dos);
         }
     }
 
-    private void insert_ivs_afval_dossier(DossierOverdrachtDto.OverdrachtDto overdracht) throws Exception {
+    private void insert_ivs_afval_dossier(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception {
         
         if (!"A".equals(overdracht.getDossier_type()) ||
                 overdracht.getDossier_id() != null ||
@@ -108,7 +108,7 @@ public class SluisService {
     }
 
     
-    private Map<String, Object> buildDossierMap(DossierOverdrachtDto.OverdrachtDto overdracht) throws RuntimeException {
+    private Map<String, Object> buildDossierMap(DossierOverdrachtDTO.OverdrachtDto overdracht) throws RuntimeException {
         
         BeanMap doso = new BeanMap(overdracht);
         Map<String, Object> dos = new HashMap(doso);

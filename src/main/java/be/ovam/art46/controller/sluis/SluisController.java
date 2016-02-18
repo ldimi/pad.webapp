@@ -1,6 +1,6 @@
 package be.ovam.art46.controller.sluis;
 
-import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDto;
+import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDTO;
 import be.ovam.art46.service.dossier.DossierService;
 import be.ovam.art46.service.sluis.SluisService;
 import be.ovam.art46.util.Application;
@@ -173,7 +173,7 @@ public class  SluisController {
     @RequestMapping(value = "/sluis/overdracht/save", method = RequestMethod.POST)
     public
     @ResponseBody
-    Response save(@RequestBody DossierOverdrachtDto overdracht) throws Exception {
+    Response save(@RequestBody DossierOverdrachtDTO overdracht) throws Exception {
         sluisService.save(overdracht);
         return getOverdrachten();
     }

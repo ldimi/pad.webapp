@@ -247,7 +247,7 @@ define([
                             m("legend", m.trust("&nbsp;")),
                             m(".row.form-group", [
                                 m(".col-md-2", m("label","Verontreinigende activiteit")),
-                                m(".col-md-4", "TODO"),
+                                m(".col-md-4", ff.selectize("activiteit_type_id_lijst", {multiple: true}, verontreinig_activiteiten_dd)),
                                 m(".col-md-2", m("label", "Instrument")),
                                 m(".col-md-4", ff.selectize("instrument_type_id_lijst", {multiple: true}, instrumenten_dd))
                             ])
