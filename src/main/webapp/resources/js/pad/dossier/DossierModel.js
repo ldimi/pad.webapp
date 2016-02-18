@@ -15,8 +15,8 @@ define([
         constructor: function (dossierData) {
             Model.call(this, dossierData.dossier);
 
-            this.initActiviteitenCollection(dossierData.verontreinigende_activiteiten);
-            this.initInstrumentenCollection(dossierData.instrumenten);
+            this.initActiviteitenCollection(dossierData.activiteit_lijst);
+            this.initInstrumentenCollection(dossierData.instrument_lijst);
         },
         meta: Model.buildMeta([
             { name: "id", type: "int" },
@@ -154,6 +154,27 @@ define([
             if (this.instrumentenManager) {
                 this.instrumentenManager.setInstrument_type_id_lijst(this.get("instrument_type_id_lijst"));
             }
+        },
+
+        toJSON: function () {
+            return {
+                dossier: Model.prototype.toJSON.call(this),
+                //parameter_lijst: this.paramsList,
+                //stofgroep_lijst: this.stofgroepList,
+                activiteit_lijst: this.activiteitenManager,
+                instrument_lijst: this.instrumentenManager
+            };
+        },
+
+        isDirty: function() {
+            var isDirty;
+            isDirty = Model.prototype.isDirty.apply(this, arguments) 
+                      // ||
+                      // this.paramsList.isDirty() ||
+                      // this.stofgroepList.isDirty()                      
+                      ;
+
+            return isDirty;
         }
 
     });

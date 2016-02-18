@@ -6,6 +6,11 @@ import be.ovam.art46.struts.actionform.DossierArt46Form;
 import be.ovam.art46.struts.actionform.DossierKadasterForm;
 import be.ovam.art46.util.Application;
 import be.ovam.art46.util.DropDownHelper;
+import be.ovam.pad.model.dossier.InstrumentDTO;
+import be.ovam.pad.model.dossier.ParameterDTO;
+import be.ovam.pad.model.dossier.StofgroepDTO;
+import be.ovam.pad.model.dossier.VerontreinigendeActiviteitDTO;
+import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDTO;
 import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
 import java.util.HashMap;
@@ -71,7 +76,7 @@ public class DossierController extends BasisDossierController {
         if (id != null) {
             dossier_id = id.toString();
         } else if (dossier_nr != null) {
-            DossierDO dossier = sqlSession.selectOne("getDossierDObyNr", dossier_nr);
+            DossierDTO dossier = sqlSession.selectOne("getDossierDTObyNr", dossier_nr);
             dossier_id = dossier.getId().toString();
         } else {
             DossierArt46Form dossierart46form = (DossierArt46Form) session.getAttribute("dossierart46form");
@@ -93,9 +98,9 @@ public class DossierController extends BasisDossierController {
     @RequestMapping(value = "/dossier/{dossier_id}/basis", method = RequestMethod.GET)
     public String startBasis(@PathVariable Integer dossier_id, Model model, HttpSession session) throws Exception  {
         
-		DossierDO dossierDO = putDossierInModelAndSession(dossier_id, model, session);
+		DossierDTO dossierDTO = putDossierInModelAndSession(dossier_id, model, session);
 
-        addModelAttrsForBasisscherm(model, dossierDO);
+        addModelAttrsForBasisscherm(model, dossierDTO);
 
                 
         return jsview("dossier.basis", "dossier/basis", model);
@@ -103,31 +108,31 @@ public class DossierController extends BasisDossierController {
 
     @RequestMapping(value = "/dossier/afval/nieuw", method = RequestMethod.GET)
     public String startAfvalNieuw(Model model, HttpSession session) throws Exception  {
-        DossierDO dossierDO = new DossierDO();
-        dossierDO.setDossier_type("A");
-        dossierDO.setDoss_hdr_id(Application.INSTANCE.getUser_id());
+        DossierDTO dossierDTO = new DossierDTO();
+        dossierDTO.setDossier_type("A");
+        dossierDTO.setDoss_hdr_id(Application.INSTANCE.getUser_id());
         
-        plaatsVersDossierInModelEnSessie(dossierDO, model, session);
+        plaatsVersDossierInModelEnSessie(dossierDTO, model, session);
         
-        addModelAttrsForBasisscherm(model, dossierDO);
+        addModelAttrsForBasisscherm(model, dossierDTO);
     
         return jsview("dossier.basis", "dossier/basis", model);
     }
    
     @RequestMapping(value = "/dossier/ander/nieuw", method = RequestMethod.GET)
     public String startAnderNieuw(Model model, HttpSession session) throws Exception  {
-        DossierDO dossierDO = new DossierDO();
-        dossierDO.setDossier_type("X");
-        dossierDO.setDoss_hdr_id(Application.INSTANCE.getUser_id());
+        DossierDTO dossierDTO = new DossierDTO();
+        dossierDTO.setDossier_type("X");
+        dossierDTO.setDoss_hdr_id(Application.INSTANCE.getUser_id());
         
-        plaatsVersDossierInModelEnSessie(dossierDO, model, session);
+        plaatsVersDossierInModelEnSessie(dossierDTO, model, session);
         
-        addModelAttrsForBasisscherm(model, dossierDO);
+        addModelAttrsForBasisscherm(model, dossierDTO);
     
         return jsview("dossier.basis", "dossier/basis", model);
     }
    
-    private void addModelAttrsForBasisscherm(Model model, DossierDO dossierDO) {
+    private void addModelAttrsForBasisscherm(Model model, DossierDTO dossierDTO) {
         
         
         model.addAttribute("isAdminIVS", Application.INSTANCE.isUserInRole("adminIVS") );
@@ -140,7 +145,7 @@ public class DossierController extends BasisDossierController {
         model.addAttribute("programmaTypes", DDH.getProgrammaTypes());
         model.addAttribute("doelgroepen_dd", DDH.getDoelgroepen_dd());
 
-        if (!"X".equals(dossierDO.getDossier_type())) {
+        if (!"X".equals(dossierDTO.getDossier_type())) {
             model.addAttribute("screening_actueel_risico_dd", sqlSession.selectList("screening_actueel_risico_dd"));
             model.addAttribute("screening_beleidsmatig_risico_dd", sqlSession.selectList("screening_beleidsmatig_risico_dd"));
             model.addAttribute("screening_integratie_risico_dd", sqlSession.selectList("screening_integratie_risico_dd"));
@@ -152,21 +157,21 @@ public class DossierController extends BasisDossierController {
             model.addAttribute("instrumenten_dd", sqlSession.selectList("be.ovam.pad.common.mappers.DossierDDMapper.instrumenten_dd"));
         }
 
-        if (dossierDO.getId() != null) {
-            if ("B".equals(dossierDO.getDossier_type())) {
-                model.addAttribute("dossierAdressen", sqlSession.selectList("getDossierAdressen", dossierDO.getId()));
+        if (dossierDTO.getId() != null) {
+            if ("B".equals(dossierDTO.getDossier_type())) {
+                model.addAttribute("dossierAdressen", sqlSession.selectList("getDossierAdressen", dossierDTO.getId()));
                 model.addAttribute("mistralUrl", System.getProperty("pad.mistral2Url"));
             }
-            if (!"X".equals(dossierDO.getDossier_type())) {
-                model.addAttribute("dossierInstrumenten" , sqlSession.selectList("getDossierInstrumenten", dossierDO.getId()));
-                model.addAttribute("dossierVerontreinigendeActiviteiten" , sqlSession.selectList("getDossierVerontreinigendeActiviteiten", dossierDO.getId()));
+            if (!"X".equals(dossierDTO.getDossier_type())) {
+                model.addAttribute("dossierInstrumenten" , sqlSession.selectList("getDossierInstrumenten", dossierDTO.getId()));
+                model.addAttribute("dossierVerontreinigendeActiviteiten" , sqlSession.selectList("getDossierVerontreinigendeActiviteiten", dossierDTO.getId()));
             }
 
-            List bestekNrs = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getBestekNrsByDossierId", dossierDO.getId());
+            List bestekNrs = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getBestekNrsByDossierId", dossierDTO.getId());
             if (bestekNrs.size() > 0) {
-                dossierDO.setAanpak_s("1");
+                dossierDTO.setAanpak_s("1");
             } else {
-                dossierDO.setAanpak_s("0");
+                dossierDTO.setAanpak_s("0");
             }
         }
     }
@@ -174,9 +179,9 @@ public class DossierController extends BasisDossierController {
     
     
     @RequestMapping(value = "/dossier/save", method = RequestMethod.POST)
-    public @ResponseBody Response save(@RequestBody DossierDO dossierDO) throws Exception {
-        DossierDO dossier = dossierService.saveDossier(dossierDO);
-        return new Response(dossier.getId());
+    public @ResponseBody Response save(@RequestBody CompleetDossier dossier) throws Exception {
+        DossierDTO dossierDTO = dossierService.saveDossier(dossier.getDossier());
+        return new Response(dossierDTO.getId());
     }
 
     @RequestMapping(value = "/dossier/financieel/save", method = RequestMethod.POST)
@@ -232,7 +237,7 @@ public class DossierController extends BasisDossierController {
     @RequestMapping(value = "/dossier/{dossier_id}/planning", method = RequestMethod.GET)
     public String startPlanning(@PathVariable Integer dossier_id, Model model, HttpSession session) throws Exception {
         
-		DossierDO dossier = putDossierInModelAndSession(dossier_id, model, session);
+		DossierDTO dossier = putDossierInModelAndSession(dossier_id, model, session);
         
         model.addAttribute("ramingenHistoriek", sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierRamingenHistoriek", dossier_id));
 		model.addAttribute("ramingen", sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierRamingen", dossier_id));
@@ -294,7 +299,7 @@ public class DossierController extends BasisDossierController {
     @RequestMapping(value = "/dossier/{dossier_id}/projectfiche", method = RequestMethod.GET)
     public String startProjectfiche(@PathVariable Integer dossier_id, Model model, HttpSession session) throws Exception {
         
-		DossierDO dossier = putDossierInModelAndSession(dossier_id, model, session);
+		DossierDTO dossier = putDossierInModelAndSession(dossier_id, model, session);
         
 		model.addAttribute("dossierafspraken", actieService.getDossierAfspraken(dossier_id));
         
@@ -315,5 +320,58 @@ public class DossierController extends BasisDossierController {
 	    params.put("afgesloten_jn", "J");
 	    	    
 		return sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getBestekLijst", params);
+    }
+    
+    
+    public static class CompleetDossier {
+        
+        private DossierDTO dossier;
+        
+        private List<ParameterDTO> parameter_lijst;
+        private List<StofgroepDTO> stofgroep_lijst;
+        
+        private List<VerontreinigendeActiviteitDTO> activiteit_lijst;
+        private List<InstrumentDTO> instrument_lijst;
+
+        public DossierDTO getDossier() {
+            return dossier;
+        }
+
+        public void setDossier(DossierDTO dossier) {
+            this.dossier = dossier;
+        }
+
+        public List<ParameterDTO> getParameter_lijst() {
+            return parameter_lijst;
+        }
+
+        public void setParameter_lijst(List<ParameterDTO> parameter_lijst) {
+            this.parameter_lijst = parameter_lijst;
+        }
+
+        public List<StofgroepDTO> getStofgroep_lijst() {
+            return stofgroep_lijst;
+        }
+
+        public void setStofgroep_lijst(List<StofgroepDTO> stofgroep_lijst) {
+            this.stofgroep_lijst = stofgroep_lijst;
+        }
+
+        public List<VerontreinigendeActiviteitDTO> getActiviteit_lijst() {
+            return activiteit_lijst;
+        }
+
+        public void setActiviteit_lijst(List<VerontreinigendeActiviteitDTO> activiteit_lijst) {
+            this.activiteit_lijst = activiteit_lijst;
+        }
+
+        public List<InstrumentDTO> getInstrument_lijst() {
+            return instrument_lijst;
+        }
+
+        public void setInstrument_lijst(List<InstrumentDTO> instrument_lijst) {
+            this.instrument_lijst = instrument_lijst;
+        }
+        
     }
 }

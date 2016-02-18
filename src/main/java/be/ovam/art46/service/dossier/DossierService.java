@@ -1,6 +1,6 @@
 package be.ovam.art46.service.dossier;
 
-import be.ovam.art46.controller.dossier.DossierDO;
+import be.ovam.art46.controller.dossier.DossierDTO;
 import be.ovam.art46.dao.DossierDAO;
 import be.ovam.art46.util.DateFormatArt46;
 import be.ovam.pad.model.Dossier;
@@ -28,7 +28,7 @@ public class DossierService {
 	}
 
 	
-	public DossierDO saveDossier(DossierDO dossier) throws Exception {
+	public DossierDTO saveDossier(DossierDTO dossier) throws Exception {
         
         Map dossierMap = new BeanMap(dossier);
         
@@ -36,7 +36,7 @@ public class DossierService {
         
 	}
     
-	public DossierDO saveDossier(Map dossier) throws Exception {
+	public DossierDTO saveDossier(Map dossier) throws Exception {
         
         Integer id = (Integer) dossier.get("id");
         String dossier_type = (String) dossier.get("dossier_type");
@@ -92,7 +92,7 @@ public class DossierService {
         }
         
         // opnieuw ophalen om de via triggers aangepaste velden mee te hebben.
-        return sqlSession.selectOne("getDossierDObyId", dossier.get("id"));
+        return sqlSession.selectOne("getDossierDTObyId", dossier.get("id"));
 	}
     
     

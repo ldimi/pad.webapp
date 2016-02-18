@@ -26,19 +26,19 @@ public class BasisDossierController {
     @Autowired
     protected BriefService briefService;
 
-    protected DossierDO putDossierInModelAndSession(Integer dossier_id, Model model, HttpSession session) throws Exception, IllegalAccessException, RuntimeException, InvocationTargetException {
+    protected DossierDTO putDossierInModelAndSession(Integer dossier_id, Model model, HttpSession session) throws Exception, IllegalAccessException, RuntimeException, InvocationTargetException {
 
-        DossierDO dossierDO = sqlSession.selectOne("getDossierDObyId", dossier_id);
+        DossierDTO dossierDTO = sqlSession.selectOne("getDossierDTObyId", dossier_id);
         
-        if (dossierDO == null) {
+        if (dossierDTO == null) {
             throw new RuntimeException("Er werd geen dossier gevonden voor id " + dossier_id);
             //+ ", of dossier_nr "  + request.getParameter("dossier_nr")) ;
         }
 
-        model.addAttribute("dossier", dossierDO);
-        model.addAttribute("custom_title", "Dossier " + dossierDO.getDossier_nr() + " (" + dossierDO.getDossier_type() + ")");
+        model.addAttribute("dossier", dossierDTO);
+        model.addAttribute("custom_title", "Dossier " + dossierDTO.getDossier_nr() + " (" + dossierDTO.getDossier_type() + ")");
 
-        DossierDO dossier_in_session = (DossierDO) session.getAttribute("dossier");
+        DossierDTO dossier_in_session = (DossierDTO) session.getAttribute("dossier");
         
         if (dossier_in_session != null && 
                 dossier_in_session.getDossier_type() != null && 
@@ -46,13 +46,13 @@ public class BasisDossierController {
             // geen actie
         } else {
 
-            plaatsVersDossierInModelEnSessie(dossierDO, model, session);
+            plaatsVersDossierInModelEnSessie(dossierDTO, model, session);
         }
         
-        return dossierDO;
+        return dossierDTO;
     }
 
-    protected void plaatsVersDossierInModelEnSessie(DossierDO dossierDO, Model model, HttpSession session) throws InvocationTargetException, IllegalAccessException {
+    protected void plaatsVersDossierInModelEnSessie(DossierDTO dossierDTO, Model model, HttpSession session) throws InvocationTargetException, IllegalAccessException {
         // nieuwe gegevens in sessie plaatsen
         session.removeAttribute("briefFilterParams");
         session.removeAttribute("dossierart46form");
@@ -62,7 +62,7 @@ public class BasisDossierController {
         session.setAttribute("briefFilterParams", new BriefFilterParamsDO());
         
         DossierArt46Form dossierart46form = new DossierArt46Form();
-        BeanUtils.copyProperties(dossierart46form, dossierDO);
+        BeanUtils.copyProperties(dossierart46form, dossierDTO);
         
         if (Application.INSTANCE.isUserInRole("adminArt46") || Application.INSTANCE.isUserInRole("adminIVS")) {
             if (!"B".equals(dossierart46form.getDossier_type())) {
@@ -86,19 +86,19 @@ public class BasisDossierController {
             dossierart46form.setDisabled(true);        
         }
         
-        session.setAttribute("dossier", dossierDO);
+        session.setAttribute("dossier", dossierDTO);
         session.setAttribute("dossierart46form", dossierart46form);
         
         
-        if (dossierDO.getId() != null && "B".equals(dossierDO.getDossier_type())) {
+        if (dossierDTO.getId() != null && "B".equals(dossierDTO.getDossier_type())) {
             DossierBOAForm dossierBOAForm = new DossierBOAForm();
-            Map dossierSmeg = sqlSession.selectOne("be.ovam.art46.mappers.DossierMapper.getDossierSmeg", dossierDO.getId());
+            Map dossierSmeg = sqlSession.selectOne("be.ovam.art46.mappers.DossierMapper.getDossierSmeg", dossierDTO.getId());
             BeanUtils.copyProperties(dossierBOAForm, dossierSmeg);
             session.setAttribute("dossierboaform", dossierBOAForm);
         }
         
-        model.addAttribute("dossier", dossierDO);
-        model.addAttribute("custom_title", "Dossier " + dossierDO.getDossier_nr() + " (" + dossierDO.getDossier_type() + ")");
+        model.addAttribute("dossier", dossierDTO);
+        model.addAttribute("custom_title", "Dossier " + dossierDTO.getDossier_nr() + " (" + dossierDTO.getDossier_type() + ")");
         
     }
 

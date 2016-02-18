@@ -4,7 +4,7 @@ package be.ovam.art46.controller.dossier;
 import java.io.Serializable;
 import java.util.Date;
 
-public class DossierDO implements Serializable{
+public class DossierDTO implements Serializable{
 
 	private static final long serialVersionUID = 50460355623282696L;
 	

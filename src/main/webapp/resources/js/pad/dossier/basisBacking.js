@@ -28,8 +28,8 @@ define([
         controller: function () {
             this.dossier = new DossierModel({
                 dossier: _G_.model.dossier,
-                instrumenten: _G_.model.dossierInstrumenten,
-                verontreinigende_activiteiten: _G_.model.dossierVerontreinigendeActiviteiten
+                instrument_lijst: _G_.model.dossierInstrumenten,
+                activiteit_lijst: _G_.model.dossierVerontreinigendeActiviteiten
             });
             this.showErrors = m.prop(false);
 

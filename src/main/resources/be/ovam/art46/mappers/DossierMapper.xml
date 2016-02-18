@@ -5,7 +5,7 @@
 
 <mapper namespace="be.ovam.art46.mappers.DossierMapper">
 
-    <sql id="getDossierDO_sql" >
+    <sql id="getDossierDTO_sql" >
         select
                 dos.id,
                 dos.dossier_nr,
@@ -66,13 +66,13 @@
         where 1 = 1
     </sql>
 
-    <select id="getDossierDObyId" parameterType="int" resultType="be.ovam.art46.controller.dossier.DossierDO">
-        <include refid="getDossierDO_sql"/>
+    <select id="getDossierDTObyId" parameterType="int" resultType="be.ovam.art46.controller.dossier.DossierDTO">
+        <include refid="getDossierDTO_sql"/>
             and dos.id = #{dossier_id}
     </select>
 
-    <select id="getDossierDObyNr" parameterType="string" resultType="be.ovam.art46.controller.dossier.DossierDO">
-        <include refid="getDossierDO_sql"/>
+    <select id="getDossierDTObyNr" parameterType="string" resultType="be.ovam.art46.controller.dossier.DossierDTO">
+        <include refid="getDossierDTO_sql"/>
             and dos.dossier_nr = #{dossier_nr}
     </select>
 

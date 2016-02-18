@@ -1,6 +1,6 @@
 package be.ovam.art46.service.sluis;
 
-import be.ovam.art46.controller.dossier.DossierDO;
+import be.ovam.art46.controller.dossier.DossierDTO;
 import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDTO;
 import be.ovam.art46.service.dossier.DossierService;
 import be.ovam.art46.util.Application;
@@ -37,9 +37,9 @@ public class SluisService {
     
 
     
-    public void save(DossierOverdrachtDTO dossierOverdrachtDto) throws Exception  {
+    public void save(DossierOverdrachtDTO dossierOverdrachtDTO) throws Exception  {
         
-        DossierOverdrachtDTO.OverdrachtDto overdracht = dossierOverdrachtDto.getOverdracht();
+        DossierOverdrachtDTO.OverdrachtDTO overdracht = dossierOverdrachtDTO.getOverdracht();
         
         if ("C".equals(overdracht.getStatus_crud()) ) {
             insert(overdracht);
@@ -51,14 +51,14 @@ public class SluisService {
             throw new IllegalStateException("Ongeldige status_crud: " + overdracht.getStatus_crud() );
         }
 
-        sqlSession.saveInTable("art46", "screening_parameter", dossierOverdrachtDto.getParameter_lijst());
-        sqlSession.saveInTable("art46", "screening_stofgroep", dossierOverdrachtDto.getStofgroep_lijst());
-        sqlSession.saveInTable("art46", "dossier_verontreinig_activiteit", dossierOverdrachtDto.getActiviteit_lijst());
-        sqlSession.saveInTable("art46", "dossier_instrument", dossierOverdrachtDto.getInstrument_lijst());
+        sqlSession.saveInTable("art46", "screening_parameter", dossierOverdrachtDTO.getParameter_lijst());
+        sqlSession.saveInTable("art46", "screening_stofgroep", dossierOverdrachtDTO.getStofgroep_lijst());
+        sqlSession.saveInTable("art46", "dossier_verontreinig_activiteit", dossierOverdrachtDTO.getActiviteit_lijst());
+        sqlSession.saveInTable("art46", "dossier_instrument", dossierOverdrachtDTO.getInstrument_lijst());
         
     }
     
-    public void insert(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception  {
+    public void insert(DossierOverdrachtDTO.OverdrachtDTO overdracht) throws Exception  {
         overdracht.setVersie_nr(1);
         overdracht.setStatus("registrati");
         overdracht.setWijzig_user(Application.INSTANCE.getUser_id());
@@ -74,7 +74,7 @@ public class SluisService {
         sqlSession.insertInTable("art46", "dossier_overdracht", overdracht);
     }
 
-    public void update(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception {
+    public void update(DossierOverdrachtDTO.OverdrachtDTO overdracht) throws Exception {
         
         overdracht.setVersie_nr(overdracht.getVersie_nr() + 1);
         overdracht.setWijzig_user(Application.INSTANCE.getUser_id());
@@ -85,14 +85,14 @@ public class SluisService {
     }
 
     
-    private void  updateIvsDossier(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception {
+    private void  updateIvsDossier(DossierOverdrachtDTO.OverdrachtDTO overdracht) throws Exception {
         if (overdracht.getIvs_dirty()) {
             Map<String, Object> dos = buildDossierMap(overdracht);
             sqlSession.updateInTable("art46", "dossier", dos);
         }
     }
 
-    private void insert_ivs_afval_dossier(DossierOverdrachtDTO.OverdrachtDto overdracht) throws Exception {
+    private void insert_ivs_afval_dossier(DossierOverdrachtDTO.OverdrachtDTO overdracht) throws Exception {
         
         if (!"A".equals(overdracht.getDossier_type()) ||
                 overdracht.getDossier_id() != null ||
@@ -102,13 +102,13 @@ public class SluisService {
         }
         
         Map<String, Object> dos = buildDossierMap(overdracht);
-        DossierDO nieuwDos = dossierService.saveDossier(dos);     
+        DossierDTO nieuwDos = dossierService.saveDossier(dos);     
     
         overdracht.setDossier_id(nieuwDos.getId());
     }
 
     
-    private Map<String, Object> buildDossierMap(DossierOverdrachtDTO.OverdrachtDto overdracht) throws RuntimeException {
+    private Map<String, Object> buildDossierMap(DossierOverdrachtDTO.OverdrachtDTO overdracht) throws RuntimeException {
         
         BeanMap doso = new BeanMap(overdracht);
         Map<String, Object> dos = new HashMap(doso);
