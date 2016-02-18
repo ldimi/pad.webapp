@@ -84,6 +84,12 @@ public class DossierController extends BasisDossierController {
         return "redirect:/s/dossier/" + dossier_id + "/" + selectedtab;
     }
 
+    
+    @RequestMapping(value = "/dossier/{dossier_id}", method = RequestMethod.GET)
+    public String start2(@PathVariable Integer dossier_id, Model model, HttpSession session) throws Exception  {
+        return startBasis(dossier_id, model, session);
+    }
+
     @RequestMapping(value = "/dossier/{dossier_id}/basis", method = RequestMethod.GET)
     public String startBasis(@PathVariable Integer dossier_id, Model model, HttpSession session) throws Exception  {
         
@@ -122,6 +128,8 @@ public class DossierController extends BasisDossierController {
     }
    
     private void addModelAttrsForBasisscherm(Model model, DossierDO dossierDO) {
+        
+        
         model.addAttribute("isAdminIVS", Application.INSTANCE.isUserInRole("adminIVS") );
         model.addAttribute("isAdminArt46", Application.INSTANCE.isUserInRole("adminArt46") );
         
@@ -139,12 +147,19 @@ public class DossierController extends BasisDossierController {
             model.addAttribute("screening_potentieel_risico_dd", sqlSession.selectList("screening_potentieel_risico_dd"));
 
             model.addAttribute("screening_prioriteit_gewichten", sqlSession.selectList("screening_prioriteit_gewichten"));
+            
+            model.addAttribute("verontreinig_activiteiten_dd", sqlSession.selectList("be.ovam.pad.common.mappers.DossierDDMapper.verontreinig_activiteiten_dd"));
+            model.addAttribute("instrumenten_dd", sqlSession.selectList("be.ovam.pad.common.mappers.DossierDDMapper.instrumenten_dd"));
         }
 
         if (dossierDO.getId() != null) {
             if ("B".equals(dossierDO.getDossier_type())) {
                 model.addAttribute("dossierAdressen", sqlSession.selectList("getDossierAdressen", dossierDO.getId()));
                 model.addAttribute("mistralUrl", System.getProperty("pad.mistral2Url"));
+            }
+            if (!"X".equals(dossierDO.getDossier_type())) {
+                model.addAttribute("dossierInstrumenten" , sqlSession.selectList("getDossierInstrumenten", dossierDO.getId()));
+                model.addAttribute("dossierVerontreinigendeActiviteiten" , sqlSession.selectList("getDossierVerontreinigendeActiviteiten", dossierDO.getId()));
             }
 
             List bestekNrs = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getBestekNrsByDossierId", dossierDO.getId());

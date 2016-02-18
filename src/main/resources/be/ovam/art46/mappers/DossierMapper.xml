@@ -759,6 +759,28 @@
         order by label
     </select>
 
+    <select id="getDossierInstrumenten" parameterType="int" resultType="ciMap">
+        select
+            di.instrument_type_id,
+            di.dossier_id,
+            di.dossier_type,
+            'R' as status_crud
+        from  art46.dossier_instrument di
+        where di.dossier_id = #{dossier_id}
+        order by di.instrument_type_id
+    </select>
+
+    <select id="getDossierVerontreinigendeActiviteiten" parameterType="int" resultType="ciMap">
+        select
+            act.activiteit_type_id,
+            act.dossier_id,
+            act.dossier_type,
+            'R' as status_crud
+        from art46.dossier_verontreinig_activiteit act
+        where act.dossier_id = #{dossier_id}
+        order by activiteit_type_id
+    </select>
+
     <select id="getDossierContactLijst" parameterType="int" resultType="ciMap">
         select
             da.dossier_id,

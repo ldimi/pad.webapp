@@ -257,11 +257,11 @@ define([
                 m(".row.form-group", [
                     m(".col-xs-6", [
                         m(".col-xs-3", "Verontreinigende activiteit:"),
-                        m(".col-xs-9", ff.selectize("activiteit_type_lijst", {multiple: true}, verontreinig_activiteiten_dd))
+                        m(".col-xs-9", ff.selectize("activiteit_type_id_lijst", {multiple: true}, verontreinig_activiteiten_dd))
                     ]),
                     m(".col-xs-6", [
                         m(".col-xs-3", "Instrument:"),
-                        m(".col-xs-9", ff.selectize("instrument_type_lijst", {multiple: true}, instrumenten_dd))
+                        m(".col-xs-9", ff.selectize("instrument_type_id_lijst", {multiple: true}, instrumenten_dd))
                     ])
                 ]),
 

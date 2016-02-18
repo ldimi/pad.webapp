@@ -11,11 +11,14 @@ define([
     "common/dropdown/ja_nee_dd",
     "common/dropdown/maanden_dd",
     "common/dropdown/dossier/doelgroepen_dd",
+    "common/dropdown/dossier/verontreinig_activiteiten_dd",
+    "common/dropdown/dossier/instrumenten_dd",
     "common/dropdown/dossier/screening/risicos",
     "ov/mithril/ajax",
-    "ov/mithril/formhelperFactory"
+    "ov/mithril/formhelperFactory",
+    "selectize"
 ], function (DossierModel, rechtsgronden, fasen, dossierhouders, programmaTypes, fusiegemeenten,
-             ja_nee_dd, maanden_dd, doelgroepen_dd,
+             ja_nee_dd, maanden_dd, doelgroepen_dd, verontreinig_activiteiten_dd, instrumenten_dd,
              risicos, ajax, fhf) {
     'use strict';
 
@@ -23,7 +26,11 @@ define([
 
     comp = {
         controller: function () {
-            this.dossier = new DossierModel(_G_.model.dossier);
+            this.dossier = new DossierModel({
+                dossier: _G_.model.dossier,
+                instrumenten: _G_.model.dossierInstrumenten,
+                verontreinigende_activiteiten: _G_.model.dossierVerontreinigendeActiviteiten
+            });
             this.showErrors = m.prop(false);
 
             this.bewaar = function () {
@@ -235,6 +242,15 @@ define([
                                     m(".col-md-2", m("label", "Looptijd (maanden)")),
                                     m(".col-md-1", ff.input("bsw_looptijd"))
                                 ]) : null
+                        ]),
+                        m("fieldset", [
+                            m("legend", m.trust("&nbsp;")),
+                            m(".row.form-group", [
+                                m(".col-md-2", m("label","Verontreinigende activiteit")),
+                                m(".col-md-4", "TODO"),
+                                m(".col-md-2", m("label", "Instrument")),
+                                m(".col-md-4", ff.selectize("instrument_type_id_lijst", {multiple: true}, instrumenten_dd))
+                            ])
                         ])
                     ]: null,
                 ((_G_.model.isAdminIVS || _G_.model.isAdminArt46) ) ?

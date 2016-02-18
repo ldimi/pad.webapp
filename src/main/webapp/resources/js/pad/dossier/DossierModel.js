@@ -3,13 +3,19 @@
 
 define([
     "ov/Model",
+    "common/dossier/InstrumentenManager",
     "common/dropdown/dossier/screening/risicos"
-], function (Model, risicos) {
+], function (Model, InstrumentenManager, risicos) {
     'use strict';
 
     var DossierModel;
 
     DossierModel = Model.extend({
+        constructor: function (dossierData) {
+            Model.call(this, dossierData.dossier);
+
+            this.initInstrumentenCollection(dossierData.instrumenten);
+        },
         meta: Model.buildMeta([
             { name: "id", type: "int" },
             { name: "dossier_nr" },
@@ -66,6 +72,13 @@ define([
             { name: "overdracht_id", type: "int" }
         ]),
 
+        initInstrumentenCollection: function(instrument_lijst) {
+            instrument_lijst = instrument_lijst || [];
+            this.instrumentenManager = new InstrumentenManager(instrument_lijst, this.get("dossier_id"), this.get("dossier_type"));
+            this.attributes.instrument_type_id_lijst = this.instrumentenManager.getInstrument_type_id_lijst();
+        },
+
+
         enforceInvariants: function () {
 
             if (this.get("id") === null && this.get("dossier_b") === null ) {
@@ -89,6 +102,8 @@ define([
             this._invariant_timing();
             this._invariant_bsp_jn();
             this._invariant_prioriteits_index();
+
+            this._invariant_instrumenten();
 
         },
 
@@ -119,9 +134,15 @@ define([
 
             this.attributes.prioriteits_index = prioriteit.index;
             this.attributes.prioriteits_formule = prioriteit.formule;
+        },
+
+        _invariant_instrumenten: function () {
+            if (!this.instrumentenManager) {
+                // initialisatie van instrumenten is nog niet gebeurd.
+                return;
+            }
+            this.instrumentenManager.setInstrument_type_id_lijst(this.get("instrument_type_id_lijst"));
         }
-
-
 
     });
 
