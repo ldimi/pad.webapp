@@ -28,8 +28,8 @@ define([
         controller: function () {
             this.dossier = new DossierModel({
                 dossier: _G_.model.dossier,
-                instrument_lijst: _G_.model.dossierInstrumenten,
-                activiteit_lijst: _G_.model.dossierVerontreinigendeActiviteiten
+                instrument_lijst: _G_.model.instrument_lijst,
+                activiteit_lijst: _G_.model.activiteit_lijst
             });
             this.showErrors = m.prop(false);
 
@@ -195,6 +195,16 @@ define([
                 ]),
                 (dossier_type !== 'X') ?
                     [
+                        (ctrl.dossier.get("id") !== null) ?
+                            m("fieldset", [
+                                m("legend", m.trust("&nbsp;")),
+                                m(".row.form-group", [
+                                    m(".col-md-2", m("label","Verontreinigende activiteit")),
+                                    m(".col-md-4", ff.selectize("activiteit_type_id_lijst", {multiple: true}, verontreinig_activiteiten_dd)),
+                                    m(".col-md-2", m("label", "Instrument")),
+                                    m(".col-md-4", ff.selectize("instrument_type_id_lijst", {multiple: true}, instrumenten_dd))
+                                ])
+                            ]) : null,
                         m("fieldset", [
                             m("legend", m.trust("&nbsp;")),
                             m(".row.form-group", [
@@ -242,15 +252,6 @@ define([
                                     m(".col-md-2", m("label", "Looptijd (maanden)")),
                                     m(".col-md-1", ff.input("bsw_looptijd"))
                                 ]) : null
-                        ]),
-                        m("fieldset", [
-                            m("legend", m.trust("&nbsp;")),
-                            m(".row.form-group", [
-                                m(".col-md-2", m("label","Verontreinigende activiteit")),
-                                m(".col-md-4", ff.selectize("activiteit_type_id_lijst", {multiple: true}, verontreinig_activiteiten_dd)),
-                                m(".col-md-2", m("label", "Instrument")),
-                                m(".col-md-4", ff.selectize("instrument_type_id_lijst", {multiple: true}, instrumenten_dd))
-                            ])
                         ])
                     ]: null,
                 ((_G_.model.isAdminIVS || _G_.model.isAdminArt46) ) ?

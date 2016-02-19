@@ -1,4 +1,4 @@
-package be.ovam.art46.controller.dossier;
+package be.ovam.art46.service.dossier;
 
 
 import java.io.Serializable;

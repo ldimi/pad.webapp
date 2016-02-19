@@ -17,6 +17,7 @@ define([
 
             this.initActiviteitenCollection(dossierData.activiteit_lijst);
             this.initInstrumentenCollection(dossierData.instrument_lijst);
+            this._orgAttributes = _.clone(this.attributes);
         },
         meta: Model.buildMeta([
             { name: "id", type: "int" },
@@ -71,18 +72,21 @@ define([
             { name: "prioriteits_index", type: "double" },
             { name: "prioriteits_formule" },
 
+            { name: "instrument_type_id_lijst" },
+            { name: "activiteit_type_id_lijst" },
+
             { name: "overdracht_id", type: "int" }
         ]),
 
         initActiviteitenCollection: function(activiteit_lijst) {
             activiteit_lijst = activiteit_lijst || [];
-            this.activiteitenManager = new ActiviteitenManager(activiteit_lijst, this.get("dossier_id"), this.get("dossier_type"));
+            this.activiteitenManager = new ActiviteitenManager(activiteit_lijst, this.get("id"), this.get("dossier_type"));
             this.attributes.activiteit_type_id_lijst = this.activiteitenManager.getActiviteit_type_id_lijst();
         },
 
         initInstrumentenCollection: function(instrument_lijst) {
             instrument_lijst = instrument_lijst || [];
-            this.instrumentenManager = new InstrumentenManager(instrument_lijst, this.get("dossier_id"), this.get("dossier_type"));
+            this.instrumentenManager = new InstrumentenManager(instrument_lijst, this.get("id"), this.get("dossier_type"));
             this.attributes.instrument_type_id_lijst = this.instrumentenManager.getInstrument_type_id_lijst();
         },
 
@@ -164,17 +168,6 @@ define([
                 activiteit_lijst: this.activiteitenManager,
                 instrument_lijst: this.instrumentenManager
             };
-        },
-
-        isDirty: function() {
-            var isDirty;
-            isDirty = Model.prototype.isDirty.apply(this, arguments) 
-                      // ||
-                      // this.paramsList.isDirty() ||
-                      // this.stofgroepList.isDirty()                      
-                      ;
-
-            return isDirty;
         }
 
     });

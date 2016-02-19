@@ -1,6 +1,5 @@
 package be.ovam.art46.service.dossier;
 
-import be.ovam.art46.controller.dossier.DossierDTO;
 import be.ovam.art46.dao.DossierDAO;
 import be.ovam.art46.util.DateFormatArt46;
 import be.ovam.pad.model.Dossier;
@@ -26,17 +25,24 @@ public class DossierService {
 	public Dossier getDossier(Integer id) {
 		return (Dossier) dossierDAO.getObject(Dossier.class, id);
 	}
-
-	
-	public DossierDTO saveDossier(DossierDTO dossier) throws Exception {
+    
+    public Integer saveDossier(DossierCompleetDTO dossierCompleet) throws Exception {
+        Integer dossier_id = saveDossier(dossierCompleet.getDossier());
         
-        Map dossierMap = new BeanMap(dossier);
+        sqlSession.saveInTable("art46", "dossier_verontreinig_activiteit", dossierCompleet.getActiviteit_lijst());
+        sqlSession.saveInTable("art46", "dossier_instrument", dossierCompleet.getInstrument_lijst());
+
+        return dossier_id;
+    }
+    
+	private Integer saveDossier(DossierDTO dossier) throws Exception {
+        Map dossierMap;
+        dossierMap = new BeanMap(dossier);
         
         return saveDossier(dossierMap);
-        
 	}
     
-	public DossierDTO saveDossier(Map dossier) throws Exception {
+	public Integer saveDossier(Map dossier) throws Exception {
         
         Integer id = (Integer) dossier.get("id");
         String dossier_type = (String) dossier.get("dossier_type");
@@ -92,7 +98,7 @@ public class DossierService {
         }
         
         // opnieuw ophalen om de via triggers aangepaste velden mee te hebben.
-        return sqlSession.selectOne("getDossierDTObyId", dossier.get("id"));
+        return (Integer) dossier.get("id");
 	}
     
     

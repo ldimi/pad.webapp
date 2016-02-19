@@ -1,16 +1,13 @@
 package be.ovam.art46.controller.dossier;
 
+import be.ovam.art46.service.dossier.DossierDTO;
 import be.ovam.art46.service.ActieService;
+import be.ovam.art46.service.dossier.DossierCompleetDTO;
 import be.ovam.art46.service.dossier.DossierService;
 import be.ovam.art46.struts.actionform.DossierArt46Form;
 import be.ovam.art46.struts.actionform.DossierKadasterForm;
 import be.ovam.art46.util.Application;
 import be.ovam.art46.util.DropDownHelper;
-import be.ovam.pad.model.dossier.InstrumentDTO;
-import be.ovam.pad.model.dossier.ParameterDTO;
-import be.ovam.pad.model.dossier.StofgroepDTO;
-import be.ovam.pad.model.dossier.VerontreinigendeActiviteitDTO;
-import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDTO;
 import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
 import java.util.HashMap;
@@ -163,8 +160,8 @@ public class DossierController extends BasisDossierController {
                 model.addAttribute("mistralUrl", System.getProperty("pad.mistral2Url"));
             }
             if (!"X".equals(dossierDTO.getDossier_type())) {
-                model.addAttribute("dossierInstrumenten" , sqlSession.selectList("getDossierInstrumenten", dossierDTO.getId()));
-                model.addAttribute("dossierVerontreinigendeActiviteiten" , sqlSession.selectList("getDossierVerontreinigendeActiviteiten", dossierDTO.getId()));
+                model.addAttribute("instrument_lijst" , sqlSession.selectList("get_dossier_instrument_lijst", dossierDTO.getId()));
+                model.addAttribute("activiteit_lijst" , sqlSession.selectList("get_dossier_activiteit_lijst", dossierDTO.getId()));
             }
 
             List bestekNrs = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getBestekNrsByDossierId", dossierDTO.getId());
@@ -176,12 +173,10 @@ public class DossierController extends BasisDossierController {
         }
     }
 
-    
-    
     @RequestMapping(value = "/dossier/save", method = RequestMethod.POST)
-    public @ResponseBody Response save(@RequestBody CompleetDossier dossier) throws Exception {
-        DossierDTO dossierDTO = dossierService.saveDossier(dossier.getDossier());
-        return new Response(dossierDTO.getId());
+    public @ResponseBody Response save(@RequestBody DossierCompleetDTO dossierCompleet) throws Exception {
+        Integer dossier_id = dossierService.saveDossier(dossierCompleet);
+        return new Response(dossier_id);
     }
 
     @RequestMapping(value = "/dossier/financieel/save", method = RequestMethod.POST)
@@ -193,9 +188,7 @@ public class DossierController extends BasisDossierController {
         return "redirect:/s/dossier/" + id + "/projectfiche";
     }
 
-    
-    
-    
+        
     
     @RequestMapping(value = "/dossier/{dossier_id}/jd", method = RequestMethod.GET)
     public String startJd(@PathVariable Integer dossier_id, Model model, HttpSession session) throws Exception {
@@ -323,55 +316,4 @@ public class DossierController extends BasisDossierController {
     }
     
     
-    public static class CompleetDossier {
-        
-        private DossierDTO dossier;
-        
-        private List<ParameterDTO> parameter_lijst;
-        private List<StofgroepDTO> stofgroep_lijst;
-        
-        private List<VerontreinigendeActiviteitDTO> activiteit_lijst;
-        private List<InstrumentDTO> instrument_lijst;
-
-        public DossierDTO getDossier() {
-            return dossier;
-        }
-
-        public void setDossier(DossierDTO dossier) {
-            this.dossier = dossier;
-        }
-
-        public List<ParameterDTO> getParameter_lijst() {
-            return parameter_lijst;
-        }
-
-        public void setParameter_lijst(List<ParameterDTO> parameter_lijst) {
-            this.parameter_lijst = parameter_lijst;
-        }
-
-        public List<StofgroepDTO> getStofgroep_lijst() {
-            return stofgroep_lijst;
-        }
-
-        public void setStofgroep_lijst(List<StofgroepDTO> stofgroep_lijst) {
-            this.stofgroep_lijst = stofgroep_lijst;
-        }
-
-        public List<VerontreinigendeActiviteitDTO> getActiviteit_lijst() {
-            return activiteit_lijst;
-        }
-
-        public void setActiviteit_lijst(List<VerontreinigendeActiviteitDTO> activiteit_lijst) {
-            this.activiteit_lijst = activiteit_lijst;
-        }
-
-        public List<InstrumentDTO> getInstrument_lijst() {
-            return instrument_lijst;
-        }
-
-        public void setInstrument_lijst(List<InstrumentDTO> instrument_lijst) {
-            this.instrument_lijst = instrument_lijst;
-        }
-        
-    }
 }

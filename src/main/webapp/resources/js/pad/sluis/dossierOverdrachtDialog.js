@@ -216,6 +216,10 @@ define([
                             m(".col-xs-6", [
                                 m(".col-xs-3", "Rechtsgrond:"),
                                 m(".col-xs-9", ff.select("rechtsgrond_code", rechtsgronden[ctrl.item.get("dossier_type")] ))
+                            ]),
+                            m(".col-xs-6", [
+                                m(".col-xs-3", "Fase:"),
+                                m(".col-xs-9",  ff.select("dossier_fase_id", fasen[ctrl.item.get("dossier_type")] ))
                             ])
                         ])
                     ],
@@ -254,16 +258,17 @@ define([
                             m(".col-xs-3", ff.input("prioriteits_index"))
                     ])
                 ]),
-                m(".row.form-group", [
-                    m(".col-xs-6", [
-                        m(".col-xs-3", "Verontreinigende activiteit:"),
-                        m(".col-xs-9", ff.selectize("activiteit_type_id_lijst", {multiple: true}, verontreinig_activiteiten_dd))
-                    ]),
-                    m(".col-xs-6", [
-                        m(".col-xs-3", "Instrument:"),
-                        m(".col-xs-9", ff.selectize("instrument_type_id_lijst", {multiple: true}, instrumenten_dd))
-                    ])
-                ]),
+                (ctrl.item.get("status_crud") !== 'C') ?
+                    m(".row.form-group", [
+                        m(".col-xs-6", [
+                            m(".col-xs-3", "Verontreinigende activiteit:"),
+                            m(".col-xs-9", ff.selectize("activiteit_type_id_lijst", {multiple: true}, verontreinig_activiteiten_dd))
+                        ]),
+                        m(".col-xs-6", [
+                            m(".col-xs-3", "Instrument:"),
+                            m(".col-xs-9", ff.selectize("instrument_type_id_lijst", {multiple: true}, instrumenten_dd))
+                        ])
+                    ]) : null,
 
 
                 m(".row",  { style: {borderTop: "1px solid lightgray", paddingTop: "10px"}}),

@@ -1,5 +1,6 @@
 package be.ovam.art46.controller.dossier;
 
+import be.ovam.art46.service.dossier.DossierDTO;
 import be.ovam.art46.service.BriefService;
 import be.ovam.art46.service.dossier.DossierJDService;
 import be.ovam.art46.struts.actionform.DossierArt46Form;

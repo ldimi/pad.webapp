@@ -1,6 +1,5 @@
 package be.ovam.art46.service.sluis;
 
-import be.ovam.art46.controller.dossier.DossierDTO;
 import be.ovam.pad.model.dossieroverdracht.DossierOverdrachtDTO;
 import be.ovam.art46.service.dossier.DossierService;
 import be.ovam.art46.util.Application;
@@ -102,9 +101,9 @@ public class SluisService {
         }
         
         Map<String, Object> dos = buildDossierMap(overdracht);
-        DossierDTO nieuwDos = dossierService.saveDossier(dos);     
+        Integer dos_id = dossierService.saveDossier(dos);     
     
-        overdracht.setDossier_id(nieuwDos.getId());
+        overdracht.setDossier_id(dos_id);
     }
 
     
