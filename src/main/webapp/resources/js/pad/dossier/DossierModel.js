@@ -12,13 +12,14 @@ define([
     var DossierModel;
 
     DossierModel = Model.extend({
-        constructor: function (dossierData) {
-            Model.call(this, dossierData.dossier);
+        constructor: function (data) {
+            Model.call(this, data.dossier);
 
-            this.initActiviteitenCollection(dossierData.activiteit_lijst);
-            this.initInstrumentenCollection(dossierData.instrument_lijst);
+            this.initActiviteitenCollection(data.activiteit_lijst);
+            this.initInstrumentenCollection(data.instrument_lijst);
             this._orgAttributes = _.clone(this.attributes);
         },
+
         meta: Model.buildMeta([
             { name: "id", type: "int" },
             { name: "dossier_nr" },
@@ -79,13 +80,11 @@ define([
         ]),
 
         initActiviteitenCollection: function(activiteit_lijst) {
-            activiteit_lijst = activiteit_lijst || [];
             this.activiteitenManager = new ActiviteitenManager(activiteit_lijst, this.get("id"), this.get("dossier_type"));
             this.attributes.activiteit_type_id_lijst = this.activiteitenManager.getActiviteit_type_id_lijst();
         },
 
         initInstrumentenCollection: function(instrument_lijst) {
-            instrument_lijst = instrument_lijst || [];
             this.instrumentenManager = new InstrumentenManager(instrument_lijst, this.get("id"), this.get("dossier_type"));
             this.attributes.instrument_type_id_lijst = this.instrumentenManager.getInstrument_type_id_lijst();
         },

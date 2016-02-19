@@ -45,7 +45,6 @@ define([
 
         overdrachtenArray = _.map(data.dossierOverdrachtLijst, function (overdrachtAttributes) {
             var overdracht, filterFn, filterFn2;
-            overdracht = new DossierOverdrachtModel(overdrachtAttributes);
 
             filterFn = function (it) {
                 return (it.overdracht_id === overdrachtAttributes.overdracht_id);
@@ -54,10 +53,13 @@ define([
                 return (it.dossier_id === overdrachtAttributes.dossier_id);
             };
 
-            overdracht.initParamsCollection(_.filter(data.dossierOverdrachtLijst_parameters, filterFn));
-            overdracht.initStofgroepCollection(_.filter(data.dossierOverdrachtLijst_stofgroepen, filterFn));
-            overdracht.initActiviteitenCollection(_.filter(data.dossierOverdrachtLijst_activiteiten, filterFn2));
-            overdracht.initInstrumentenCollection(_.filter(data.dossierOverdrachtLijst_instrumenten, filterFn2));
+            overdracht = new DossierOverdrachtModel({
+                overdracht: overdrachtAttributes,
+                parameter_lijst: _.filter(data.dossierOverdrachtLijst_parameters, filterFn),
+                stofgroep_lijst: _.filter(data.dossierOverdrachtLijst_stofgroepen, filterFn),
+                activiteit_lijst: _.filter(data.dossierOverdrachtLijst_activiteiten, filterFn2),
+                instrument_lijst: _.filter(data.dossierOverdrachtLijst_instrumenten, filterFn2)
+            });
             return overdracht;
         });
 
