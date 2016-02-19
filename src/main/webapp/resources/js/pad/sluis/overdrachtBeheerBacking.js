@@ -55,8 +55,8 @@ define([
 
             overdracht = new DossierOverdrachtModel({
                 overdracht: overdrachtAttributes,
-                parameter_lijst: _.filter(data.dossierOverdrachtLijst_parameters, filterFn),
-                stofgroep_lijst: _.filter(data.dossierOverdrachtLijst_stofgroepen, filterFn),
+                parameter_lijst: _.filter(data.dossierOverdrachtLijst_parameters, filterFn2),
+                stofgroep_lijst: _.filter(data.dossierOverdrachtLijst_stofgroepen, filterFn2),
                 activiteit_lijst: _.filter(data.dossierOverdrachtLijst_activiteiten, filterFn2),
                 instrument_lijst: _.filter(data.dossierOverdrachtLijst_instrumenten, filterFn2)
             });

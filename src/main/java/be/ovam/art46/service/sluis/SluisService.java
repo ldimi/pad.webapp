@@ -50,8 +50,8 @@ public class SluisService {
             throw new IllegalStateException("Ongeldige status_crud: " + overdracht.getStatus_crud() );
         }
 
-        sqlSession.saveInTable("art46", "screening_parameter", dossierOverdrachtDTO.getParameter_lijst());
-        sqlSession.saveInTable("art46", "screening_stofgroep", dossierOverdrachtDTO.getStofgroep_lijst());
+        sqlSession.saveInTable("art46", "dossier_parameter", dossierOverdrachtDTO.getParameter_lijst());
+        sqlSession.saveInTable("art46", "dossier_stofgroep", dossierOverdrachtDTO.getStofgroep_lijst());
         sqlSession.saveInTable("art46", "dossier_verontreinig_activiteit", dossierOverdrachtDTO.getActiviteit_lijst());
         sqlSession.saveInTable("art46", "dossier_instrument", dossierOverdrachtDTO.getInstrument_lijst());
         
