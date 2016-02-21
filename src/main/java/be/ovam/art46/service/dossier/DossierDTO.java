@@ -60,8 +60,6 @@ public class DossierDTO implements Serializable{
     private Integer potentieel_risico_id;
     private Double prioriteits_index;
     
-    private Integer overdracht_id;
-    
     public Integer getId() {
         return id;
     }
@@ -420,14 +418,6 @@ public class DossierDTO implements Serializable{
 
     public void setPrioriteits_index(Double prioriteits_index) {
         this.prioriteits_index = prioriteits_index;
-    }
-
-    public Integer getOverdracht_id() {
-        return overdracht_id;
-    }
-
-    public void setOverdracht_id(Integer overdracht_id) {
-        this.overdracht_id = overdracht_id;
     }
 
 }

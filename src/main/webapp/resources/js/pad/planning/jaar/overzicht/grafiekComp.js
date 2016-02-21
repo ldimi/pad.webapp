@@ -12,16 +12,9 @@ define([
         _mijlpalenData, _programmaBudgettenData, _paramGrafiekMeta, formatDate, _paramGrafiekFM;
 
     _paramGrafiekMeta = new Meta([
-        {
-            name: "jaar",
-            type: "int"
-        }, {
-            name: "budget_code",
-            type: "string"
-        }, {
-            name: "markering_id",
-            type: "int"
-        }
+        { name: "jaar", type: "int" },
+        { name: "budget_code" },
+        { name: "markering_id", type: "int" }
     ]);
 
     init = function () {

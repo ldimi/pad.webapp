@@ -52,7 +52,6 @@ define([
             { name: "rechtsgrond_code" },
             { name: "doelgroep_type_id", type: "int" },
 
-            { name: "smeg_naam" },
             { name: "commentaar_bodem" },
 
             { name: "timing_jaar", type: "int" , min: 2000, max: 2050 },
@@ -74,9 +73,7 @@ define([
             { name: "prioriteits_formule" },
 
             { name: "instrument_type_id_lijst" },
-            { name: "activiteit_type_id_lijst" },
-
-            { name: "overdracht_id", type: "int" }
+            { name: "activiteit_type_id_lijst" }
         ]),
 
         initActiviteitenCollection: function(activiteit_lijst) {

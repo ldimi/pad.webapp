@@ -13,8 +13,7 @@ define([
 ], function (ajax, Meta, GridComp, formatters, budgetPerProgrammaDetailDialog, markeerPlanningDialog, grafiekComp) {
     'use strict';
 
-    var _paramMeta, _paramFM = null,
-        _programmaBudgettenData, _mijlpalenData, _mijlpalenProgrammaData, _dateFormatter, _intFormatter, _customBedragFormatter = null,
+    var _programmaBudgettenData, _mijlpalenData, _mijlpalenProgrammaData, _dateFormatter, _intFormatter, _customBedragFormatter = null,
         toonBudgetten, toonProgrammaBudgetten, ophalen, voegTotaalBudgetToe, voegMijlpaalBedragenToe, onReady;
 
     _dateFormatter = formatters("date");
@@ -41,14 +40,6 @@ define([
         }
         return numberWithCommas(_intFormatter(deelBedrag)) + '<span style="width: 50px; display: inline-block; text-align: right;" >' + percentage + "</span>";
     };
-
-    _paramMeta = new Meta([
-        {
-            name: "jaar",
-            type: "int"
-        }
-    ]);
-
 
     toonBudgetten = function (budgetData) {
         var budgetPerBudgetcodeGrid, budgetPerBudgetcodeMeta;
@@ -142,7 +133,7 @@ define([
     };
 
     toonProgrammaBudgetten = function (programmaBudgettenData, mijlpalenData) {
-        var budgetPerProgrammacodeGrid, ophalenCallback, metaArr;
+        var budgetPerProgrammacodeGrid, metaArr;
 
         $('#budget_per_programmacode_div').empty();
 
@@ -192,10 +183,6 @@ define([
         });
 
 
-        ophalenCallback = function () {
-            ophalen(_paramFM.$jaar.ov_value());
-        };
-
         budgetPerProgrammacodeGrid = new GridComp({
             el: "#budget_per_programmacode_div",
             meta: new Meta(metaArr),
@@ -207,11 +194,11 @@ define([
             deleteBtn: window._G_.isAdminArt46,
             onNewClicked: function (item, data) {
                 budgetPerProgrammaDetailDialog.open({
-                    jaar: _paramFM.$jaar.ov_value(),
+                    jaar: $('#paramForm').find("[name=jaar]").val(),
                     programma_code: null,
                     budget: null,
                     status_crud: "C"
-                }, data, ophalenCallback);
+                }, data, ophalen);
             },
             onEditClicked: function (item, data) {
                 if (window._G_.isAdminArt46) {
@@ -220,20 +207,21 @@ define([
                     } else {
                         item.status_crud = "C";
                     }
-                    budgetPerProgrammaDetailDialog.open(item, data, ophalenCallback);
+                    budgetPerProgrammaDetailDialog.open(item, data, ophalen);
                 }
             },
             onDeleteClicked: function (item) {
-                budgetPerProgrammaDetailDialog.verwijder(item, ophalenCallback);
+                budgetPerProgrammaDetailDialog.verwijder(item, ophalen);
             }
         });
         budgetPerProgrammacodeGrid.setData(programmaBudgettenData);
     };
 
 
-    ophalen = function (jaar) {
-        var budgettenPromise, programmaBudgettenPromise, mijlpalenPromise, mijlpalenProgrammaPromise, getJSON;
+    ophalen = function () {
+        var jaar, budgettenPromise, programmaBudgettenPromise, mijlpalenPromise, mijlpalenProgrammaPromise, getJSON;
 
+        jaar = $('#paramForm').find("[name=jaar]").val();
         $('#jb_content_div').addClass('invisible');
         $('#canvas_div').addClass("invisible");
 
@@ -280,14 +268,11 @@ define([
     };
 
     onReady = function () {
-        _paramFM = $('#paramForm').ov_formManager({
-            meta: _paramMeta
-        });
-        _paramFM.$jaar.val(new Date().getFullYear());
+        $('#paramForm').find("[name=jaar]").val(new Date().getFullYear());
 
 
         $("#ophalenBtn").click(function () {
-            ophalen(_paramFM.$jaar.ov_value());
+            ophalen();
         }).removeClass("invisible");
 
         $('#markeerBtn').click(function () {

@@ -53,8 +53,7 @@
                 dos.beleidsmatig_risico_id,
                 dos.integratie_risico_id,
                 dos.potentieel_risico_id,
-                dos.prioriteits_index,
-                doso.overdracht_id
+                dos.prioriteits_index
         from art46.v_dossier dos
                     inner join art46.dossier ados
                     on dos.id = ados.id
