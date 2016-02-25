@@ -229,30 +229,31 @@ define([
                                 m(".col-md-3", ctrl.dossier.get("prioriteits_formule"))
                             ])
                         ]),
-                        m("fieldset", [
-                            m("legend", m.trust("&nbsp;")),
-                            m(".row.form-group", [
-                                m(".col-md-2", m("label","Raming BBO: prijs")),
-                                m(".col-md-1", ff.input("bbo_prijs")),
-                                m(".col-md-2", m("label", "Looptijd (maanden)")),
-                                m(".col-md-1", ff.input("bbo_looptijd"))
-                            ]),
-                            m(".row.form-group", [
-                                m(".col-md-2", m("label","met BSP?")),
-                                m(".col-md-1",ff.select("bsp_jn", ja_nee_dd))
-                            ]),
-                            (ctrl.dossier.get("bsp_jn") === 'J') ?
+                        (dossier_type === 'B') ?
+                            m("fieldset", [
+                                m("legend", m.trust("&nbsp;")),
                                 m(".row.form-group", [
-                                    m(".col-md-2", m("label","Raming BSP: prijs")),
-                                    m(".col-md-1", ff.input("bsp_prijs")),
+                                    m(".col-md-2", m("label","Raming BBO: prijs")),
+                                    m(".col-md-1", ff.input("bbo_prijs")),
                                     m(".col-md-2", m("label", "Looptijd (maanden)")),
-                                    m(".col-md-1", ff.input("bsp_looptijd")),
-                                    m(".col-md-2", m("label","Raming BSW: prijs")),
-                                    m(".col-md-1", ff.input("bsw_prijs")),
-                                    m(".col-md-2", m("label", "Looptijd (maanden)")),
-                                    m(".col-md-1", ff.input("bsw_looptijd"))
-                                ]) : null
-                        ])
+                                    m(".col-md-1", ff.input("bbo_looptijd"))
+                                ]),
+                                m(".row.form-group", [
+                                    m(".col-md-2", m("label","met BSP?")),
+                                    m(".col-md-1",ff.select("bsp_jn", ja_nee_dd))
+                                ]),
+                                (ctrl.dossier.get("bsp_jn") === 'J') ?
+                                    m(".row.form-group", [
+                                        m(".col-md-2", m("label","Raming BSP: prijs")),
+                                        m(".col-md-1", ff.input("bsp_prijs")),
+                                        m(".col-md-2", m("label", "Looptijd (maanden)")),
+                                        m(".col-md-1", ff.input("bsp_looptijd")),
+                                        m(".col-md-2", m("label","Raming BSW: prijs")),
+                                        m(".col-md-1", ff.input("bsw_prijs")),
+                                        m(".col-md-2", m("label", "Looptijd (maanden)")),
+                                        m(".col-md-1", ff.input("bsw_looptijd"))
+                                    ]) : null
+                            ]) : null
                     ]: null,
                 ((_G_.model.isAdminIVS || _G_.model.isAdminArt46) ) ?
                     m(".row.col-md-12.floatRightContainer",[

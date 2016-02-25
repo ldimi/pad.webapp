@@ -74,7 +74,7 @@ define([
             }
         },
         _save: function (item) {
-            var action, status_crud;
+            var status_crud;
             status_crud = item.get("status_crud");
             if (status_crud === 'R') {
                 item.set("status_crud", 'U');
@@ -103,11 +103,13 @@ define([
     });
 
     _comp.view = function (ctrl) {
-        var vdom, ff;
+        var vdom, ff, dossier_type;
 
         if (!ctrl.item) {
             return null;
         }
+
+        dossier_type = ctrl.item.get("dossier_type");
 
         ff = fhf.get().setModel(ctrl.item).setShowErrors(ctrl.showErrors())
             .setDefaultAttrs({
@@ -136,7 +138,7 @@ define([
                         m(".col-xs-9", ff.select("dossier_type", ctrl.dossier_types))
                     ])
                 ]),
-                (ctrl.item.get("dossier_type") === 'B')
+                (dossier_type === 'B')
                     ? [
                         m(".row.form-group", [
                             m(".col-xs-6", [
@@ -185,11 +187,11 @@ define([
                                 m(".row.form-group", [
                                     m(".col-xs-6", [
                                         m(".col-xs-3", "Rechtsgrond:"),
-                                        m(".col-xs-9", ff.select("rechtsgrond_code", rechtsgronden[ctrl.item.get("dossier_type")] ))
+                                        m(".col-xs-9", ff.select("rechtsgrond_code", rechtsgronden[dossier_type] ))
                                     ]),
                                     m(".col-xs-6", [
                                         m(".col-xs-3", "Fase:"),
-                                        m(".col-xs-9", ff.select("dossier_fase_id", fasen[ctrl.item.get("dossier_type")] ))
+                                        m(".col-xs-9", ff.select("dossier_fase_id", fasen[dossier_type] ))
                                     ])
                                 ]),
                                 m(".row.form-group", [
@@ -215,11 +217,11 @@ define([
                         m(".row.form-group", [
                             m(".col-xs-6", [
                                 m(".col-xs-3", "Rechtsgrond:"),
-                                m(".col-xs-9", ff.select("rechtsgrond_code", rechtsgronden[ctrl.item.get("dossier_type")] ))
+                                m(".col-xs-9", ff.select("rechtsgrond_code", rechtsgronden[dossier_type] ))
                             ]),
                             m(".col-xs-6", [
                                 m(".col-xs-3", "Fase:"),
-                                m(".col-xs-9",  ff.select("dossier_fase_id", fasen[ctrl.item.get("dossier_type")] ))
+                                m(".col-xs-9",  ff.select("dossier_fase_id", fasen[dossier_type] ))
                             ])
                         ])
                     ],
@@ -270,38 +272,40 @@ define([
                         ])
                     ]) : null,
 
-
-                m(".row",  { style: {borderTop: "1px solid lightgray", paddingTop: "10px"}}),
-                m(".row.form-group", [
-                    m(".col-xs-6", [
-                        m(".col-xs-3", "Raming BBO: prijs"),
-                        m(".col-xs-3", ff.input("bbo_prijs")),
-                        m(".col-xs-3", "Looptijd (maanden)"),
-                        m(".col-xs-3", ff.input("bbo_looptijd"))
-                    ])
-                ]),
-                m(".row.form-group", [
-                    m(".col-xs-6", [
-                        m(".col-xs-3", "met BSP?"),
-                        m(".col-xs-3", ff.select("bsp_jn", ja_nee_dd))
-                    ])
-                ]),
-                (ctrl.item.get("bsp_jn") === 'J')
-                    ? m(".row.form-group", [
-                        m(".col-xs-6", [
-                            m(".col-xs-3", "Raming BSP: prijs"),
-                            m(".col-xs-3", ff.input("bsp_prijs")),
-                            m(".col-xs-3", "Looptijd (maanden)"),
-                            m(".col-xs-3", ff.input("bsp_looptijd"))
+                (dossier_type === 'B')
+                    ? [
+                        m(".row",  { style: {borderTop: "1px solid lightgray", paddingTop: "10px"}}),
+                        m(".row.form-group", [
+                            m(".col-xs-6", [
+                                m(".col-xs-3", "Raming BBO: prijs"),
+                                m(".col-xs-3", ff.input("bbo_prijs")),
+                                m(".col-xs-3", "Looptijd (maanden)"),
+                                m(".col-xs-3", ff.input("bbo_looptijd"))
+                            ])
                         ]),
-                        m(".col-xs-6", [
-                            m(".col-xs-3", "Raming BSW: prijs"),
-                            m(".col-xs-3", ff.input("bsw_prijs")),
-                            m(".col-xs-3", "Looptijd (maanden)"),
-                            m(".col-xs-3", ff.input("bsw_looptijd"))
-                        ])
-                    ])
-                    : null,
+                        m(".row.form-group", [
+                            m(".col-xs-6", [
+                                m(".col-xs-3", "met BSP?"),
+                                m(".col-xs-3", ff.select("bsp_jn", ja_nee_dd))
+                            ])
+                        ]),
+                        (ctrl.item.get("bsp_jn") === 'J')
+                            ? m(".row.form-group", [
+                                m(".col-xs-6", [
+                                    m(".col-xs-3", "Raming BSP: prijs"),
+                                    m(".col-xs-3", ff.input("bsp_prijs")),
+                                    m(".col-xs-3", "Looptijd (maanden)"),
+                                    m(".col-xs-3", ff.input("bsp_looptijd"))
+                                ]),
+                                m(".col-xs-6", [
+                                    m(".col-xs-3", "Raming BSW: prijs"),
+                                    m(".col-xs-3", ff.input("bsw_prijs")),
+                                    m(".col-xs-3", "Looptijd (maanden)"),
+                                    m(".col-xs-3", ff.input("bsw_looptijd"))
+                                ])
+                            ]) : null
+                    ] : null,
+
 
 
                 m(".row.form-group", {style: {borderTop: "1px solid lightgray", paddingTop: "10px"}}),

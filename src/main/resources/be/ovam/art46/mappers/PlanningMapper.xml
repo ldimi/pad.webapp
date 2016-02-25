@@ -255,6 +255,7 @@
                 'C' as status_crud
             from art46.v_dossier dos2
             where 1 = 1
+                and dos2.dossier_nr not like '\_%' escape '\'
                 and dos2.DOSS_HDR_ID = #{doss_hdr_id}
                 and dos2.AFSLUIT_D is null
                 <if test='dossier_type == "NIET_X"'>
