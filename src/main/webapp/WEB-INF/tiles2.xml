@@ -106,6 +106,11 @@
         <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/bodemEnAfval.jsp"/>
     </definition>
 
+    <definition name="planning.individueel.bodemEnAfval.jsView" extends="planning.individueel.baseDef">
+        <put-attribute name="tab_selected" value="Planning dossiers"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+
     <definition name="planning.individueel.raamcontracten" extends="planning.individueel.baseDef">
         <put-attribute name="tab_selected" value="Planning raamcontracten"/>
         <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/raamcontracten.jsp"/>

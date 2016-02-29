@@ -60,6 +60,10 @@ define([
                 required: true,
                 width: 50
             }, {
+                name: "fase_looptijd",
+                type: "int",
+                hidden: true
+            }, {
                 name: "fase_code_heeft_details_jn",
                 exportCsv: false,
                 hidden: true
