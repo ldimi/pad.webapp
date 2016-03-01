@@ -47,7 +47,7 @@ define([
             this.showErrors(false);
             m.redraw();
         },
-        _onClose: function () {
+        preClose: function () {
             this._lijn = null;
             m.redraw();
         },
@@ -81,7 +81,7 @@ define([
                     ]),
                     m("tr", [
                         m("td", "Fase detail:"),
-                        m("td", {colspan: "3" }, ff.select("fase_code_detail", detailFasen.dd(ctrl._lijn.get("fase_code"))))
+                        m("td", {colspan: "3" }, ff.select("fase_detail_code", detailFasen.dd(ctrl._lijn.get("fase_code"))))
                     ]),
                     m("tr", [
                         m("td", { width: "80px" }, "Gepland Datum:"),
