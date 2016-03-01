@@ -39,10 +39,12 @@ public class PlanningServiceImpl implements PlanningService {
 		} else {
 			planning.setDossierDD(sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", planningParams.getDoss_hdr_id()));
 		}
+        
+        // TODO : beter eenmalig als model attribuut doorgeven.
 		planning.setFaseDD(sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD", null));
-		planning.setFaseDetailDD(sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDetailDD", null));			
-		planning.setContractenDD(sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD",
-				planningParams.getDoss_hdr_id()));
+		planning.setFaseDetailDD(sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDetailDD", null));
+        
+		planning.setContractenDD(sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD", planningParams.getDoss_hdr_id()));
 
 		return planning;
 	}

@@ -47,6 +47,13 @@ public class PlanningController {
         
 		model.addAttribute("dossiersDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", doss_hdr_id));
         model.addAttribute("jaren", DropDownHelper.INSTANCE.getJaren());
+        
+		model.addAttribute("faseDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD"));
+		model.addAttribute("faseDetailDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDetailDD"));
+        
+		model.addAttribute("contractenDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD", doss_hdr_id));
+       
+        
 		addDossierhouder(model,doss_hdr_id);
         return jsview("planning.individueel.bodemEnAfval", "planning/individueel/bodemEnAfval2", model);
 		//return "planning.individueel.bodemEnAfval";

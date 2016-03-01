@@ -167,7 +167,7 @@ define([
                 ]),
                 m("div", [
                     m("button", {onclick: _.bind(ctrl.bewaar, ctrl)}, "Bewaar"),
-                    m("button", {onclick: _.bind(ctrl.close, ctrl)}, "annuleer")
+                    m("button", {onclick: _.bind(ctrl.close, ctrl)}, "Annuleer")
                 ])
             ];
         }
