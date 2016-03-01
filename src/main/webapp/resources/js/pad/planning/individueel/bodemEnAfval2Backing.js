@@ -1,5 +1,5 @@
 /*jslint nomen: true, debug: true, browser: true */
-/*global define: false, $: false, alert: false, _:false, _G_ */
+/*global define: false, $: false, alert: false, _:false, console, _G_ */
 
 define([
     "planning/individueel/PlanningLijnDialog2",
@@ -16,7 +16,7 @@ define([
 ], function (PlanningLijnDialog, PlanningLijnModel, dossierhouders_dd, jaren_dd, Model, GridComp, events, ajax, fhf, m, _) {
     'use strict';
 
-    var comp, paramComp, ParamModel, _grid, _initGrid, _getPlanning, _renderPlanningGegevens = null,
+    var comp, paramComp, ParamModel, _getPlanning, _renderPlanningGegevens = null,
         _planning, _planningLijnDialog;
 
 
@@ -24,6 +24,7 @@ define([
         meta: Model.buildMeta([
             { name: "jaar", type: "int" },
             { name: "dossier_id", type: "int" },
+            { name: "dossier_type" },
             { name: "doss_hdr_id" },
             { name: "benut_jn" }
         ]),
@@ -39,7 +40,8 @@ define([
     paramComp = {
         controller: function () {
             this.params = new ParamModel({
-                doss_hdr_id: _G_.model.doss_hdr_id
+                doss_hdr_id: _G_.model.doss_hdr_id,
+                dossier_type: "NIET_X"
             });
 
             // customisatie van dropdown lijsten voor params
@@ -48,13 +50,39 @@ define([
 
             this.benut_jn_dd = [
                 {value: "", label: "incl. gerealiseerd"},
-                {value: "J", label: "excl. gerealiseerd"}
+                {value: "N", label: "excl. gerealiseerd"}
             ];
 
             this.showErrors = m.prop(false);
 
+            // methods
+            ///////////////////////////////////////////////////////////////
+
             this.ophalen = function () {
-                alert("Todo");
+                $('#planningGrid').addClass('invisible');
+                ajax.postJSON({
+                    url: "/pad/s/planning/getPlanning",
+                    content: this.params
+                }).then(function (response) {
+                    if (response) {
+                        _planning = response;
+                        _planning.faseDD.unshift({
+                            value: "",
+                            label: ""
+                        });
+                        _planning.faseDetailDD.unshift({
+                            value: "",
+                            label: ""
+                        });
+                        _planning.contractenDD.unshift({
+                            value: "",
+                            label: ""
+                        });
+
+                        events.trigger("planning.lijnen:refresh", _planning.lijnen);
+                        $('#planningGrid').removeClass('invisible');
+                    }
+                });
             };
         },
         view: function (ctrl) {
@@ -84,8 +112,84 @@ define([
         },
         view: function (ctrl) {
             return m("div", [
-                paramComp.view(ctrl.paramCtrl)
+                paramComp.view(ctrl.paramCtrl),
+                m("#planningGrid", {
+                    config: comp.configGrid,
+                    class: "invisible",
+                    style: {
+                        position: "absolute",
+                        top: "35px",
+                        left: "5px",
+                        right: "5px",
+                        bottom: "5px"
+                    }
+                })
             ]);
+        },
+        configGrid: function (el, isInitialized) {
+            var grid;
+            if (!isInitialized) {
+                grid = new GridComp({
+                    el: el,
+                    model: PlanningLijnModel,
+                    editBtn: true,
+                    newBtn: true,
+                    deleteBtn: true,
+                    onEditClicked: function (item) {
+                        // _planningLijnDialog.show(item, _planning);
+                    },
+                    onNewClicked: function (item) {
+                        // var newItem;
+                        // if (item) {
+                        //     newItem = item.createNewLine();
+                        //     _planning.selectedLijnIndex = _planning.lijnen.indexOf(item);
+                        //     _planningLijnDialog.show(newItem, _planning);
+                        // } else {
+                        //     alert("er is geen rij geselecteerd.");
+                        // }
+                    },
+                    onDeleteClicked: function (item) {
+                        // if (item.get('status_crud') === 'C') {
+                        //     $.notifyError("Ongeplande lijnen worden niet verwijderd.");
+                        //     return;
+                        // }
+                        // if (item.get("c_isReedsGekoppeld")) {
+                        //     $.notifyError("Deze planningslijn kan niet verwijderd worden. (reeds gekoppeld/benut)");
+                        //     return;
+                        // }
+                        // item.set({
+                        //     deleted_jn: "J",
+                        //     status_crud: "U"
+                        // });
+                        // ajax.postJSON({
+                        //     url: "/pad/s/planning/bewaar",
+                        //     content: {
+                        //         lijnen: [item.clone()]
+                        //     }
+                        // }).success(function () {
+                        //     $.notify({
+                        //         text: "De lijn is verwijderd."
+                        //     });
+                        // });
+                        //
+                        // // lokale versie wordt al aangepast (we gaan ervan uit dat bewaren toch lukt.)
+                        // _planning.lijnen = _.reject(_planning.lijnen, function (lijn) {
+                        //     return (lijn.cid === item.cid);
+                        // });
+                        //
+                        // events.trigger("planning.lijnen:refresh", _planning.lijnen);
+                    },
+                    exportCsv: true,
+                    exportCsvFileName: "planning.csv"
+                });
+                events.on("planning.lijnen:refresh", function(planningLijnen) {
+                    grid.setData(planningLijnen);
+                });
+            }
+
+
+
+
         }
     };
 
