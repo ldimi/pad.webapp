@@ -16,8 +16,7 @@ define([
 ], function (PlanningLijnDialog, PlanningLijnModel, dossierhouders_dd, jaren_dd, Model, GridComp, events, ajax, fhf, m, _) {
     'use strict';
 
-    var comp, paramComp, ParamModel, _getPlanning, _renderPlanningGegevens = null,
-        _planning, _planningLijnDialog;
+    var comp, paramComp, ParamModel, _planning;
 
 
     ParamModel =  Model.extend({
@@ -109,6 +108,7 @@ define([
     comp = {
         controller: function () {
             this.paramCtrl = new paramComp.controller();
+            this.dialogCtrl = new PlanningLijnDialog.controller();
         },
         view: function (ctrl) {
             return m("div", [
@@ -123,7 +123,8 @@ define([
                         right: "5px",
                         bottom: "5px"
                     }
-                })
+                }),
+                PlanningLijnDialog.view(ctrl.dialogCtrl)
             ]);
         },
         configGrid: function (el, isInitialized) {
@@ -137,6 +138,9 @@ define([
                     deleteBtn: true,
                     onEditClicked: function (item) {
                         // _planningLijnDialog.show(item, _planning);
+                        var cloned = item.clone();
+                        cloned.set("status_crud", "U");
+                        events.trigger("planningLijnDialog:open", cloned, _planning);
                     },
                     onNewClicked: function (item) {
                         // var newItem;
@@ -186,9 +190,6 @@ define([
                     grid.setData(planningLijnen);
                 });
             }
-
-
-
 
         }
     };
