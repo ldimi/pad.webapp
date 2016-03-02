@@ -26,7 +26,8 @@ define(["common/dropdown/dropdownBuilder"], function (dropdownBuilder) {
     };
     
     fasen.heeft_details_jn = function (fase_code, dossier_type) {
-        return fasen.find(fase_code, dossier_type).heeft_details_jn;
+        var fase = fasen.find(fase_code, dossier_type);
+        return (fase ? fase.heeft_details_jn : null);
     };
     fasen.find = function (fase_code, dossier_type) {
         return _.find(_G_.model.faseDD , function (fase) {
