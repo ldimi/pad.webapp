@@ -2,10 +2,7 @@ package be.ovam.art46.service.schuldvordering;
 
 import be.ovam.art46.dao.AanvraagSchuldvorderingDAO;
 import be.ovam.art46.service.BriefService;
-import be.ovam.art46.util.Application;
 import be.ovam.pad.model.AanvraagSchuldvordering;
-import be.ovam.pad.model.Brief;
-import be.ovam.pad.model.Schuldvordering;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
