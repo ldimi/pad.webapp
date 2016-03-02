@@ -37,8 +37,6 @@ define([
         //this.width = 750;
         //this.height = 500;
         
-        this.cnt = m.prop(1);
-
         this.showErrors = m.prop(false);
 
     };
@@ -47,8 +45,6 @@ define([
             this._lijn = lijn;
             this._planningData = planningData;
             this.showErrors(false);
-            
-            this.cnt(this.cnt() + 1);
         },
         bewaar: _.noop,
         voegDeelopdrToe: _.noop
@@ -62,8 +58,6 @@ define([
 
             dossier_type = ctrl._lijn.get("dossier_type");
             
-            window._sel = ff.select("fase_code", fasen[dossier_type]);
-
             return m("div", [
                 m("table.formlayout", [
                     m("tr", [
@@ -75,10 +69,6 @@ define([
                                  ff.input("dossier_b", {readOnly:  true, style: {border: "none", width: "100%"}})
                             ])
                         )
-                    ]),
-                    m("tr", [
-                        m("td", "Cnt:"),
-                        m("td", ctrl.cnt())
                     ]),
                     m("tr", [
                         m("td", "Fase:"),
