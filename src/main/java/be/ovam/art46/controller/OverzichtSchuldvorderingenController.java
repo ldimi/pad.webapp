@@ -2,10 +2,10 @@ package be.ovam.art46.controller;
 
 import be.ovam.art46.controller.form.OverzichtSchuldvorderingenForm;
 import be.ovam.art46.dao.OfferteDao;
-import be.ovam.art46.dto.ReportViewRegelDto;
 import be.ovam.art46.dto.SelectOptionIntegerDto;
 import be.ovam.art46.service.DeelOpdrachtService;
 import be.ovam.art46.service.schuldvordering.OverzichtSchuldvorderingenService;
+import be.ovam.pad.dto.ReportViewRegelDto;
 import be.ovam.pad.model.DeelOpdracht;
 import be.ovam.pad.model.Offerte;
 import org.apache.commons.collections.CollectionUtils;
@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by Koen on 12/01/2015.
@@ -42,7 +44,7 @@ public class OverzichtSchuldvorderingenController extends BasicMeetstaatControll
             response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
             response.setHeader("Pragma", "public");
             response.setHeader("Content-disposition", "exportoverzichtschuldvorderingen"+offerteId+".xls");
-            overzichtSchuldvorderingenService.createExportOFferte(op, offerteId, 0);
+            overzichtSchuldvorderingenService.createExportOfferte(op, offerteId, 0);
         } catch (Exception e) {
             log.error(e, e);
         } finally {

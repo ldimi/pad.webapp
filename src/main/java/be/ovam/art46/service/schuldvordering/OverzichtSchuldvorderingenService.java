@@ -1,6 +1,8 @@
 package be.ovam.art46.service.schuldvordering;
 
-import be.ovam.art46.dto.ReportViewRegelDto;
+
+
+import be.ovam.pad.dto.ReportViewRegelDto;
 
 import javax.servlet.ServletOutputStream;
 import java.io.OutputStream;
@@ -15,7 +17,7 @@ public interface OverzichtSchuldvorderingenService {
 
     LinkedHashMap<String, ReportViewRegelDto> getReportViewDtoForDeelopdracht(Integer deelOpdrachtId) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
-    void createExportOFferte(OutputStream outputStream, Long offerteId, Integer deelOpdrachtId) throws Exception;
+    void createExportOfferte(OutputStream outputStream, Long offerteId, Integer deelOpdrachtId) throws Exception;
 
     void createExportDeelOpdracht(ServletOutputStream op, String title, Integer deelopdrachtId) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 }

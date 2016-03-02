@@ -10,6 +10,7 @@ import be.ovam.art46.util.Application;
 import be.ovam.pad.model.Bestek;
 import be.ovam.pad.model.Brief;
 import be.ovam.pad.model.MeetstaatRegel;
+import be.ovam.pad.service.MeetstaatBasicService;
 import be.ovam.pad.util.MeetstaatUtil;
 import com.google.common.io.Files;
 import org.apache.commons.collections.CollectionUtils;

@@ -12,6 +12,7 @@ import be.ovam.pad.model.Brief;
 import be.ovam.pad.model.MeetstaatRegel;
 import be.ovam.pad.model.Offerte;
 import be.ovam.pad.model.OfferteRegel;
+import be.ovam.pad.service.MeetstaatBasicService;
 import be.ovam.pad.util.MeetstaatUtil;
 import be.ovam.util.mybatis.SqlSession;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.io.CsvListReader;
@@ -29,10 +31,8 @@ import org.supercsv.prefs.CsvPreference;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.*;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Created by Koen Corstjens on 29-8-13.
