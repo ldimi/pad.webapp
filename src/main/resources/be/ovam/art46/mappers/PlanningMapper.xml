@@ -190,7 +190,7 @@
         resultType="be.ovam.art46.model.planning.PlanningLijnDO"
         parameterType="be.ovam.art46.model.planning.ParamsDO"  >
         with
-        alle_lijnen as (
+        geplande_lijnen as (
             select *
             from art46.v_planning_lijn_details planl
             where 1 = 1
@@ -212,35 +212,97 @@
                 <if test='benut_jn == "N"' >
                     and planl.ibb_d is null
                 </if>
+        ),
+        ongeplande_dossier_lijnen as (
+            select id, dossier_nr, dossier_type, fase_code, fase_looptijd
+            from
+                  (   select id, dossier_nr, dossier_type, null as fase_code, null as fase_looptijd
+                      from art46.dossier
+                      where (BBO_PRIJS is  null and BSW_prijs is null and BSP_prijs is null)
+                          and DOSS_HDR_ID = #{doss_hdr_id}
+                   UNION
+                      select id, dossier_nr, dossier_type, 'BBO' as fase_code, bbo_looptijd as fase_looptijd
+                      from art46.dossier
+                      where BBO_PRIJS is not null
+                          and DOSS_HDR_ID = #{doss_hdr_id}
+                   UNION
+                      select id, dossier_nr, dossier_type, 'BSP' as fase_code, bsp_looptijd as fase_looptijd
+                      from art46.dossier
+                      where BSP_PRIJS is not null
+                          and DOSS_HDR_ID = #{doss_hdr_id}
+                   UNION
+                      select id, dossier_nr, dossier_type, 'BSW' as fase_code, bsw_looptijd as bsw_looptijd
+                      from art46.dossier
+                      where BSW_PRIJS is not null
+                          and DOSS_HDR_ID = #{doss_hdr_id}
+                  ) as t
+            where 1 = 1
+                and (t.id, t.fase_code) not in (select dossier_id, fase_code from geplande_lijnen)
         )
-        select *
-        from alle_lijnen
+        select
+             doss_hdr_id,
+             lijn_id,
+             planning_dossier_versie,
+             dossier_id,
+             dossier_nr,
+             dossier_gemeente_b,
+             dossier_b,
+             dossier_type,
+             dossier_is_raamcontract_jn,
+             fase_code,
+             cast(null as int) as fase_looptijd,
+             fase_code_heeft_details_jn,
+             fase_detail_code,
+             actie_code,
+             contract_id,
+             contract_type,
+             contract_b,
+             contract_nr,
+             contract_is_raamcontract_jn,
+             bestek_id,
+             bestek_nr,
+             bestek_omschrijving,
+             igb_d,
+             ig_bedrag,
+             deelopdracht_id,
+             aanvraagvastlegging_id,
+             ib_bedrag,
+             ibb_d,
+             sap_project_id,
+             benut_bestek_id,
+             benut_bestek_nr,
+             benut_bestek_omschrijving,
+             commentaar,
+             deleted_jn,
+             status_crud
+        from geplande_lijnen
         <if test="jaar == null">
             <!-- nieuwe lijnen voor ongeplande dossiers -->
         union
             select
-                dos2.doss_hdr_id,
+                dos.doss_hdr_id,
                 null as lijn_id,
                 0 as planning_dossier_versie,
-                dos2.id as dossier_id,
-                dos2.dossier_nr,
-                dos2.gemeente_b as dossier_gemeente_b,
-                dos2.DOSSIER_B,
-                dos2.DOSSIER_TYPE,
-                dos2.raamcontract_jn as dossier_is_raamcontract_jn,
-                null as FASE_CODE,
+                dos.id as dossier_id,
+                dos.dossier_nr,
+                dos.gemeente_b as dossier_gemeente_b,
+                dos.dossier_b,
+                dos.dossier_type,
+                dos.raamcontract_jn as dossier_is_raamcontract_jn,
+                dos1.fase_code,
+                dos1.fase_looptijd,
                 null as fase_code_heeft_details_jn,
-                null as FASE_DETAIL_CODE,
+                null as fase_detail_code,
                 null as actie_code,
-                null as CONTRACT_ID,
-                null as CONTRACT_TYPE,
+                null as contract_id,
+                null as contract_type,
                 null as contract_b,
                 null as contract_nr,
                 null as contract_is_raamcontract_jn,
                 null as bestek_id,
                 null as bestek_nr,
                 null as bestek_omschrijving,
-                null as IGB_D,
+                null as igb_d,
                 null as ig_bedrag,
                 null as deelopdracht_id,
                 null as aanvraagvastlegging_id,
@@ -253,22 +315,23 @@
                 null as commentaar,
                 'N' as deleted_jn,
                 'C' as status_crud
-            from art46.v_dossier dos2
+            from
+                  ongeplande_dossier_lijnen as dos1
+                      inner join art46.v_dossier dos
+                      on dos1.id = dos.id
             where 1 = 1
-                and dos2.dossier_nr not like '\_%' escape '\'
-                and dos2.DOSS_HDR_ID = #{doss_hdr_id}
-                and dos2.AFSLUIT_D is null
+                and dos.dossier_nr not like '\_%' escape '\'
+                and dos.AFSLUIT_D is null
                 <if test='dossier_type == "NIET_X"'>
                     <![CDATA[
-                    and dos2.DOSSIER_TYPE <> 'X'
+                    and dos.DOSSIER_TYPE <> 'X'
                     ]]>
                 </if>
                 <if test='dossier_type == "X" or dossier_type == "A" or dossier_type == "B"'>
-                    and dos2.DOSSIER_TYPE = #{dossier_type}
+                    and dos.DOSSIER_TYPE = #{dossier_type}
                 </if>
-                and dos2.id not in (select dossier_id from alle_lijnen)
                 <if test="dossier_id != null">
-                    and dos2.id = #{dossier_id}
+                    and dos.id = #{dossier_id}
                 </if>
         </if>
         order by dossier_gemeente_b, dossier_b, fase_code
