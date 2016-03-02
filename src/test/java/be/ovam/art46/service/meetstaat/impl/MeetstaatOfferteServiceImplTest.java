@@ -3,7 +3,6 @@ package be.ovam.art46.service.meetstaat.impl;
 import be.ovam.pad.model.MeetstaatRegel;
 import be.ovam.pad.model.Offerte;
 import be.ovam.pad.model.OfferteRegel;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +28,7 @@ public class MeetstaatOfferteServiceImplTest {
     public void bereken(){
 
         List<OfferteRegel> offerteRegelList = new ArrayList<OfferteRegel>();
+
         addToList(offerteRegelList, "10.1", null);
         addToList(offerteRegelList, "4", null);
         addToList(offerteRegelList, "4.1", null);
