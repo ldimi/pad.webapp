@@ -21,12 +21,17 @@ define(["common/dropdown/dropdownBuilder"], function (dropdownBuilder) {
     fasen.A = filterFasenFn('A');
     fasen.X = filterFasenFn('X');
 
-    fasen.isValid = function (fase_id, dossier_type) {
-        var gevonden;
-        gevonden = _.find(fasen[dossier_type] , function (fase) {
-                       return (fase.value === fase_id);
-                   });
-        return !!gevonden;
+    fasen.isValid = function (fase_code, dossier_type) {
+        return !!fasen.find(fase_code, dossier_type);
+    };
+    
+    fasen.heeft_details_jn = function (fase_code, dossier_type) {
+        return fasen.find(fase_code, dossier_type).heeft_details_jn;
+    };
+    fasen.find = function (fase_code, dossier_type) {
+        return _.find(_G_.model.faseDD , function (fase) {
+                   return (fase.value === fase_code && fase.dossier_type === dossier_type);
+               });
     };
 
     return fasen;

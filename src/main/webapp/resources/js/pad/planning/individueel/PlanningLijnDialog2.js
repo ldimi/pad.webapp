@@ -13,7 +13,15 @@ define([
 ], function (fasen, detailFasen, events ,ajax, fhf, dialogBuilder, m, _) {
     'use strict';
 
-    var PlanningLijnDialog, dateConfig;
+    var PlanningLijnDialog, dateConfig, actie_dd;
+    
+    actie_dd = [
+        { value: "", label: "" },
+        { value: "N_B", label: "Nieuw enkelvoudig bestek" },
+        { value: "H_B", label: "Bestaand enkelvoudig bestek" },
+        { value: "GGO", label: "Gegroepeerde opdracht" },
+        { value: "RC", label: "Raamcontract" }
+    ];
 
     dateConfig = function (el, isInitialized) {
         if (!isInitialized) {
@@ -34,17 +42,15 @@ define([
         //events.on("dossierhouders:dataReceived", _.bind(this.close, this));
 
         this.title = "Editeer Planningslijn";
-        //this.width = 750;
-        //this.height = 500;
+        this.width = 550;
         
         this.showErrors = m.prop(false);
-
     };
     _.extend(PlanningLijnDialog.controller.prototype, {
         preOpen: function (lijn, planningData) {
             this._lijn = lijn;
             this._planningData = planningData;
-            this.showErrors(false);
+            this.showErrors(true); // TODO
         },
         bewaar: _.noop,
         voegDeelopdrToe: _.noop
@@ -52,11 +58,14 @@ define([
 
 
     PlanningLijnDialog.view = function (ctrl) {
-            var ff, dossier_type;
-            if (!ctrl._lijn) { return null; }
-            ff = fhf.get().setModel(ctrl._lijn).setShowErrors(ctrl.showErrors());
+            var ff, pl_lijn, dossier_type;
+            
+            pl_lijn = ctrl._lijn;
+            if (!pl_lijn) { return null; }
+            
+            ff = fhf.get().setModel(pl_lijn).setShowErrors(ctrl.showErrors());
 
-            dossier_type = ctrl._lijn.get("dossier_type");
+            dossier_type = pl_lijn.get("dossier_type");
             
             return m("div", [
                 m("table.formlayout", [
@@ -74,10 +83,11 @@ define([
                         m("td", "Fase:"),
                         m("td", {colspan: "3" }, ff.select("fase_code", fasen[dossier_type]))
                     ]),
-                    m("tr", [
-                        m("td", "Fase detail:"),
-                        m("td", {colspan: "3" }, ff.select("fase_detail_code", detailFasen.dd(ctrl._lijn.get("fase_code"))))
-                    ]),
+                    ( fasen.heeft_details_jn(pl_lijn.get("fase_code"), pl_lijn.get("dossier_type")) === 'J' ) ?
+                        m("tr", [
+                            m("td", "Fase detail:"),
+                            m("td", {colspan: "3" }, ff.select("fase_detail_code", detailFasen.dd(pl_lijn.get("fase_code"))))
+                        ]) : null,
                     m("tr", [
                         m("td", { width: "80px" }, "Gepland Datum:"),
                         m("td", { width: "170px" }, ff.dateInput("igb_d", {config: dateConfig})),
@@ -86,7 +96,7 @@ define([
                     ]),
                     m("tr", [
                         m("td", "actie:"),
-                        m("td", {colspan: "3" }, ff.input("actie_code"))
+                        m("td", {colspan: "3" }, ff.select("actie_code", actie_dd))
                     ]),
                     m("tr", [
                         m("td", "Contract:"),

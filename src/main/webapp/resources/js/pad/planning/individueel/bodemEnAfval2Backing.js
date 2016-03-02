@@ -3,7 +3,7 @@
 
 define([
     "planning/individueel/PlanningLijnDialog2",
-    "planning/individueel/PlanningLijnModel",
+    "planning/individueel/PlanningLijnModel2",
     "dropdown/dossierhouders",
     "dropdown/jaren",
     "ov/Model",
