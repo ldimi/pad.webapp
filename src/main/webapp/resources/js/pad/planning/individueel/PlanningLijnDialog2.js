@@ -2,6 +2,7 @@
 /*global define: false, Slick: false, $: false, _: false, alert: false, _G_:true, console */
 
 define([
+    "planning/individueel/PlanningLijnModel2",
     "dropdown/planning/fasen",
     "dropdown/planning/detailFasen",
     "ov/events",
@@ -10,11 +11,11 @@ define([
     "ov/mithril/dialogBuilder",
     "mithril",
     "underscore"
-], function (fasen, detailFasen, events ,ajax, fhf, dialogBuilder, m, _) {
+], function (PlanningLijnModel, fasen, detailFasen, events ,ajax, fhf, dialogBuilder, m, _) {
     'use strict';
 
     var PlanningLijnDialog, dateConfig, actie_dd;
-    
+
     actie_dd = [
         { value: "", label: "" },
         { value: "N_B", label: "Nieuw enkelvoudig bestek" },
@@ -33,37 +34,150 @@ define([
     };
 
 
+
     PlanningLijnDialog = {};
 
     PlanningLijnDialog.controller = function () {
         events.on("planningLijnDialog:open", this.open.bind(this));
+
+        events.on("planningLijnDialog:doFetchBestekkenDD", this.fetchBestekkenDD.bind(this));
 
         // na save wordt er gewacht op data, vooraleer de dialog te sluiten.
         //events.on("dossierhouders:dataReceived", _.bind(this.close, this));
 
         this.title = "Editeer Planningslijn";
         this.width = 550;
-        
+
         this.showErrors = m.prop(false);
     };
     _.extend(PlanningLijnDialog.controller.prototype, {
         preOpen: function (lijn, planningData) {
             this._lijn = lijn;
             this._planningData = planningData;
-            
-            this.showErrors(true); // TODO
+
+            this.fetchBestekkenDD();
+
+            this.showErrors(false); // TODO
         },
-        bewaar: _.noop,
-        voegDeelopdrToe: _.noop
+        bewaar: function() {
+            var status_crud;
+            this.showErrors(true);
+
+            if (!this._lijn.isValid()) {
+                $.notify("Er zijn validatie fouten.");
+                return;
+            }
+            if (!this._lijn.isDirty()) {
+                $.notify("De lijn is niet gewijzigd.");
+                return;
+            }
+            this._bewaar();
+        },
+
+        _bewaar: function () {
+            if (this._lijn.get("status_crud") === 'R') {
+                this._lijn.set("status_crud", 'U');
+            }
+
+            ajax.postJSON({
+                url: "/pad/s/planning/bewaar",
+                content: this._lijn.clone()
+            }).then(function (response) {
+                var lijn;
+                lijn = new PlanningLijnModel(response);
+
+                if (this._lijn.get("status_crud") === 'C') {
+                    this._planningData.lijnen.splice(this._planningData.selectedLijnIndex, 0, lijn);
+                } else {
+                    this._planningData.lijnen.splice(this._planningData.selectedLijnIndex, 1, lijn);
+                }
+                $.notify("De lijn is bewaard.");
+                events.trigger("planning.lijnen:refresh", this._planningData.lijnen);
+                this.close();
+            }.bind(this));
+
+        },
+
+        voegDeelopdrToe: _.noop,
+
+        fetchBestekkenDD: function () {
+            var actie_code, contract_id;
+            actie_code = this._lijn.get("actie_code");
+            contract_id = this._lijn.get("contract_id");
+
+            if (actie_code === "N_B") {
+                this.bestekken_dd = [];
+            } else if (actie_code === "H_B") {
+                this.fetchBestekkenDDByDossierId(this._lijn.get("dossier_id"));
+            } else if (contract_id === "") {
+                this.bestekken_dd = [];
+            } else {
+                this.fetchBestekkenDDByDossierId(contract_id);
+            }
+        },
+
+        fetchBestekkenDDByDossierId: function (dossier_id) {
+            var self = this;
+            if (dossier_id !== null) {
+                ajax.postJSON({
+                    url: "/pad/s/planning/getBestekkenByDossier",
+                    content: dossier_id
+                }).then(function (bestekken_dd) {
+                    var actie_code;
+                    actie_code = self._lijn.get("actie_code");
+                    if (actie_code === "GGO") {
+                        bestekken_dd.unshift({
+                            value: "",
+                            label: "via nieuw gegroepeerd bestek"
+                        });
+                    } else if (actie_code === "RC") {
+                        bestekken_dd.unshift({
+                            value: "",
+                            label: "via nieuw raamcontract bestek"
+                        });
+                    } else {
+                        bestekken_dd.unshift({
+                            value: "",
+                            label: ""
+                        });
+                    }
+                    self.bestekken_dd = bestekken_dd;
+                });
+            }
+            this.bestekken_dd = [];
+        }
+
+        //  TODO ???
+        //
+        // _filterContractDD: function () {
+        //     var actie_code = this.fm.$actie_code.val(),
+        //         raamcontracten_jn;
+        //     if (actie_code === "N_B" || actie_code === "H_B") {
+        //         raamcontracten_jn = "GEEN";
+        //     } else if (actie_code === "RC") {
+        //         raamcontracten_jn = "J";
+        //     } else {
+        //         raamcontracten_jn = "N";
+        //     }
+        //     this.fm.$contract_id.select('filter', function (option) {
+        //         return (option.value === "" || option.raamcontract_jn === raamcontracten_jn);
+        //     });
+        //
+        //
+        // },
+
+
+
+
     });
 
 
     PlanningLijnDialog.view = function (ctrl) {
         var ff, pl_lijn, dossier_type;
-        
+
         pl_lijn = ctrl._lijn;
         if (!pl_lijn) { return null; }
-        
+
         ff = fhf.get().setModel(pl_lijn).setShowErrors(ctrl.showErrors())
             .setDefaultAttrs({
                 readOnly: function (veldNaam) {
@@ -82,7 +196,7 @@ define([
             });
 
         dossier_type = pl_lijn.get("dossier_type");
-        
+
         return m("div", [
             m("table.formlayout", [
                 m("tr", [
@@ -114,20 +228,20 @@ define([
                     m("td", "actie:"),
                     m("td", {colspan: "3" }, ff.select("actie_code", actie_dd))
                 ]),
-                
+
                 ( _.contains(["GGO", "RC"],pl_lijn.get("actie_code")) ) ?
                     m("tr", [
                         m("td", "Contract:"),
                         m("td", {colspan: "3" }, ff.select("contract_id", ctrl._planningData.contractenDD))
                     ]) : null,
-                    
+
                 ( pl_lijn.get("actie_code") === "H_B" ||
                     ( _.contains(["GGO", "RC"],pl_lijn.get("actie_code")) && pl_lijn.get("contract_id") !== null)) ?
                     m("tr", [
                         m("td", "Bestek:"),
-                        m("td", {colspan: "3" }, ff.input("bestek_id"))
+                        m("td", {colspan: "3" }, ff.select("bestek_id", ctrl.bestekken_dd))
                     ]) : null,
-                ( pl_lijn.get("benut_bestek_id") !== null ) ?     
+                ( pl_lijn.get("benut_bestek_id") !== null ) ?
                     m("tr", [
                         m("td", "Benut bestek:"),
                         m("td", {colspan: "3" }, ff.input("c_bestek_omschrijving", { style: { color: "blue"}}))

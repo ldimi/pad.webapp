@@ -348,11 +348,9 @@ define([
             var self = this;
             ajax.postJSON({
                 url: "/pad/s/planning/bewaar",
-                content: {
-                    lijnen: [self._lijn.clone()]
-                }
+                content: self._lijn.clone()
             }).success(function (response) {
-                self._orgLijn.set(response.lijnen[0]);
+                self._orgLijn.set(response);
                 $.notify({
                     text: "De lijn is bewaard."
                 });

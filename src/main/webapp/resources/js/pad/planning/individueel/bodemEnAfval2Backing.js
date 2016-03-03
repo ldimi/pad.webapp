@@ -65,14 +65,7 @@ define([
                 }).then(function (response) {
                     if (response) {
                         _planning = response;
-                        _planning.faseDD.unshift({
-                            value: "",
-                            label: ""
-                        });
-                        _planning.faseDetailDD.unshift({
-                            value: "",
-                            label: ""
-                        });
+
                         _planning.contractenDD.unshift({
                             value: "",
                             label: ""
@@ -133,55 +126,51 @@ define([
                 grid = new GridComp({
                     el: el,
                     model: PlanningLijnModel,
-                    editBtn: true,
                     newBtn: true,
+                    editBtn: true,
                     deleteBtn: true,
+                    onNewClicked: function (item) {
+                        var newItem;
+                        if (item) {
+                            newItem = item.createNewLine();
+                            _planning.selectedLijnIndex = _planning.lijnen.indexOf(item);
+                            events.trigger("planningLijnDialog:open", newItem, _planning);
+                        } else {
+                            alert("er is geen rij geselecteerd.");
+                        }
+                    },
                     onEditClicked: function (item) {
                         // _planningLijnDialog.show(item, _planning);
                         var cloned = item.clone();
-                        cloned.set("status_crud", "U");
+                        _planning.selectedLijnIndex = _planning.lijnen.indexOf(item);
                         events.trigger("planningLijnDialog:open", cloned, _planning);
                     },
-                    onNewClicked: function (item) {
-                        // var newItem;
-                        // if (item) {
-                        //     newItem = item.createNewLine();
-                        //     _planning.selectedLijnIndex = _planning.lijnen.indexOf(item);
-                        //     _planningLijnDialog.show(newItem, _planning);
-                        // } else {
-                        //     alert("er is geen rij geselecteerd.");
-                        // }
-                    },
                     onDeleteClicked: function (item) {
-                        // if (item.get('status_crud') === 'C') {
-                        //     $.notifyError("Ongeplande lijnen worden niet verwijderd.");
-                        //     return;
-                        // }
-                        // if (item.get("c_isReedsGekoppeld")) {
-                        //     $.notifyError("Deze planningslijn kan niet verwijderd worden. (reeds gekoppeld/benut)");
-                        //     return;
-                        // }
-                        // item.set({
-                        //     deleted_jn: "J",
-                        //     status_crud: "U"
-                        // });
-                        // ajax.postJSON({
-                        //     url: "/pad/s/planning/bewaar",
-                        //     content: {
-                        //         lijnen: [item.clone()]
-                        //     }
-                        // }).success(function () {
-                        //     $.notify({
-                        //         text: "De lijn is verwijderd."
-                        //     });
-                        // });
-                        //
-                        // // lokale versie wordt al aangepast (we gaan ervan uit dat bewaren toch lukt.)
-                        // _planning.lijnen = _.reject(_planning.lijnen, function (lijn) {
-                        //     return (lijn.cid === item.cid);
-                        // });
-                        //
-                        // events.trigger("planning.lijnen:refresh", _planning.lijnen);
+                        if (item.get('status_crud') === 'C') {
+                            $.notifyError("Ongeplande lijnen worden niet verwijderd.");
+                            return;
+                        }
+                        if (item.get("c_isReedsGekoppeld")) {
+                            $.notifyError("Deze planningslijn kan niet verwijderd worden. (reeds gekoppeld/benut)");
+                            return;
+                        }
+                        item.set({
+                            deleted_jn: "J",
+                            status_crud: "U"
+                        });
+                        ajax.postJSON({
+                            url: "/pad/s/planning/bewaar",
+                            content: item.clone()
+                        }).then(function () {
+                            $.notify("De lijn is verwijderd.");
+                        });
+
+                        // lokale versie wordt al aangepast (we gaan ervan uit dat bewaren toch lukt.)
+                        _planning.lijnen = _.reject(_planning.lijnen, function (lijn) {
+                            return (lijn.cid === item.cid);
+                        });
+
+                        events.trigger("planning.lijnen:refresh", _planning.lijnen);
                     },
                     exportCsv: true,
                     exportCsvFileName: "planning.csv"

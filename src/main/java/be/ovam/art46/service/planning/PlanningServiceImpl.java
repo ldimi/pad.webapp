@@ -50,30 +50,28 @@ public class PlanningServiceImpl implements PlanningService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public PlanningDataDO bewaar(PlanningDataDO planningData) {
+	public PlanningLijnDO bewaar(PlanningLijnDO planningLijnDO) {
 		String user_id = Application.INSTANCE.getUser_id();
 		
-		for (PlanningLijnDO planningLijnDO : planningData.getLijnen()) {
-			if ("U".equals(planningLijnDO.getStatus_crud()) || "C".equals(planningLijnDO.getStatus_crud())) {
-				
-				PlanningDossierVersieDO planningDossierVersie = new PlanningDossierVersieDO();
-				planningDossierVersie.setDossier_id(planningLijnDO.getDossier_id());
-				planningDossierVersie.setWijzig_user(user_id);
-				sqlSession.insert("be.ovam.art46.mappers.PlanningMapper.insertPlanningDossierVersie", planningDossierVersie);
-								
-				planningLijnDO.setWijzig_user(user_id);
-				planningLijnDO.setPlanning_dossier_versie(planningDossierVersie.getPlanning_versie());
-				
-				if ("C".equals(planningLijnDO.getStatus_crud())) {
-					sqlSession.insert("be.ovam.art46.mappers.PlanningMapper.insertPlanningLijn", planningLijnDO);
-				}
-				
-				sqlSession.insert("be.ovam.art46.mappers.PlanningMapper.insertPlanningLijnVersie", planningLijnDO);
-				planningLijnDO.setStatus_crud("R");
-			}
-		}
+        if ("U".equals(planningLijnDO.getStatus_crud()) || "C".equals(planningLijnDO.getStatus_crud())) {
+
+            PlanningDossierVersieDO planningDossierVersie = new PlanningDossierVersieDO();
+            planningDossierVersie.setDossier_id(planningLijnDO.getDossier_id());
+            planningDossierVersie.setWijzig_user(user_id);
+            sqlSession.insert("be.ovam.art46.mappers.PlanningMapper.insertPlanningDossierVersie", planningDossierVersie);
+
+            planningLijnDO.setWijzig_user(user_id);
+            planningLijnDO.setPlanning_dossier_versie(planningDossierVersie.getPlanning_versie());
+
+            if ("C".equals(planningLijnDO.getStatus_crud())) {
+                sqlSession.insert("be.ovam.art46.mappers.PlanningMapper.insertPlanningLijn", planningLijnDO);
+            }
+
+            sqlSession.insert("be.ovam.art46.mappers.PlanningMapper.insertPlanningLijnVersie", planningLijnDO);
+            planningLijnDO.setStatus_crud("R");
+        }
 		
-		return planningData;
+		return planningLijnDO;
 	}
 
 

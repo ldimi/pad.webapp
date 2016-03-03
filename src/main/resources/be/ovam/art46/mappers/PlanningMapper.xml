@@ -448,7 +448,7 @@
                '(' || bestek_nr || ') ' ||
                case when afsluit_d is not null then '(GESLOTEN) '
                    else ''
-               end || omschrijving  as label,
+               end || coalesce(omschrijving, '')  as label,
                bestek_nr,
                omschrijving
         from art46.Bestek

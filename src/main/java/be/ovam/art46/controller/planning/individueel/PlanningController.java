@@ -2,6 +2,7 @@ package be.ovam.art46.controller.planning.individueel;
 
 import be.ovam.art46.model.planning.ParamsDO;
 import be.ovam.art46.model.planning.PlanningDataDO;
+import be.ovam.art46.model.planning.PlanningLijnDO;
 import be.ovam.art46.service.planning.PlanningService;
 import be.ovam.art46.util.Application;
 import be.ovam.art46.util.DropDownHelper;
@@ -124,9 +125,9 @@ public class PlanningController {
 	
 	@RequestMapping(value = "/planning/bewaar", method = RequestMethod.POST)
 	public @ResponseBody
-	PlanningDataDO bewaar(@RequestBody PlanningDataDO planning) throws Exception {		
-		planning =  planningService.bewaar(planning);		
-		return planning;
+	PlanningLijnDO bewaar(@RequestBody PlanningLijnDO planningLijn) throws Exception {		
+		planningLijn =  planningService.bewaar(planningLijn);		
+		return planningLijn;
 	}
 	
 	@SuppressWarnings("rawtypes")

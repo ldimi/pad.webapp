@@ -133,9 +133,7 @@ define([
                 });
                 ajax.postJSON({
                     url: "/pad/s/planning/bewaar",
-                    content: {
-                        lijnen: [item.clone()]
-                    }
+                    content: item.clone()
                 }).success(function () {
                     $.notify({
                         text: "De lijn is verwijderd."

@@ -4,9 +4,10 @@
 define([
     "dropdown/planning/fasen",
     "ov/Model",
+    "ov/events",
     "ov/formatters",
     "underscore"
-], function (fasen, Model) {
+], function (fasen, Model, events) {
     'use strict';
 
     var PlanningLijnModel, _boekjaar;
@@ -77,7 +78,16 @@ define([
                     return "";
                 }
             },
-            { name: "igb_d", type: "date", label: "Gepland datum", required: true, width: 80 },
+            { name: "igb_d", type: "date", label: "Gepland datum", required: true, width: 80,
+                slickFormatter: function (row, cell, value, columnDef, item) {
+                    if (value !== null) {
+                        return item.str("igb_d");
+                    } else if (item.get("fase_looptijd") !== null) {
+                        return '<span style="color: green;" >' + item.get("fase_looptijd") + ' maanden</span>';
+                    }
+                    return "";
+                }
+            },
             { name: "ig_bedrag", label: "Gepland bedrag", required: true, type: "int", width: 80 },
             { name: "ib_bedrag", label: "Benut bedrag", type: "double", width: 80, slickCssClass: "blauwetekst" },
             { name: "ibb_d", type: "date", label: "Benut datum", width: 80, slickCssClass: "blauwetekst" },
@@ -169,14 +179,31 @@ define([
             this._validate_bestek_id_required_for_HERHALING_BESTEK();
             this._validate_actie_code_required_in_boekjaar();
             this._validate_contract_id_required_for_RC_and_GGO_in_boekjaar();
+
+            if (this.hasChanged("actie_code")) {
+                this.attributes.contract_id = null;
+                this.attributes.bestek_id = null;
+            } else if (this.hasChanged("contract_id")) {
+                this.attributes.bestek_id = null;
+            }
+
+            // TODO : Hoe zit het met bestek_omschrijving en bestek_nr ???
+            //if (this.hasChanged("bestek_id")) {
+            //    this.attributes.bestek_nr = null;
+            //    this.attributes.bestek_omschrijving = null;
+            //}
+
+            if (this.hasChanged("actie_code") || this.hasChanged("contract_id")) {
+                events.trigger("planningLijnDialog:doFetchBestekkenDD");
+            }
         },
-        
+
         _validate_fase_detail_code_required_in_boekjaar: function () {
             if (this.isInBoekjaar() &&
                 this.get("fase_code") !== null &&
                 fasen.heeft_details_jn(this.get("fase_code"), this.get("dossier_type")) &&
                 this.get("fase_detail_code") === null )  {
-            
+
                 this.validationError.fase_detail_code = "Verplicht veld in boekjaar.";
             }
         },
@@ -186,22 +213,22 @@ define([
                 this.validationError.bestek_id = "Verplicht veld indien 'Bestaand bestek'.";
             }
         },
-        
+
         _validate_actie_code_required_in_boekjaar: function () {
             if (this.isInBoekjaar() && this.get("actie_code") === null) {
                 this.validationError.actie_code = "Verplicht veld in boekjaar.";
             }
         },
-        
+
         _validate_contract_id_required_for_RC_and_GGO_in_boekjaar: function() {
-            if (this.isInBoekjaar() && 
+            if (this.isInBoekjaar() &&
                 _.contains(["RC", "GGO"], this.get("actie_code")) &&
                 this.get("contract_id") === null)                       {
-                
+
                 this.validationError.contract_id = "Verplicht veld in boekjaar.";
             }
         },
-        
+
         isInBoekjaar: function () {
             var boekjaar, geplandJaar;
             if (this.get("igb_d") !== null && this.isValid("igb_d")) {
@@ -213,7 +240,7 @@ define([
         },
 
 
-        
+
         // aanmaken van een nieuw item,
         // waarbij een aantal gegevens van dit item overgenomen worden.
         createNewLine: function () {
