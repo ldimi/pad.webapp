@@ -71,7 +71,7 @@ public class PlanningServiceImpl implements PlanningService {
             planningLijnDO.setStatus_crud("R");
         }
 		
-		return planningLijnDO;
+		return (PlanningLijnDO) sqlSession.selectOne("getPlanningLijn_byLijnId",planningLijnDO.getLijn_id());
 	}
 
 
