@@ -144,7 +144,7 @@ public class OverzichtSchuldvorderingenServiceImpl implements OverzichtSchuldvor
         LinkedHashMap<String, ReportViewRegelDto> regels = ExcelExportUtil.createHeaderReportViewRegel(offerte);
         addTotaalRegel(regels, offerte.getTotaalInclBtw());
         if (deelOpdracht.getVoorstelDeelopdracht() != null) {
-            addVoorstelDeelopdracht(deelOpdracht.getVoorstelDeelopdracht(), regels);
+            ExcelExportUtil.addVoorstelDeelopdracht(deelOpdracht.getVoorstelDeelopdracht(), regels);
         }
         verwerkSchuldvorderingRegels(regels, aanvraagSchuldvorderingen, true);
         return regels;
@@ -191,31 +191,6 @@ public class OverzichtSchuldvorderingenServiceImpl implements OverzichtSchuldvor
     }
 
 
-    private void addVoorstelDeelopdracht(VoorstelDeelopdracht voorstelDeelopdracht, LinkedHashMap<String, ReportViewRegelDto> regels) {
-        if (voorstelDeelopdracht != null) {
-            BigDecimal totaal = new BigDecimal(0);
-            int teller = 1;
-            for (VoorstelDeelopdrachtRegel voorstelDeelopdrachtRegel : voorstelDeelopdracht.getVoorstelDeelopdrachtRegels()) {
-                ReportViewRegelDto reportViewRegelDto = regels.get(voorstelDeelopdrachtRegel.getPostnr());
-                if (reportViewRegelDto == null) {
-                    reportViewRegelDto = new ReportViewRegelDto();
-                    reportViewRegelDto.setPostnr(voorstelDeelopdrachtRegel.getPostnr());
-                    reportViewRegelDto.setTaak(voorstelDeelopdrachtRegel.getTaak());
-                    reportViewRegelDto.setRegelTotaalOfferte(new BigDecimal(0));
-                    if (StringUtils.isEmpty(voorstelDeelopdrachtRegel.getPostnr())) {
-                        reportViewRegelDto.setPostnr("vd " + teller);
-                    }
-                    regels.put("vd" + voorstelDeelopdrachtRegel.getId(), reportViewRegelDto);
-                }
-                reportViewRegelDto.setVoorstelDeelopdrachtTotaal(voorstelDeelopdrachtRegel.getRegelTotaalInclBtw());
-                if (voorstelDeelopdrachtRegel.getRegelTotaalInclBtw() != null) {
-                    totaal = totaal.add(voorstelDeelopdrachtRegel.getRegelTotaalInclBtw());
-                }
-            }
-            ReportViewRegelDto reportViewRegelDto = regels.get("t");
-            reportViewRegelDto.setVoorstelDeelopdrachtTotaal(totaal);
-        }
-    }
 
 }
 
