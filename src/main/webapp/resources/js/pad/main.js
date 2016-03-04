@@ -111,8 +111,8 @@ requirejs.config({
     },
     packages: [{
         name: "ov",
-        location: "//services.ovam.be/jsrepo/ov/6.05"
-        //location: "../ov"
+        location: "//services.ovam.be/jsrepo/ov/6.06"
+        // location: "../ov"
     }, {
         name: "common",
         location: "../common"

@@ -21,6 +21,7 @@ public class PlanningLijnDO implements Serializable {
     private String dossier_is_raamcontract_jn;
 
     private String fase_code;
+    private Integer fase_prijs; 
     private Integer fase_looptijd; 
     private String fase_code_heeft_details_jn;
     private String fase_detail_code;
@@ -342,6 +343,14 @@ public class PlanningLijnDO implements Serializable {
 
     public void setFase_looptijd(Integer fase_looptijd) {
         this.fase_looptijd = fase_looptijd;
+    }
+
+    public Integer getFase_prijs() {
+        return fase_prijs;
+    }
+
+    public void setFase_prijs(Integer fase_prijs) {
+        this.fase_prijs = fase_prijs;
     }
 
 

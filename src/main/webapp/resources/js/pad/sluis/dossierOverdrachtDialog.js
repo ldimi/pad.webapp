@@ -53,10 +53,13 @@ define([
             this.item = item;
             window._item = item;
 
-            //this.title = "Overdracht detail, id:  " + this.item.get("overdracht_id") +
-            //                              ", dossierNr: " + this.item.get("dossier_nr") ;
-            this.$dialog.dialog('option', 'title', "Overdracht detail, id:  " + this.item.get("overdracht_id") +
-                                                          ", dossierNr: " + this.item.get("dossier_nr"));
+            this.title = "Overdracht detail, id:  " + this.item.get("overdracht_id") + ", dossierNr: " + this.item.get("dossier_nr") ;
+            // this.$dialog.dialog('option', 'title', "Ooverdracht detail, id:  " + this.item.get("overdracht_id") +
+            //                                               ", dossierNr: " + this.item.get("dossier_nr"));
+
+            //this.$dialog.dialog({title: "Ooverdracht detail, id:  " + this.item.get("overdracht_id") +
+            //                                              ", dossierNr: " + this.item.get("dossier_nr")});
+            //
 
             this.showErrors(false);
         },

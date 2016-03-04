@@ -22,12 +22,6 @@ define([
     _customBedragFormatter = function (totaalBedrag, deelBedrag) {
         var percentage = "";
 
-        function numberWithCommas(x) {
-            var parts = x.toString().split(".");
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            return parts.join(",");
-        }
-
         if (totaalBedrag) {
             percentage = deelBedrag * 100 / totaalBedrag;
             if (percentage > 100) {
@@ -38,7 +32,7 @@ define([
         } else {
             percentage = '&nbsp;';
         }
-        return numberWithCommas(_intFormatter(deelBedrag)) + '<span style="width: 50px; display: inline-block; text-align: right;" >' + percentage + "</span>";
+        return _intFormatter(deelBedrag, ".") + '<span style="width: 50px; display: inline-block; text-align: right;" >' + percentage + "</span>";
     };
 
     toonBudgetten = function (budgetData) {

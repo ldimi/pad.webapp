@@ -7,11 +7,12 @@ define([
     "ov/events",
     "ov/formatters",
     "underscore"
-], function (fasen, Model, events) {
+], function (fasen, Model, events, formatters) {
     'use strict';
 
-    var PlanningLijnModel, _boekjaar;
+    var PlanningLijnModel, _boekjaar, intFormatter;
 
+    intFormatter = formatters("int");
     _boekjaar = new Date().getFullYear();
 
 
@@ -30,6 +31,7 @@ define([
             { name: "dossier_type", label: "A/B", width: 40 },
             { name: "dossier_is_raamcontract_jn", type: "string", hidden: true },
             { name: "fase_code", label: "Fase", required: true, width: 50 },
+            { name: "fase_prijs", type: "int", hidden: true },
             { name: "fase_looptijd", type: "int", hidden: true },
             { name: "fase_code_heeft_details_jn", exportCsv: false, hidden: true },
             { name: "fase_detail_code", label: "Fase detail", width: 70,
@@ -88,7 +90,16 @@ define([
                     return "";
                 }
             },
-            { name: "ig_bedrag", label: "Gepland bedrag", required: true, type: "int", width: 80 },
+            { name: "ig_bedrag", label: "Gepland bedrag", required: true, type: "int", width: 80,
+                slickFormatter: function (row, cell, value, columnDef, item) {
+                    if (value !== null) {
+                        return intFormatter(item.get("ig_bedrag"), ".");
+                    } else if (item.get("fase_prijs") !== null) {
+                        return '<span style="color: green;" >' + intFormatter(item.get("fase_prijs") , ".") + '</span>';
+                    }
+                    return "";
+                }
+            },
             { name: "ib_bedrag", label: "Benut bedrag", type: "double", width: 80, slickCssClass: "blauwetekst" },
             { name: "ibb_d", type: "date", label: "Benut datum", width: 80, slickCssClass: "blauwetekst" },
             { name: "commentaar", label: "Commentaar", width: 200 },

@@ -18,17 +18,10 @@ define([
 
 
     _paramMeta = new Meta([
-        {
-            name: "jaar",
-            type: "int"
-        }, {
-            name: "dossier_id",
-            type: "int"
-        }, {
-            name: "doss_hdr_id"
-        }, {
-            name: "benut_jn"
-        }
+        { name: "jaar", type: "int" },
+        { name: "dossier_id", type: "int" },
+        { name: "doss_hdr_id" },
+        { name: "benut_jn" }
     ]);
 
 

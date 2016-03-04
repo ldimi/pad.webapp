@@ -91,7 +91,7 @@
             #{deleted_jn, jdbcType=VARCHAR},
             #{wijzig_user})
     </insert>
-    
+
     <sql id="planning_lijn_velden">
              doss_hdr_id,
              lijn_id,
@@ -103,6 +103,7 @@
              dossier_type,
              dossier_is_raamcontract_jn,
              fase_code,
+             cast(null as int) as fase_prijs,
              cast(null as int) as fase_looptijd,
              fase_code_heeft_details_jn,
              fase_detail_code,
@@ -136,10 +137,10 @@
             select
                 <include refid="planning_lijn_velden"/>
             from art46.v_planning_lijn_details planl
-            where 
+            where
                 lijn_id = #{lijn_id}
     </select>
-    
+
     <select id="getPlanningDetails"
         resultType="be.ovam.art46.model.planning.PlanningLijnDO"
         parameterType="be.ovam.art46.model.planning.ParamsDO"  >
@@ -168,24 +169,24 @@
                 </if>
         ),
         ongeplande_dossier_lijnen as (
-            select id, dossier_nr, dossier_type, fase_code, fase_looptijd
+            select id, dossier_nr, dossier_type, fase_code, fase_prijs, fase_looptijd
             from
-                  (   select id, dossier_nr, dossier_type, null as fase_code, null as fase_looptijd
+                  (   select id, dossier_nr, dossier_type, null as fase_code, null as fase_prijs, null as fase_looptijd
                       from art46.dossier
                       where (BBO_PRIJS is  null and BSW_prijs is null and BSP_prijs is null)
                           and DOSS_HDR_ID = #{doss_hdr_id}
                    UNION
-                      select id, dossier_nr, dossier_type, 'BBO' as fase_code, bbo_looptijd as fase_looptijd
+                      select id, dossier_nr, dossier_type, 'BBO' as fase_code, bbo_prijs as fase_prijs, bbo_looptijd as fase_looptijd
                       from art46.dossier
                       where BBO_PRIJS is not null
                           and DOSS_HDR_ID = #{doss_hdr_id}
                    UNION
-                      select id, dossier_nr, dossier_type, 'BSP' as fase_code, bsp_looptijd as fase_looptijd
+                      select id, dossier_nr, dossier_type, 'BSP' as fase_code, bsp_prijs as fase_prijs, bsp_looptijd as fase_looptijd
                       from art46.dossier
                       where BSP_PRIJS is not null
                           and DOSS_HDR_ID = #{doss_hdr_id}
                    UNION
-                      select id, dossier_nr, dossier_type, 'BSW' as fase_code, bsw_looptijd as bsw_looptijd
+                      select id, dossier_nr, dossier_type, 'BSW' as fase_code, bsw_prijs as fase_prijs, bsw_looptijd as bsw_looptijd
                       from art46.dossier
                       where BSW_PRIJS is not null
                           and DOSS_HDR_ID = #{doss_hdr_id}
@@ -210,6 +211,7 @@
                 dos.dossier_type,
                 dos.raamcontract_jn as dossier_is_raamcontract_jn,
                 dos1.fase_code,
+                dos1.fase_prijs,
                 dos1.fase_looptijd,
                 null as fase_code_heeft_details_jn,
                 null as fase_detail_code,

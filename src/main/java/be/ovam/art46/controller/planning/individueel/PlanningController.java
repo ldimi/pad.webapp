@@ -57,7 +57,6 @@ public class PlanningController {
         
 		addDossierhouder(model,doss_hdr_id);
         return jsview("planning.individueel.bodemEnAfval", "planning/individueel/bodemEnAfval2", model);
-		//return "planning.individueel.bodemEnAfval";
 	}
 
 
@@ -81,6 +80,18 @@ public class PlanningController {
 		return "planning.individueel.gegroepeerdeOpdrachten";
 	}
 
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/planning/individueel/gegroepeerdeOpdrachten2", method = RequestMethod.GET)
+	public String gegroepeerdeOpdrachten2(HttpServletRequest request, Model model) throws Exception {
+		String doss_hdr_id =  getDossierhouderId(request);		
+		List gegroepeerdeOpdrachtenDD = sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getGegroepeerdeOpdrachtenDDbyUid", doss_hdr_id);
+		model.addAttribute("gegroepeerdeOpdrachtenDD", gegroepeerdeOpdrachtenDD);
+		addDossierhouder(model, doss_hdr_id);
+		//return "planning.individueel.gegroepeerdeOpdrachten";
+        return jsview("planning.individueel.bodemEnAfval", "planning/individueel/bodemEnAfval2", model);
+	}
+
+	
 	
 	@RequestMapping(value = "/planning/individueel/takenlijst", method = RequestMethod.GET)
 	public String takenlijst(HttpServletRequest request, Model model) throws Exception {
