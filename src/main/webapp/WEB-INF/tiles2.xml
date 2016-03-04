@@ -121,6 +121,11 @@
         <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/gegroepeerdeOpdrachten.jsp"/>
     </definition>
 
+    <definition name="planning.individueel.gegroepeerdeOpdrachten.jsView" extends="planning.individueel.baseDef">
+        <put-attribute name="tab_selected" value="Planning groepcontracten"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+
     <definition name="planning.individueel.takenlijst" extends="planning.individueel.baseDef">
         <put-attribute name="tab_selected" value="Takenlijst"/>
         <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/takenlijst.jsp"/>
