@@ -5,7 +5,7 @@ define([
     "planning/individueel/PlanningLijnDialog2",
     "planning/individueel/PlanningLijnModel2",
     "planning/individueel/bestekDetailsDialog",
-    "planning/individueel/faseDetailsDialog",
+    "planning/individueel/FaseDetailsDialog2",
     "dropdown/dossierhouders",
     "dropdown/jaren",
     "ov/Model",
@@ -16,7 +16,7 @@ define([
     "ov/mithril/formhelperFactory",
     "mithril",
     "underscore"
-], function (PlanningLijnDialog, PlanningLijnModel, bestekDetailsDialog, faseDetailsDialog, dossierhouders_dd, jaren_dd, Model, GridComp, events, formatters, ajax, fhf, m, _) {
+], function (PlanningLijnDialog, PlanningLijnModel, bestekDetailsDialog, FaseDetailsDialog, dossierhouders_dd, jaren_dd, Model, GridComp, events, formatters, ajax, fhf, m, _) {
     'use strict';
 
     var comp, paramComp, ParamModel, OverzichtLijnModel, _planning;
@@ -46,7 +46,7 @@ define([
             { name: "fase_code", hidden: true},
             { name: "group_id", label: "Bestek", width: 120,
                 slickFormatter: function (row, cell, value, columnDef, dataContext) {
-                    if (dataContext.bestek_id === null) {
+                    if (dataContext.get("bestek_id") === null) {
                         return value;
                     }
                     return '<a href="s/bestek/' + dataContext.bestek_id + '" target="_blank" >' + value + '</a>';
@@ -144,7 +144,7 @@ define([
             this.dialogCtrl = new PlanningLijnDialog.controller();
 
             bestekDetailsDialog.init();
-            faseDetailsDialog.init();
+            this.faseDetailsCtrl = new FaseDetailsDialog.controller();
 
             events.on("overzicht.lijnen:refresh", function(overzichtLijnen) {
                 this.tot_voorspeld_saldo =  _.reduce(overzichtLijnen, function (memo, item) {
@@ -185,6 +185,7 @@ define([
                         }
                     })
                 ]),
+                FaseDetailsDialog.view(ctrl.faseDetailsCtrl),
                 PlanningLijnDialog.view(ctrl.dialogCtrl)
             ]);
         },
@@ -200,7 +201,7 @@ define([
                         if (item.get("bestek_id")) {
                             bestekDetailsDialog.show(item.get("bestek_id"), item.get("bestek_nr"));
                         } else {
-                            faseDetailsDialog.show(item.get("contract_id"), item.get("fase_code"));
+                            events.trigger("faseDetailsDialog:open",item.get("contract_id"), item.get("fase_code"), true);
                         }
                     }
                 });

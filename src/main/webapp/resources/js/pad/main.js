@@ -7,7 +7,7 @@ console.log("laad main.js");
 
 requirejs.config({
     paths: {
-        'mithril': '//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.0/mithril',
+        'mithril': '//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.3/mithril',
         'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min',
         'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min',
         'jquery.validate': '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min',

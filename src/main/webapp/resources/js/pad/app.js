@@ -5,6 +5,7 @@ console.log("laad app");
 
 
 define("app", [
+    "mithril",
     "ov",
     "ov/initJQueryValidate",
     "jquery-ui",
@@ -12,11 +13,12 @@ define("app", [
     "jquery.notify",
     "slick.core",
     "slick.grid",
-    "underscore",
-    "mithril"
-], function (ov) {
+    "underscore"
+], function (m, ov) {
     'use strict';
     var $notifyContainer;
+    
+    window.m = m;
 
     console.log("define app, ov.version: " + ov.version);
 
