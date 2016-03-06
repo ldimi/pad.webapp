@@ -4,7 +4,7 @@
 define([
     "planning/individueel/PlanningLijnDialog2",
     "planning/individueel/PlanningLijnModel2",
-    "planning/individueel/bestekDetailsDialog",
+    "planning/individueel/BestekDetailsDialog2",
     "planning/individueel/FaseDetailsDialog2",
     "dropdown/dossierhouders",
     "dropdown/jaren",
@@ -16,7 +16,7 @@ define([
     "ov/mithril/formhelperFactory",
     "mithril",
     "underscore"
-], function (PlanningLijnDialog, PlanningLijnModel, bestekDetailsDialog, FaseDetailsDialog, dossierhouders_dd, jaren_dd, Model, GridComp, events, formatters, ajax, fhf, m, _) {
+], function (PlanningLijnDialog, PlanningLijnModel, BestekDetailsDialog, FaseDetailsDialog, dossierhouders_dd, jaren_dd, Model, GridComp, events, formatters, ajax, fhf, m, _) {
     'use strict';
 
     var comp, paramComp, ParamModel, OverzichtLijnModel, _planning;
@@ -143,7 +143,7 @@ define([
             this.paramCtrl = new paramComp.controller();
             this.dialogCtrl = new PlanningLijnDialog.controller();
 
-            bestekDetailsDialog.init();
+            this.bestekDetailsCtrl = new BestekDetailsDialog.controller();
             this.faseDetailsCtrl = new FaseDetailsDialog.controller();
 
             events.on("overzicht.lijnen:refresh", function(overzichtLijnen) {
@@ -185,6 +185,7 @@ define([
                         }
                     })
                 ]),
+                BestekDetailsDialog.view(ctrl.bestekDetailsCtrl),
                 FaseDetailsDialog.view(ctrl.faseDetailsCtrl),
                 PlanningLijnDialog.view(ctrl.dialogCtrl)
             ]);
@@ -199,7 +200,7 @@ define([
                     model: OverzichtLijnModel,
                     onEditClicked: function (item) {
                         if (item.get("bestek_id")) {
-                            bestekDetailsDialog.show(item.get("bestek_id"), item.get("bestek_nr"));
+                            events.trigger("bestekDetailsDialog:open",item.get("bestek_id"), item.get("bestek_nr"), true);
                         } else {
                             events.trigger("faseDetailsDialog:open",item.get("contract_id"), item.get("fase_code"), true);
                         }

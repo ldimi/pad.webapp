@@ -12,54 +12,58 @@ define([
 ], function (Model, GridComp, events ,ajax, dialogBuilder, m, _) {
     'use strict';
 
-    var FaseDetailsDialog , FaseDetailModel;
+    var BestekDetailsDialog , BestekDetailModel;
     
-    FaseDetailModel = Model.extend({
+    BestekDetailModel = Model.extend({
         meta: Model.buildMeta([
-            { name: "dossier_nr",
+            { name: "bestek_id", hidden: true },
+            { name: "bestek_nr", hidden: true },
+            { name: "dossier_id", type: "int", hidden: true },
+            { name: "dossier_nr", width: 70,
                 slickFormatter: function (row, cell, value, columnDef, item) {
-                    return '<a href="dossierdetailsArt46.do?dossier_nr=' + value + '" target="_blank" >' + value + '</a>';
+                    return '<a href="s/dossier/' + item.get("dossier_id")  + '/basis" target="_blank" >' + value + '</a>';
                 }
             },
             { name: "dossier_b", label: "Dossier Titel", width: 300 },
-            { name: "doss_hdr_id", label: "Dossierhouder" },
+            { name: "doss_hdr_id", label: "Doss. houder" },
             { name: "igb_d", label: "Gepland datum", type: "date" },
-            { name: "ig_bedrag", label: "Gepland bedrag", type: "double" }
+            { name: "ig_bedrag", label: "Gepland bedrag", type: "double" },
+            { name: "bedrag", label: "Bedrag deelopdracht", type: "double" }
         ])
     });
         
-    FaseDetailsDialog = {};
+    BestekDetailsDialog = {};
 
-    FaseDetailsDialog.controller = function () {
+    BestekDetailsDialog.controller = function () {
 
-        this.title = "Fasen";
+        this.title = "Bestek";
         this.width = 800;
         this.height = 400;
 
         this.showErrors = m.prop(false);
         
-        events.on("faseDetailsDialog:open", this.open.bind(this));
-        
-        events.on("faseDetailsDialog:dataReceived", function(data) {
+        events.on("bestekDetailsDialog:open", this.open.bind(this));
+        events.on("bestekDetailsDialog:dataReceived", function(data) {
             this.grid.setData(data);
         }.bind(this));
-
     };
-    _.extend(FaseDetailsDialog.controller.prototype, {
-        preOpen: function (contract_id, fase_code, readOnly) {
+    _.extend(BestekDetailsDialog.controller.prototype, {
+        preOpen: function (bestek_id, bestek_nr, readOnly) {
             this.readOnly = !!readOnly;
             
-            this.title = "Fase : " + fase_code;
+            this.title = "Bestek : " + bestek_nr;
             
             ajax.postJSON({
-                url: "/pad/s/planning/getDetailsVoorFase",
-                content: {
-                    contract_id: contract_id,
-                    fase_code: fase_code
-                }
+                url: "/pad/s/planning/getDetailsVoorBestek",
+                content: bestek_id
             }).then(function (response) {
                 if (response) {
-                    events.trigger("faseDetailsDialog:dataReceived", response);
+                    if (!readOnly) {
+                        response = _.filter(response, function (detail) {
+                                        return (detail.ig_bedrag !== null);
+                                    });
+                    }
+                    events.trigger("bestekDetailsDialog:dataReceived", response);
                 }
             });
             
@@ -69,10 +73,10 @@ define([
             if (!isInitialized) {
                 this.grid = new GridComp({
                     el: el,
-                    model: FaseDetailModel,
+                    model: BestekDetailModel,
                     editBtn: this.readOnly ? false: "Selecteer",
                     onEditClicked: function (item) {
-                        events.trigger("faseDetailsDialog:selected", item);
+                        events.trigger("bestekDetailsDialog:selected", item);
                     }
                 });
             }
@@ -81,8 +85,8 @@ define([
     });
 
 
-    FaseDetailsDialog.view = function (ctrl) {
-        return m("#faseDetailsDialog", [
+    BestekDetailsDialog.view = function (ctrl) {
+        return m("#bestekDetailsDialog", [
             m("div",
                 { style: { position: "absolute", top: "2px", left: "2px", right: "2px", bottom: "28px" },
                   class: "slick-grid-div",
@@ -92,5 +96,5 @@ define([
         ]);
     };
     
-    return dialogBuilder(FaseDetailsDialog);
+    return dialogBuilder(BestekDetailsDialog);
 });
