@@ -7,9 +7,10 @@ define([
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/dialogBuilder",
+    "ov/mithril/gridConfigBuilder",
     "mithril",
     "underscore"
-], function (Model, GridComp, events ,ajax, dialogBuilder, m, _) {
+], function (Model, GridComp, events ,ajax, dialogBuilder, gridConfigBuilder, m, _) {
     'use strict';
 
     var BestekDetailsDialog , BestekDetailModel;
@@ -43,9 +44,6 @@ define([
         this.showErrors = m.prop(false);
         
         events.on("bestekDetailsDialog:open", this.open.bind(this));
-        events.on("bestekDetailsDialog:dataReceived", function(data) {
-            this.grid.setData(data);
-        }.bind(this));
     };
     _.extend(BestekDetailsDialog.controller.prototype, {
         preOpen: function (bestek_id, bestek_nr, readOnly) {
@@ -68,19 +66,26 @@ define([
             });
             
             this.showErrors(false);
-        },
-        configGrid: function (el, isInitialized) {
-            if (!isInitialized) {
-                this.grid = new GridComp({
-                    el: el,
-                    model: BestekDetailModel,
-                    editBtn: this.readOnly ? false: "Selecteer",
-                    onEditClicked: function (item) {
-                        events.trigger("bestekDetailsDialog:selected", item);
-                    }
-                });
-            }
         }
+        // ,
+        // configGrid: function (el, isInitialized, ctx) {
+        //     var grid, dataReceivedHandler;
+        //     if (!isInitialized) {
+        //         grid = new GridComp({
+        //             el: el,
+        //             model: BestekDetailModel,
+        //             editBtn: this.readOnly ? false: "Selecteer",
+        //             onEditClicked: function (item) {
+        //                 events.trigger("bestekDetailsDialog:selected", item);
+        //             }
+        //         });
+        //         dataReceivedHandler = grid.setData.bind(grid);
+        //         events.on("bestekDetailsDialog:dataReceived", dataReceivedHandler);
+        //         ctx.onunload = function () {
+        //             events.off("bestekDetailsDialog:dataReceived", dataReceivedHandler);
+        //         };
+        //     }
+        // }
     
     });
 
@@ -90,7 +95,15 @@ define([
             m("div",
                 { style: { position: "absolute", top: "2px", left: "2px", right: "2px", bottom: "28px" },
                   class: "slick-grid-div",
-                  config: ctrl.configGrid.bind(ctrl)
+                  //config: ctrl.configGrid.bind(ctrl)
+                  config: gridConfigBuilder({
+                                model: BestekDetailModel,
+                                editBtn: ctrl.readOnly ? false: "Selecteer",
+                                onEditClicked: function (item) {
+                                    events.trigger("bestekDetailsDialog:selected", item);
+                                },
+                                setDataEvent: "bestekDetailsDialog:dataReceived"
+                            })
                 }
             )
         ]);
