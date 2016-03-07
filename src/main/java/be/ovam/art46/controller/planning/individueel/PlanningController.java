@@ -34,14 +34,6 @@ public class PlanningController {
 	private SqlSession sqlSession;
 
 	
-	@RequestMapping(value = "/planning/individueel/bodemEnAfval", method = RequestMethod.GET)
-	public String bodemEnAfval(HttpServletRequest request, Model model) throws Exception {
-		String doss_hdr_id =  getDossierhouderId(request);
-		model.addAttribute("dossiersDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", doss_hdr_id));
-        addDossierhouder(model,doss_hdr_id);		
-		return "planning.individueel.bodemEnAfval";
-	}
-
     @RequestMapping(value = "/planning/individueel/bodemEnAfval2", method = RequestMethod.GET)
 	public String bodemEnAfval2(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);
