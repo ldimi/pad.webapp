@@ -99,14 +99,25 @@ define([
                 url: "/pad/s/planning/bewaar",
                 content: this._lijn.clone()
             }).then(function (response) {
-                var lijn;
-                lijn = new PlanningLijnModel(response);
+                var savedLijn;
+                savedLijn = new PlanningLijnModel(response);
 
                 if (this._lijn.get("status_crud") === 'C') {
-                    this._planningData.lijnen.splice(this._planningData.selectedLijnIndex, 0, lijn);
+                    // eventueel lijn verwijderen
+                    this._planningData.lijnen = _.reject(this._planningData.lijnen, function (lijn) {
+                        return (lijn.get("dossier_id") === savedLijn.get("dossier_id") &&
+                                lijn.get("ig_bedrag") === null &&
+                                lijn.get("status_crud") === "C" &&
+                                (lijn.get("fase_code") === null ||
+                                 lijn.get("fase_code") === savedLijn.get("fase_code"))
+                               );
+                    }, this);
+                    // deze nieuwe lijn toevoegen
+                    this._planningData.lijnen.splice(this._planningData.selectedLijnIndex, 0, savedLijn);
                 } else {
-                    this._planningData.lijnen.splice(this._planningData.selectedLijnIndex, 1, lijn);
+                    this._planningData.lijnen.splice(this._planningData.selectedLijnIndex, 1, savedLijn);
                 }
+                
                 $.notify("De lijn is bewaard.");
                 events.trigger("planning.lijnen:refresh", this._planningData.lijnen);
                 this.close();
