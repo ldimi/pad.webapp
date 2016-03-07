@@ -2,8 +2,8 @@
 /*global define: false, $: false, alert: false, _:false, console, _G_ */
 
 define([
-    "planning/individueel/PlanningLijnDialog2",
-    "planning/individueel/PlanningLijnModel2",
+    "planning/individueel/PlanningLijnDialog",
+    "planning/individueel/PlanningLijnModel",
     "dropdown/dossierhouders",
     "dropdown/jaren",
     "ov/Model",
@@ -30,7 +30,7 @@ define([
 
         enforceInvariants: function () {
             if (this.hasChanged("doss_hdr_id")) {
-                window.open('/pad/s/planning/individueel/bodemEnAfval2?doss_hdr_id=' + this.get("doss_hdr_id"),'_top');
+                window.open('/pad/s/planning/individueel/bodemEnAfval?doss_hdr_id=' + this.get("doss_hdr_id"),'_top');
             }
 
         }

@@ -34,8 +34,8 @@ public class PlanningController {
 	private SqlSession sqlSession;
 
 	
-    @RequestMapping(value = "/planning/individueel/bodemEnAfval2", method = RequestMethod.GET)
-	public String bodemEnAfval2(HttpServletRequest request, Model model) throws Exception {
+    @RequestMapping(value = "/planning/individueel/bodemEnAfval", method = RequestMethod.GET)
+	public String bodemEnAfval(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);
         
 		model.addAttribute("dossiersDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", doss_hdr_id));
@@ -48,23 +48,13 @@ public class PlanningController {
        
         
 		addDossierhouder(model,doss_hdr_id);
-        return jsview("planning.individueel.bodemEnAfval", "planning/individueel/bodemEnAfval2", model);
+        return jsview("planning.individueel.bodemEnAfval", "planning/individueel/bodemEnAfval", model);
 	}
 
-
-	@SuppressWarnings({ "rawtypes" })
-	@RequestMapping(value = "/planning/individueel/raamcontracten", method = RequestMethod.GET)
-	public String raamcontracten(HttpServletRequest request, Model model) throws Exception {
-		String doss_hdr_id =  getDossierhouderId(request);
-		List raamContractenDD = sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getRaamcontractenDDbyUid", doss_hdr_id);
-		model.addAttribute("raamContractenDD", raamContractenDD);
-		addDossierhouder(model, doss_hdr_id);
-		return "planning.individueel.raamcontracten";
-	}
 
 	@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "/planning/individueel/raamcontracten2", method = RequestMethod.GET)
-	public String raamcontracten2(HttpServletRequest request, Model model) throws Exception {
+	@RequestMapping(value = "/planning/individueel/raamcontracten", method = RequestMethod.GET)
+	public String raamcontracten(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);
 
 		model.addAttribute("dossiersDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", doss_hdr_id));
@@ -79,7 +69,7 @@ public class PlanningController {
 		model.addAttribute("A_dossiers_DD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getRaamcontractenDDbyUid", doss_hdr_id) );
         
 		addDossierhouder(model, doss_hdr_id);
-        return jsview("planning.individueel.raamcontracten", "planning/individueel/gegroepeerdeOpdrachten2", model);
+        return jsview("planning.individueel.raamcontracten", "planning/individueel/gegroepeerdeOpdrachten", model);
 	}
 
     
@@ -87,16 +77,6 @@ public class PlanningController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/planning/individueel/gegroepeerdeOpdrachten", method = RequestMethod.GET)
 	public String gegroepeerdeOpdrachten(HttpServletRequest request, Model model) throws Exception {
-		String doss_hdr_id =  getDossierhouderId(request);		
-		List gegroepeerdeOpdrachtenDD = sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getGegroepeerdeOpdrachtenDDbyUid", doss_hdr_id);
-		model.addAttribute("gegroepeerdeOpdrachtenDD", gegroepeerdeOpdrachtenDD);
-		addDossierhouder(model, doss_hdr_id);
-		return "planning.individueel.gegroepeerdeOpdrachten";
-	}
-
-	@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "/planning/individueel/gegroepeerdeOpdrachten2", method = RequestMethod.GET)
-	public String gegroepeerdeOpdrachten2(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);
 
 		model.addAttribute("dossiersDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", doss_hdr_id));
@@ -111,7 +91,7 @@ public class PlanningController {
 		model.addAttribute("A_dossiers_DD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getGegroepeerdeOpdrachtenDDbyUid", doss_hdr_id) );
         
 		addDossierhouder(model, doss_hdr_id);
-        return jsview("planning.individueel.gegroepeerdeOpdrachten", "planning/individueel/gegroepeerdeOpdrachten2", model);
+        return jsview("planning.individueel.gegroepeerdeOpdrachten", "planning/individueel/gegroepeerdeOpdrachten", model);
 	}
 
 	

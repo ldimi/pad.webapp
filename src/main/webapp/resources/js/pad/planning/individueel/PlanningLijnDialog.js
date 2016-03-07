@@ -2,7 +2,7 @@
 /*global define: false, Slick: false, $: false, _: false, alert: false, _G_:true, console */
 
 define([
-    "planning/individueel/PlanningLijnModel2",
+    "planning/individueel/PlanningLijnModel",
     "dropdown/planning/fasen",
     "dropdown/planning/detailFasen",
     "ov/events",

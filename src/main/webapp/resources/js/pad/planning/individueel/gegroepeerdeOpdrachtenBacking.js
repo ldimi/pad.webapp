@@ -2,10 +2,10 @@
 /*global define: false, $: false, alert: false, _:false, console, _G_ */
 
 define([
-    "planning/individueel/PlanningLijnDialog2",
-    "planning/individueel/PlanningLijnModel2",
-    "planning/individueel/BestekDetailsDialog2",
-    "planning/individueel/FaseDetailsDialog2",
+    "planning/individueel/PlanningLijnDialog",
+    "planning/individueel/PlanningLijnModel",
+    "planning/individueel/BestekDetailsDialog",
+    "planning/individueel/FaseDetailsDialog",
     "dropdown/dossierhouders",
     "dropdown/jaren",
     "ov/Model",
@@ -35,9 +35,9 @@ define([
         enforceInvariants: function () {
             if (this.hasChanged("doss_hdr_id")) {
                 if (_G_.model.RAAM_OF_GROEP === "GROEP") {
-                    window.open('/pad/s/planning/individueel/gegroepeerdeOpdrachten2?doss_hdr_id=' + this.get("doss_hdr_id"),'_top');
+                    window.open('/pad/s/planning/individueel/gegroepeerdeOpdrachten?doss_hdr_id=' + this.get("doss_hdr_id"),'_top');
                 } else {
-                    window.open('/pad/s/planning/individueel/raamcontracten2?doss_hdr_id=' + this.get("doss_hdr_id"),'_top');
+                    window.open('/pad/s/planning/individueel/raamcontracten?doss_hdr_id=' + this.get("doss_hdr_id"),'_top');
                 }
             }
 
@@ -166,9 +166,9 @@ define([
                             model: OverzichtLijnModel,
                             onEditClicked: function (item) {
                                 if (item.get("bestek_id")) {
-                                    events.trigger("bestekDetailsDialog:open",item.get("bestek_id"), item.get("bestek_nr"), true);
+                                    events.trigger("bestekDetailsDialog:open",item.get("bestek_id"), item.get("bestek_nr"));
                                 } else {
-                                    events.trigger("faseDetailsDialog:open",item.get("contract_id"), item.get("fase_code"), true);
+                                    events.trigger("faseDetailsDialog:open",item.get("contract_id"), item.get("fase_code"));
                                 }
                             },
                             setDataEvent: "overzicht.lijnen:refresh"

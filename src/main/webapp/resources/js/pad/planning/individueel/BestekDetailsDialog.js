@@ -56,7 +56,7 @@ define([
                 content: bestek_id
             }).then(function (response) {
                 if (response) {
-                    if (!readOnly) {
+                    if (selectCb) {
                         response = _.filter(response, function (detail) {
                                         return (detail.ig_bedrag !== null);
                                     });
