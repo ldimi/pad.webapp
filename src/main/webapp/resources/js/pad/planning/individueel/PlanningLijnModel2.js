@@ -84,7 +84,8 @@ define([
                 slickFormatter: function (row, cell, value, columnDef, item) {
                     if (value !== null) {
                         return item.str("igb_d");
-                    } else if (item.get("fase_looptijd") !== null) {
+                    }
+                    if (item.get("fase_looptijd") !== null) {
                         return '<span style="color: green;" >' + item.get("fase_looptijd") + ' maanden</span>';
                     }
                     return "";
@@ -94,7 +95,8 @@ define([
                 slickFormatter: function (row, cell, value, columnDef, item) {
                     if (value !== null) {
                         return intFormatter(item.get("ig_bedrag"), ".");
-                    } else if (item.get("fase_prijs") !== null) {
+                    }
+                    if (item.get("fase_prijs") !== null) {
                         return '<span style="color: green;" >' + intFormatter(item.get("fase_prijs") , ".") + '</span>';
                     }
                     return "";
@@ -194,25 +196,18 @@ define([
             if (this.hasChanged("actie_code")) {
                 this.attributes.contract_id = null;
                 this.attributes.bestek_id = null;
+                events.trigger("planningLijnModel.actie_code:changed");
             } else if (this.hasChanged("contract_id")) {
                 this.attributes.bestek_id = null;
+                events.trigger("planningLijnModel.contract_id:changed");
             }
 
-            // TODO : Hoe zit het met bestek_omschrijving en bestek_nr ???
-            //if (this.hasChanged("bestek_id")) {
-            //    this.attributes.bestek_nr = null;
-            //    this.attributes.bestek_omschrijving = null;
-            //}
-
-            if (this.hasChanged("actie_code") || this.hasChanged("contract_id")) {
-                events.trigger("planningLijnDialog:doFetchBestekkenDD");
-            }
         },
 
         _validate_fase_detail_code_required_in_boekjaar: function () {
             if (this.isInBoekjaar() &&
                 this.get("fase_code") !== null &&
-                fasen.heeft_details_jn(this.get("fase_code"), this.get("dossier_type")) &&
+                fasen.heeft_details_jn(this.get("fase_code")) === 'J' &&
                 this.get("fase_detail_code") === null )  {
 
                 this.validationError.fase_detail_code = "Verplicht veld in boekjaar.";

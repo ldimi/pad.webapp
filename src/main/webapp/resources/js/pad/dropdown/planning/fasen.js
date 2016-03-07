@@ -24,14 +24,15 @@ define(["common/dropdown/dropdownBuilder"], function (dropdownBuilder) {
     fasen.isValid = function (fase_code, dossier_type) {
         return !!fasen.find(fase_code, dossier_type);
     };
-    
-    fasen.heeft_details_jn = function (fase_code, dossier_type) {
-        var fase = fasen.find(fase_code, dossier_type);
+
+    fasen.heeft_details_jn = function (fase_code) {
+        var fase = fasen.find(fase_code);
         return (fase ? fase.heeft_details_jn : null);
     };
     fasen.find = function (fase_code, dossier_type) {
         return _.find(_G_.model.faseDD , function (fase) {
-                   return (fase.value === fase_code && fase.dossier_type === dossier_type);
+                   return (fase.value === fase_code &&
+                                (dossier_type === undefined || fase.dossier_type === dossier_type));
                });
     };
 

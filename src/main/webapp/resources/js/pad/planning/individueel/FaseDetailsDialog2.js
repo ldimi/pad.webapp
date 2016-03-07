@@ -3,17 +3,17 @@
 
 define([
     "ov/Model",
-    "ov/GridComp",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/dialogBuilder",
+    "ov/mithril/gridConfigBuilder",
     "mithril",
     "underscore"
-], function (Model, GridComp, events ,ajax, dialogBuilder, m, _) {
+], function (Model, events ,ajax, dialogBuilder, gridConfigBuilder, m, _) {
     'use strict';
 
     var FaseDetailsDialog , FaseDetailModel;
-    
+
     FaseDetailModel = Model.extend({
         meta: Model.buildMeta([
             { name: "dossier_nr",
@@ -27,7 +27,7 @@ define([
             { name: "ig_bedrag", label: "Gepland bedrag", type: "double" }
         ])
     });
-        
+
     FaseDetailsDialog = {};
 
     FaseDetailsDialog.controller = function () {
@@ -37,20 +37,15 @@ define([
         this.height = 400;
 
         this.showErrors = m.prop(false);
-        
-        events.on("faseDetailsDialog:open", this.open.bind(this));
-        
-        events.on("faseDetailsDialog:dataReceived", function(data) {
-            this.grid.setData(data);
-        }.bind(this));
 
+        events.on("faseDetailsDialog:open", this.open.bind(this));
     };
     _.extend(FaseDetailsDialog.controller.prototype, {
-        preOpen: function (contract_id, fase_code, readOnly) {
-            this.readOnly = !!readOnly;
-            
+        preOpen: function (contract_id, fase_code, selectCb) {
+            this.selectCb = selectCb;
+
             this.title = "Fase : " + fase_code;
-            
+
             ajax.postJSON({
                 url: "/pad/s/planning/getDetailsVoorFase",
                 content: {
@@ -62,35 +57,30 @@ define([
                     events.trigger("faseDetailsDialog:dataReceived", response);
                 }
             });
-            
+
             this.showErrors(false);
-        },
-        configGrid: function (el, isInitialized) {
-            if (!isInitialized) {
-                this.grid = new GridComp({
-                    el: el,
-                    model: FaseDetailModel,
-                    editBtn: this.readOnly ? false: "Selecteer",
-                    onEditClicked: function (item) {
-                        events.trigger("faseDetailsDialog:selected", item);
-                    }
-                });
-            }
         }
-    
+
     });
 
 
     FaseDetailsDialog.view = function (ctrl) {
-        return m("#faseDetailsDialog", [
-            m("div",
+        return m("div",
                 { style: { position: "absolute", top: "2px", left: "2px", right: "2px", bottom: "28px" },
                   class: "slick-grid-div",
-                  config: ctrl.configGrid.bind(ctrl)
+                  config: gridConfigBuilder({
+                                model: FaseDetailModel,
+                                editBtn: ctrl.selectCb ? "Selecteer" :false,
+                                onEditClicked: function (item) {
+                                    if (ctrl.selectCb) { ctrl.selectCb(item);}
+                                    ctrl.close();
+                                },
+                                setDataEvent: "faseDetailsDialog:dataReceived"
+                            })
                 }
-            )
-        ]);
+            );
+        //]);
     };
-    
+
     return dialogBuilder(FaseDetailsDialog);
 });

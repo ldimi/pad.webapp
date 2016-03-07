@@ -16,13 +16,27 @@ define([
 
     var PlanningLijnDialog, dateConfig, actie_dd;
 
-    actie_dd = [
-        { value: "", label: "" },
-        { value: "N_B", label: "Nieuw enkelvoudig bestek" },
-        { value: "H_B", label: "Bestaand enkelvoudig bestek" },
-        { value: "GGO", label: "Gegroepeerde opdracht" },
-        { value: "RC", label: "Raamcontract" }
-    ];
+    actie_dd = (function() {
+        var dd = [
+            { value: "N_B",
+              label: (_G_.model.RAAM_OF_GROEP)
+                        ? (_G_.model.RAAM_OF_GROEP === "RAAM")
+                            ? "Nieuw raamcontract bestek"
+                            : "Nieuw gegroepeerd bestek"
+                        : "Nieuw enkelvoudig bestek"
+            },
+            { value: "H_B",
+              label: (_G_.model.RAAM_OF_GROEP) ? "Bestaand bestek" : "Bestaand enkelvoudig bestek"
+            }
+        ];
+        if (!_G_.model.RAAM_OF_GROEP) {
+            dd.unshift({ value: "", label: "" });
+            dd.push({ value: "GGO", label: "Gegroepeerde opdracht" });
+            dd.push({ value: "RC", label: "Raamcontract" });
+        }
+        return dd;
+    }());
+
 
     dateConfig = function (el, isInitialized) {
         if (!isInitialized) {
@@ -40,10 +54,12 @@ define([
     PlanningLijnDialog.controller = function () {
         events.on("planningLijnDialog:open", this.open.bind(this));
 
-        events.on("planningLijnDialog:doFetchBestekkenDD", this.fetchBestekkenDD.bind(this));
+        events.on("planningLijnModel.actie_code:changed", function() {
+            this.fetchBestekkenDD();
+            this.filterContractenDD();
+        }.bind(this));
 
-        // na save wordt er gewacht op data, vooraleer de dialog te sluiten.
-        //events.on("dossierhouders:dataReceived", _.bind(this.close, this));
+        events.on("planningLijnModel.contract_id:changed", this.fetchBestekkenDD.bind(this));
 
         this.title = "Editeer Planningslijn";
         this.width = 550;
@@ -56,11 +72,11 @@ define([
             this._planningData = planningData;
 
             this.fetchBestekkenDD();
+            this.filterContractenDD();
 
-            this.showErrors(false); // TODO
+            this.showErrors(false);
         },
         bewaar: function() {
-            var status_crud;
             this.showErrors(true);
 
             if (!this._lijn.isValid()) {
@@ -98,7 +114,42 @@ define([
 
         },
 
-        voegDeelopdrToe: _.noop,
+        voegDeelopdrToe: function() {
+            var actie_code, fase_code, bestek_id;
+
+            if (_G_.model.RAAM_OF_GROEP === "GROEP" && this._lijn.get("dossier_is_raamcontract_jn") === 'N') {
+                actie_code = this._lijn.get("actie_code");
+                fase_code = this._lijn.get("fase_code");
+                bestek_id = this._lijn.get("bestek_id");
+
+                if (actie_code === "N_B" && fase_code !== null) {
+                    events.trigger("faseDetailsDialog:open",this._lijn.get("dossier_id"), this._lijn.get("fase_code"), function(item) {
+                        var omschrijving, commentaar_org;
+                        commentaar_org = this._lijn.str("commentaar");
+                        omschrijving = "( " + item.get("dossier_nr") + " " + item.get("dossier_b") +
+                                        " : " + item.get("ig_bedrag") + " )";
+                        if (commentaar_org !== "") {
+                            omschrijving = "\n" + omschrijving;
+                        }
+                        this._lijn.set("commentaar", commentaar_org + omschrijving);
+                    }.bind(this));
+                } else if (actie_code === "H_B" && bestek_id !== null) {
+                    events.trigger("bestekDetailsDialog:open",this._lijn.get("bestek_id"), this._lijn.get("bestek_nr"), function(item) {
+                        var omschrijving, commentaar_org;
+                        commentaar_org = this._lijn.str("commentaar");
+                        omschrijving = "( " + item.get("dossier_nr") + " " + item.get("dossier_b") + ", " + item.get("bestek_nr") +
+                                        " : " + item.get("ig_bedrag") + " )";
+                        if (commentaar_org !== "") {
+                            omschrijving = "\n" + omschrijving;
+                        }
+                        this._lijn.set("commentaar", commentaar_org + omschrijving);
+                    }.bind(this));
+                }
+            }
+        },
+
+
+
 
         fetchBestekkenDD: function () {
             var actie_code, contract_id;
@@ -145,26 +196,24 @@ define([
                 });
             }
             this.bestekken_dd = [];
-        }
+        },
 
-        //  TODO ???
-        //
-        // _filterContractDD: function () {
-        //     var actie_code = this.fm.$actie_code.val(),
-        //         raamcontracten_jn;
-        //     if (actie_code === "N_B" || actie_code === "H_B") {
-        //         raamcontracten_jn = "GEEN";
-        //     } else if (actie_code === "RC") {
-        //         raamcontracten_jn = "J";
-        //     } else {
-        //         raamcontracten_jn = "N";
-        //     }
-        //     this.fm.$contract_id.select('filter', function (option) {
-        //         return (option.value === "" || option.raamcontract_jn === raamcontracten_jn);
-        //     });
-        //
-        //
-        // },
+        filterContractenDD: function () {
+            var actie_code = this._lijn.get("actie_code"),
+                raamcontracten_jn;
+            if (actie_code === "N_B" || actie_code === "H_B") {
+                raamcontracten_jn = "GEEN";
+            } else if (actie_code === "RC") {
+                raamcontracten_jn = "J";
+            } else {
+                raamcontracten_jn = "N";
+            }
+            this.contractenDD = _.filter(this._planningData.contractenDD,  function (option) {
+                return (option.value === "" || option.raamcontract_jn === raamcontracten_jn);
+            });
+
+
+        }
 
 
 
@@ -213,7 +262,7 @@ define([
                     m("td", "Fase:"),
                     m("td", {colspan: "3" }, ff.select("fase_code", fasen[dossier_type]))
                 ]),
-                ( fasen.heeft_details_jn(pl_lijn.get("fase_code"), pl_lijn.get("dossier_type")) === 'J' ) ?
+                ( fasen.heeft_details_jn(pl_lijn.get("fase_code")) === 'J') ?
                     m("tr", [
                         m("td", "Fase detail:"),
                         m("td", {colspan: "3" }, ff.select("fase_detail_code", detailFasen.dd(pl_lijn.get("fase_code"))))
@@ -232,7 +281,7 @@ define([
                 ( _.contains(["GGO", "RC"],pl_lijn.get("actie_code")) ) ?
                     m("tr", [
                         m("td", "Contract:"),
-                        m("td", {colspan: "3" }, ff.select("contract_id", ctrl._planningData.contractenDD))
+                        m("td", {colspan: "3" }, ff.select("contract_id", ctrl.contractenDD))
                     ]) : null,
 
                 ( pl_lijn.get("actie_code") === "H_B" ||
@@ -260,8 +309,12 @@ define([
                 ])
             ]),
             m("div", [
-                // m("button", {onclick: _.bind(ctrl.voegDeelopdrToe, ctrl)}, "Selecteer planningsitem"),
-                // m("br"),
+                (pl_lijn.get("dossier_is_raamcontract_jn") === 'N'  &&
+                        ( (pl_lijn.get("actie_code") === "N_B" && pl_lijn.get("fase_code") !== null) ||
+                          (pl_lijn.get("actie_code") === "H_B" && pl_lijn.get("bestek_id") !== null)   ))
+                    ? m("button", {onclick: _.bind(ctrl.voegDeelopdrToe, ctrl)}, "Selecteer planningsitem")
+                    : null,
+                m("br"),
                 m("button", {onclick: _.bind(ctrl.bewaar, ctrl)}, "Bewaar"),
                 m("button", {onclick: _.bind(ctrl.close, ctrl)}, "Annuleer")
             ])

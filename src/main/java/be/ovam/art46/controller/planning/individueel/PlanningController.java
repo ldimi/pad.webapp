@@ -71,6 +71,28 @@ public class PlanningController {
 	}
 
 	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/planning/individueel/raamcontracten2", method = RequestMethod.GET)
+	public String raamcontracten2(HttpServletRequest request, Model model) throws Exception {
+		String doss_hdr_id =  getDossierhouderId(request);
+
+		model.addAttribute("dossiersDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", doss_hdr_id));
+        model.addAttribute("jaren", DropDownHelper.INSTANCE.getJaren());
+        
+		model.addAttribute("faseDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD"));
+		model.addAttribute("faseDetailDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDetailDD"));
+        
+		model.addAttribute("contractenDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD", doss_hdr_id));
+       
+        model.addAttribute("RAAM_OF_GROEP", "RAAM");
+		model.addAttribute("A_dossiers_DD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getRaamcontractenDDbyUid", doss_hdr_id) );
+        
+		addDossierhouder(model, doss_hdr_id);
+        return jsview("planning.individueel.raamcontracten", "planning/individueel/gegroepeerdeOpdrachten2", model);
+	}
+
+    
+    
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/planning/individueel/gegroepeerdeOpdrachten", method = RequestMethod.GET)
 	public String gegroepeerdeOpdrachten(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);		
@@ -85,9 +107,6 @@ public class PlanningController {
 	public String gegroepeerdeOpdrachten2(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);
 
-        
-        
-        
 		model.addAttribute("dossiersDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getDossiersDDbyUid", doss_hdr_id));
         model.addAttribute("jaren", DropDownHelper.INSTANCE.getJaren());
         
@@ -96,12 +115,8 @@ public class PlanningController {
         
 		model.addAttribute("contractenDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD", doss_hdr_id));
        
-        
-        
-        
-        
-		List gegroepeerdeOpdrachtenDD = sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getGegroepeerdeOpdrachtenDDbyUid", doss_hdr_id);
-		model.addAttribute("gegroepeerdeOpdrachtenDD", gegroepeerdeOpdrachtenDD);
+        model.addAttribute("RAAM_OF_GROEP", "GROEP");
+		model.addAttribute("A_dossiers_DD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getGegroepeerdeOpdrachtenDDbyUid", doss_hdr_id) );
         
 		addDossierhouder(model, doss_hdr_id);
         return jsview("planning.individueel.gegroepeerdeOpdrachten", "planning/individueel/gegroepeerdeOpdrachten2", model);

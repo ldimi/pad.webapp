@@ -14,7 +14,7 @@ define([
     'use strict';
 
     var BestekDetailsDialog , BestekDetailModel;
-    
+
     BestekDetailModel = Model.extend({
         meta: Model.buildMeta([
             { name: "bestek_id", hidden: true },
@@ -32,7 +32,7 @@ define([
             { name: "bedrag", label: "Bedrag deelopdracht", type: "double" }
         ])
     });
-        
+
     BestekDetailsDialog = {};
 
     BestekDetailsDialog.controller = function () {
@@ -42,15 +42,15 @@ define([
         this.height = 400;
 
         this.showErrors = m.prop(false);
-        
+
         events.on("bestekDetailsDialog:open", this.open.bind(this));
     };
     _.extend(BestekDetailsDialog.controller.prototype, {
-        preOpen: function (bestek_id, bestek_nr, readOnly) {
-            this.readOnly = !!readOnly;
-            
+        preOpen: function (bestek_id, bestek_nr, selectCb) {
+            this.selectCb = selectCb;
+
             this.title = "Bestek : " + bestek_nr;
-            
+
             ajax.postJSON({
                 url: "/pad/s/planning/getDetailsVoorBestek",
                 content: bestek_id
@@ -64,29 +64,9 @@ define([
                     events.trigger("bestekDetailsDialog:dataReceived", response);
                 }
             });
-            
+
             this.showErrors(false);
         }
-        // ,
-        // configGrid: function (el, isInitialized, ctx) {
-        //     var grid, dataReceivedHandler;
-        //     if (!isInitialized) {
-        //         grid = new GridComp({
-        //             el: el,
-        //             model: BestekDetailModel,
-        //             editBtn: this.readOnly ? false: "Selecteer",
-        //             onEditClicked: function (item) {
-        //                 events.trigger("bestekDetailsDialog:selected", item);
-        //             }
-        //         });
-        //         dataReceivedHandler = grid.setData.bind(grid);
-        //         events.on("bestekDetailsDialog:dataReceived", dataReceivedHandler);
-        //         ctx.onunload = function () {
-        //             events.off("bestekDetailsDialog:dataReceived", dataReceivedHandler);
-        //         };
-        //     }
-        // }
-    
     });
 
 
@@ -95,12 +75,12 @@ define([
             m("div",
                 { style: { position: "absolute", top: "2px", left: "2px", right: "2px", bottom: "28px" },
                   class: "slick-grid-div",
-                  //config: ctrl.configGrid.bind(ctrl)
                   config: gridConfigBuilder({
                                 model: BestekDetailModel,
-                                editBtn: ctrl.readOnly ? false: "Selecteer",
+                                editBtn: ctrl.selectCb ? "Selecteer" : false,
                                 onEditClicked: function (item) {
-                                    events.trigger("bestekDetailsDialog:selected", item);
+                                    if (ctrl.selectCb) { ctrl.selectCb(item);}
+                                    ctrl.close();
                                 },
                                 setDataEvent: "bestekDetailsDialog:dataReceived"
                             })
@@ -108,6 +88,6 @@ define([
             )
         ]);
     };
-    
+
     return dialogBuilder(BestekDetailsDialog);
 });
