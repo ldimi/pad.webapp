@@ -33,7 +33,7 @@
         </tr>
         <tr>
             <td valign='top'  colspan="2">
-                <textarea name="financiele_info" style="width: 100%" rows="8" maxlength="820" >${dossier.financiele_info}</textarea>
+                <textarea name="financiele_info" style="width: 100%" rows="8" maxlength="3000" >${dossier.financiele_info}</textarea>
             </td>
         </tr>
 

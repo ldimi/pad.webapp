@@ -6,7 +6,7 @@
 
 alter table art46.dossier
     drop constraint cc_dossier_raming
-    drop constraint constraint cc_dossier_raming_bsp
+    drop constraint cc_dossier_raming_bsp
 ;
 
 
