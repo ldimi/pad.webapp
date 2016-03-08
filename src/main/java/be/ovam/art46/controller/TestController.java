@@ -126,7 +126,12 @@ public class TestController {
 	@RequestMapping(value = "/test/mail/send", method = RequestMethod.GET)
 	public @ResponseBody
 	String sendmail(HttpSession session,  Model model) throws Exception {
-		mailService.sendMail("dvdveken@ovam.be", "Pad test send mail" , "pad@ovam.be", "Dit is een test");		
+        String[] to = new String[] {"dvdveken@ovam.be", "dimitri.van.der.veken@ovam.be"};
+        String message = "In dossier  " + "blabla" + " (" + "blabla" + ") werd voor " +
+                " bestek " + "blabla" + " de volgende deelopdracht goedgekeurd: " + "blabla" + " (" + "blabla" +
+                ")." + "<br>" + "<br>" +
+                " Meer info over het bestek op: " + "http://bla/bla/URL" + "/s/bestek/" + "blabla";
+		mailService.sendHTMLMail(to, "Pad test send mail" , "pad@ovam.be", message);		
 		return "Mail verzonden";
 	}
 	

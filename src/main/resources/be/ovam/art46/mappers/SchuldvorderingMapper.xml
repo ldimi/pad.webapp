@@ -400,4 +400,25 @@
         where wb.aanvr_schuldvordering_id = #{aanvr_schuldvordering_id}
     </select>
 
+    <select id="getEmailsForSchuldvordering"
+            parameterType="int"
+            resultType="string" >
+        select sv.WEBLOKET_GEBRUIKER_EMAIL
+        from art46.SCHULDVORDERING sv
+        where 1 = 1
+            and sv.VORDERING_ID = #{schuldvordering_id}
+        union
+        select distinct abon.email
+        from art46.SCHULDVORDERING sv
+                inner join  art46.AANVR_SCHULDVORDERING asv
+                on sv.AANVR_SCHULDVORDERING_ID = asv.AANVR_SCHULDVORDERING_ID
+             inner join art46.OFFERTE off
+             on asv.OFFERTE_ID = off.ID
+                inner join  art46.OFFERTE_ABONNEE abon
+                on off.id = abon.OFFERTE_ID
+        where 1 = 1
+            and sv.VORDERING_ID = #{schuldvordering_id}
+    </select>
+
+
 </mapper>

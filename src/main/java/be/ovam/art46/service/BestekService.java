@@ -80,12 +80,11 @@ public class BestekService {
     private void sendEmailGoedkeuringDeelopdrachtDossierhouderDeelopdracht(Integer deelopdracht_id) {
         try {
             DeelOpdrachtDO deelopdrachtDO = sql.selectOne("getDeelopdrachtById", deelopdracht_id);
-            String message = getOmgevingWarning() +
-                    "In dossier  " + deelopdrachtDO.getAnder_dossier_b_l() + " (" + deelopdrachtDO.getAnder_dossier_nr() + ") werd voor " +
+            String message = "In dossier  " + deelopdrachtDO.getAnder_dossier_b_l() + " (" + deelopdrachtDO.getAnder_dossier_nr() + ") werd voor " +
                     " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht goedgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
-                    ")." + System.getProperty("line.separator") + System.getProperty("line.separator") +
+                    ").<br><br>" + 
                     " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
-            mailService.sendMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be", getOmgevingWarning() + "Goedkeuring deelopdracht", this.getPadMailAdres(), message);
+            mailService.sendMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be", "Goedkeuring deelopdracht", this.getPadMailAdres(), message);
 
             DeelOpdracht deelOpdracht = deelOpdrachtService.get(deelopdracht_id);
             VoorstelDeelopdracht voorstelDeelopdracht = deelOpdracht.getVoorstelDeelopdracht();
@@ -133,7 +132,7 @@ public class BestekService {
         for (Map project : projecten) {
             message += System.getProperty("line.separator") + "   - " + project.get("project_id") + " " + project.get("project_b");
         }
-        mailService.sendMail(this.getMailAdresAfsluitenBestek(), getOmgevingWarning() + "Afsluiting bestek " + bestek.getBestek_nr(), this.getPadMailAdres(), message);
+        mailService.sendMail(this.getMailAdresAfsluitenBestek(), "Afsluiting bestek " + bestek.getBestek_nr(), this.getPadMailAdres(), message);
     }
 
 

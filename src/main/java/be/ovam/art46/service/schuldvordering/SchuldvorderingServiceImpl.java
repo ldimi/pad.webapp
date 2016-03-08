@@ -155,7 +155,8 @@ public class SchuldvorderingServiceImpl implements SchuldvorderingService {
 
             if (svDO.getWebloket_gebruiker_email() != null) {
                 log.info("Er wordt een mail naar de inzender van de aanvraag verstuurd");
-                String aan = svDO.getWebloket_gebruiker_email();
+                List<String> aan = sqlSession.selectList("getEmailsForSchuldvordering", svDO.getVordering_id());
+                // String aan = svDO.getWebloket_gebruiker_email();
                 String onderwerp = "Uw schuldvordering " + svDO.getSchuldvordering_nr() + " is beoordeeld.";
                 String van = svDO.getContact_doss_hdr_email();
                 String link = urlWebloket + "/webloket/offerte/" + svDO.getOfferte_id() +
@@ -168,7 +169,7 @@ public class SchuldvorderingServiceImpl implements SchuldvorderingService {
                 // mail wordt niet verzonden in ontwikkel omgeving ...
                 String omgeving = System.getProperty("ovam.omgeving");
                 if (!"ontwikkeling".equals(omgeving)) {
-                    mailService.sendHTMLMail(aan, onderwerp, van, inhoud.toString());
+                    mailService.sendHTMLMail((String[]) aan.toArray(), onderwerp, van, inhoud.toString());
                     log.info("mail verzonden aan : " + aan);
                 } else {
                     log.info("[omgeving = ontwikkeling] geen mail verzonden van : " + van + ",  aan : " + aan + ", link : " + link);
