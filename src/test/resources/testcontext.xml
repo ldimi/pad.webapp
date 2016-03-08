@@ -73,7 +73,7 @@
     <Parameter name="ovam.esb.readVastlegging.endpoint" override="false" value="http://10.1.11.115:8080/EsbSap/http/SapServices/readVastlegging"/>
     <Parameter name="ovam.budget.aanvraagvastlegging" override="false" value="http://test-in.ovam.be/budget/rest/budgetreservering/aanvraagVastlegging.do"/>
     <Parameter name="ovam.budget.rest.url" override="false" value="http://10.1.154.86:8280/budget/rest"/>
-    <Parameter name="ovam.webloket.url" value="https://services.ovam.be/webloket-ivs/" override="false"/>
+    <Parameter name="ovam.webloket.url" value="https://services.ovam.be/webloket-ivs" override="false"/>
     <Parameter name="ovam.esb.url" override="false" value="http://10.1.11.155:8001/rest/cmis"/>
     <Parameter name="pad.schuldvordering.nieuwe.flow" value="true" override="false"/>
 

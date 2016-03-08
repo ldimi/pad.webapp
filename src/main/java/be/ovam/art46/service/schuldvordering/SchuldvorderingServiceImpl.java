@@ -158,7 +158,7 @@ public class SchuldvorderingServiceImpl implements SchuldvorderingService {
                 String aan = svDO.getWebloket_gebruiker_email();
                 String onderwerp = "Uw schuldvordering " + svDO.getSchuldvordering_nr() + " is beoordeeld.";
                 String van = svDO.getContact_doss_hdr_email();
-                String link = urlWebloket + "webloket/offerte/" + svDO.getOfferte_id() +
+                String link = urlWebloket + "/webloket/offerte/" + svDO.getOfferte_id() +
                         "/aanvraagSchuldvordering/" + svDO.getAanvr_schuldvordering_id();
                 StringBuilder inhoud = new StringBuilder()
                         .append(getOmgevingWarning())

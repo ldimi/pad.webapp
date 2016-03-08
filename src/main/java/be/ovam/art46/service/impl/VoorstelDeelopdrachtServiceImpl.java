@@ -115,6 +115,6 @@ public class VoorstelDeelopdrachtServiceImpl implements VoorstelDeelopdrachtServ
     }
 
     public String getWebloketLink(VoorstelDeelopdracht voorstelDeelopdracht) {
-        return urlWebloket+"webloket/offerte/"+voorstelDeelopdracht.getOfferte().getId()+"/voorstel/"+voorstelDeelopdracht.getId();
+        return urlWebloket+"/webloket/offerte/"+voorstelDeelopdracht.getOfferte().getId()+"/voorstel/"+voorstelDeelopdracht.getId();
     }
 }
