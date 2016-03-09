@@ -11,6 +11,6 @@ public interface MailService {
 
     OvamMail save(String aan, String onderwerp, String van, String bericht);
 
-    void sendMail(OvamMail ovamMail) throws Exception;
+    void sendHTMLMail(OvamMail ovamMail) throws Exception;
 
 }

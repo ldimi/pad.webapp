@@ -4,7 +4,6 @@ import be.ovam.art46.dao.MailDAO;
 import be.ovam.pad.model.OvamMail;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,8 +18,7 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
 	private JavaMailSenderImpl mailSender;
-    @Autowired
-    private SimpleMailMessage templateMessage;
+
     @Autowired
     private MailDAO mailDAO;
 
@@ -29,16 +27,16 @@ public class MailServiceImpl implements MailService {
 
 	
 	public void sendMail(String to, String subject, String from, String message) throws Exception {
-        sendHTMLMail(to, subject, from, message);
+        MailServiceImpl.this.sendHTMLMail(to, subject, from, message);
 	}
     
-    public void sendMail(OvamMail ovamMail) throws MessagingException {
-        sendHTMLMail(ovamMail.getTo(), ovamMail.getSubject(),ovamMail.getFrom(), ovamMail.getMessage());
+    public void sendHTMLMail(OvamMail ovamMail) throws MessagingException {
+        MailServiceImpl.this.sendHTMLMail(ovamMail.getTo(), ovamMail.getSubject(),ovamMail.getFrom(), ovamMail.getMessage());
     }
     
     public void sendHTMLMail(String to, String subject, String from, String bericht) throws MessagingException {
         String[] toArr =  new String[] {to};
-        sendHTMLMail(toArr, subject, from, bericht);
+        MailServiceImpl.this.sendHTMLMail(toArr, subject, from, bericht);
     }
 
     public void sendHTMLMail(String[] toArr, String subject, String from, String bericht) throws MessagingException {

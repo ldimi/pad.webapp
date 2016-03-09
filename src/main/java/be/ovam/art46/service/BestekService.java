@@ -90,7 +90,7 @@ public class BestekService {
             VoorstelDeelopdracht voorstelDeelopdracht = deelOpdracht.getVoorstelDeelopdracht();
             if (voorstelDeelopdracht != null) {
                 if (voorstelDeelopdracht.getOvamMail() != null) {
-                    mailService.sendMail(voorstelDeelopdracht.getOvamMail());
+                    mailService.sendHTMLMail(voorstelDeelopdracht.getOvamMail());
                     voorstelDeelopdracht.setOvamMail(null);
                     deelOpdrachtService.save(deelOpdracht);
                 }
@@ -116,21 +116,11 @@ public class BestekService {
         return mailadres;
     }
 
-    private String getOmgevingWarning() {
-        String omgeving = System.getProperty("ovam.omgeving");
-        if (omgeving == null || omgeving.equals("productie")) {
-            // default  productie , geen waarschuwings text.
-            return "";
-        } else {
-            return "[DIT IS EEN TEST ! vanuit de " + omgeving + " omgeving] ";
-        }
-    }
-
     private void sendEmailAfsluitenBestek(BestekDO bestek) throws Exception {
         List<Map> projecten = sql.selectList("getSAPProjectByBestekId", bestek.getBestek_id());
-        String message = getOmgevingWarning() + "Bestek " + bestek.getBestek_nr() + " werd afgesloten, de volgende projectnummers mogen daarom worden afgesloten: ";
+        String message = "Bestek " + bestek.getBestek_nr() + " werd afgesloten, de volgende projectnummers mogen daarom worden afgesloten: ";
         for (Map project : projecten) {
-            message += System.getProperty("line.separator") + "   - " + project.get("project_id") + " " + project.get("project_b");
+            message += "<br>   - " + project.get("project_id") + " " + project.get("project_b");
         }
         mailService.sendMail(this.getMailAdresAfsluitenBestek(), "Afsluiting bestek " + bestek.getBestek_nr(), this.getPadMailAdres(), message);
     }
