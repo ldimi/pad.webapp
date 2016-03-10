@@ -117,7 +117,7 @@ define([
                 } else {
                     this._planningData.lijnen.splice(this._planningData.selectedLijnIndex, 1, savedLijn);
                 }
-                
+
                 $.notify("De lijn is bewaard.");
                 events.trigger("planning.lijnen:refresh", this._planningData.lijnen);
                 this.close();
@@ -219,7 +219,7 @@ define([
             } else {
                 raamcontracten_jn = "N";
             }
-            this.contractenDD = _.filter(this._planningData.contractenDD,  function (option) {
+            this.contractenDD = _.filter(_G_.contractenDD,  function (option) {
                 return (option.value === "" || option.raamcontract_jn === raamcontracten_jn);
             });
 

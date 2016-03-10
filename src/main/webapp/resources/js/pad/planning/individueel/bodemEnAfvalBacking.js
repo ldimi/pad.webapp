@@ -70,6 +70,7 @@ define([
                             value: "",
                             label: ""
                         });
+                        _G_.contractenDD = _planning.contractenDD;  // !! opgepast : globale variabele.
 
                         events.trigger("planning.lijnen:refresh", _planning.lijnen);
                         $('#planningGrid').removeClass('invisible');

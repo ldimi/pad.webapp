@@ -1,5 +1,5 @@
 /*jslint nomen: true, debug: true, browser: true */
-/*global define: false, $: false, alert: false, console: false, _:false */
+/*global define: false, $: false, alert: false, console: false, _:false, _G_ */
 
 define([
     "dropdown/planning/fasen",
@@ -80,6 +80,9 @@ define([
                     return "";
                 }
             },
+            { name: "benut_bestek_id", type: "int", hidden: true },
+            { name: "benut_bestek_nr", type: "string", hidden: true },
+            { name: "benut_bestek_omschrijving", type: "string", hidden: true },
             { name: "igb_d", type: "date", label: "Gepland datum", required: true, width: 80,
                 slickFormatter: function (row, cell, value, columnDef, item) {
                     if (value !== null) {
@@ -193,6 +196,9 @@ define([
             this._validate_actie_code_required_in_boekjaar();
             this._validate_contract_id_required_for_RC_and_GGO_in_boekjaar();
 
+            this._invariant_contract_id();
+
+
             if (this.hasChanged("actie_code")) {
                 this.attributes.contract_id = null;
                 this.attributes.bestek_id = null;
@@ -202,6 +208,19 @@ define([
                 events.trigger("planningLijnModel.contract_id:changed");
             }
 
+        },
+
+        _invariant_contract_id: function () {
+            var contract_id, contract;
+            if (this.hasChanged("contract_id")) {
+                contract_id =  this.get("contract_id");
+                if (contract_id !== null) {
+                    contract = _(_G_.contractenDD).findWhere({value: contract_id });
+                    this.attributes.contract_type = contract.contract_type;
+                } else {
+                    this.attributes.contract_type =  null;
+                }
+            }
         },
 
         _validate_fase_detail_code_required_in_boekjaar: function () {
