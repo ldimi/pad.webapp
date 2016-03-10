@@ -84,7 +84,7 @@ public class BestekService {
                     " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht goedgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
                     ").<br><br>" + 
                     " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
-            mailService.sendMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be", "Goedkeuring deelopdracht", this.getPadMailAdres(), message);
+            mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be", "Goedkeuring deelopdracht", this.getPadMailAdres(), message);
 
             DeelOpdracht deelOpdracht = deelOpdrachtService.get(deelopdracht_id);
             VoorstelDeelopdracht voorstelDeelopdracht = deelOpdracht.getVoorstelDeelopdracht();
@@ -122,7 +122,7 @@ public class BestekService {
         for (Map project : projecten) {
             message += "<br>   - " + project.get("project_id") + " " + project.get("project_b");
         }
-        mailService.sendMail(this.getMailAdresAfsluitenBestek(), "Afsluiting bestek " + bestek.getBestek_nr(), this.getPadMailAdres(), message);
+        mailService.sendHTMLMail(this.getMailAdresAfsluitenBestek(), "Afsluiting bestek " + bestek.getBestek_nr(), this.getPadMailAdres(), message);
     }
 
 

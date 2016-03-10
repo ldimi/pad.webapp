@@ -26,10 +26,6 @@ public class MailServiceImpl implements MailService {
     private String ovam_omgeving;
 
 	
-	public void sendMail(String to, String subject, String from, String message) throws Exception {
-        MailServiceImpl.this.sendHTMLMail(to, subject, from, message);
-	}
-    
     public void sendHTMLMail(OvamMail ovamMail) throws MessagingException {
         MailServiceImpl.this.sendHTMLMail(ovamMail.getTo(), ovamMail.getSubject(),ovamMail.getFrom(), ovamMail.getMessage());
     }
