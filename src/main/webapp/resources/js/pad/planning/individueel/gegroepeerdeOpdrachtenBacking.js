@@ -129,11 +129,11 @@ define([
                 m("table", [
                     m("tr", [
                         m("td", "Dossier houder:"),
-                        m("td", ff.select("doss_hdr_id", dossierhouders_dd)),
+                        m("td", ff.select("doss_hdr_id", {style: {width: "200px"}}, dossierhouders_dd)),
                         m("td", ff.select("jaar", jaren_dd)),
                         m("td", ff.select("benut_jn", ctrl.benut_jn_dd)),
                         m("td", "A-dossier:"),
-                        m("td", ff.select("dossier_id", _G_.model.A_dossiers_DD)),
+                        m("td", ff.select("dossier_id", {style: {width: "350px"}}, _G_.model.A_dossiers_DD)),
                         m("td", m("button", {class: "inputBtn", onclick: _.bind(ctrl.ophalen, ctrl)}, "Ophalen"))
                     ])
                 ])
