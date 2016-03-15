@@ -161,19 +161,10 @@ public class SchuldvorderingServiceImpl implements SchuldvorderingService {
                 String van = svDO.getContact_doss_hdr_email();
                 String link = urlWebloket + "/webloket/offerte/" + svDO.getOfferte_id() +
                         "/aanvraagSchuldvordering/" + svDO.getAanvr_schuldvordering_id();
-                StringBuilder inhoud = new StringBuilder()
-                        .append(getOmgevingWarning())
-                        .append("Uw schuldvordering ").append(svDO.getSchuldvordering_nr()).append(" is beoordeeld: \n")
-                        .append(link);
+                String inhoud = "Uw schuldvordering " + svDO.getSchuldvordering_nr() + " is beoordeeld: \n" + link;
 
-                // mail wordt niet verzonden in ontwikkel omgeving ...
-                String omgeving = System.getProperty("ovam.omgeving");
-                if (!"ontwikkeling".equals(omgeving)) {
-                    mailService.sendHTMLMail((String[]) aan.toArray(), onderwerp, van, inhoud.toString());
-                    log.info("mail verzonden aan : " + aan);
-                } else {
-                    log.info("[omgeving = ontwikkeling] geen mail verzonden van : " + van + ",  aan : " + aan + ", link : " + link);
-                }
+                mailService.sendHTMLMail(aan.toArray(new String[aan.size()]), onderwerp, van, inhoud);
+                log.info("mail verzonden aan : " + aan);
             } else {
                 throw new RuntimeException("Geen webloket_gebruiker gekoppeld aan " + svDO.getSchuldvordering_nr());
             }
@@ -350,16 +341,5 @@ public class SchuldvorderingServiceImpl implements SchuldvorderingService {
         Schuldvordering schuldvordering = get(vordering_id);
         return esbService.print(schuldvordering.getAntwoordPDF().getDms_id(), Application.INSTANCE.getUser_id(), schuldvordering.getNummer());
     }
-
-    private String getOmgevingWarning() {
-        String omgeving = System.getProperty("ovam.omgeving");
-        if (omgeving == null || omgeving.equals("productie")) {
-            // default  productie , geen waarschuwings text. 
-            return "";
-        } else {
-            return "[DIT IS EEN TEST ! vanuit de " + omgeving + " omgeving] ";
-        }
-    }
-
 
 }

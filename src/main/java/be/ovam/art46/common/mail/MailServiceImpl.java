@@ -26,13 +26,14 @@ public class MailServiceImpl implements MailService {
     private String ovam_omgeving;
 
 	
+    @Override
     public void sendHTMLMail(OvamMail ovamMail) throws MessagingException {
-        MailServiceImpl.this.sendHTMLMail(ovamMail.getTo(), ovamMail.getSubject(),ovamMail.getFrom(), ovamMail.getMessage());
+        this.sendHTMLMail(ovamMail.getTo(), ovamMail.getSubject(),ovamMail.getFrom(), ovamMail.getMessage());
     }
     
     public void sendHTMLMail(String to, String subject, String from, String bericht) throws MessagingException {
         String[] toArr =  new String[] {to};
-        MailServiceImpl.this.sendHTMLMail(toArr, subject, from, bericht);
+        this.sendHTMLMail(toArr, subject, from, bericht);
     }
 
     public void sendHTMLMail(String[] toArr, String subject, String from, String bericht) throws MessagingException {
