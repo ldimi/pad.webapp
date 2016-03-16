@@ -18,7 +18,7 @@ requirejs.config({
         'slick.core' : '//services.ovam.be/jsrepo/slickgrid/2.2.1/slick.core',
         'slick.grid': '//services.ovam.be/jsrepo/slickgrid/2.2.1/slick.grid',
 
-        'underscore': '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min',
+        'underscore': '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore', //-min',
 
         'jasmine': '../jasmine/jasmine-1.3.1/jasmine',
         'jasmine-html': '../jasmine/jasmine-1.3.1/jasmine-html',
@@ -111,7 +111,7 @@ requirejs.config({
     },
     packages: [{
         name: "ov",
-        location: "//services.ovam.be/jsrepo/ov/6.07"
+        location: "//services.ovam.be/jsrepo/ov/6.09"
         //location: "../ov"
     }, {
         name: "common",
