@@ -4,6 +4,7 @@ import be.ovam.art46.dao.DossierDAO;
 import be.ovam.art46.util.DateFormatArt46;
 import be.ovam.pad.model.Dossier;
 import be.ovam.util.mybatis.SqlSession;
+import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,8 @@ public class DossierService {
         String dossier_nr = (String) dossier.get("dossier_nr");
         String dossier_b = (String) dossier.get("dossier_b");
         
+        boolean nieuwIvsDossier = false;
+        
         if (dossier_type == null) {
             throw new IllegalArgumentException("dossier_type is niet gekend.");
         }
@@ -61,6 +64,7 @@ public class DossierService {
             } else if ("A".equals(dossier_type)) {
                 if (dossier_b != null && dossier_b.length() > 0) {
                     dossier.put("dossier_nr", generateDossierNr());
+                    nieuwIvsDossier = true;
                 } else {
                     Integer maxId = (Integer) sqlSession.selectOne("getMaxIdDossier");
                     maxId = maxId + 1;
@@ -88,6 +92,7 @@ public class DossierService {
 
                     if (dossier_b != null && dossier_b.length() > 0) {
                         dossier.put("dossier_nr", generateDossierNr());
+                        nieuwIvsDossier = true;
                     }
                 } else {
                     throw new RuntimeException("Combinate (dossier_type, dossier_b) is ongeldig.");
@@ -97,13 +102,23 @@ public class DossierService {
             sqlSession.updateInTable("art46", "dossier", dossier);
         }
         
+        if (nieuwIvsDossier) {
+            createNieuwDossierTaak((Integer) dossier.get("id"));
+        }
+        
         // opnieuw ophalen om de via triggers aangepaste velden mee te hebben.
         return (Integer) dossier.get("id");
 	}
     
+    private void createNieuwDossierTaak (Integer dossier_id) {
+        Map taak = new HashMap();
+        taak.put("dossier_id", dossier_id);
+        taak.put("taak_type", "nieuw_ivs_dossier");
+        sqlSession.insertInTable("art46", "dossier_taak", taak);
+        return;
+    }
     
-    
-	public String generateDossierNr() throws Exception {
+	private String generateDossierNr() throws Exception {
         String volgNr = ((Integer) sqlSession.selectOne("getNieuwVolgNrDossier")).toString();
         volgNr = StringUtils.leftPad(volgNr, 3, "0");
 		String id = DateFormatArt46.getYear() + volgNr; 

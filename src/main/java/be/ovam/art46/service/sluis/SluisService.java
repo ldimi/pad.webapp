@@ -85,9 +85,9 @@ public class SluisService {
 
     
     private void  updateIvsDossier(DossierOverdrachtDTO.OverdrachtDTO overdracht) throws Exception {
-        if (overdracht.getIvs_dirty()) {
+        if (overdracht.getIvs_dirty() || "naar_ivs".equals(overdracht.getStatus()) ) {
             Map<String, Object> dos = buildDossierMap(overdracht);
-            sqlSession.updateInTable("art46", "dossier", dos);
+            dossierService.saveDossier(dos); 
         }
     }
 

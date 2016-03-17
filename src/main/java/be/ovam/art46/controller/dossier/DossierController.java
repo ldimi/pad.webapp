@@ -180,7 +180,7 @@ public class DossierController extends BasisDossierController {
     }
 
     @RequestMapping(value = "/dossier/financieel/save", method = RequestMethod.POST)
-    public String save(@RequestParam Integer id, @RequestParam String financiele_info) throws Exception {
+    public String saveFinancieel(@RequestParam Integer id, @RequestParam String financiele_info) throws Exception {
         Map dossier = new HashMap();
         dossier.put("id", id);
         dossier.put("financiele_info", financiele_info);
