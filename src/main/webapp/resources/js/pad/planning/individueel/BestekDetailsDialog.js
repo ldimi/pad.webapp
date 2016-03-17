@@ -21,8 +21,8 @@ define([
             { name: "bestek_nr", hidden: true },
             { name: "dossier_id", type: "int", hidden: true },
             { name: "dossier_nr", width: 70,
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    return '<a href="s/dossier/' + item.get("dossier_id")  + '/basis" target="_blank" >' + value + '</a>';
+                gridFormatter: function (value) {
+                    return '<a href="s/dossier/' + this.get("dossier_id")  + '/basis" target="_blank" >' + value + '</a>';
                 }
             },
             { name: "dossier_b", label: "Dossier Titel", width: 300 },

@@ -99,7 +99,10 @@ public class PlanningController {
 	@RequestMapping(value = "/planning/individueel/takenlijst", method = RequestMethod.GET)
 	public String takenlijst(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);
-		addDossierhouder(model, doss_hdr_id);
+        
+		model.addAttribute("faseDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD"));
+
+        addDossierhouder(model, doss_hdr_id);
 		return "planning.individueel.takenlijst";
 	}
 

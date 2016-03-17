@@ -17,7 +17,7 @@ define([
     FaseDetailModel = Model.extend({
         meta: Model.buildMeta([
             { name: "dossier_nr",
-                slickFormatter: function (row, cell, value, columnDef, item) {
+                gridFormatter: function (value) {
                     return '<a href="dossierdetailsArt46.do?dossier_nr=' + value + '" target="_blank" >' + value + '</a>';
                 }
             },
