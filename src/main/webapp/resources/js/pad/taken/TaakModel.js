@@ -17,9 +17,9 @@ define([
             }, {
                 name: 'taak',
                 width: 160,
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    if (item.get('kleur')) {
-                        return '<span style="color: ' + item.get('kleur') + '">' + value + '</span>';
+                gridFormatter: function (value) {
+                    if (this.get('kleur')) {
+                        return '<span style="color: ' + this.get('kleur') + '">' + value + '</span>';
                     }
                     return value;
                 }
@@ -33,29 +33,29 @@ define([
                 name: 'dossier_nr',
                 label: 'dossier',
                 width: 60,
-                slickFormatter: function (row, cell, value, columnDef, item) {
+                gridFormatter: function (value) {
                     var title;
                     if (value === null) {
                         return value;
                     }
-                    title = item.get("dossier_b") || value;
+                    title = this.get("dossier_b") || value;
                     return '<span title="' + title + '">' + value + '</span>';
                 }
             }, {
                 name: 'omschrijving',   // er wordt een link gerenderd naar een pagina ivm de taak (eventueel plaats waar taak opgelost wordt).
                 width: 180,
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    return '<a href="/pad/' + item.get('link') + '" target="_blank" >' + value + '</a>';
+                gridFormatter: function (value) {
+                    return '<a href="/pad/' + this.get('link') + '" target="_blank" >' + value + '</a>';
                 }
             }, {
                 name: 'dms_link',
                 width: 20,
                 label: ' ',
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    if (!item.get('dms_file')) {
+                gridFormatter: function () {
+                    if (!this.get('dms_file')) {
                         return '';
                     }
-                    return '<a href="' + _G_.dms_webdrive_base + item.get('dms_file') + '" target="_blank" >' +
+                    return '<a href="' + _G_.dms_webdrive_base + this.get('dms_file') + '" target="_blank" >' +
                            '<img src="resources/images/AlfrescoLogo32.png" width="16" height="16" border="0" alt="Brief bekijken" title="Brief bekijken"/>' +
                            '</a>';
                 }
@@ -71,7 +71,7 @@ define([
             }, {
                 name: 'termijn',
                 width: 50,
-                slickFormatter: function (row, cell, value, columnDef, item) {
+                gridFormatter: function (value) {
                     if (value && value < 8) {
                         return '<span style="color: red;">' + value + '</span>';
                     }
@@ -81,11 +81,11 @@ define([
                 name: 'afwerk_jn',
                 width: 20,
                 label: ' ',
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    if (item.get('afwerk_jn') !== 'J') {
+                gridFormatter: function () {
+                    if (this.get('afwerk_jn') !== 'J') {
                         return '';
                     }
-                    return '<a href="javascript:void(0)" onclick="taakAfwerken(\'' + item.cid + '\')" >' +
+                    return '<a href="javascript:void(0)" onclick="taakAfwerken(\'' + this.cid + '\')" >' +
                            '<img src="resources/images/document-edit-offline-16.png" width="16" height="16" border="0" alt="Taakafwerken" title="Taakafwerken"/>' +
                            '</a>';
                 }
