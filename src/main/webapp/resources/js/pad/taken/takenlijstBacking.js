@@ -3,17 +3,17 @@
 
 define([
     "taken/TaakModel",
-    "taken/brief_opmerking_taakDialog",
+    "taken/nieuw_pad_dossier_taakDialog",
     "taken/brief_in_check_afd_hfd_taakDialog",
     "taken/brief_in_check_auteur_taakDialog",
     "ov/GridComp",
     "ov/Model",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
-], function (TaakModel, brief_opmerking_taakDialog, brief_in_check_afd_hfd_taakDialog, brief_in_check_auteur_taakDialog, GridComp, Model, ajax, fhf) {
+], function (TaakModel, nieuw_pad_dossier_taakDialog, brief_in_check_afd_hfd_taakDialog, brief_in_check_auteur_taakDialog, GridComp, Model, ajax, fhf) {
     'use strict';
 
-    var comp, ParamsModel, _initGrid, _grid, brief_opmerking_taakDialogCtrl, brief_in_check_afd_hfd_taakDialogCtrl, brief_in_check_auteur_taakDialogCtrl;
+    var comp, ParamsModel, _initGrid, _grid, nieuw_pad_dossier_taakDialogCtrl, brief_in_check_afd_hfd_taakDialogCtrl, brief_in_check_auteur_taakDialogCtrl;
 
     window.taakAfwerken = function (cid) {
         var taak;
@@ -29,8 +29,8 @@ define([
             brief_in_check_auteur_taakDialogCtrl.open(taak);
             return;
         }
-        if (taak.get("taak_type") === 'brief_opmerking') {
-            brief_opmerking_taakDialogCtrl.open(taak);
+        if (taak.get("taak_type") === 'nieuw PAD dossier') {
+            nieuw_pad_dossier_taakDialogCtrl.open(taak);
             return;
         }
         alert("onbekend taak type :" + taak.get("taak_type"));
@@ -44,7 +44,7 @@ define([
         _grid.setData(data);
     };
 
-    brief_opmerking_taakDialogCtrl = new brief_opmerking_taakDialog.controller({
+    nieuw_pad_dossier_taakDialogCtrl = new nieuw_pad_dossier_taakDialog.controller({
         taakAfgeslotenCb: window.taakAfgesloten
     });
     brief_in_check_afd_hfd_taakDialogCtrl = new brief_in_check_afd_hfd_taakDialog.controller({
@@ -96,7 +96,8 @@ define([
                 "/pad/s/takenlijst/brief_in_check_afd_hfd",
                 "/pad/s/takenlijst/brief_in_check_auteur",
                 "/pad/s/takenlijst/brieven_printen",
-                "/pad/s//takenlijst/deelopdracht/goedkeuren"
+                "/pad/s//takenlijst/deelopdracht/goedkeuren",
+                "/pad/s/takenlijst/nieuw_pad_dossier"
             ];
 
             $('#takenlijstDiv').addClass('invisible');
@@ -120,8 +121,6 @@ define([
                 _grid.setData(arr);
                 $('#takenlijstDiv').removeClass('invisible');
             });
-
-
         }
     });
 
@@ -160,7 +159,7 @@ define([
                 },
                 class: "invisible"
             }),
-            brief_opmerking_taakDialog.view(brief_opmerking_taakDialogCtrl),
+            nieuw_pad_dossier_taakDialog.view(nieuw_pad_dossier_taakDialogCtrl),
             brief_in_check_afd_hfd_taakDialog.view(brief_in_check_afd_hfd_taakDialogCtrl),
             brief_in_check_auteur_taakDialog.view(brief_in_check_auteur_taakDialogCtrl)
         ];
