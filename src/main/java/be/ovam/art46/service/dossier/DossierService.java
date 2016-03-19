@@ -115,7 +115,6 @@ public class DossierService {
         taak.put("dossier_id", dossier_id);
         taak.put("taak_type", "nieuw PAD dossier");
         sqlSession.insertInTable("art46", "dossier_taak", taak);
-        return;
     }
     
 	private String generateDossierNr() throws Exception {

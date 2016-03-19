@@ -10,6 +10,7 @@ import be.ovam.art46.util.Application;
 import be.ovam.art46.util.DropDownHelper;
 import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -304,6 +305,14 @@ public class DossierController extends BasisDossierController {
     }
         
 
+    @RequestMapping(value = "dossier/taak/{taak_id}/nieuwPadDossier//behandeld", method = RequestMethod.POST)
+    public @ResponseBody Response nieuwPadDossierBehandeld(@PathVariable Integer taak_id){        
+        Map taak = new HashMap();
+        taak.put("taak_id", taak_id);
+        taak.put("behandeld_d", new Date());
+        sqlSession.updateInTable("art46", "dossier_taak", taak);
+        return new Response(true,null);        
+    }
     
     
 

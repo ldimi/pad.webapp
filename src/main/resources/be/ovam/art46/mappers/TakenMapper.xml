@@ -301,6 +301,7 @@
             tat.taak_type_volgnr,
             tat.taak_type,
             tat.taak_b,
+            dt.taak_id as taak_key,
             dos.dossier_nr,
             dos.dossier_b_l as dossier_b,
             dos.doss_hdr_id as uitvoerder,
@@ -315,6 +316,7 @@
         WHERE 1 = 1
              and dt.taak_type = 'nieuw PAD dossier'
              and dos.DOSS_HDR_ID = #{doss_hdr_id}
+             and dt.behandeld_d is null
         fetch first 200 rows only
     </select>
 

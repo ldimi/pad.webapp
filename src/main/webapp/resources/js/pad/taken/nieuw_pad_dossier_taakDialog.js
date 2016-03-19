@@ -11,6 +11,8 @@ define([
     var comp = {};
 
     comp.controller = function (options) {
+        this.taakAfgeslotenCb = options.taakAfgeslotenCb;
+        
         this.title = "Taak : nieuw Pad dossier";
         this.width = 380;
 
@@ -18,18 +20,17 @@ define([
 
         this.taakAfsluiten = function () {
             var self = this;
-            alert("TODO");
-            // ajax.postJson({
-            //     url: "/pad/s/dossier/nieuwPadDossier/" + self.taak.get("taak_key") + "/behandeld",
-            //     content: null
-            // }).then(function (response) {
-            //     if (response && response.success) {
-            //         options.taakAfgeslotenCb(self.taak);
-            //         self.close();
-            //     } else {
-            //         alert("De actie niet gelukt (server error :" + response.errorMsg + ")");
-            //     }
-            // });
+            ajax.postJson({
+                url: "/pad/s/dossier/taak/" + self.taak.get("taak_key") + "/nieuwPadDossier/behandeld",
+                content: null
+            }).then(function (response) {
+                if (response && response.success) {
+                    self.taakAfgeslotenCb(self.taak);
+                    self.close();
+                } else {
+                    alert("De actie niet gelukt (server error :" + response.errorMsg + ")");
+                }
+            });
         };
 
         this.preOpen = function (taak) {
