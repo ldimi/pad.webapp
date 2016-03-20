@@ -99,31 +99,27 @@
         <put-attribute name="title" value="Planning"/>
         <put-attribute name="menuId" value="m_planning.individueel"/>
         <put-attribute name="body" value="/WEB-INF/pages/planning/individueel/tabsLayout.jsp"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
     </definition>
 
     <definition name="planning.individueel.bodemEnAfval.jsView" extends="planning.individueel.baseDef">
         <put-attribute name="tab_selected" value="Planning dossiers"/>
-        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
     </definition>
 
     <definition name="planning.individueel.raamcontracten.jsView" extends="planning.individueel.baseDef">
         <put-attribute name="tab_selected" value="Planning raamcontracten"/>
-        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
     </definition>
 
     <definition name="planning.individueel.gegroepeerdeOpdrachten.jsView" extends="planning.individueel.baseDef">
         <put-attribute name="tab_selected" value="Planning groepcontracten"/>
-        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
     </definition>
 
-    <definition name="planning.individueel.takenlijst" extends="planning.individueel.baseDef">
+    <definition name="planning.individueel.takenlijst.jsView" extends="planning.individueel.baseDef">
         <put-attribute name="tab_selected" value="Takenlijst"/>
-        <put-attribute name="tab_body" value="/WEB-INF/pages/planning/individueel/takenlijst.jsp"/>
     </definition>
 
     <definition name="planning.individueel.grafieken.jsView" extends="planning.individueel.baseDef">
         <put-attribute name="tab_selected" value="Grafieken"/>
-        <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
     </definition>
 
     <!-- Planning Jaar -->

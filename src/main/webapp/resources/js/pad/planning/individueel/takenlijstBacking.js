@@ -2,72 +2,112 @@
 /*global define: false, $: false, alert: false, _:false, _G_ */
 
 define([
-    "ov/ajax",
-    "ov/Meta",
     "planning/individueel/PlanningLijnModel",
+    "dropdown/dossierhouders",
+    "dropdown/jaren",
+    "ov/Model",
     "ov/GridComp",
+    "ov/events",
+    "ov/mithril/ajax",
+    "ov/mithril/formhelperFactory",
     "underscore",
-    "ov/select"
-], function (ajax, Meta, PlanningLijnModel, GridComp, _) {
+    "mithril"
+], function (PlanningLijnModel, dossierhouders_dd, jaren_dd, Model, GridComp, events, ajax, fhf, _, m) {
     'use strict';
 
-    var _grid, _initGrid, _getTaken, _renderTaken = null,
-        _paramMeta, _paramFM;
-
-    _paramMeta = new Meta([{
-        name: "jaar",
-        type: "int"
-    }]);
+    var ParamModel, paramComp, comp;
+        
+    PlanningLijnModel.prototype.meta.getColDef("ib_bedrag").set("hidden", true);
+    PlanningLijnModel.prototype.meta.getColDef("ibb_d").set("hidden", true);
 
 
-    _initGrid = function () {
-        var meta = PlanningLijnModel.prototype.meta.clone();
-        meta.getColDef("ib_bedrag").set("hidden", true);
-        meta.getColDef("ibb_d").set("hidden", true);
+    ParamModel =  Model.extend({
+        meta: Model.buildMeta([
+            { name: "doss_hdr_id" },
+            { name: "dossier_type" },
+            { name: "jaar", type: "int"}
+        ])
+    });
+    
+    paramComp = {
+        controller: function () {
+            this.params = new ParamModel({
+                doss_hdr_id: _G_.model.doss_hdr_id,
+                dossier_type: "ALLE",
+                jaar: new Date().getFullYear()
+            });
 
+            this.showErrors = m.prop(false);
 
-        _grid = new GridComp({
-            el: '#takenlijst_div',
-            meta: meta,
-            model: PlanningLijnModel
-        });
+            // methods
+            ///////////////////////////////////////////////////////////////
+
+            this.ophalen = function () {
+                $('#takenlijst').addClass('invisible');
+                ajax.postJSON({
+                    url: "/pad/s/planning/getTaken",
+                    content: this.params
+                }).then(function (taken) {
+                    events.trigger("taken:refresh", _.sortBy(taken, "igb_d"));
+                    $('#takenlijst').removeClass('invisible');
+                });
+            }.bind(this);
+        },
+        view: function (ctrl) {
+            var ff;
+            ff = fhf.get().setModel(ctrl.params).setShowErrors(ctrl.showErrors());
+
+            return m("div",
+                m("table", [
+                    m("tr", [
+                        m("td", "Dossier houder:"),
+                        m("td", ff.select("doss_hdr_id", {style: {width: "200px"}}, dossierhouders_dd)),
+                        m("td", "Jaar:"),
+                        m("td", ff.select("jaar", jaren_dd)),
+                        m("td", m("button", {class: "inputBtn", onclick: _.bind(ctrl.ophalen, ctrl)}, "Ophalen"))
+                    ])
+                ])
+            );
+        }
     };
 
-    _renderTaken = function (taken) {
-        _grid.setData(_.sortBy(taken, "igb_d"));
-
-        $('#takenlijst_div').removeClass('invisible');
+    comp = {
+        controller: function () {
+            this.paramCtrl = new paramComp.controller();
+        },
+        view: function (ctrl) {
+            return m("div", [
+                paramComp.view(ctrl.paramCtrl),
+                m("#takenlijst", {
+                    config: comp.configGrid,
+                    class: "invisible",
+                    style: {
+                        position: "absolute",
+                        top: "35px",
+                        left: "5px",
+                        right: "5px",
+                        bottom: "5px"
+                    }
+                })
+            ]);
+        },
+        configGrid: function (el, isInitialized) {
+            var grid;
+            if (!isInitialized) {
+                grid = new GridComp({
+                    el: el,
+                    model: PlanningLijnModel,
+                    exportCsv: true,
+                    exportCsvFileName: "taken_planning.csv"
+                });
+                events.on("taken:refresh", function(planningLijnen) {
+                    grid.setData(planningLijnen);
+                });
+            }
+        }
     };
 
-    _getTaken = function (params) {
-        $('#takenlijst_div').addClass('invisible');
-        ajax.postJSON({
-            url: "/pad/s/planning/getTaken",
-            content: params
-        }).success(function (taken) {
-            _renderTaken(taken);
-        });
+    m.mount($("#jsviewContentDiv").get(0), comp);
 
-    };
-
-    function onReady() {
-        _initGrid();
-
-        _paramFM = $('#paramForm').ov_formManager({meta: _paramMeta});
-        _paramFM.$jaar.val(new Date().getFullYear());
-
-        $("#ophalenBtn").click(function () {
-            var params = _paramFM.values();
-
-            // "ALLE" staat voor alle dossiertypes !
-            params.dossier_type = "ALLE";
-
-            _getTaken(params);
-        }).removeClass("invisible");
-
-    }
-
-    return {
-        onReady: onReady
-    };
+    return;
 });

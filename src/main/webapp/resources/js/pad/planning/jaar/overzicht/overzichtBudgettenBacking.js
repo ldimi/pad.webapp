@@ -61,16 +61,16 @@ define([
             label: "Gepland budget",
             type: "int",
             width: 130,
-            slickFormatter: function (row, cell, value, columnDef, item) {
-                return _customBedragFormatter(item.budget, item.gepland_bedrag_per_budgetcode);
+            gridFormatter: function () {
+                return _customBedragFormatter(this.budget, this.gepland_bedrag_per_budgetcode);
             }
         }, {
             name: "vastgelegd_bedrag_per_budgetcode",
             label: "Vastgelegd budget",
             type: "int",
             width: 130,
-            slickFormatter: function (row, cell, value, columnDef, item) {
-                return _customBedragFormatter(item.budget, item.vastgelegd_bedrag_per_budgetcode);
+            gridFormatter: function () {
+                return _customBedragFormatter(this.budget, this.vastgelegd_bedrag_per_budgetcode);
             }
         }]);
 
@@ -111,7 +111,7 @@ define([
         _.each(programmaBudgettenData, function (item) {
             // met mijlpaal waarden.
             _.each(mijlpalenData, function (mijlpaal, index) {
-                var name, percentage, mijlpaalProgramma;
+                var name, mijlpaalProgramma;
                 mijlpaalProgramma = _.find(mijlpalenProgrammaData, function (mp) {
                     return (mp.programma_code === item.programma_code && (mp.mijlpaal_d - mijlpaal.mijlpaal_d) === 0);
                 });
@@ -147,16 +147,16 @@ define([
             label: "Gepland budget",
             type: "int",
             width: 130,
-            slickFormatter: function (row, cell, value, columnDef, item) {
-                return _customBedragFormatter(item.budget, item.gepland_bedrag_per_programmacode);
+            gridFormatter: function () {
+                return _customBedragFormatter(this.budget, this.gepland_bedrag_per_programmacode);
             }
         }, {
             name: "vastgelegd_bedrag_per_programmacode",
             label: "Vastgelegd budget",
             type: "int",
             width: 130,
-            slickFormatter: function (row, cell, value, columnDef, item) {
-                return _customBedragFormatter(item.budget, item.vastgelegd_bedrag_per_programmacode);
+            gridFormatter: function () {
+                return _customBedragFormatter(this.budget, this.vastgelegd_bedrag_per_programmacode);
             }
         }];
 
@@ -170,8 +170,8 @@ define([
                 label: label,
                 type: "int",
                 width: 120,
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    return _customBedragFormatter(item.budget, item[name]);
+                gridFormatter: function () {
+                    return _customBedragFormatter(this.budget, this[name]);
                 }
             });
         });

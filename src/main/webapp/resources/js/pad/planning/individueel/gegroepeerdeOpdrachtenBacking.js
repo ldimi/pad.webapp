@@ -50,11 +50,11 @@ define([
             { name: "bestek_nr", hidden: true},
             { name: "fase_code", hidden: true},
             { name: "group_id", label: "Bestek", width: 120,
-                slickFormatter: function (row, cell, value, columnDef, dataContext) {
-                    if (dataContext.get("bestek_id") === null) {
+                gridFormatter: function (value) {
+                    if (this.get("bestek_id") === null) {
                         return value;
                     }
-                    return '<a href="s/bestek/' + dataContext.get("bestek_id") + '" target="_blank" >' + value + '</a>';
+                    return '<a href="s/bestek/' + this.get("bestek_id") + '" target="_blank" >' + value + '</a>';
                 }
             },
             { name: "omschrijving", label: "Omschrijving", width: 500},

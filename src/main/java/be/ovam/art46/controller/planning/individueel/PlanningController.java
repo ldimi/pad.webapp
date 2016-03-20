@@ -100,10 +100,11 @@ public class PlanningController {
 	public String takenlijst(HttpServletRequest request, Model model) throws Exception {
 		String doss_hdr_id =  getDossierhouderId(request);
         
+        model.addAttribute("jaren", DropDownHelper.INSTANCE.getJaren());
 		model.addAttribute("faseDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD"));
 
         addDossierhouder(model, doss_hdr_id);
-		return "planning.individueel.takenlijst";
+		return jsview("planning.individueel.takenlijst", "planning/individueel/takenlijst", model);
 	}
 
 	@RequestMapping(value = "/planning/individueel/grafieken", method = RequestMethod.GET)

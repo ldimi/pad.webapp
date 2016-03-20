@@ -43,7 +43,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
             label: " ",
             width: 6,
             hidden: false,
-            slickFormatter: function (row, cell, value, columnDef, item) {
+            gridFormatter: function (value) {
                 return '<img src="/pad/resources/images/edit.gif" alt="Details Projectfiche" style="margin: 0px" onclick="popupSapProjectDetails(' + value + ')">';
             }
         },
