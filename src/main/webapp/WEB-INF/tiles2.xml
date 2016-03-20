@@ -24,6 +24,9 @@
         <put-attribute name="body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
     </definition>
 
+    <definition name="jsView.jsp" template="/WEB-INF/pages/layouts/jsView.jsp" >
+    </definition>
+
     <!--
     -->
     <definition name="noMenu.jsView" template="/WEB-INF/pages/layouts/jsView.jsp" >
@@ -276,10 +279,19 @@
         <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/briefHierarchy.jsp"/>
     </definition>
 
+    <!--
     <definition name="dossier.planning" extends="dossier.baseDef">
         <put-attribute name="tab_selected" value="Planning"/>
         <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/planninglijst.jsp"/>
     </definition>
+    -->
+
+    <definition name="dossier.planning.jsView" extends="dossier.baseDef">
+        <put-attribute name="tab_selected" value="Planning"/>
+        <put-attribute name="tab_body" value="/WEB-INF/pages/dossier/planninglijst.jsp"/>
+    </definition>
+
+	<definition name="actielijst2" template="/WEB-INF/pages/algemeen/actielijst.jsp" />
 
     <definition name="dossier.bestek" extends="dossier.baseDef">
         <put-attribute name="tab_selected" value="Bestek"/>

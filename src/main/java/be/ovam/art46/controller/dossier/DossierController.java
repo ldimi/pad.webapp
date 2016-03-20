@@ -243,8 +243,26 @@ public class DossierController extends BasisDossierController {
 		else {
 			model.addAttribute("fases", DDH.getFaseRaming());
 		}
+
         
-        return "dossier.planning";
+		String dossier_type = dossier.getDossier_type();
+		Integer parent_id = dossier.getId();
+		List acties = null;
+		
+		if ("B".equals(dossier_type) || "A".equals(dossier_type)) {
+			acties = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierActies", parent_id);
+		} else if ("I".equals(dossier_type)) {
+			acties = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierActiesNietGerealiseerd", parent_id);
+		} else if ("J".equals(dossier_type)) {
+			acties = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierJdActies", parent_id);
+		} else {
+			throw new RuntimeException("Dit dossier_type wordt niet ondersteund : " + dossier_type);
+		}
+		model.addAttribute("acties", acties);
+        
+        
+        //return "dossier.planning";
+        return jsview("dossier.planning", "planning/dossier/dossierPlanning", model);
     }
     
     @RequestMapping(value = "/dossier/{dossier_id}/bestek", method = RequestMethod.GET)
