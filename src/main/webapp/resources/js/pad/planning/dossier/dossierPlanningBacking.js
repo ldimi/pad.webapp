@@ -67,7 +67,7 @@ define([
                     ff.select("jaar", jaren_dd)
                 ]),
                 m("#planningGridDiv", {
-                    style: {height: "160px"},
+                    style: {height: "180px"},
                     config: gridConfigBuilder({
                                   model: PlanningLijnModel,
                                   setDataEvent: "planningGrid:refresh"
