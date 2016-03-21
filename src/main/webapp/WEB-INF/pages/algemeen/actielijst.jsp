@@ -4,7 +4,7 @@
 <%@ taglib uri="/tags/struts-logic" prefix="logic" %>
 
 <%@ taglib uri="/tags/display-tags" prefix="display" %>
-<%-- <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %> --%>
+
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles-extras" prefix="tilesx" %>
 

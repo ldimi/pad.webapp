@@ -12,8 +12,7 @@
     <tr>
         <td>
             <logic:notEmpty name="dossiers" scope="request">
-                <display:table id="dossier" name="requestScope.dossiers"
-                    class="lijst width980">
+                <display:table id="dossier" name="requestScope.dossiers" class="lijst width980">
                     <display:column property="dossier_id_jd" title="Dossier nummer" />
                     <display:column property="dossier_b" title="Titel" class="center" />
                     <display:column title="Dossierhouder" class="center">
@@ -23,24 +22,16 @@
                                 label="ambtenaar_b" value="ambtenaar_id" />
                         </html:select>
                     </display:column>
-                    <display:column property="commentaar" title="Commentaar"
-                        class="center" />
-                    <display:column style="text-align: center;">
-                        <logic:present role="adminArt46,adminJD">
-                            <img src='<html:rewrite page="/"/>/resources/images/edit.gif'
-                                alt="Actie wijzigen" title="Dossier wijzigen"
-                                onclick="popupWindow('<html:rewrite action="dossierjd"/>?crudAction=read&popup=yes&&dossier_id_jd=<bean:write name="dossier" property="dossier_id_jd"/>','DossierJD')" />
-                        </logic:present>
-                    </display:column>
-                    <display:column style="text-align: center;">
-                        <logic:present role="adminJD">
-                            <a
-                                href='dossierjd.do?crudAction=delete&dossier_id_jd=<bean:write name="dossier" property="dossier_id_jd"/>'>
-                                <html:img border="0" page="/resources/images/delete.gif"
-                                    title="Verwijderen" />
-                            </a>
-                        </logic:present>
-                    </display:column>
+                    <display:column property="commentaar" title="Commentaar"  class="center" />
+                    <display:column property="stand_terugvordering" title="Stand Terugvordering"  class="center" />
+
+                    <%--
+                    TODO : Eventueel een detailscherm om gekoppelde acties te bekijken bouwen.
+                       (editeren is waarschijnlijk niet meer nodig, laatste actie dateert van november 2013)
+                       voortaan kan je naar jurisch dossier springen indien gekoppeld.
+                    --%>
+
+
                     <display:setProperty name="basic.msg.empty_list_row" value="" />
                 </display:table>
             </logic:notEmpty>
@@ -58,11 +49,11 @@
 <br/>
 <br/>
 <c:if test="${not empty juridischedossiers}">
-    
+
     Gelinkte dossiers uit toepassing dossieropvolging juridische dienst (DOJUR):
-    
+
     <table>
-    
+
         <c:forEach var="juridischDossier" items="${juridischedossiers}">
             <tr>
                 <td><a

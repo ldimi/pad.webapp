@@ -67,10 +67,6 @@
     	<put name="body" value="/WEB-INF/pages/algemeen/actiedetails.jsp"></put>
     </definition>
 
-	<definition name="dossierjddetails" extends="baseDefPopup">    	
-		<put name="title" value="Details juridisch dossier"/> 
-    	<put name="body" value="/WEB-INF/pages/bodem/dossierdetailsjd.jsp"></put>
-    </definition>
 	
 	<definition name="queryresult" extends="baseDefPopup">
 		<put name="titleKey" value="query.title"/> 

@@ -113,7 +113,7 @@
         <div class="planning"  style="width: 1080px; margin-top: 30px;">
             <strong>Acties</strong>
             <tiles:insertDefinition name="actielijst2">
-                <tiles:putAttribute name="dossier_type" value="B"/>
+                <tiles:putAttribute name="dossier_type" value="${dossierart46form.dossier_type}"/>
                 <tiles:putAttribute name="forward" value="forwardivs"/>
                 <tiles:putAttribute name="parent_id" value="${dossierart46form.id}"/>
                 <tiles:putAttribute name="roles" value="adminIVS"/>
