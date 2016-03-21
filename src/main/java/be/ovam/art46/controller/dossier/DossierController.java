@@ -244,6 +244,7 @@ public class DossierController extends BasisDossierController {
 			model.addAttribute("fases", DDH.getFaseRaming());
 		}
 
+        model.addAttribute("jaren", DropDownHelper.INSTANCE.getJaren());
         
 		String dossier_type = dossier.getDossier_type();
 		Integer parent_id = dossier.getId();

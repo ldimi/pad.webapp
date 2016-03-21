@@ -7,9 +7,10 @@
 <%@ taglib uri="/tags/display-tags" prefix="display" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<div id="planning_js_div" class="planning" style="width: 1080px; height: 200px;">
+</div>
+
 <tiles:insertTemplate template="/WEB-INF/pages/layouts/jsView.jsp" />
-<%--
---%>
 
 <c:if test="${dossierart46form.dossier_type != 'X'}">
 
@@ -57,7 +58,7 @@
                     </logic:notEmpty>
                 </td>
             </tr>
-        </table>        
+        </table>
     </div>
 
     <c:if test="${dossierart46form.dossier_type == 'B'}">
@@ -107,7 +108,7 @@
             </table>
         </div>
     </c:if>
-    
+
     <logic:notEmpty name="dossierart46form" property="dossier_nr" scope="session">
         <div class="planning"  style="width: 1080px; margin-top: 30px;">
             <strong>Acties</strong>
