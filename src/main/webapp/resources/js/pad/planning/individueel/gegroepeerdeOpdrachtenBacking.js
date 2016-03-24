@@ -139,8 +139,8 @@ define([
                             ] : null
                     ])
                 ]),
-                (_G_.model.A_dossiers_DD.length == 0 ) ?
-                    m("div" , "geen dossier te plannen") : null
+                (_G_.model.A_dossiers_DD.length === 0 ) ?
+                    m("div" , { style: {margin: "20px"}}, "geen dossier te plannen") : null
             );
         }
     };

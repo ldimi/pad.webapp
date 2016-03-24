@@ -27,7 +27,7 @@
                                 <html:optionsCollection name="DDH" property="prioriteitRaming" label="prioriteit_b" value="prioriteit_id" />
                             </html:select>
                         </display:column>
-                        <display:column property="budget_vastgelegd" title="Budget vastgelegdd" decorator="be.ovam.art46.decorator.CurrencyDecorator" class="number"/>
+                        <display:column property="budget_vastgelegd" title="Budget vastgelegd" decorator="be.ovam.art46.decorator.CurrencyDecorator" class="number"/>
                         <display:column title="Afgesloten" class="center">
                             <html:checkbox name="raming" property="afgesloten_s" value="1" styleClass="checkbox" disabled="true"/>
                         </display:column>
