@@ -159,7 +159,7 @@ define([
                         (ctrl.item.get_ivs_dossier_jn() === 'J')
                             ? m(".row.form-group",
                                 m(".col-xs-12",
-                                    m("span", { style: {color: "blue"}}, "Dit is reeds een ivs dossier: " + ctrl.item.get("dossier_nr"))))
+                                    m("span", { style: {color: "blue"}}, "Dit is reeds een PAD dossier: " + ctrl.item.get("dossier_nr"))))
                             : null,
                         (ctrl.item.get("smeg_id"))
                             ? [

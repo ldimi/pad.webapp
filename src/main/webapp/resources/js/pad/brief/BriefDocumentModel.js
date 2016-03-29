@@ -29,8 +29,8 @@ define([
                 name: "dms_id",
                 label: " ",
                 width: 30,
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    return '<a href="' + _G_.dms_webdrive_base + item.get('dms_folder') + '/' + item.get('dms_filename') + '" target="_blank" >' +
+                gridFormatter: function () {
+                    return '<a href="' + _G_.dms_webdrive_base + this.get('dms_folder') + '/' + this.get('dms_filename') + '" target="_blank" >' +
                            '<img src="resources/images/AlfrescoLogo32.png" width="16" height="16" border="0" alt="Brief bekijken" title="Brief bekijken"/>' +
                            '</a>';
                 }

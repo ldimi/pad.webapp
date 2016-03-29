@@ -59,7 +59,7 @@ define([
 
             { name: "bbo_prijs", type: "int" },
             { name: "bbo_looptijd", type: "int" },
-            { name: "bsp_jn" },
+            { name: "bsp_jn", default: 'N' },
             { name: "bsp_prijs", type: "int" },
             { name: "bsp_looptijd", type: "int" },
             { name: "bsw_prijs", type: "int" },

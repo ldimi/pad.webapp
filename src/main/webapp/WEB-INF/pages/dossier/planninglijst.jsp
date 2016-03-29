@@ -1,13 +1,16 @@
 <%@ page language="java" %>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%-- <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %> --%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="/tags/struts-bean" prefix="bean" %>
 <%@ taglib uri="/tags/struts-html" prefix="html" %>
 <%@ taglib uri="/tags/struts-logic" prefix="logic" %>
 <%@ taglib uri="/tags/display-tags" prefix="display" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<tiles:insert definition="dossierPlanning">
-</tiles:insert>
+<div id="planning_js_div" class="planning" style="width: 1080px; height: 200px;">
+</div>
+
+<tiles:insertTemplate template="/WEB-INF/pages/layouts/jsView.jsp" />
 
 <c:if test="${dossierart46form.dossier_type != 'X'}">
 
@@ -52,12 +55,10 @@
                             </display:column>
                             <display:setProperty name="basic.msg.empty_list_row" value=""/>
                         </display:table>
-                            <%--
-                            --%>
                     </logic:notEmpty>
                 </td>
             </tr>
-        </table>        
+        </table>
     </div>
 
     <c:if test="${dossierart46form.dossier_type == 'B'}">
@@ -107,17 +108,17 @@
             </table>
         </div>
     </c:if>
-    
+
     <logic:notEmpty name="dossierart46form" property="dossier_nr" scope="session">
         <div class="planning"  style="width: 1080px; margin-top: 30px;">
             <strong>Acties</strong>
-            <tiles:insert definition="actielijst">
-                <tiles:put name="dossier_type" value="B"/>
-                <tiles:put name="forward" value="forwardivs"/>
-                <tiles:put name="parent_id" beanName="dossierart46form" beanProperty="id" beanScope="session"/>
-                <tiles:put name="roles" value="adminIVS"/>
-                <tiles:put name="extraUrl" value=""/>
-            </tiles:insert>
+            <tiles:insertDefinition name="actielijst2">
+                <tiles:putAttribute name="dossier_type" value="${dossierart46form.dossier_type}"/>
+                <tiles:putAttribute name="forward" value="forwardivs"/>
+                <tiles:putAttribute name="parent_id" value="${dossierart46form.id}"/>
+                <tiles:putAttribute name="roles" value="adminIVS"/>
+                <tiles:putAttribute name="extraUrl" value=""/>
+            </tiles:insertDefinition>
         </div>
     </logic:notEmpty>
 </c:if>

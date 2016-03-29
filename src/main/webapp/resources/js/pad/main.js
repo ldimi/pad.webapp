@@ -8,8 +8,10 @@ console.log("laad main.js");
 requirejs.config({
     paths: {
         'mithril': '//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.3/mithril',
-        'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min',
-        'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min',
+        // 'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery',
+        // 'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui',
+        'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min',
+        'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min',
         'jquery.validate': '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min',
         'selectize': '//cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/js/standalone/selectize',
 
@@ -111,7 +113,7 @@ requirejs.config({
     },
     packages: [{
         name: "ov",
-        location: "//services.ovam.be/jsrepo/ov/6.09"
+        location: "//services.ovam.be/jsrepo/ov/6.11"
         //location: "../ov"
     }, {
         name: "common",

@@ -30,7 +30,7 @@
         from (
                 select
                     10 as taak_type_nr,
-                    'schuldvordering goedkeuren' as taak,
+                    'schuldvordering goedkeuren' as taak_b,
                     dos.dossier_nr,
                     dos.dossier_b_l as dossier_b,
                     case when sv.DEELOPDRACHT_ID is null then coalesce(br.auteur_id, dos.DOSS_HDR_ID)
@@ -79,7 +79,7 @@
         )
         select
             20 as taak_type_nr,
-            'ondertekenen schuldvorderingen' as taak,
+            'ondertekenen schuldvorderingen' as taak_b,
             cast(null as int) as dossier_id,
             cast(null as char) as uitvoerder,
             'ondertekenen' as omschrijving,
@@ -105,7 +105,7 @@
         )
         select
             40 as taak_type_nr,
-            'scannen schuldvorderingen' as taak,
+            'scannen schuldvorderingen' as taak_b,
             cast(null as int) as dossier_id,
             cast(null as char) as uitvoerder,
             'scannen' as omschrijving,
@@ -130,7 +130,7 @@
         )
         select
             50 as taak_type_nr,
-            'printen schuldvorderingen' as taak,
+            'printen schuldvorderingen' as taak_b,
             cast(null as int) as dossier_id,
             cast(null as char) as uitvoerder,
             'printen' as omschrijving,
@@ -147,7 +147,7 @@
         resultType="ciMap" >
         select
             60 as taak_type_nr,
-            'voorstel beoordelen' as taak,
+            'voorstel beoordelen' as taak_b,
             dos.dossier_nr,
             dos.dossier_b_l as dossier_b,
             dos.DOSS_HDR_ID as uitvoerder,
@@ -173,7 +173,7 @@
         resultType="ciMap" >
         select
             100 as taak_type_nr,
-            'deelopdracht goedkeuren' as taak,
+            'deelopdracht goedkeuren' as taak_b,
             do.ander_dossier_nr as dossier_nr,
             do.ander_dossier_b as dossier_b,
             do.ander_doss_hdr_id as uitvoerder,
@@ -197,7 +197,7 @@
             80 as taak_type_nr,
             'brief_in_check_afd_hfd' as taak_type,
             br.brief_id as taak_key,
-            'inkomende brief' as taak,
+            'inkomende brief' as taak_b,
             'green' as kleur,
             dos.dossier_nr,
             dos.dossier_b_l as dossier_b,
@@ -232,7 +232,7 @@
             90 as taak_type_nr,
             'brief_in_check_auteur' as taak_type,
             br.brief_id as taak_key,
-            'inkomende brief' as taak,
+            'inkomende brief' as taak_b,
             case when br.opmerking_afd_hfd is null then null
                  else 'red'
             end as kleur,
@@ -284,7 +284,7 @@
         )
         select
             51 as taak_type_nr,
-            'printen brieven' as taak,
+            'printen brieven' as taak_b,
             cast(null as int) as dossier_id,
             cast(null as char) as uitvoerder,
             'printen' as omschrijving,
@@ -292,6 +292,32 @@
             's/taken/brief/printen' as link
         from agregate
         where agregate.aantal > 0
+    </select>
+
+    <select id="get_taken_nieuw_pad_dossier"
+        parameterType="be.ovam.art46.controller.taken.TakenLijstController$ParamsDO"
+        resultType="ciMap" >
+        select
+            tat.taak_type_volgnr,
+            tat.taak_type,
+            tat.taak_b,
+            dt.taak_id as taak_key,
+            dos.dossier_nr,
+            dos.dossier_b_l as dossier_b,
+            dos.doss_hdr_id as uitvoerder,
+            dos.dossier_b_l as omschrijving,
+            's/dossier/' || dos.id as link,
+            'J' as afwerk_jn
+        from art46.dossier_taak dt
+                inner join art46.v_dossier dos
+                on dt.DOSSIER_ID = dos.id
+             inner join art46.taak_type tat
+             on dt.taak_type = tat.taak_type
+        WHERE 1 = 1
+             and dt.taak_type = 'nieuw PAD dossier'
+             and dos.DOSS_HDR_ID = #{doss_hdr_id}
+             and dt.behandeld_d is null
+        fetch first 200 rows only
     </select>
 
 

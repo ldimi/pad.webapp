@@ -180,9 +180,6 @@
 			<forward redirect="false" path="actiedetails" name="errordelete" />
 			<forward redirect="true" path="/dossierdetails.do?selectedtab=Planning"
 				name="forwardivs" />
-			<forward redirect="false"
-				path="/dossierjd.do?crudAction=read&amp;popup=yes&amp;useForward=false"
-				name="forwardjd" />
 			<forward redirect="true"
 				path="/dossierdetails.do?selectedtab=Planning" name="forwardafval" />
 		</action>
@@ -284,17 +281,6 @@
 			<forward redirect="false" path="lijstendetails" name="error" />
 			<forward redirect="false" path="/lijstenoverzicht.do" name="delete" />
 			<forward redirect="false" path="/lijstenoverzicht.do" name="errordelete" />
-		</action>
-
-		<action path="/dossierjd" type="be.ovam.art46.struts.action.DossierJDCrudAction"
-			validate="true" scope="request" name="dossierjdform" input="dossierjddetails">
-			<forward redirect="false" path="dossierjddetails" name="view" />
-			<forward redirect="false" path="dossierjddetails" name="read" />
-			<forward redirect="false" path="dossierjddetails" name="save" />
-			<forward redirect="false" path="dossierjddetails" name="error" />
-			<forward redirect="true" path="/dossierdetails.do?selectedtab=JD"
-				name="delete" />
-			<forward redirect="false" path="dossierjddetails" name="errordelete" />
 		</action>
 
 		<action path="/lijstnietafgeslotendeelopdrachtenview" forward="lijstnietafgeslotendeelopdrachten" />

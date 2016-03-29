@@ -50,11 +50,11 @@ define([
             { name: "bestek_nr", hidden: true},
             { name: "fase_code", hidden: true},
             { name: "group_id", label: "Bestek", width: 120,
-                slickFormatter: function (row, cell, value, columnDef, dataContext) {
-                    if (dataContext.get("bestek_id") === null) {
+                gridFormatter: function (value) {
+                    if (this.get("bestek_id") === null) {
                         return value;
                     }
-                    return '<a href="s/bestek/' + dataContext.get("bestek_id") + '" target="_blank" >' + value + '</a>';
+                    return '<a href="s/bestek/' + this.get("bestek_id") + '" target="_blank" >' + value + '</a>';
                 }
             },
             { name: "omschrijving", label: "Omschrijving", width: 500},
@@ -132,11 +132,15 @@ define([
                         m("td", ff.select("doss_hdr_id", {style: {width: "200px"}}, dossierhouders_dd)),
                         m("td", ff.select("jaar", jaren_dd)),
                         m("td", ff.select("benut_jn", ctrl.benut_jn_dd)),
-                        m("td", "A-dossier:"),
-                        m("td", ff.select("dossier_id", {style: {width: "350px"}}, _G_.model.A_dossiers_DD)),
-                        m("td", m("button", {class: "inputBtn", onclick: _.bind(ctrl.ophalen, ctrl)}, "Ophalen"))
+                        (_G_.model.A_dossiers_DD.length > 0 ) ? [
+                                m("td", "A-dossier:"),
+                                m("td", ff.select("dossier_id", {style: {width: "350px"}}, _G_.model.A_dossiers_DD)),
+                                m("td", m("button", {class: "inputBtn", onclick: _.bind(ctrl.ophalen, ctrl)}, "Ophalen"))
+                            ] : null
                     ])
-                ])
+                ]),
+                (_G_.model.A_dossiers_DD.length === 0 ) ?
+                    m("div" , { style: {margin: "20px"}}, "geen dossier te plannen") : null
             );
         }
     };

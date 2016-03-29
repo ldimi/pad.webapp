@@ -150,9 +150,6 @@ public class SchuldvorderingServiceImpl implements SchuldvorderingService {
             sqlSession.updateInTable("art46", "schuldvordering", svDO);
             createStatusHistory(schuldvorderingId, svDO.getStatus(), null);
 
-            log.info("schulvordering gegevens worden naar buget verzonden");
-            budgetRestService.verzendSchuldvordering(svDO.getVordering_id());
-
             if (svDO.getWebloket_gebruiker_email() != null) {
                 log.info("Er wordt een mail naar de inzender van de aanvraag verstuurd");
                 List<String> aan = sqlSession.selectList("getEmailsForSchuldvordering", svDO.getVordering_id());
@@ -169,7 +166,8 @@ public class SchuldvorderingServiceImpl implements SchuldvorderingService {
                 throw new RuntimeException("Geen webloket_gebruiker gekoppeld aan " + svDO.getSchuldvordering_nr());
             }
 
-
+            log.info("schulvordering gegevens worden naar buget verzonden");
+            budgetRestService.verzendSchuldvordering(svDO.getVordering_id());
         }
     }
 

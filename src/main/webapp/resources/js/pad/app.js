@@ -16,7 +16,7 @@ define("app", [
     "underscore"
 ], function (m, ov) {
     'use strict';
-    var $notifyContainer;
+    var $notifyContainer, $ajax_loading;
     
     window.m = m;
 
@@ -39,12 +39,13 @@ define("app", [
 
     }
 
-    $('.ajax-loading').ajaxStart(function () {
-        $(this).removeClass('invisible');
+    $ajax_loading = $(".ajax-loading");
+    $(document).ajaxStart(function () {
+        $ajax_loading.removeClass('invisible');
     }).ajaxStop(function () {
-        $(this).addClass('invisible');
+        $ajax_loading.addClass('invisible');
     }).ajaxError(function () {
-        $(this).addClass('invisible');
+        $ajax_loading.addClass('invisible');
     });
 
     // default setting datepicker

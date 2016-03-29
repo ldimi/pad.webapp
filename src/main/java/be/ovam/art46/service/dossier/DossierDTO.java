@@ -48,7 +48,7 @@ public class DossierDTO implements Serializable{
 
     private Integer bbo_prijs;
     private Integer bbo_looptijd;
-    private String bsp_jn;
+    private String bsp_jn = "N";
     private Integer bsp_prijs;
     private Integer bsp_looptijd;
     private Integer bsw_prijs;

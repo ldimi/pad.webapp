@@ -384,63 +384,6 @@
         where dossier_id = #{dossier_id}
     </select>
 
-
-    <sql id="brief_opmerking_velden" >
-        brief_id,
-        opmerking,
-        auteur,
-        creatie_d,
-        behandeld_d,
-        verwijderd_jn,
-        wijzig_user
-    </sql>
-
-    <sql id="brief_opmerking_params" >
-        #{brief_id},
-        #{opmerking},
-        #{auteur},
-        #{creatie_d},
-        #{behandeld_d},
-        #{verwijderd_jn},
-        #{wijzig_user}
-    </sql>
-
-
-    <select id="getBriefOpmerkingen" resultType="be.ovam.art46.model.BriefOpmerking" parameterType="int">
-        select
-            opmerking_id,
-            <include refid="brief_opmerking_velden"/>,
-            wijzig_ts
-       from art46.brief_opmerking opm
-       where verwijderd_jn ='N'
-           and brief_id = #{brief_id}
-       order by wijzig_ts desc
-    </select>
-
-    <select id="getBriefOpmerking" resultType="be.ovam.art46.model.BriefOpmerking" parameterType="int">
-        select
-            opmerking_id,
-            <include refid="brief_opmerking_velden"/>,
-            wijzig_ts
-       from art46.brief_opmerking opm
-       where  opmerking_id = #{opmerking_id}
-    </select>
-
-    <insert id="insertBriefOpmerking" parameterType="be.ovam.art46.model.BriefOpmerking"  useGeneratedKeys="true" keyProperty="opmerking_id">
-        insert into art46.brief_opmerking
-            (<include refid="brief_opmerking_velden"/>)
-        values
-            (<include refid="brief_opmerking_params"/>)
-    </insert>
-
-    <update id="updateBriefOpmerking" parameterType="be.ovam.art46.model.BriefOpmerking">
-        update art46.brief_opmerking
-        set
-            (<include refid="brief_opmerking_velden"/>) = (<include refid="brief_opmerking_params"/>)
-        where
-            opmerking_id = #{opmerking_id}
-    </update>
-
     <select id="getBriefDocumenten" resultType="ciMap" parameterType="int">
             select
                 'brief' as type,

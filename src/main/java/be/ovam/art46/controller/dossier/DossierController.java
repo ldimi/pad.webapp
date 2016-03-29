@@ -10,6 +10,7 @@ import be.ovam.art46.util.Application;
 import be.ovam.art46.util.DropDownHelper;
 import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,8 +243,24 @@ public class DossierController extends BasisDossierController {
 		else {
 			model.addAttribute("fases", DDH.getFaseRaming());
 		}
+
+        model.addAttribute("jaren", DropDownHelper.INSTANCE.getJaren());
         
-        return "dossier.planning";
+		String dossier_type = dossier.getDossier_type();
+		List acties = null;
+		
+		if ("B".equals(dossier_type) || "A".equals(dossier_type)) {
+			acties = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierActies", dossier.getId());
+//		} else if ("I".equals(dossier_type)) {
+//			acties = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierActiesNietGerealiseerd", parent_id);
+//		} else if ("J".equals(dossier_type)) {
+//			acties = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierJdActies", parent_id);
+//		} else {
+//			throw new RuntimeException("Dit dossier_type wordt niet ondersteund : " + dossier_type);
+		}
+		model.addAttribute("acties", acties);
+        
+        return jsview("dossier.planning", "planning/dossier/dossierPlanning", model);
     }
     
     @RequestMapping(value = "/dossier/{dossier_id}/bestek", method = RequestMethod.GET)
@@ -304,6 +321,14 @@ public class DossierController extends BasisDossierController {
     }
         
 
+    @RequestMapping(value = "dossier/taak/{taak_id}/nieuwPadDossier//behandeld", method = RequestMethod.POST)
+    public @ResponseBody Response nieuwPadDossierBehandeld(@PathVariable Integer taak_id){        
+        Map taak = new HashMap();
+        taak.put("taak_id", taak_id);
+        taak.put("behandeld_d", new Date());
+        sqlSession.updateInTable("art46", "dossier_taak", taak);
+        return new Response(true,null);        
+    }
     
     
 

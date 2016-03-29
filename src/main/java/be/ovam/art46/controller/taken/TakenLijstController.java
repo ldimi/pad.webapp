@@ -113,6 +113,12 @@ public class TakenLijstController {
         return new ArrayList();
     }
 
+    @SuppressWarnings("rawtypes")
+    @RequestMapping(value = "/takenlijst/nieuw_pad_dossier", method = RequestMethod.POST)
+    public @ResponseBody List nieuw_pad_dossier_taken(@RequestBody ParamsDO params){
+        return sqlSession.selectList("be.ovam.art46.mappers.TakenMapper.get_taken_nieuw_pad_dossier", params);
+    }
+
         
     public static class ParamsDO implements Serializable {
 

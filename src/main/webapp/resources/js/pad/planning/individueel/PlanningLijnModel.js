@@ -22,8 +22,8 @@ define([
             { name: "doss_hdr_id", label: "Dossierhouder", type: "string", hidden: true, width: 100 },
             { name: "dossier_id", type: "int", required: true, hidden: true },
             { name: "dossier_nr", label: "Dossier Nr", width: 60,
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    return '<a href="s/dossier/' + item.get('dossier_id')  + '/basis" target="_blank" >' + value + '</a>';
+                gridFormatter: function (value) {
+                    return '<a href="s/dossier/' + this.get('dossier_id')  + '/basis" target="_blank" >' + value + '</a>';
                 }
             },
             { name: "dossier_gemeente_b", label: "Gemeente", width: 70 },
@@ -35,8 +35,8 @@ define([
             { name: "fase_looptijd", type: "int", hidden: true },
             { name: "fase_code_heeft_details_jn", exportCsv: false, hidden: true },
             { name: "fase_detail_code", label: "Fase detail", width: 70,
-                slickFormatter: function (row, cell, value, columnDef, item) {
-                    if (value === null && item.get("fase_code_heeft_details_jn") === 'J' && item.get("c_isInBoekjaar")) {
+                gridFormatter: function (value) {
+                    if (value === null && this.get("fase_code_heeft_details_jn") === 'J' && this.get("c_isInBoekjaar")) {
                         return '<span style="color: red;" title="verplicht veld" " >verplicht veld</span>';
                     }
                     if (value) {
@@ -56,22 +56,22 @@ define([
             { name: "bestek_nr", label: "Bestek", hidden: true, width: 70 },
             { name: "bestek_omschrijving", hidden: true },
             { name: "c_bestek_omschrijving", label: "Bestek omschrijving", exportCsv: false, width: 180,
-                slickFormatter: function (row, cell, value, columnDef, item) {
+                gridFormatter: function (value) {
                     var color = "black",
                         href = "s/bestek/";
                     if (value !== null) {
 
-                        if (item.get("benut_bestek_id")) {
+                        if (this.get("benut_bestek_id")) {
                             color = "blue";
-                            href = href + item.get("benut_bestek_id");
-                        } else if (item.get("bestek_id")){
-                            href = href + item.get("bestek_id");
+                            href = href + this.get("benut_bestek_id");
+                        } else if (this.get("bestek_id")){
+                            href = href + this.get("bestek_id");
                         } else {
                             // geen bestek gekend.
                             return value;
                         }
 
-                        if (item.get("contract_id") !== null) {
+                        if (this.get("contract_id") !== null) {
                             href = href + "/deelopdrachten";
                         }
 
@@ -84,23 +84,23 @@ define([
             { name: "benut_bestek_nr", type: "string", hidden: true },
             { name: "benut_bestek_omschrijving", type: "string", hidden: true },
             { name: "igb_d", type: "date", label: "Gepland datum", required: true, width: 80,
-                slickFormatter: function (row, cell, value, columnDef, item) {
+                gridFormatter: function (value) {
                     if (value !== null) {
-                        return item.str("igb_d");
+                        return this.str("igb_d");
                     }
-                    if (item.get("fase_looptijd") !== null) {
-                        return '<span style="color: green;" >' + item.get("fase_looptijd") + ' maanden</span>';
+                    if (this.get("fase_looptijd") !== null) {
+                        return '<span style="color: green;" >' + this.get("fase_looptijd") + ' maanden</span>';
                     }
                     return "";
                 }
             },
             { name: "ig_bedrag", label: "Gepland bedrag", required: true, type: "int", width: 80,
-                slickFormatter: function (row, cell, value, columnDef, item) {
+                gridFormatter: function (value) {
                     if (value !== null) {
-                        return intFormatter(item.get("ig_bedrag"), ".");
+                        return intFormatter(this.get("ig_bedrag"), ".");
                     }
-                    if (item.get("fase_prijs") !== null) {
-                        return '<span style="color: green;" >' + intFormatter(item.get("fase_prijs") , ".") + '</span>';
+                    if (this.get("fase_prijs") !== null) {
+                        return '<span style="color: green;" >' + intFormatter(this.get("fase_prijs") , ".") + '</span>';
                     }
                     return "";
                 }

@@ -15,7 +15,8 @@ define([
                 name: 'taak_type_nr',
                 hidden: true
             }, {
-                name: 'taak',
+                name: 'taak_b',
+                label: 'taak',
                 width: 160,
                 gridFormatter: function (value) {
                     if (this.get('kleur')) {

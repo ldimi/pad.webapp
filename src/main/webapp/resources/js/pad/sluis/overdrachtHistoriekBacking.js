@@ -22,7 +22,7 @@ define([
             { name: "dossier_omschrijving", label: "Titel", width: 150},
             { name: "dossier_id_boa", label: "Bodem Nr", type: "int", width: 60 },
             { name: "dossier_nr", label: "IVS Nr", width: 60,
-                slickFormatter: function (row, cell, value) {
+                gridFormatter: function (value) {
                     return (value && !value.startsWith("_") ) ? value : null;
                 }
             },
