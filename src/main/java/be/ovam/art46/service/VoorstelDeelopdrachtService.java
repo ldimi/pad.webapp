@@ -3,6 +3,7 @@ package be.ovam.art46.service;
 
 import be.ovam.pad.model.DeelOpdracht;
 import be.ovam.pad.model.VoorstelDeelopdracht;
+import com.itextpdf.text.DocumentException;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
@@ -31,5 +32,5 @@ public interface VoorstelDeelopdrachtService {
 
     void exportToExcel(VoorstelDeelopdracht voorstelDeelopdracht, OutputStream outputStream) throws IOException;
 
-    void exportToPdf(VoorstelDeelopdracht voorstelDeelopdracht, ServletOutputStream op);
+    void exportToPdf(VoorstelDeelopdracht voorstelDeelopdracht, ServletOutputStream op) throws DocumentException;
 }

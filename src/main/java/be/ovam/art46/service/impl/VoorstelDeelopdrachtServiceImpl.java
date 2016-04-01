@@ -9,7 +9,14 @@ import be.ovam.art46.service.VoorstelDeelopdrachtService;
 import be.ovam.art46.service.meetstaat.MeetstaatOfferteService;
 import be.ovam.pad.model.*;
 import be.ovam.pad.util.excel.ExcelExportUtil;
+import be.ovam.pad.util.pdf.PdfExportUtil;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfPTable;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +36,7 @@ import java.util.List;
  */
 @Service
 public class VoorstelDeelopdrachtServiceImpl implements VoorstelDeelopdrachtService {
+    private Logger log = Logger.getLogger(VoorstelDeelopdrachtServiceImpl.class);
     @Autowired
     private VoorstelDeelopdrachtDao voorstelDeelopdrachtDao;
     @Autowired
@@ -206,13 +214,84 @@ public class VoorstelDeelopdrachtServiceImpl implements VoorstelDeelopdrachtServ
         ExcelExportUtil.addCell(voorstelDeelopdracht.getBedragExclBtw(), projectrow, 8, styleGetal);
         ExcelExportUtil.addCell(voorstelDeelopdracht.getBedragInclBtw(), projectrow, 9, styleGetal);
 
-
         workbook.write(outputStream);
     }
 
     @Override
-    public void exportToPdf(VoorstelDeelopdracht voorstelDeelopdracht, ServletOutputStream op) {
+    public void exportToPdf(VoorstelDeelopdracht voorstelDeelopdracht, ServletOutputStream op) throws DocumentException {
+        Document document = new Document(PageSize.A4);
+        String title = "Voorstel " + voorstelDeelopdracht.getNummer();
+        try {
+            PdfExportUtil.addHeaderAndFooter(op, document, title);
+            document.open();
 
+            PdfPTable basicTable = new PdfPTable(1);
+            basicTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
+            basicTable.addCell(PdfExportUtil.createCellNoBorder(createTableRegels(voorstelDeelopdracht)));
+            basicTable.addCell(PdfExportUtil.createCellNoBorder(createTableInfo(voorstelDeelopdracht)));
+            basicTable.setHeaderRows(0);
+            document.add(basicTable);
+        } catch (DocumentException de) {
+            log.error("Error bij het aanmaken van pdf " + title + ": " + de, de);
+        } finally {
+            document.close();
+        }
+    }
+
+    private Element createTableRegels(VoorstelDeelopdracht voorstelDeelopdracht) throws DocumentException {
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(40);
+        table.setWidths(new int[]{50, 50});
+        table.setHeaderRows(1);
+        table.addCell(PdfExportUtil.buildCell("Voorstel: ") );
+        table.addCell(PdfExportUtil.buildCell(""));
+        table.addCell(PdfExportUtil.buildCell("Nummer"));
+        table.addCell(PdfExportUtil.buildCell(voorstelDeelopdracht.getNummer()));
+        table.addCell(PdfExportUtil.buildCell("Status"));
+        table.addCell(PdfExportUtil.buildCell(voorstelDeelopdracht.getVoorstelDeelopdrachtStatus().getName()));
+        table.addCell(PdfExportUtil.buildCell("Offerte"));
+        table.addCell(PdfExportUtil.buildCell(voorstelDeelopdracht.getOfferte().getInzender()));
+        table.addCell(PdfExportUtil.buildCell("Dossier"));
+        table.addCell(PdfExportUtil.buildCell(voorstelDeelopdracht.getDossier().getTitel()));
+        return table;
+    }
+
+    private Element createTableInfo(VoorstelDeelopdracht voorstelDeelopdracht) {
+        PdfPTable table = new PdfPTable(10);
+        table.setWidthPercentage(100);
+        table.addCell(PdfExportUtil.addHeaderCell("Postnr: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Taak: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Details: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Type: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Eenheid: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Eenheidsprijs / TP: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Aantal: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Bedrag: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Totaal: "));
+        table.addCell(PdfExportUtil.addHeaderCell("Totaal incl. BTW: "));
+        for(VoorstelDeelopdrachtRegel voorstelDeelopdrachtRegel : voorstelDeelopdracht.getVoorstelDeelopdrachtRegels()){
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getPostnr()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getTaak()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getBeschrijving()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getType()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getEenheid()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getEenheidsprijs()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getAfname()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getAfnameBedrag()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getRegelTotaal()));
+            table.addCell(PdfExportUtil.buildCell(voorstelDeelopdrachtRegel.getRegelTotaalInclBtw()));
+        }
+        table.addCell(PdfExportUtil.addHeaderCell(""));
+        table.addCell(PdfExportUtil.addHeaderCell(""));
+        table.addCell(PdfExportUtil.addHeaderCell(""));
+        table.addCell(PdfExportUtil.addHeaderCell(""));
+        table.addCell(PdfExportUtil.addHeaderCell(""));
+        table.addCell(PdfExportUtil.addHeaderCell(""));
+        table.addCell(PdfExportUtil.addHeaderCell(""));
+        table.addCell(PdfExportUtil.addHeaderCell("Totaal"));
+        table.addCell(PdfExportUtil.buildCell(voorstelDeelopdracht.getBedragExclBtw()));
+        table.addCell(PdfExportUtil.buildCell(voorstelDeelopdracht.getBedragInclBtw()));
+        return table;
     }
 
     private void addCell(HSSFRow row, int position, Object value, HSSFCellStyle style) {
