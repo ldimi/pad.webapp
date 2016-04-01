@@ -3,32 +3,30 @@ package be.ovam.art46.controller.bestek;
 
 import be.ovam.art46.controller.BasicBestekController;
 import be.ovam.art46.form.VoorstelDeelopdrachtForm;
-import be.ovam.art46.model.*;
+import be.ovam.art46.model.SelectElement;
 import be.ovam.art46.service.DeelOpdrachtService;
-import be.ovam.art46.service.dossier.DossierService;
 import be.ovam.art46.service.VoorstelDeelopdrachtService;
 import be.ovam.art46.service.meetstaat.MeetstaatEenheidService;
 import be.ovam.art46.service.meetstaat.MeetstaatOfferteService;
 import be.ovam.art46.util.OvamCustomCalendarEditor;
 import be.ovam.art46.util.OvamCustomNumberEditor;
-import be.ovam.pad.model.DeelOpdracht;
-import be.ovam.pad.model.Dossier;
-import be.ovam.pad.model.MeetstaatRegel;
-import be.ovam.pad.model.Offerte;
-import be.ovam.pad.model.VoorstelDeelopdracht;
-import be.ovam.pad.model.VoorstelDeelopdrachtStatus;
-
+import be.ovam.pad.model.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -41,7 +39,8 @@ import java.util.List;
  */
 @Controller
 public class VoorstelDeelopdrachtController extends BasicBestekController {
-    
+    private Logger log = Logger.getLogger(VoorstelDeelopdrachtController.class);
+
     public static final String MODEL_ATTRIBUTE_NAME_EENHEDEN = "eenheden";
     public static final String MODEL_ATTRIBUTE_NAME_TYPES = "types";
     private static final String MODEL_ATTRIBUTE_VOORSTEL_DEELOPDRACHT_FORM = "voorstelDeelopdrachtForm";
@@ -56,10 +55,9 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
     private Validator validator;
     @Autowired
     private MeetstaatOfferteService offerteService;
-    
+
     @Autowired
     private DeelOpdrachtService deelopdrachtService;
-
 
 
     @InitBinder
@@ -67,7 +65,7 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
         binder.registerCustomEditor(Dossier.class, "voorstelDeelopdracht.dossier", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                if(StringUtils.isNotEmpty(text)) {
+                if (StringUtils.isNotEmpty(text)) {
                     Dossier dossier = dossierService.get(Integer.parseInt(text));
                     setValue(dossier);
                 }
@@ -76,7 +74,7 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
         binder.registerCustomEditor(Offerte.class, "voorstelDeelopdracht.offerte", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                if(StringUtils.isNotEmpty(text)) {
+                if (StringUtils.isNotEmpty(text)) {
                     Offerte offerte = offerteService.get(Long.parseLong(text));
                     setValue(offerte);
                 }
@@ -85,7 +83,7 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
         binder.registerCustomEditor(DeelOpdracht.class, "voorstelDeelopdracht.deelOpdracht", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                if(StringUtils.isNotEmpty(text)) {
+                if (StringUtils.isNotEmpty(text)) {
                     DeelOpdracht deelOpdracht = deelopdrachtService.get(Integer.parseInt(text));
                     setValue(deelOpdracht);
                 }
@@ -98,9 +96,9 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
 
     @ModelAttribute(value = MODEL_ATTRIBUTE_DEELOPDRACHTEN)
     public List<DeelOpdracht> adDeelopdracht(@PathVariable String voorstelId) {
-        if(!(voorstelId == null || StringUtils.equals("nieuw", voorstelId))){
+        if (!(voorstelId == null || StringUtils.equals("nieuw", voorstelId))) {
             return deelopdrachtService.getMogelijkeDeelopdrachtenVoorVoorstel(Long.valueOf(voorstelId));
-        }else{
+        } else {
             return new ArrayList<DeelOpdracht>();
         }
     }
@@ -144,6 +142,49 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
         return "bestek.deelopdracht.voorstel";
     }
 
+    @RequestMapping(value = "/bestek/{bestekId}/voorstel/orgineelVoorstel{voorstelId}.xls", method = RequestMethod.GET)
+    public void exporteerNaarExcel(@PathVariable String voorstelId, HttpServletResponse response) throws IOException {
+        VoorstelDeelopdracht voorstelDeelopdracht = voorstelDeelopdrachtService.get(Long.valueOf(voorstelId));
+        ServletOutputStream op = null;
+        try {
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Expires", "0");
+            response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+            response.setHeader("Pragma", "public");
+            response.setHeader("Content-disposition", "orgineelVoorstel" + voorstelId + ".xls");
+            op = response.getOutputStream();
+            voorstelDeelopdrachtService.exportToExcel(voorstelDeelopdracht, op);
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            if (op != null) {
+                op.flush();
+                op.close();
+            }
+        }
+    }
+    @RequestMapping(value = "/bestek/{bestekId}/voorstel/orgineelVoorstel{voorstelId}.pdf", method = RequestMethod.GET)
+    public void exporteerNaarPdf(@PathVariable String voorstelId, HttpServletResponse response) throws IOException {
+        VoorstelDeelopdracht voorstelDeelopdracht = voorstelDeelopdrachtService.get(Long.valueOf(voorstelId));
+        ServletOutputStream op = null;
+        try {
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Expires", "0");
+            response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+            response.setHeader("Pragma", "public");
+            response.setHeader("Content-disposition", "orgineelVoorstel" + voorstelId + ".pdf");
+            op = response.getOutputStream();
+            voorstelDeelopdrachtService.exportToPdf(voorstelDeelopdracht, op);
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            if (op != null) {
+                op.flush();
+                op.close();
+            }
+        }
+    }
+
     @RequestMapping(value = "/bestek/{bestekId}/voorstel/{voorstelId}", method = RequestMethod.POST)
     public String save(@PathVariable Long bestekId, @PathVariable String voorstelId, @RequestParam String action,
                        @Valid @ModelAttribute(MODEL_ATTRIBUTE_VOORSTEL_DEELOPDRACHT_FORM) VoorstelDeelopdrachtForm voorstelDeelopdrachtForm,
@@ -152,35 +193,35 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
     ) throws Exception {
         super.startBasic(bestekId, model);
         VoorstelDeelopdracht voorstelDeelopdracht = voorstelDeelopdrachtForm.getVoorstelDeelopdracht();
-        if(StringUtils.equals(action,"Bewaar")){
+        if (StringUtils.equals(action, "Bewaar")) {
             voorstelDeelopdracht.setStatus(VoorstelDeelopdrachtStatus.Status.IN_OPMAAK.getValue());
-        }else if(StringUtils.equals(action,"Aanvraag verzenden")){
-            if(voorstelDeelopdracht.getDossier()==null){
-                FieldError error = new FieldError("voorstelDeelopdrachtForm","voorstelDeelopdracht.dossier","Om een voorstel aan te maken moet u een dossier selecteren!");
+        } else if (StringUtils.equals(action, "Aanvraag verzenden")) {
+            if (voorstelDeelopdracht.getDossier() == null) {
+                FieldError error = new FieldError("voorstelDeelopdrachtForm", "voorstelDeelopdracht.dossier", "Om een voorstel aan te maken moet u een dossier selecteren!");
                 errors.addError(error);
             }
-            if(voorstelDeelopdracht.getOfferte()==null){
-                FieldError error = new FieldError("voorstelDeelopdrachtForm","voorstelDeelopdracht.offerte","Om een voorstel aan te maken moet u een offerte selecteren!");
+            if (voorstelDeelopdracht.getOfferte() == null) {
+                FieldError error = new FieldError("voorstelDeelopdrachtForm", "voorstelDeelopdracht.offerte", "Om een voorstel aan te maken moet u een offerte selecteren!");
                 errors.addError(error);
             }
             if (!errors.hasErrors()) {
                 voorstelDeelopdracht.setStatus(VoorstelDeelopdrachtStatus.Status.IN_AANVRAAG.getValue());
                 voorstelDeelopdracht.setAanvraagDatum(Calendar.getInstance());
             }
-        }else if(StringUtils.equals(action,"Toekennen")){
-            if(voorstelDeelopdracht.getDeelOpdracht()==null){
-                FieldError error = new FieldError("voorstelDeelopdrachtForm","voorstelDeelopdracht.deelOpdracht","Om een voorstel toe te kennen moet u een deelopdracht selecteren!");
+        } else if (StringUtils.equals(action, "Toekennen")) {
+            if (voorstelDeelopdracht.getDeelOpdracht() == null) {
+                FieldError error = new FieldError("voorstelDeelopdrachtForm", "voorstelDeelopdracht.deelOpdracht", "Om een voorstel toe te kennen moet u een deelopdracht selecteren!");
                 errors.addError(error);
             }
             if (!errors.hasErrors()) {
                 voorstelDeelopdracht.setStatus(VoorstelDeelopdrachtStatus.Status.TOEGEKEND.getValue());
                 voorstelDeelopdracht.setBeslissingsDatum(Calendar.getInstance());
             }
-        }else if(StringUtils.equals(action,"Niet selecteren")){
+        } else if (StringUtils.equals(action, "Niet selecteren")) {
             voorstelDeelopdracht.setDeelOpdracht(null);
             voorstelDeelopdracht.setStatus(VoorstelDeelopdrachtStatus.Status.NIET_GESELECTEERD.getValue());
             voorstelDeelopdracht.setBeslissingsDatum(Calendar.getInstance());
-        }else if(StringUtils.equals(action,"Aanpassing vragen")){
+        } else if (StringUtils.equals(action, "Aanpassing vragen")) {
             voorstelDeelopdracht.setDeelOpdracht(null);
             voorstelDeelopdracht.setStatus(VoorstelDeelopdrachtStatus.Status.AANPASSING_GEVRAAGD.getValue());
             voorstelDeelopdracht.setBeslissingsDatum(Calendar.getInstance());
@@ -190,9 +231,9 @@ public class VoorstelDeelopdrachtController extends BasicBestekController {
         }
         Long id = voorstelDeelopdrachtService.save(voorstelDeelopdrachtForm.getVoorstelDeelopdracht(), principal.getName());
         model.addAttribute("aanvraagSchuldvorderingId", voorstelDeelopdrachtForm.getVoorstelDeelopdracht().getId());
-        if(StringUtils.equals(VoorstelDeelopdrachtStatus.Status.IN_OPMAAK.getValue(), voorstelDeelopdracht.getStatus())) {
+        if (StringUtils.equals(VoorstelDeelopdrachtStatus.Status.IN_OPMAAK.getValue(), voorstelDeelopdracht.getStatus())) {
             return "redirect:/s/bestek/" + bestekId + "/voorstel/" + id + "#totaal";
-        }else {
+        } else {
             return "redirect:/s/bestek/" + bestekId + "/voorstel/" + id + "/mail";
         }
 

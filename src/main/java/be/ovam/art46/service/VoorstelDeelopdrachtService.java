@@ -4,6 +4,9 @@ package be.ovam.art46.service;
 import be.ovam.pad.model.DeelOpdracht;
 import be.ovam.pad.model.VoorstelDeelopdracht;
 
+import javax.servlet.ServletOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -26,4 +29,7 @@ public interface VoorstelDeelopdrachtService {
 
     String getWebloketLink(VoorstelDeelopdracht voorstelDeelopdracht);
 
+    void exportToExcel(VoorstelDeelopdracht voorstelDeelopdracht, OutputStream outputStream) throws IOException;
+
+    void exportToPdf(VoorstelDeelopdracht voorstelDeelopdracht, ServletOutputStream op);
 }

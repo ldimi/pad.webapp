@@ -81,6 +81,12 @@
                     <tr><td colspan="2">
                         <c:if test="${voorstelDeelopdrachtForm.voorstelDeelopdracht.locked}" >
                         <a href="/pad/s/bestek/${bestekId}/voorstel/${voorstelDeelopdrachtForm.id}/mail"><b>Verwittig leverancier</b></a>
+                        </c:if><br/>
+                        <c:if test="${voorstelDeelopdrachtForm.voorstelDeelopdracht.locked}" >
+                            <a href="/pad/s/bestek/${bestekId}/voorstel/orgineelVoorstel${voorstelDeelopdrachtForm.id}.xls"><b>Exporteer naar Excel</b></a>
+                        </c:if>
+                        <c:if test="${voorstelDeelopdrachtForm.voorstelDeelopdracht.locked}" >
+                            <a href="/pad/s/bestek/${bestekId}/voorstel/orgineelVoorstel${voorstelDeelopdrachtForm.id}.pdf"><b>Exporteer naar PDF</b></a>
                         </c:if>
                     </td></tr>
                 </table>
