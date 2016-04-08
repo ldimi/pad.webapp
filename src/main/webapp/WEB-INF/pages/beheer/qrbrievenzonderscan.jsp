@@ -102,7 +102,7 @@
             <td><fmt:formatDate value="${brief.laatsteWijzigingDatum}" pattern="dd/MM/yyyy HH:mm"/></td>
             <td>${brief.laatsteWijzigingUser}</td>
             <td>
-                <a href='<%=System.getProperty("ovam.dms.webdrive.base") %>/${brief.dmsFolder}/${brief.dmsFileName}'
+                <a href='<%=System.getProperty("ovam.dms.webdrive.base") %>${brief.dmsFolder}/${brief.dmsFileName}'
                             target="_blank" style="text-decoration: none;">
                     <img src="resources/images/AlfrescoLogo32.png" width="16" height="16" border="0" alt="Brief bekijken" title="Brief bekijken"/>
                 </a>
