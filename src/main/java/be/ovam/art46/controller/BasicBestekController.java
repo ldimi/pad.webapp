@@ -53,7 +53,7 @@ public class BasicBestekController {
 
     public void startBasic(Long bestekId, Model model) throws Exception {
         
-        bestekDO = sql.selectOne("getBestek", bestekId);
+        bestekDO = sql.selectOne("be.ovam.art46.mappers.BestekMapper.getBestek", bestekId);
         
         
         this.bestekId = bestekId;

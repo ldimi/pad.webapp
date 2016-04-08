@@ -10,6 +10,7 @@ public class BestekDO implements Serializable {
     
     private Integer bestek_id;
 	private String bestek_nr;
+    private String bestek_hdr_id;
 
     private Integer dossier_id;
 	private String dossier_nr;
@@ -158,6 +159,14 @@ public class BestekDO implements Serializable {
 
     public void setScreening_organisatie_id(Integer screening_organisatie_id) {
         this.screening_organisatie_id = screening_organisatie_id;
+    }
+
+    public String getBestek_hdr_id() {
+        return bestek_hdr_id;
+    }
+
+    public void setBestek_hdr_id(String bestek_hdr_id) {
+        this.bestek_hdr_id = bestek_hdr_id;
     }
 
 	

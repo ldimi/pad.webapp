@@ -12,7 +12,7 @@
             <tr>
                 <td>
                     <display:table id="bestek" defaultsort="1" defaultorder="descending" name="requestScope.dossierdetailsopenbesteklijst" requestURI="/dossierdetails.do" class="lijst width980">
-                        <display:column  titleKey="dossier.bestek.lijst.besteknr" sortProperty="bestek_nr">
+                        <display:column  title="Besteknr" sortProperty="bestek_nr">
                             <logic:equal name="bestek" property="deelopdracht" value="0">
                                 <a href='/pad/s/bestek/<bean:write name="bestek" property="bestek_id"/>/basisgegevens/' >
                                     <bean:write name="bestek" property="bestek_nr"/>
@@ -22,14 +22,15 @@
                                 <bean:write name="bestek" property="bestek_nr"/>
                             </logic:equal>
                             </display:column>
-                        <display:column property="omschrijving" titleKey="dossier.bestek.lijst.omschrijving" />
-                        <display:column titleKey="dossier.bestek.lijst.opdrachthouder" property="naam" />
-                        <display:column titleKey="dossier.bestek.lijst.fase">
+                        <display:column property="omschrijving" title="Omschrijving" />
+                        <display:column title="Opdrachthouder" property="naam" />
+                        <display:column title="Bestekhouder" property="bestek_hdr_id" />
+                        <display:column title="Fase">
                             <html:select name="bestek" property="fase_id" styleClass="input" disabled="true">
                                 <html:optionsCollection name="DDH" property="bestekBodemFase" />
                             </html:select>
                         </display:column>
-                        <display:column titleKey="dossier.bestek.lijst.type">
+                        <display:column title="Type">
                             <html:select name="bestek" property="type_id" styleClass="input" disabled="true">
                                 <html:optionsCollection name="DDH" property="bestekBodemType" />
                             </html:select>
@@ -71,7 +72,7 @@
             <tr>
                 <td>
                     <display:table id="bestek" defaultsort="1" defaultorder="descending" name="requestScope.dossierdetailsafgeslotenbesteklijst" requestURI="/dossierdetails.do" class="lijst width980">
-                        <display:column  titleKey="dossier.bestek.lijst.besteknr" sortProperty="bestek_nr">
+                        <display:column  title="Besteknr" sortProperty="bestek_nr">
                             <logic:equal name="bestek" property="deelopdracht" value="0">
                                 <a href='/pad/s/bestek/<bean:write name="bestek" property="bestek_id"/>/basisgegevens/' >
                                     <bean:write name="bestek" property="bestek_nr"/>
@@ -81,14 +82,15 @@
                                 <bean:write name="bestek" property="bestek_nr"/>
                             </logic:equal>
                             </display:column>
-                        <display:column property="omschrijving" titleKey="dossier.bestek.lijst.omschrijving" />
-                        <display:column titleKey="dossier.bestek.lijst.opdrachthouder" property="naam" />
-                        <display:column titleKey="dossier.bestek.lijst.fase">
+                        <display:column property="omschrijving" title="Omschrijving" />
+                        <display:column title="Opdrachthouder" property="naam" />
+                        <display:column title="Bestekhouder" property="bestek_hdr_id" />
+                        <display:column title="Fase">
                             <html:select name="bestek" property="fase_id" styleClass="input" disabled="true">
                                 <html:optionsCollection name="DDH" property="bestekBodemFase" />
                             </html:select>
                         </display:column>
-                        <display:column titleKey="dossier.bestek.lijst.type">
+                        <display:column title="Type">
                             <html:select name="bestek" property="type_id" styleClass="input" disabled="true">
                                 <html:optionsCollection name="DDH" property="bestekBodemType" />
                             </html:select>

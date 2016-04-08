@@ -31,6 +31,7 @@
         select
             bestek_id,
             bestek_nr,
+            bestek_hdr_id,
             dossier_id,
             dossier_nr,
             dossier_type,

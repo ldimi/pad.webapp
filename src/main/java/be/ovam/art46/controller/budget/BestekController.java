@@ -33,7 +33,6 @@ public class BestekController extends BasicBestekController {
 
     @RequestMapping(value = "/bestek/{bestekId}", method = RequestMethod.GET)
     public String start(@PathVariable Long bestekId, Model model) throws Exception {
-    	logger.info("log4j info");
         return startBasis(bestekId, model);
     }
         
@@ -64,6 +63,7 @@ public class BestekController extends BasicBestekController {
         model.addAttribute("bestekBodemType_dd", DropDownHelper.INSTANCE.getBestekBodemType());
         model.addAttribute("bestekBodemProcedure_dd", DropDownHelper.INSTANCE.getBestekBodemProcedure());
         model.addAttribute("bestekBodemFase_dd", DropDownHelper.INSTANCE.getBestekBodemFase());
+        model.addAttribute("dossierhouders", DropDownHelper.INSTANCE.getDossierhouders());
         model.addAttribute("organisatiesVoorScreening_dd", ovamcore_sqlSession.selectList("organisatiesVoorScreening_dd"));
     }
    

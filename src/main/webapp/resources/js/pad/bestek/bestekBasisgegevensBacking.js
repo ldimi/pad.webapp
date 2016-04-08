@@ -2,87 +2,45 @@
 /*global define: false, Slick: false, $: false, _: false, alert: false, window, _G_, m */
 
 define([
+    "dropdown/dossierhouders",
     "ov/mithril/ajax",
     "ov/Model",
     "ov/mithril/formhelperFactory",
     "ov/mithril/dialogBuilder"
-], function (ajax, Model, fhf, dialogBuilder) {
+], function (dossierhouders, ajax, Model, fhf, dialogBuilder) {
     "use strict";
 
     var BestekModel, comp, aanmakenSAPDialog;
 
     BestekModel = Model.extend({
         meta: Model.buildMeta([
-            {
-                name: "bestek_id",
-                type: "int"
-            }, {
-                name: "bestek_nr"
-            }, {
-                name: "dossier_id",
-                type: "int",
-                required: true
-            }, {
-                name: "dossier_nr",
-                required: true
-            }, {
-                name: "dossier_type",
-                required: true
-            }, {
-                name: "type_id",
-                type: "int",
-                required: true
-            }, {
-                name: "procedure_id",
-                type: "int",
-                required: true
-            }, {
-                name: "fase_id",
-                type: "int",
-                min: -1,
-                required: true
-            }, {
-                name: "dienst_id",
-                type: "int",
-                required: true
-            }, {
-                name: "omschrijving"
-            }, {
-                name: "commentaar"
-            }, {
-                name: "btw_tarief",
-                type: "int",
-                default: 21,
-                required: true
-            }, {
-                name: "start_d",
-                type: "date"
-            }, {
-                name: "stop_d",
-                type: "date"
-            }, {
-                name: "afsluit_d",
-                type: "date"
-            }, {
-                name: "verlenging_s"
-            }, {
-                name: "wbs_nr"
-            }, {
-                name: "screening_jn"
-            }, {
-                name: "screening_organisatie_id",
-                type: "int"
-            }, {
-                name: "raamcontract_jn"
-            }
+            { name: "bestek_id", type: "int" },
+            { name: "bestek_nr" },
+            { name: "bestek_hdr_id" },
+            { name: "dossier_id", type: "int", required: true },
+            { name: "dossier_nr", required: true },
+            { name: "dossier_type", required: true },
+            { name: "type_id", type: "int", required: true },
+            { name: "procedure_id", type: "int", required: true },
+            { name: "fase_id", type: "int", min: -1, required: true },
+            { name: "dienst_id", type: "int", required: true },
+            { name: "omschrijving" },
+            { name: "commentaar" },
+            { name: "btw_tarief", type: "int", default: 21, required: true },
+            { name: "start_d", type: "date" },
+            { name: "stop_d", type: "date" },
+            { name: "afsluit_d", type: "date" },
+            { name: "verlenging_s" },
+            { name: "wbs_nr" },
+            { name: "screening_jn" },
+            { name: "screening_organisatie_id", type: "int" },
+            { name: "raamcontract_jn" }
         ]),
 
         enforceInvariants: function () {
-
             if (this.get("screening_jn") === "N" ) {
                 this.attributes.screening_organisatie_id = null;
             }
-
         }
     });
 
@@ -181,7 +139,9 @@ define([
                     m("tr", [
                          m("td", "Besteknummer:"),
                          m("td", ff.input("bestek_nr", {readOnly: true})),
-                         m("td", {width: "30px", rowspan: 9})
+                         m("td", {width: "30px", rowspan: 9}),
+                         m("td", "Bestekhouder:"),
+                         m("td", ff.select("bestek_hdr_id", dossierhouders))
                     ]),
                     m("tr", [
                         m("td", "Type:"),
