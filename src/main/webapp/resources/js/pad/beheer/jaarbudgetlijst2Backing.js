@@ -2,42 +2,72 @@
 /*global define: false, Slick: false, $: false, _: false, alert: false, console: false */
 
 define([
-    "ov/ajax",
-    "ov/Meta",
+    "dropdown/jaren",
+    "ov/Model",
     "ov/GridComp",
+    "ov/mithril/ajax",
+    "ov/mithril/formhelperFactory",
+    "mithril",
     "underscore"
-], function (ajax, Meta, GridComp) {
+], function (jaren_dd, Model, GridComp, ajax, fhf, m, _) {
     'use strict';
-    var _jaar, postData, _jaarbudgetGrid, _jaarbudgetDetailFm, _jaarbudgetMeta, $jaarbudgetDetailDialog;
+    var ParamsModel, JaarbudgetModel, paramsComp,
+        _jaar, postData, _jaarbudgetGrid, _jaarbudgetDetailFm, $jaarbudgetDetailDialog;
 
-    _jaarbudgetMeta = new Meta([{
-        name: "jaar",
-        hidden: true
-    }, {
-        name: "budget_code",
-        label: "Budget code",
-        required: true
-    }, {
-        name: "budget",
-        label: "Budget bedrag",
-        type: "int",
-        required: true
-    }, {
-        name: "effectief_budget",
-        label: "Effectief budget",
-        type: "int",
-        required: false
-    }, {
-        name: "artikel_b",
-        label: "Artikelcode",
-        type: "String",
-        required: false
-    }, {
-        name: "status_crud",
-        hidden: true
-    }]);
+    ParamsModel = Model.extend({
+        meta: Model.buildMeta([
+            { name: "jaar", type: "int", required: true, default: new Date().getFullYear() }
+        ])
+    });
+    
+    JaarbudgetModel = Model.extend({
+        meta: Model.buildMeta([
+            { name: "jaar", hidden: true },
+            { name: "budget_code", label: "Budget code", required: true },
+            { name: "budget", label: "Budget bedrag", type: "int", required: true },
+            { name: "effectief_budget", label: "Effectief budget", type: "int", required: false },
+            { name: "artikel_b", label: "Artikelcode", type: "String", required: false },
+            { name: "status_crud", hidden: true }
+        ])
+    });
+
+    paramsComp = {
+        controller: function () {
+            this.params = new ParamsModel();
+            this.showErrors = m.prop(false);
+
+            this.ophalen = function () {
+                var jaar = this.params.get("jaar");
+                if (jaar) {
+                    ajax.getJSON({
+                        url: '/pad/s/beheer/getjaarbudgetten',
+                        content: {
+                            "jaar": jaar
+                        }
+                    }).then(function (resp) {
+                        _jaarbudgetGrid.setData(resp);
+                        $('#jaarBudgetGridDiv').removeClass('invisible');
+                    });
+                }
+            };
+        },
+        view: function (ctrl) {
+            var ff;
+            ff = fhf.get().setModel(ctrl.params).setShowErrors(ctrl.showErrors());
+            return [
+                m("table", [
+                    m("tr", [
+                        m("td", "Jaar:"),
+                        m("td", ff.select("jaar", jaren_dd)),
+                        m("td", m("button", {onclick: _.bind(ctrl.ophalen, ctrl)}, "Ophalen"))
+                    ])
+                ])
+            ];
+        }
+    };
 
 
+    
     function openJaarbudgetDialog(item) {
         _jaarbudgetDetailFm.populate(item);
         if (item.status_crud === 'C') {
@@ -81,15 +111,6 @@ define([
             $('#jaarBudgetGridDiv').addClass('invisible');
             _jaar = $('#paramForm [name=jaar]').val();
 
-            ajax.getJSON({
-                url: '/pad/s/beheer/getjaarbudgetten',
-                content: {
-                    "jaar": _jaar
-                }
-            }).done(function (resp) {
-                _jaarbudgetGrid.setData(resp);
-                $('#jaarBudgetGridDiv').removeClass('invisible');
-            });
 
         }).removeClass("invisible");
 
