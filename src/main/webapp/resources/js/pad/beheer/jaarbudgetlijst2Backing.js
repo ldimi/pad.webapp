@@ -1,18 +1,20 @@
 /*jslint nomen: true, debug: true, browser: true */
-/*global define: false, Slick: false, $: false, _: false, alert: false, console: false */
+/*global define: false, Slick: false, $: false, alert: false, console: false, _G_ */
 
 define([
     "dropdown/jaren",
     "ov/Model",
     "ov/GridComp",
+    "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory",
+    "ov/mithril/dialogBuilder",
     "mithril",
     "underscore"
-], function (jaren_dd, Model, GridComp, ajax, fhf, m, _) {
+], function (jaren_dd, Model, GridComp, events, ajax, fhf, dialogBuilder, m, _) {
     'use strict';
-    var ParamsModel, JaarbudgetModel, paramsComp,
-        _jaar, postData, _jaarbudgetGrid, _jaarbudgetDetailFm, $jaarbudgetDetailDialog;
+    var ParamsModel, JaarbudgetModel, saveJaarbudget, paramsComp, configJaarbudgetGrid, jaarbudgetDialog,
+        comp, _jaar;
 
     ParamsModel = Model.extend({
         meta: Model.buildMeta([
@@ -27,9 +29,18 @@ define([
             { name: "budget", label: "Budget bedrag", type: "int", required: true },
             { name: "effectief_budget", label: "Effectief budget", type: "int", required: false },
             { name: "artikel_b", label: "Artikelcode", type: "String", required: false },
-            { name: "status_crud", hidden: true }
+            { name: "status_crud", hidden: true, default: "C" }
         ])
     });
+    
+    saveJaarbudget = function (jaarbudget) {
+        ajax.postJson({
+            url: "/pad/s/beheer/jaarbudget/save",
+            content: jaarbudget
+        }).then(function (list) {
+            events.trigger("jaarbudget:dataReceived", list);
+        });
+    };
 
     paramsComp = {
         controller: function () {
@@ -37,16 +48,16 @@ define([
             this.showErrors = m.prop(false);
 
             this.ophalen = function () {
-                var jaar = this.params.get("jaar");
-                if (jaar) {
+                _jaar = this.params.get("jaar");
+                if (_jaar) {
                     ajax.getJSON({
                         url: '/pad/s/beheer/getjaarbudgetten',
                         content: {
-                            "jaar": jaar
+                            "jaar": _jaar
                         }
                     }).then(function (resp) {
-                        _jaarbudgetGrid.setData(resp);
-                        $('#jaarBudgetGridDiv').removeClass('invisible');
+                        events.trigger("jaarbudget:dataReceived", resp);
+                        // TODO $('#jaarBudgetGridDiv').removeClass('invisible');
                     });
                 }
             };
@@ -67,100 +78,113 @@ define([
     };
 
 
-    
-    function openJaarbudgetDialog(item) {
-        _jaarbudgetDetailFm.populate(item);
-        if (item.status_crud === 'C') {
-            _jaarbudgetDetailFm.$budget_code.removeAttr("readonly");
-            _jaarbudgetDetailFm.$budget_code.removeAttr("disabled");
-        } else {
-            _jaarbudgetDetailFm.$budget_code.attr("readonly", "readonly");
-            _jaarbudgetDetailFm.$budget_code.attr("disabled", "disabled");
-        }
-        $jaarbudgetDetailDialog.dialog("open");
-    }
-
-    function initJaarBudgetGrid() {
-        _jaarbudgetGrid = new GridComp({
-            el: "#jaarBudgetGridDiv",
-            meta: _jaarbudgetMeta,
-            newBtn: window._G_isAdminArt46,
-            editBtn: window._G_isAdminArt46,
-            deleteBtn: window._G_isAdminArt46,
-            onEditClicked: function (item) {
-                openJaarbudgetDialog(item);
-            },
-            onNewClicked: function () {
-                openJaarbudgetDialog({
-                    status_crud: 'C',
-                    jaar: _jaar
-                });
-            },
-            onDeleteClicked: function (item) {
-                postData('/pad/s/beheer/jaarbudget/delete', item);
-            }
-        });
-    }
-
-
-    function onReady() {
-        $('#paramForm [name=jaar]').val(new Date().getFullYear());
-
-        $('#ophalenBtn').click(function () {
-
-            $('#jaarBudgetGridDiv').addClass('invisible');
-            _jaar = $('#paramForm [name=jaar]').val();
-
-
-        }).removeClass("invisible");
-
-
-        _jaarbudgetDetailFm = $('#detailForm').ov_formManager({
-            meta: _jaarbudgetMeta
-        });
-
-        $jaarbudgetDetailDialog = $('#detailDialog').dialog({
-            autoOpen: false,
-            modal: true
-        });
-
-        initJaarBudgetGrid();
-
-        $('#bewaarBtn').click(function () {
-            var item, action;
-
-            if (_jaarbudgetDetailFm.validate()) {
-                item = _jaarbudgetDetailFm.values();
-                if (item.status_crud === 'C') {
-                    action = "insert";
-                } else {
-                    action = "update";
-                }
-                postData('/pad/s/beheer/jaarbudget/' + action, item);
-            }
-        });
-
-        $('#annuleerBtn').click(function () {
-            $jaarbudgetDetailDialog.dialog("close");
-        });
-
-        postData = function (url, data) {
-            ajax.postJson({
-                url: url,
-                content: data
-            }).success(function (response) {
-                if (response && response.success) {
-                    _jaarbudgetGrid.setData(response.result);
-                    $jaarbudgetDetailDialog.dialog("close");
-                } else {
-                    alert("De actie niet gelukt (server error :" + response.errorMsg + ")");
+    configJaarbudgetGrid = function (el, isInitialized) {
+        var grid;
+        if (!isInitialized) {
+            grid = new GridComp({
+                el: el,
+                model: JaarbudgetModel,
+                newBtn: _G_.model.isAdminArt46,
+                editBtn: _G_.model.isAdminArt46,
+                deleteBtn: _G_.model.isAdminArt46,
+                onNewClicked: function () {
+                    events.trigger("jaarbudgetDialog:open", new JaarbudgetModel().set("jaar", _jaar));
+                },
+                onEditClicked: function (item) {
+                    events.trigger("jaarbudgetDialog:open", item.clone().set("status_crud", "U"));
+                },
+                onDeleteClicked: function (item) {
+                    saveJaarbudget(item.clone().set("status_crud", "D"));
                 }
             });
-        };
-
-    }
-
-    return {
-        onReady: onReady
+            events.on("jaarbudget:dataReceived", function (data) {
+                grid.setData(data);
+            });
+        }
     };
+    
+    jaarbudgetDialog = dialogBuilder({
+        controller: function () {
+            events.on("jaarbudgetDialog:open", _.bind(this.open, this));
+            events.on("jaarbudget:dataReceived", _.bind(this.close, this));
+
+            this.title = "Editeer";
+            //this.width = 300;
+            //this.height = 200;
+
+            this.showErrors = m.prop(false);
+
+            this.preOpen = function (jaarbudget) {
+                this.jaarbudget = jaarbudget;
+                this.showErrors(false);
+            };
+
+            this.bewaar = function () {
+                this.showErrors(true);
+                if (!this.jaarbudget.isValid()) {
+                    $.notify("Er zijn validatie fouten.");
+                    return;
+                }
+                saveJaarbudget(this.jaarbudget);
+            };
+        },
+        view: function(ctrl) {
+            var ff, status_crud;
+            if (!ctrl.jaarbudget) {
+                return null;
+            }
+
+            ff = fhf.get().setModel(ctrl.jaarbudget).setShowErrors(ctrl.showErrors());
+            status_crud = ctrl.jaarbudget.get("status_crud");
+            return [
+                m("table", [
+                    m("tr", [
+                        m("td[width=100px]", "Budget code:"),
+                        m("td[width=100px]", 
+                            ff.select("budget_code",
+                                {readOnly:  status_crud !== 'C' },
+                                _G_.model.budgetCode_dd)
+                        )
+                    ]),
+                    m("tr", [
+                        m("td", "Budget bedrag:"),
+                        m("td", ff.input("budget"))
+                    ]),
+                    m("tr", [
+                        m("td", "Effectief budget:"),
+                        m("td", ff.input("effectief_budget"))
+                    ])
+                ]),
+                m("div", [
+                    m("button", {onclick: _.bind(ctrl.bewaar, ctrl)}, "Bewaar"),
+                    m("button", {onclick: _.bind(ctrl.close, ctrl)}, "annuleer")
+                ])
+            ];
+        }
+    });
+    
+    comp = {
+        controller: function() {
+            this.paramsCtrl = new paramsComp.controller();
+            this.jaarbudgetCtrl = new jaarbudgetDialog.controller();
+        },
+        view: function (ctrl) {
+            return m("div", {style: {marginLeft: "50px", align:"left"}}, [
+                m("h3", "Beheer Mijlpalen"),
+
+                paramsComp.view(ctrl.paramsCtrl),
+
+                m("div", {
+                    config: configJaarbudgetGrid,
+                    style: {width: "400px", height: "200px", marginTop: "20px"},
+                    class: jaarbudgetList ? "" : "invisible"
+                }),
+
+                jaarbudgetDialog.view(ctrl.jaarbudgetCtrl)
+            ]);
+        }
+    };
+
+    m.mount($("#jsviewContentDiv").get(0), comp);
+
 });
