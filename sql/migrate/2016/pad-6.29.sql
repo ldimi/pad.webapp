@@ -36,7 +36,9 @@ create view art46.v_bestek as
 select
     be.bestek_id,
     be.bestek_nr,
-    be.bestek_hdr_id,
+    case when dos.raamcontract_jn = 'J' then be.bestek_hdr_id
+         else dos.doss_hdr_id
+    end as bestek_hdr_id,
     be.dossier_id,
     dos.dossier_nr,
     be.dossier_type,
