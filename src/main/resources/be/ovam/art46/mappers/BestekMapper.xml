@@ -9,7 +9,7 @@
     <select id="getNieuwBestekData" resultType="be.ovam.art46.model.BestekDO" parameterType="int" >
     <![CDATA[
         select
-              --(select max(bestek_id) + 1 from art46.bestek ) as bestek_id,
+              dos.doss_hdr_id as bestek_hdr_id,
               dos.id as dossier_id,
               dos.dossier_type,
               dos.dossier_nr,

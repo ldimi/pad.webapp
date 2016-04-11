@@ -141,7 +141,9 @@ define([
                          m("td", ff.input("bestek_nr", {readOnly: true})),
                          m("td", {width: "30px", rowspan: 9}),
                          m("td", "Bestekhouder:"),
-                         m("td", ff.select("bestek_hdr_id", dossierhouders))
+                         m("td", ff.select("bestek_hdr_id",
+                             {readOnly: (ctrl.bestek.get("raamcontract_jn") === 'J') ? false : true},
+                             dossierhouders))
                     ]),
                     m("tr", [
                         m("td", "Type:"),
