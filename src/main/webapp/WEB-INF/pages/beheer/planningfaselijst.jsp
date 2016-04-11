@@ -37,8 +37,8 @@
                     <td>
                         <select name="budget_code" class="input">
                             <option value=""></option>
-                            <c:forEach var="item" items="${DDH.budgetCodeList}" >
-                                <option value="${item.budget_code}">${item.budget_code}</option>
+                            <c:forEach var="item" items="${DDH.budgetCode_dd}" >
+                                <option value="${item.value}">${item.label}</option>
                             </c:forEach>
                         </select>
                     </td>

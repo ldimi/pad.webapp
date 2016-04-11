@@ -207,12 +207,6 @@
         <put-attribute name="body" value="/WEB-INF/pages/beheer/briefAardLijst.jsp"/>
     </definition>
 
-    <definition name="beheer.jaarbudget" extends="baseDef">
-        <put-attribute name="title" value="Beheer Jaarbudget"/>
-        <put-attribute name="menuId" value="m_toepassingsbeheer.jaarbudget"/>
-        <put-attribute name="body" value="/WEB-INF/pages/beheer/jaarbudgetlijst.jsp"/>
-    </definition>
-
     <definition name="beheer.meetstaat.templates" extends="baseDef">
         <put-attribute name="title" value="Beheer meetstaat templates"/>
         <put-attribute name="menuId" value="m_toepassingsbeheer.meetstaat.templates"/>

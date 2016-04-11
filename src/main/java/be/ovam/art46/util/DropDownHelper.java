@@ -191,8 +191,8 @@ public enum DropDownHelper {
     	return this.get("be.ovam.art46.mappers.DropDownMapper.actieveLijsten");
     }
 	
-	public List getBudgetCodeList () {
-    	return this.get("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCodeList");
+	public List getBudgetCode_dd () {
+    	return this.get("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCode_dd");
 	}
 	
 	

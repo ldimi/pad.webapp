@@ -5,8 +5,6 @@
 
 <mapper namespace="be.ovam.art46.mappers.JaarbudgetMapper">
 
-    <cache/>
-
     <select id="getJaarbudgetList"  resultType="ciMap" parameterType="map">
         select jb.jaar,
               jb.budget_code,
@@ -21,28 +19,6 @@
         where jb.jaar = #{jaar}
         order by jb.budget_code
     </select>
-
-    <update id="updateJaarbudget" parameterType="map">
-        update art46.JAARBUDGET
-        set
-            budget = #{budget},
-            effectief_budget = #{effectief_budget}
-        where jaar = #{jaar} and
-              budget_code = #{budget_code}
-    </update>
-
-    <insert id="insertJaarbudget" parameterType="map">
-        insert into art46.JAARBUDGET
-        (jaar, budget_code, budget, effectief_budget)
-        values
-        (#{jaar}, #{budget_code}, #{budget}, #{effectief_budget})
-    </insert>
-
-    <delete id="delete" parameterType="map">
-        delete from  art46.JAARBUDGET
-        where jaar = #{jaar} and
-              budget_code = #{budget_code}
-    </delete>
 
 
 </mapper>
