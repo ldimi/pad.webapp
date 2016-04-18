@@ -24,8 +24,8 @@ define([
             { name: "procedure_id", type: "int", required: true },
             { name: "fase_id", type: "int", min: -1, required: true },
             { name: "dienst_id", type: "int", required: true },
-            { name: "omschrijving" },
-            { name: "commentaar" },
+            { name: "omschrijving", size: 750 },
+            { name: "commentaar", size: 750 },
             { name: "btw_tarief", type: "int", default: 21, required: true },
             { name: "start_d", type: "date" },
             { name: "stop_d", type: "date" },
@@ -184,12 +184,12 @@ define([
                          m("td", {colspan: 2}, [
                              "Omschrijving:",
                              m("br"),
-                             ff.textarea("omschrijving", {rows: 10, cols:55 })
+                             ff.textarea("omschrijving", {rows: 10, cols:55, maxlength: 750 })
                          ]),
                          m("td", {colspan: 2}, [
                              "Opmerkingen:",
                              m("br"),
-                             ff.textarea("commentaar", {rows: 10, cols:55 })
+                             ff.textarea("commentaar", {rows: 10, cols:55, maxlength: 750 })
                          ])
                     ])
                 ]),
