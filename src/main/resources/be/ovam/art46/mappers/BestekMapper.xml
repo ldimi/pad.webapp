@@ -49,6 +49,7 @@
             wbs_nr,
             screening_jn,
             screening_organisatie_id,
+            voorstellen_opm,
             raamcontract_jn
         from art46.v_bestek
         where bestek_id= #{bestek_id}

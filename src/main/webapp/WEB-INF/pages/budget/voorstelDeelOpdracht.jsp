@@ -7,7 +7,7 @@
            action="/pad/s/bestek/${bestekId}/voorstel/${voorstelDeelopdrachtForm.id}"
            modelAttribute="voorstelDeelopdrachtForm">
     <table style="width: 100%">
-        <tr class="table-header" style="width: 100%">
+        <tr style="width: 100%">
             <td colspan="2">Voorstel:</td>
         </tr>
 

@@ -1,8 +1,24 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+
+<form class="formlayout"
+      action="/pad/s/bestek/${bestekId}/voorstellen_opm/update"
+      method="post" >
+    <table  style="width: 700px;" >
+        <tr>
+            <td width="80px" >Opmerking:</td>
+            <td width="500px" >
+                <textarea name="voorstellen_opm" rows="3" cols="100" maxlength="250" >${bestekDO.voorstellen_opm}</textarea>
+            </td>
+            <td><input type="submit" class="inputbtn" value="Bewaar" /></td>
+        </tr>
+    </table>
+</form>
+
 <table style="width: 100%">
-    <tr class="table-header" style="width: 100%">
-        <td>Voorstellen voor: ${offerte.bestek.bestek_nr} ${offerte.bestek.omschrijving} </td>
+    <tr style="width: 100%">
+        <td>Voorstellen voor: ${bestekDO.bestek_nr} ${bestekDO.omschrijving} </td>
     </tr>
     <tr>
         <td>
