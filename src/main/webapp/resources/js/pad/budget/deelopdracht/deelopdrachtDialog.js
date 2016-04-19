@@ -187,27 +187,22 @@ define([
                         m("tbody", [
                             m("tr", [
                                 m("td[width='100px']", "Bestek"),
-                                m("td[width='420px']", [
-                                    ff.input("bestek_nr", {readOnly: true } )
-                                ])
+                                m("td[width='160px']", ff.input("bestek_nr", {readOnly: true } )),
+                                m("td[width='100px']", "Contract"),
+                                m("td[width='160px']", ff.input("ander_dossier_nr", {readOnly: true } ))
+                                
                             ]),
                             m("tr", [
                                 m("td", "Dossier"),
-                                m("td", [
-                                    ff.select("dossier_id", {}, ctrl.dossiers)
-                                ])
+                                m("td[colspan=3]", ff.select("dossier_id", {}, ctrl.dossiers))
                             ]),
                             m("tr", [
                                 m("td", "Offerte"),
-                                m("td", [
-                                    ff.select("offerte_id", {}, ctrl.offerten)
-                                ])
+                                m("td[colspan=3]", ff.select("offerte_id", {}, ctrl.offerten))
                             ]),
                             m("tr", [
                                 m("td", "Plannings Item"),
-                                m("td", [
-                                    ff.select("planning_lijn_id", {}, ctrl.filterredPlanningItems())
-                                ])
+                                m("td[colspan=3]", ff.select("planning_lijn_id", {}, ctrl.filterredPlanningItems()))
                             ]),
                             m("tr", [
                                 m("td", "Geraamd bedrag (incl. BTW)"),
@@ -215,34 +210,25 @@ define([
                                     ff.input("bedrag", {maxlength: 10 }),
                                     ctrl.deelopdracht.checkOpnieuwGoedkeuren() ?
                                         m("label", {style: {color: "blue"}}, "meer dan 50% verhoogd: moet opnieuw goedgekeurd worden") : ""
-                                ])
-                            ]),
-                            m("tr", [
+                                ]),
                                 m("td", "Goedgekeurd bedrag SV"),
-                                m("td", [
-                                    ff.input("schuldvordering_bedrag", {readOnly: true })
-                                ])
+                                m("td", ff.input("schuldvordering_bedrag", {readOnly: true }))
                             ]),
                             m("tr", [
                                 m("td", "Datum opdracht"),
-                                m("td", [
-                                    ff.dateInput("voorstel_d")
-                                ])
-                            ]),
-                            m("tr", [
+                                m("td", ff.dateInput("voorstel_d")),
                                 m("td", "Datum afsluiting"),
-                                m("td", [
-                                    ff.dateInput("afsluit_d")
-                                ])
+                                m("td", ff.dateInput("afsluit_d"))
                             ]),
                             m("tr", [
                                 m("td", "Datum goedkeuring"),
-                                m("td", [
+                                m("td", 
                                     ff.dateInput("goedkeuring_d" ,{
                                         readOnly: ( ctrl.deelopdracht.get("raamcontract_jn") !== "J" ||
                                                     ctrl.deelopdracht.get("ander_doss_hdr_id") !== ctrl.deelopdracht.get("current_doss_hdr_id"))
-                                    })
-                                ])
+                                    })),
+                                m("td", "Datum afkeuring"),
+                                m("td", "TODO")
                             ])
                         ])
                     ])
@@ -262,8 +248,7 @@ define([
                     m("div", {style: {marginTop: "10px"}}, [
                             m("button", {onclick: _.bind(ctrl.openHistoriek, ctrl)}, "Toon geschiedenis")
                     ]) :
-                    ""
-                ,
+                    "",
 
                 deelopdrachtHistDialog.view(ctrl.deelopdrachtHistDialogCtrl),
                 briefDialog.view(ctrl.briefDialogCtrl)
