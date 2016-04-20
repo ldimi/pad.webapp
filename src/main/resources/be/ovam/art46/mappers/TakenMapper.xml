@@ -186,6 +186,7 @@
         where 1 = 1
             and do.afsluit_d is null
             and do.goedkeuring_d is null
+            and do.afkeuring_d is null
             and do.ander_raamcontract_jn = 'J'
             and do.ander_doss_hdr_id = #{doss_hdr_id}
     </select>

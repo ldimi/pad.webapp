@@ -78,5 +78,48 @@ where v.viewschema = 'ART46'
 
 
 
+
+
+drop trigger art46.au_deelopdracht_hist;
+
+create trigger art46.au_deelopdracht_hist
+after update on art46.deelopdracht
+referencing
+    old as pre
+    new as post
+for each row mode db2sql
+insert into art46.deelopdracht_hist (
+    deelopdracht_id,
+    creatie_ts,
+    bestek_id,
+    dossier_id,
+    bedrag,
+    goedkeuring_d,
+    goedkeuring_bedrag,
+    voorstel_d,
+    afsluit_d,
+    wbs_nr,
+    planning_lijn_id,
+    offerte_id,
+    voorstel_deelopdracht_id
+    )
+values (
+    pre.deelopdracht_id,
+    pre.wijzig_ts,
+    pre.bestek_id,
+    pre.dossier_id,
+    pre.bedrag,
+    pre.goedkeuring_d,
+    pre.goedkeuring_bedrag,
+    pre.voorstel_d,
+    pre.afsluit_d,
+    pre.wbs_nr,
+    pre.planning_lijn_id,
+    pre.offerte_id,
+    pre.voorstel_deelopdracht_id
+)
+;
+
+
 -- deze versie van de wijzigingen in db registreren.
 insert into art46.db_versie(db_versie, omschrijving) values ('6.31', 'drop deelopdracht.stop_s');

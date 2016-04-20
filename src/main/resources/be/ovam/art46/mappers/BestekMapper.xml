@@ -279,8 +279,9 @@
                 left outer join vastlegging on vastlegging.bestek_id = be.bestek_id
                 left outer join geraamd on geraamd.bestek_id = be.bestek_id
                 left outer join ART46.V_PLANNING_LIJN pl on pl.lijn_id = ad.PLANNING_LIJN_ID
-        where
-            ad.goedkeuring_d is null
+        where 1 = 1
+            and ad.goedkeuring_d is null
+            and ad.afkeuring_d is null
             and ad.AFSLUIT_D is null -- niet afgesloten deelopdracht
         order by
             dossier_b_ander, bestek_id

@@ -10,6 +10,7 @@ import be.ovam.art46.service.meetstaat.MeetstaatOfferteService;
 import be.ovam.art46.util.Application;
 import be.ovam.pad.model.Brief;
 import be.ovam.pad.model.DeelOpdracht;
+import be.ovam.pad.model.DeelOpdrachtDO;
 import be.ovam.pad.model.Offerte;
 import be.ovam.web.Response;
 import be.ovam.util.mybatis.SqlSession;
@@ -176,8 +177,9 @@ public class DeelOpdrachtController extends BasicBestekController{
     }
 
     @RequestMapping(value = "/budget/deelopdracht/update", method = RequestMethod.POST)
-    public @ResponseBody Response update(@RequestBody DeelOpdracht deelOpdracht) throws Exception {
-        sqlSession.update("be.ovam.art46.mappers.DeelopdrachtMapper.updateDeelopdracht", deelOpdracht);
+    public @ResponseBody Response update(@RequestBody DeelOpdrachtDO deelOpdracht) throws Exception {
+        //sqlSession.update("be.ovam.art46.mappers.DeelopdrachtMapper.updateDeelopdracht", deelOpdracht);
+        sqlSession.updateInTable("art46", "deelopdracht", deelOpdracht);
         return new Response(null, true, null);
     }
 

@@ -13,7 +13,13 @@ define([
     "ov/events"
 ], function (DeelopdrachtModel, BriefModel, deelopdrachtHistDialog, briefDialog, UploaderDialog, fhf,ajax, GridComp, event) {
     'use strict';
-    var _comp;
+    var _comp, goedkeuring_afkeuring_dd;
+    
+    goedkeuring_afkeuring_dd = [
+        { value: "", label: "" },
+        { value: "gk", label: "goedkeuring" },
+        { value: "afk", label: "afkeuring" }
+    ];
 
     _comp = {};
 
@@ -104,8 +110,6 @@ define([
                     // raamcontract beheerder is aan het editeren.
                     if (this.deelopdracht.get("goedkeuring_d")) {
                         this.deelopdracht.set("goedkeuring_bedrag", this.deelopdracht.get("bedrag"));
-                    } else {
-                        this.deelopdracht.set("goedkeuring_bedrag", null);
                     }
                 }
             }
@@ -220,16 +224,57 @@ define([
                                 m("td", "Datum afsluiting"),
                                 m("td", ff.dateInput("afsluit_d"))
                             ]),
-                            m("tr", [
-                                m("td", "Datum goedkeuring"),
-                                m("td", 
-                                    ff.dateInput("goedkeuring_d" ,{
-                                        readOnly: ( ctrl.deelopdracht.get("raamcontract_jn") !== "J" ||
-                                                    ctrl.deelopdracht.get("ander_doss_hdr_id") !== ctrl.deelopdracht.get("current_doss_hdr_id"))
-                                    })),
-                                m("td", "Datum afkeuring"),
-                                m("td", "TODO")
-                            ])
+                            ( ctrl.deelopdracht.get("raamcontract_jn") === "J" )
+                                ? // beheer goed/afkeuren voor raamcontracten
+                                (ctrl.deelopdracht.get("ander_doss_hdr_id") !== ctrl.deelopdracht.get("current_doss_hdr_id"))
+                                    ?  // readonly mededeling van goedkeurings status
+                                    (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "gk")
+                                        ? [  
+                                            m("tr",
+                                                m("td[colspan=4]",
+                                                    m("span", {style: {color: "blue"}},
+                                                        "Goedgekeurd op " + ctrl.deelopdracht.str("goedkeuring_d") + " voor " + ctrl.deelopdracht.str("goedkeuring_bedrag") + " EUR."
+                                            )))
+                                        ]
+                                        : (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "afk")
+                                            ? [
+                                                m("tr",
+                                                    m("td[colspan=4]",
+                                                        m("span", {style: {color: "red"}},
+                                                            "Afgekeurd op " + ctrl.deelopdracht.str("afkeuring_d")
+                                                ))),
+                                                m("tr",
+                                                    m("td[colspan=4]",
+                                                        m("span", {style: {color: "red"}},
+                                                            ctrl.deelopdracht.str("afkeuring_opm")
+                                                )))
+                                            ]
+                                            : null
+                                    :
+                                    [ // editeerbare velden om goed / af te keuren
+                                        m("tr", [
+                                            m("td", "Goed/Af-keuren"),
+                                            m("td", ff.select("goedkeuring_afkeuring", goedkeuring_afkeuring_dd))
+                                        ]),
+                                        m("tr",
+                                            (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "gk") ?
+                                                [
+                                                    m("td", "Datum goedkeuring"),
+                                                    m("td", ff.dateInput("goedkeuring_d"))
+                                                ] : 
+                                                (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "afk") ?
+                                                    [
+                                                        m("td", "Datum afkeuring"),
+                                                        m("td", ff.dateInput("afkeuring_d"))
+                                                    ] : null
+                                        ),
+                                        (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "afk") ?
+                                            m("tr", [
+                                                m("td", "Reden afkeuring"),
+                                                m("td[colspan=3]", ff.textarea("afkeuring_opm"), {maxlength: 250})
+                                            ]) : null
+                                    ]
+                                : null
                         ])
                     ])
                 ]),
