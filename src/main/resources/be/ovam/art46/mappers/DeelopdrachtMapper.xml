@@ -95,7 +95,7 @@
         order by wijzig_TS asc
     </select>
 
-    <sql id="bestekdeelopdrachtlijst_sql">
+    <select id="bestekdeelopdrachtlijst" resultType="ciMap" parameterType="int" >
         select
             do.deelopdracht_id,
             do.deelopdracht_nr,
@@ -103,6 +103,7 @@
             do.dossier_id,
             do.bedrag,
             do.goedkeuring_d,
+            do.afkeuring_d,
             do.voorstel_d,
             do.afsluit_d,
             do.wbs_nr,
@@ -123,10 +124,6 @@
             do.dossier_b_l,
             do.ander_raamcontract_jn
         from art46.v_deelopdracht do
-    </sql>
-
-    <select id="bestekdeelopdrachtlijst" resultType="ciMap" parameterType="int" >
-        <include refid="bestekdeelopdrachtlijst_sql"/>
         where 1 = 1
             and do.bestek_id = #{bestek_id}
             <if test="offerte_id != null and offerte_id != -1">

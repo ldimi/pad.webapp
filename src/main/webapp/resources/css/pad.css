@@ -220,6 +220,13 @@ th {
     color: blue;
 }
 
+.groenetekst {
+    color: green;
+}
+
+.rodetekst {
+    color: red;
+}
 
 ul.error {
     color: #ff0000;

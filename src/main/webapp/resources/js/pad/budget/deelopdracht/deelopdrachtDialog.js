@@ -14,7 +14,7 @@ define([
 ], function (DeelopdrachtModel, BriefModel, deelopdrachtHistDialog, briefDialog, UploaderDialog, fhf,ajax, GridComp, event) {
     'use strict';
     var _comp, goedkeuring_afkeuring_dd;
-    
+
     goedkeuring_afkeuring_dd = [
         { value: "", label: "" },
         { value: "gk", label: "goedkeuring" },
@@ -105,6 +105,8 @@ define([
                 if (this.deelopdracht.get("ander_doss_hdr_id") !== this.deelopdracht.get("current_doss_hdr_id")) {
                     if (this.deelopdracht.checkOpnieuwGoedkeuren()) {
                         this.deelopdracht.set("goedkeuring_d", null);
+                        this.deelopdracht.set("afkeuring_d", null);
+                        this.deelopdracht.set("afkeuring_opm", null);
                     }
                 } else {
                     // raamcontract beheerder is aan het editeren.
@@ -180,9 +182,9 @@ define([
     });
 
     _comp.view = function(ctrl) {
-        var ff;
-
-        ff = fhf.get().setModel(ctrl.deelopdracht).setShowErrors(ctrl.showErrors());
+        var ff, deelopdracht;
+        deelopdracht = ctrl.deelopdracht;
+        ff = fhf.get().setModel(deelopdracht).setShowErrors(ctrl.showErrors());
 
         return [
             m("#detailDialog.hidden", {config: _.bind(ctrl._configDialog, ctrl) }, [
@@ -194,7 +196,7 @@ define([
                                 m("td[width='160px']", ff.input("bestek_nr", {readOnly: true } )),
                                 m("td[width='100px']", "Contract"),
                                 m("td[width='160px']", ff.input("ander_dossier_nr", {readOnly: true } ))
-                                
+
                             ]),
                             m("tr", [
                                 m("td", "Dossier"),
@@ -212,7 +214,7 @@ define([
                                 m("td", "Geraamd bedrag (incl. BTW)"),
                                 m("td", [
                                     ff.input("bedrag", {maxlength: 10 }),
-                                    ctrl.deelopdracht.checkOpnieuwGoedkeuren() ?
+                                    deelopdracht.boven_50_procent_grens() ?
                                         m("label", {style: {color: "blue"}}, "meer dan 50% verhoogd: moet opnieuw goedgekeurd worden") : ""
                                 ]),
                                 m("td", "Goedgekeurd bedrag SV"),
@@ -224,57 +226,72 @@ define([
                                 m("td", "Datum afsluiting"),
                                 m("td", ff.dateInput("afsluit_d"))
                             ]),
-                            ( ctrl.deelopdracht.get("raamcontract_jn") === "J" )
+                            ( deelopdracht.get("raamcontract_jn") === "J" )
                                 ? // beheer goed/afkeuren voor raamcontracten
-                                (ctrl.deelopdracht.get("ander_doss_hdr_id") !== ctrl.deelopdracht.get("current_doss_hdr_id"))
+                                (deelopdracht.get("ander_doss_hdr_id") !== deelopdracht.get("current_doss_hdr_id"))
                                     ?  // readonly mededeling van goedkeurings status
-                                    (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "gk")
-                                        ? [  
+                                    (deelopdracht.get("goedkeuring_afkeuring") === "gk")
+                                        ? [
                                             m("tr",
                                                 m("td[colspan=4]",
                                                     m("span", {style: {color: "blue"}},
-                                                        "Goedgekeurd op " + ctrl.deelopdracht.str("goedkeuring_d") + " voor " + ctrl.deelopdracht.str("goedkeuring_bedrag") + " EUR."
+                                                        "Goedgekeurd op " + deelopdracht.str("goedkeuring_d") + " voor " + deelopdracht.str("goedkeuring_bedrag") + " EUR."
                                             )))
                                         ]
-                                        : (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "afk")
+                                        : (deelopdracht.get("goedkeuring_afkeuring") === "afk")
                                             ? [
                                                 m("tr",
                                                     m("td[colspan=4]",
                                                         m("span", {style: {color: "red"}},
-                                                            "Afgekeurd op " + ctrl.deelopdracht.str("afkeuring_d")
+                                                            "Afgekeurd op " + deelopdracht.str("afkeuring_d")
                                                 ))),
                                                 m("tr",
                                                     m("td[colspan=4]",
                                                         m("span", {style: {color: "red"}},
-                                                            ctrl.deelopdracht.str("afkeuring_opm")
-                                                )))
+                                                            deelopdracht.str("afkeuring_opm")
+                                                ))),
+                                                m("tr",
+                                                    m("td", {colspan: 2}, ff.checkbox("opnieuw_goedkeuren_jn", "Opnieuw laten goedkeuren", "J", "N"))
+                                                )
                                             ]
-                                            : null
+                                            : (deelopdracht.get("goedkeuring_bedrag") !== null )
+                                                ?
+                                                m("tr",
+                                                    m("td[colspan=4]",
+                                                        m("span", {style: {color: "blue"}},
+                                                            "vorig goedgekeurd bedrag : " + deelopdracht.str("goedkeuring_bedrag") + " EUR."
+                                                )))
+                                                : null
                                     :
-                                    [ // editeerbare velden om goed / af te keuren
+                                    [ // editeerbare velden om goed / af te keuren (editeerbaar voor ander_doss_hdr_id)
+                                        (deelopdracht.get("goedkeuring_bedrag") !== null) ?
+                                            m("tr", [
+                                                m("td", "Laatst goedgekeurd bedrag"),
+                                                m("td", ff.input("goedkeuring_bedrag", {readOnly: true }))
+                                            ]) : null,
                                         m("tr", [
                                             m("td", "Goed/Af-keuren"),
                                             m("td", ff.select("goedkeuring_afkeuring", goedkeuring_afkeuring_dd))
                                         ]),
                                         m("tr",
-                                            (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "gk") ?
+                                            (deelopdracht.get("goedkeuring_afkeuring") === "gk") ?
                                                 [
                                                     m("td", "Datum goedkeuring"),
                                                     m("td", ff.dateInput("goedkeuring_d"))
-                                                ] : 
-                                                (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "afk") ?
+                                                ] :
+                                                (deelopdracht.get("goedkeuring_afkeuring") === "afk") ?
                                                     [
                                                         m("td", "Datum afkeuring"),
                                                         m("td", ff.dateInput("afkeuring_d"))
                                                     ] : null
                                         ),
-                                        (ctrl.deelopdracht.get("goedkeuring_afkeuring") === "afk") ?
+                                        (deelopdracht.get("goedkeuring_afkeuring") === "afk") ?
                                             m("tr", [
                                                 m("td", "Reden afkeuring"),
                                                 m("td[colspan=3]", ff.textarea("afkeuring_opm"), {maxlength: 250})
                                             ]) : null
                                     ]
-                                : null
+                                : null  // indien geen raamcontract, is er steeds een automatische goedkeuring
                         ])
                     ])
                 ]),
@@ -283,13 +300,13 @@ define([
                     m("button", {onclick: _.bind(ctrl.close, ctrl)}, "Annuleer")
                 ]),
 
-                ctrl.deelopdracht.get("deelopdracht_id") === null ?
+                deelopdracht.get("deelopdracht_id") === null ?
                     m("div", "Om bestanden toe te voegen, moet de deelopdracht eerst opgeslagen worden.") :
                     m("div", {
                         config: _.bind(ctrl._configBrievenGrid, ctrl),
                         style: { width: "530px", height: "150px" }
                     }),
-                ctrl.deelopdracht.get("deelopdracht_id") !== null ?
+                deelopdracht.get("deelopdracht_id") !== null ?
                     m("div", {style: {marginTop: "10px"}}, [
                             m("button", {onclick: _.bind(ctrl.openHistoriek, ctrl)}, "Toon geschiedenis")
                     ]) :

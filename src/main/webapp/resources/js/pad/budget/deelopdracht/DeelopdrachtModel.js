@@ -29,6 +29,8 @@ define([
             { name: "raamcontract_jn" },
             { name: "ander_doss_hdr_id" },
             { name: "current_doss_hdr_id" },
+            // indien de deelopdracht afgekeurd is , kan opnieuw een goedkeuring gevraagd worden.
+            { name: "opnieuw_goedkeuren_jn", default: "N"},
             { name: "status_crud" }
         ]),
 
@@ -36,10 +38,10 @@ define([
             if (this.hasChanged("dossier_id")) {
                 this.attributes.planning_lijn_id = null;
             }
-            
-            this.invariant_goedk_afk(); 
-            
-            
+
+            this.invariant_goedk_afk();
+
+
             //custom validatie voor plannings item : verplicht vanaf 2014
             if( this.get("planning_lijn_id") === null &&
                 !window._G_isAdminArt46  &&
@@ -50,11 +52,11 @@ define([
 
             console.log(this.attributes);
         },
-        
+
         invariant_goedk_afk: function () {
             var goedkeuring_afkeuring;
             goedkeuring_afkeuring = this.get("goedkeuring_afkeuring");
-            
+
             if (this.hasChanged("goedkeuring_afkeuring")) {
                 if (goedkeuring_afkeuring === "afk") {
                     this.attributes.goedkeuring_d = null;
@@ -81,9 +83,22 @@ define([
         },
 
         checkOpnieuwGoedkeuren: function() {
+            if (this.get("raamcontract_jn") === "J" && this.get("afsluit_d") === null) {
+
+                if (this.get("afkeuring_d") !== null && this.get("opnieuw_goedkeuren_jn") === "J") {
+                    return true;
+                }
+
+                return this.boven_50_procent_grens();
+            }
+            return false;
+        },
+
+        boven_50_procent_grens: function() {
             var goedkeuring_bedrag, bedrag;
 
             if (this.get("raamcontract_jn") === "J" && this.get("afsluit_d") === null) {
+
                 goedkeuring_bedrag = this.get("goedkeuring_bedrag");
                 if (goedkeuring_bedrag !== null) {
                     bedrag = this.get("bedrag");

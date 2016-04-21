@@ -138,7 +138,10 @@
                                         <display:column property="bedrag" title="Geraamd bedrag" sortable="true" class="number" decorator="be.ovam.art46.decorator.CurrencyDecorator"/>
                                         <display:column property="totaal_schuldvorderingen" title="Goedgekeurd bedrag SV" sortable="true" class="number" decorator="be.ovam.art46.decorator.CurrencyDecorator"/>
                                         <display:column property="totaal_facturen" title="SAP facturen" sortable="true" class="number" decorator="be.ovam.art46.decorator.CurrencyDecorator"/>
-                                        <display:column property="goedkeuring_d" decorator="be.ovam.art46.decorator.DateDecorator" title="Goedkeuring" sortable="true" class="center"/>
+
+                                        <display:column property="goedkeuring_d" decorator="be.ovam.art46.decorator.DateDecorator" title="Goedkeuring" sortable="true" class="center blauwetekst"/>
+                                        <display:column property="afkeuring_d" decorator="be.ovam.art46.decorator.DateDecorator" title="Afkeuring" sortable="true" class="center rodetekst"/>
+
                                         <display:column class="center" title="Voorstel" sortable="true">
                                             <c:if test="${not empty deelopdracht.voorstel_deelopdracht_id}">
                                                 <a href="/pad/s/bestek/${bestekId}/voorstel/${deelopdracht.voorstel_deelopdracht_id}">
