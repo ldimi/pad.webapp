@@ -6,24 +6,16 @@ import be.ovam.art46.dao.SAPDAO;
 import be.ovam.art46.dao.SchuldvorderingDAO;
 import be.ovam.art46.model.BestekDO;
 import be.ovam.art46.model.Raming;
-import be.ovam.art46.struts.actionform.DeelopdrachtLijstForm;
 import be.ovam.art46.struts.actionform.SAPFactuurDossierForm;
-import be.ovam.art46.struts.plugin.LoadPlugin;
 import be.ovam.pad.model.Bestek;
-import be.ovam.pad.model.DeelOpdracht;
-import be.ovam.pad.model.DeelOpdrachtDO;
-import be.ovam.pad.model.VoorstelDeelopdracht;
 import be.ovam.util.mybatis.SqlSession;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -40,16 +32,16 @@ public class BestekService {
 
     @Autowired
     private BestekDAO bestekDAO;
+    
     @Autowired
     private SchuldvorderingDAO schuldvorderingDAO;
+    
     @Autowired
     private SAPDAO sapDAO;
+    
     @Autowired
     private MailService mailService;
-    @Autowired
-    private BriefService briefService;
-    @Autowired
-    private DeelOpdrachtService deelOpdrachtService;
+    
     @Autowired
     private EsbService esbService;
 
@@ -76,29 +68,6 @@ public class BestekService {
         bestekDAO.saveObject(bestek);
     }
 
-
-    private void sendEmailGoedkeuringDeelopdrachtDossierhouderDeelopdracht(Integer deelopdracht_id) {
-        try {
-            DeelOpdrachtDO deelopdrachtDO = sql.selectOne("getDeelopdrachtById", deelopdracht_id);
-            String message = "In dossier  " + deelopdrachtDO.getAnder_dossier_b_l() + " (" + deelopdrachtDO.getAnder_dossier_nr() + ") werd voor " +
-                    " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht goedgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
-                    ").<br><br>" + 
-                    " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
-            mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be", "Goedkeuring deelopdracht", this.getPadMailAdres(), message);
-
-            DeelOpdracht deelOpdracht = deelOpdrachtService.get(deelopdracht_id);
-            VoorstelDeelopdracht voorstelDeelopdracht = deelOpdracht.getVoorstelDeelopdracht();
-            if (voorstelDeelopdracht != null) {
-                if (voorstelDeelopdracht.getOvamMail() != null) {
-                    mailService.sendHTMLMail(voorstelDeelopdracht.getOvamMail());
-                    voorstelDeelopdracht.setOvamMail(null);
-                    deelOpdrachtService.save(deelOpdracht);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private String getPadMailAdres() {
         String mailadres = System.getProperty("pad.mailadres");
@@ -134,23 +103,6 @@ public class BestekService {
         return bestekDAO.getRamingByBestekId(bestekId);
     }
 
-    public void saveDeelopdrachtGoedkeuring_d(DeelopdrachtLijstForm form) throws Exception {
-        Iterator iter = form.getGoedkeuring_ds().keySet().iterator();
-        String deelopdracht_id = null;
-        List<Object[]> paramList = new ArrayList<Object[]>();
-        while (iter.hasNext()) {
-            deelopdracht_id = (String) iter.next();
-            if (form.getGoedkeuring_ds().get(deelopdracht_id) != null && ((String) form.getGoedkeuring_ds().get(deelopdracht_id)).length() != 0) {
-                Object[] params = {((String) form.getGoedkeuring_ds().get(deelopdracht_id)).length() == 0 ? null : (String) form.getGoedkeuring_ds().get(deelopdracht_id), Integer.valueOf(deelopdracht_id)};
-                paramList.add(params);
-            }
-        }
-        bestekDAO.saveDeelopdrachtGoedkeuring_d(paramList);
-        iter = paramList.iterator();
-        while (iter.hasNext()) {
-            sendEmailGoedkeuringDeelopdrachtDossierhouderDeelopdracht(Integer.valueOf(((Object[]) iter.next())[1].toString()));
-        }
-    }
 
     public SchuldvorderingDAO getSchuldvorderingDAO() {
         return schuldvorderingDAO;

@@ -74,10 +74,6 @@ public class BestekDAO extends BaseDAO {
 		return result;
 	}	
 	
-	public void saveDeelopdrachtGoedkeuring_d(List params) throws  Exception {
-		executeUpdateAll("update ART46.DEELOPDRACHT set GOEDKEURING_D = ?, GOEDKEURING_BEDRAG = BEDRAG where DEELOPDRACHT_ID = ?", params);		
-	}
-	
     public Bestek get(Long bestekId) {
         return (Bestek) getObject(Bestek.class, bestekId);
     }

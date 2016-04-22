@@ -158,4 +158,11 @@
               and vdo.id = #{voorstel_deelopdracht_id}
     </select>
 
+    <update id="updateDeelopdracht_Goedkeuring_d" >
+        update art46.deelopdracht
+        set goedkeuring_d = #{goedkeuring_d},
+            goedkeuring_bedrag = bedrag
+        where deelopdracht_id = #{deelopdracht_id}
+    </update>
+
 </mapper>
