@@ -178,11 +178,12 @@ public class DeelOpdrachtController extends BasicBestekController{
 
     @RequestMapping(value = "/budget/deelopdracht/update", method = RequestMethod.POST)
     public @ResponseBody Response update(@RequestBody DeelOpdrachtDO deelOpdracht) throws Exception {
-        //sqlSession.update("be.ovam.art46.mappers.DeelopdrachtMapper.updateDeelopdracht", deelOpdracht);
-        sqlSession.updateInTable("art46", "deelopdracht", deelOpdracht);
+        deelOpdrachtService.update(deelOpdracht);
         return new Response(null, true, null);
     }
 
+    
+    
     @RequestMapping(value = "/budget/deelopdracht/upload", method = RequestMethod.POST)
     public @ResponseBody Integer uploadMedia(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("deelopdrachtId") int deelopdracht_id) throws Exception {
         return deelOpdrachtService.uploadBrief(deelopdracht_id, name, file.getBytes());

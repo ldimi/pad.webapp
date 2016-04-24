@@ -19,10 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -44,7 +42,7 @@ public class DeelOpdrachtService {
     private MailService mailService;
 
 
-    private Logger log = Logger.getLogger(DeelOpdrachtService.class);
+    private final Logger log = Logger.getLogger(DeelOpdrachtService.class);
 
     public List<DeelOpdracht> getMogelijkeDeelopdrachtenVoorVoorstel(Long voorstelId) {
         if(voorstelId==null){
@@ -90,6 +88,18 @@ public class DeelOpdrachtService {
             deelOpdrachtDao.save(deelOpdracht);
         }
     }
+    
+    public void update(DeelOpdrachtDO deelOpdracht)  {
+        DeelOpdrachtDO old = getDeelopdrachtBy(deelOpdracht.getDeelopdracht_id());
+        sqlSession.updateInTable("art46", "deelopdracht", deelOpdracht);
+        
+        if (old.getGoedkeuring_d() == null && deelOpdracht.getGoedkeuring_d() != null) {
+            sendMailGoedkeuring(deelOpdracht, deelOpdracht.getAnder_doss_hdr_id());
+        } else if (old.getAfkeuring_d() != null && deelOpdracht.getAfkeuring_d() != null) {
+            sendMailAfkeuring(deelOpdracht, deelOpdracht.getAnder_doss_hdr_id());
+        }
+    }
+    
 
     public DeelOpdrachtDO getDeelopdrachtBy(int id) {
         DeelOpdrachtDO deelOpdrachtDO = sqlSession.selectOne("be.ovam.art46.mappers.DeelopdrachtMapper.getDeelopdrachtById", id);
@@ -97,34 +107,6 @@ public class DeelOpdrachtService {
         return deelOpdrachtDO;
     }
     
-//    public void saveDeelopdrachtGoedkeuring_d(DeelopdrachtLijstForm form) throws Exception {
-//        Iterator iter = form.getGoedkeuring_ds().keySet().iterator();
-//        String deelopdracht_id = null;
-//        List<Object[]> paramList = new ArrayList<Object[]>();
-//        while (iter.hasNext()) {
-//            deelopdracht_id = (String) iter.next();
-//            if (form.getGoedkeuring_ds().get(deelopdracht_id) != null && ((String) form.getGoedkeuring_ds().get(deelopdracht_id)).length() != 0) {
-//                Object[] params = {((String) form.getGoedkeuring_ds().get(deelopdracht_id)).length() == 0 ? null : (String) form.getGoedkeuring_ds().get(deelopdracht_id), Integer.valueOf(deelopdracht_id)};
-//                paramList.add(params);
-//            }
-//        }
-//        saveDeelopdrachtGoedkeuring_d(paramList);
-//        iter = paramList.iterator();
-//        while (iter.hasNext()) {
-//            sendEmailGoedkeuringDeelopdrachtDossierhouderDeelopdracht(Integer.valueOf(((Object[]) iter.next())[1].toString()));
-//        }
-//    }
-
-//    public void saveDeelopdrachtGoedkeuring_d(List params) throws  Exception {
-//        for (Object param : params) {
-//            Object[] arr = (Object[]) param;
-//            Map map = new HashMap();
-//            map.put("goedkeuring_d", arr[0]);
-//            map.put("deelopdracht_id", arr[1]);
-//            
-//            sqlSession.update("updateDeelopdracht_Goedkeuring_d", map);
-//        }
-//	}
 
     public void saveDeelopdrachtGoedkeuring_d(DeelopdrachtLijstForm form) throws Exception {
         Map deelopdrachtId_goedkeuring_d_map = form.getGoedkeuring_ds();
@@ -134,7 +116,7 @@ public class DeelOpdrachtService {
             if (goedkeuring_d != null && ((String) goedkeuring_d).length() != 0) {
                 
                 updateDeelopdracht_Goedkeuring_d(deelopdracht_id, (String) goedkeuring_d);
-                sendEmailGoedkeuringDeelopdrachtDossierhouderDeelopdracht(new Integer(deelopdracht_id));
+                sendMailGoedkeuring(new Integer(deelopdracht_id));
             }
         }
     }
@@ -148,17 +130,21 @@ public class DeelOpdrachtService {
 	}
 
 
+    private void sendMailGoedkeuring(Integer deelopdracht_id) {
+        DeelOpdrachtDO deelopdrachtDO = sqlSession.selectOne("getDeelopdrachtById", deelopdracht_id);
+        sendMailGoedkeuring(deelopdrachtDO, getPadMailAdres());
+    }
+
     
-    private void sendEmailGoedkeuringDeelopdrachtDossierhouderDeelopdracht(Integer deelopdracht_id) {
+    private void sendMailGoedkeuring(DeelOpdrachtDO deelopdrachtDO, String from) {
         try {
-            DeelOpdrachtDO deelopdrachtDO = sqlSession.selectOne("getDeelopdrachtById", deelopdracht_id);
             String message = "In dossier  " + deelopdrachtDO.getAnder_dossier_b_l() + " (" + deelopdrachtDO.getAnder_dossier_nr() + ") werd voor " +
                     " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht goedgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
                     ").<br><br>" + 
                     " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
             mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be", "Goedkeuring deelopdracht", this.getPadMailAdres(), message);
 
-            DeelOpdracht deelOpdracht = this.get(deelopdracht_id);
+            DeelOpdracht deelOpdracht = this.get(deelopdrachtDO.getDeelopdracht_id());
             VoorstelDeelopdracht voorstelDeelopdracht = deelOpdracht.getVoorstelDeelopdracht();
             if (voorstelDeelopdracht != null) {
                 if (voorstelDeelopdracht.getOvamMail() != null) {
@@ -167,6 +153,22 @@ public class DeelOpdrachtService {
                     this.save(deelOpdracht);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendMailAfkeuring(DeelOpdrachtDO deelopdrachtDO, String from) {
+        try {
+            String message = "In dossier  " + deelopdrachtDO.getAnder_dossier_b_l() + " (" + deelopdrachtDO.getAnder_dossier_nr() + ") werd voor " +
+                    " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht afgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
+                    ").<br><br>" + 
+                    " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
+            mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be",
+                    "afkeuring deelopdracht", 
+                    from, 
+                    message);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
