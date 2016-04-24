@@ -93,10 +93,12 @@ public class DeelOpdrachtService {
         DeelOpdrachtDO old = getDeelopdrachtBy(deelOpdracht.getDeelopdracht_id());
         sqlSession.updateInTable("art46", "deelopdracht", deelOpdracht);
         
-        if (old.getGoedkeuring_d() == null && deelOpdracht.getGoedkeuring_d() != null) {
-            sendMailGoedkeuring(deelOpdracht, deelOpdracht.getAnder_doss_hdr_id());
-        } else if (old.getAfkeuring_d() != null && deelOpdracht.getAfkeuring_d() != null) {
-            sendMailAfkeuring(deelOpdracht, deelOpdracht.getAnder_doss_hdr_id());
+        if ("J".equals(deelOpdracht.getRaamcontract_jn())) {
+            if (old.getGoedkeuring_d() == null && deelOpdracht.getGoedkeuring_d() != null) {
+                sendMailGoedkeuring(deelOpdracht, deelOpdracht.getAnder_doss_hdr_id() + "@ovam.be");
+            } else if (old.getAfkeuring_d() == null && deelOpdracht.getAfkeuring_d() != null) {
+                sendMailAfkeuring(deelOpdracht, deelOpdracht.getAnder_doss_hdr_id() + "@ovam.be");
+            }
         }
     }
     
@@ -142,7 +144,10 @@ public class DeelOpdrachtService {
                     " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht goedgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
                     ").<br><br>" + 
                     " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
-            mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be", "Goedkeuring deelopdracht", this.getPadMailAdres(), message);
+            mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be",
+                    "Goedkeuring deelopdracht",
+                    from,
+                    message);
 
             DeelOpdracht deelOpdracht = this.get(deelopdrachtDO.getDeelopdracht_id());
             VoorstelDeelopdracht voorstelDeelopdracht = deelOpdracht.getVoorstelDeelopdracht();
