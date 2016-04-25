@@ -28,6 +28,7 @@ define([
             { name: "creatie_d", type: "date" },
             { name: "raamcontract_jn" },
             { name: "ander_doss_hdr_id" },
+            { name: "bestek_hdr_id" },
             { name: "current_doss_hdr_id" },
             // indien de deelopdracht afgekeurd is , kan opnieuw een goedkeuring gevraagd worden.
             { name: "opnieuw_goedkeuren_jn", default: "N"},

@@ -102,7 +102,8 @@ define([
                 }
             } else {
                 // raamcontract
-                if (this.deelopdracht.get("ander_doss_hdr_id") !== this.deelopdracht.get("current_doss_hdr_id")) {
+                if (this.deelopdracht.get("ander_doss_hdr_id") !== this.deelopdracht.get("current_doss_hdr_id") &&
+                    this.deelopdracht.get("bestek_hdr_id") !== this.deelopdracht.get("current_doss_hdr_id")         ) {
                     if (this.deelopdracht.checkOpnieuwGoedkeuren()) {
                         this.deelopdracht.set("goedkeuring_d", null);
                         this.deelopdracht.set("afkeuring_d", null);
@@ -228,7 +229,8 @@ define([
                             ]),
                             ( deelopdracht.get("raamcontract_jn") === "J" )
                                 ? // beheer goed/afkeuren voor raamcontracten
-                                (deelopdracht.get("ander_doss_hdr_id") !== deelopdracht.get("current_doss_hdr_id"))
+                                (deelopdracht.get("ander_doss_hdr_id") !== deelopdracht.get("current_doss_hdr_id") &&
+                                 deelopdracht.get("bestek_hdr_id") !== deelopdracht.get("current_doss_hdr_id")  )
                                     ?  // readonly mededeling van goedkeurings status
                                     (deelopdracht.get("goedkeuring_afkeuring") === "gk")
                                         ? [
@@ -263,7 +265,7 @@ define([
                                                 )))
                                                 : null
                                     :
-                                    [ // editeerbare velden om goed / af te keuren (editeerbaar voor ander_doss_hdr_id)
+                                    [ // editeerbare velden om goed / af te keuren (editeerbaar voor ander_doss_hdr_id, en bestek_hdr_id)
                                         (deelopdracht.get("goedkeuring_bedrag") !== null) ?
                                             m("tr", [
                                                 m("td", "Laatst goedgekeurd bedrag"),

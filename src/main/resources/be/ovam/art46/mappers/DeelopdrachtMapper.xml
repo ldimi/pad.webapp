@@ -30,7 +30,8 @@
             do.ander_dossier_id,
             d.dossier_nr as ander_dossier_nr,
             d.dossier_b_l as ander_dossier_b_l,
-            do.ander_doss_hdr_id
+            do.ander_doss_hdr_id,
+            do.bestek_hdr_id
         from art46.v_deelopdracht do
                 left outer join art46.bestek b
                 on do.bestek_id = b.bestek_id

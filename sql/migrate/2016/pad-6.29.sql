@@ -91,4 +91,4 @@ drop view ART46.V_VOORSTEL_DEELOPDRACHT;create view art46.v_voorstel_deelopdrach
 
 
 -- deze versie van de wijzigingen in db registreren.
-insert into art46.db_versie(db_versie, omschrijving) values ('6.29', 'toevoegen bestek.doss_hdr_id');
+insert into art46.db_versie(db_versie, omschrijving) values ('6.29', 'toevoegen bestek.bestek_hdr_id');

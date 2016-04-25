@@ -188,7 +188,7 @@
             and do.goedkeuring_d is null
             and do.afkeuring_d is null
             and do.ander_raamcontract_jn = 'J'
-            and do.ander_doss_hdr_id = #{doss_hdr_id}
+            and do.bestek_hdr_id = #{doss_hdr_id}
     </select>
 
     <select id="get_taken_brief_in_check_afd_hfd"
