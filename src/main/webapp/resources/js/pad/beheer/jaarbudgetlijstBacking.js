@@ -147,7 +147,7 @@ define([
                         m("td[width=100px]",
                             ff.select("budget_code",
                                 {readOnly:  status_crud !== 'C' },
-                                _G_.model.budgetCode_dd)
+                                _G_.model.budgetCodeDD)
                         )
                     ]),
                     m("tr", [

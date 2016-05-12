@@ -31,8 +31,12 @@ define([
             { name: "dossier_type", label: "A/B", width: 40 },
             { name: "dossier_is_raamcontract_jn", type: "string", hidden: true },
             { name: "fase_code", label: "Fase", required: true, width: 50 },
-            { name: "fase_budget_code", label: "FBC", width: 50 },
-            { name: "budget_code", label: "BC", required: true, width: 50 },
+            // de default budget_code die aan de fase gekoppeld is.
+            { name: "fase_budget_code", hidden: true },
+            // de budget_code kan door admin aangepast worden, los van de fase
+            { name: "budget_code", hidden: true },
+            // de_budget_code  is colaesce(fase_budget_code, budget_code)
+            { name: "de_budget_code", label: "Budget", width: 50 },
             { name: "fase_prijs", type: "int", hidden: true },
             { name: "fase_looptijd", type: "int", hidden: true },
             { name: "fase_code_heeft_details_jn", exportCsv: false, hidden: true },
@@ -199,6 +203,7 @@ define([
             this._validate_contract_id_required_for_RC_and_GGO_in_boekjaar();
 
             this._invariant_contract_id();
+            this._invariant_budget_code();
 
 
             if (this.hasChanged("actie_code")) {
@@ -210,6 +215,24 @@ define([
                 events.trigger("planningLijnModel.contract_id:changed");
             }
 
+        },
+
+        _invariant_budget_code: function () {
+            if (this.hasChanged("fase_code")) {
+                // TODO zet fase_budget_code
+            } else if (this.hasChanged("de_budget_code")) {
+                this.attributes.budget_code = this.get("de_budget_code");
+            }
+
+            if (this.get("budget_code") === this.get("fase_budget_code")) {
+                this.attributes.budget_code = null;
+            }
+
+            if (this.get("budget_code") === null) {
+                this.attributes.de_budget_code = this.get("fase_budget_code");
+            } else {
+                this.attributes.de_budget_code = this.get("budget_code");
+            }
         },
 
         _invariant_contract_id: function () {

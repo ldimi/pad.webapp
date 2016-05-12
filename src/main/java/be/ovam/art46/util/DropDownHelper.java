@@ -191,11 +191,6 @@ public enum DropDownHelper {
     	return this.get("be.ovam.art46.mappers.DropDownMapper.actieveLijsten");
     }
 	
-	public List getBudgetCode_dd () {
-    	return this.get("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCode_dd");
-	}
-	
-	
 	private List get(String key) {
 		return sqlSession.selectList(key, null);
 	}
@@ -221,7 +216,7 @@ public enum DropDownHelper {
     }
 
     public List getBudgetCodeDD() {
-        return this.get("be.ovam.art46.mappers.PlanningMapper.getBudgetCodeDD");    	
+        return this.get("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCodeDD");    	
     }
 
     public List getProgrammaDD() {

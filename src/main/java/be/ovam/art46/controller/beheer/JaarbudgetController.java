@@ -22,7 +22,7 @@ public class JaarbudgetController {
 	
 	@RequestMapping(value = "/beheer/jaarbudget", method = RequestMethod.GET)
 	public String start(Model model) throws Exception {
-		model.addAttribute("budgetCode_dd", sqlSession.selectList("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCode_dd"));
+		model.addAttribute("budgetCodeDD", sqlSession.selectList("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCodeDD"));
         
         model.addAttribute("jaren", DropDownHelper.INSTANCE.getJaren());
         

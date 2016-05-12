@@ -5,13 +5,14 @@ define([
     "planning/individueel/PlanningLijnModel",
     "dropdown/planning/fasen",
     "dropdown/planning/detailFasen",
+    "dropdown/planning/budgetCodes",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory",
     "ov/mithril/dialogBuilder",
     "mithril",
     "underscore"
-], function (PlanningLijnModel, fasen, detailFasen, events ,ajax, fhf, dialogBuilder, m, _) {
+], function (PlanningLijnModel, fasen, detailFasen, budgetCodes, events ,ajax, fhf, dialogBuilder, m, _) {
     'use strict';
 
     var PlanningLijnDialog, dateConfig, actie_dd;
@@ -271,7 +272,9 @@ define([
                 ]),
                 m("tr", [
                     m("td", "Fase:"),
-                    m("td", {colspan: "3" }, ff.select("fase_code", fasen[dossier_type]))
+                    m("td", { width: "170px" }, ff.select("fase_code", fasen[dossier_type])),
+                    m("td", { width: "80px" }, "Budgetcode"),
+                    m("td", { width: "170px" }, ff.select("de_budget_code", {color: "red"}, budgetCodes))
                 ]),
                 ( fasen.heeft_details_jn(pl_lijn.get("fase_code")) === 'J') ?
                     m("tr", [

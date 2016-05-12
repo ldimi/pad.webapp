@@ -43,10 +43,10 @@ public class PlanningController {
         
 		model.addAttribute("faseDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD"));
 		model.addAttribute("faseDetailDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDetailDD"));
+        model.addAttribute("budgetCodeDD", DropDownHelper.INSTANCE.getBudgetCodeDD());
         
 		model.addAttribute("contractenDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD", doss_hdr_id));
        
-        
 		addDossierhouder(model,doss_hdr_id);
         return jsview("planning.individueel.bodemEnAfval", "planning/individueel/bodemEnAfval", model);
 	}
@@ -62,6 +62,7 @@ public class PlanningController {
         
 		model.addAttribute("faseDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD"));
 		model.addAttribute("faseDetailDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDetailDD"));
+        model.addAttribute("budgetCodeDD", DropDownHelper.INSTANCE.getBudgetCodeDD());
         
 		model.addAttribute("contractenDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD", doss_hdr_id));
        
@@ -84,6 +85,7 @@ public class PlanningController {
         
 		model.addAttribute("faseDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDD"));
 		model.addAttribute("faseDetailDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getFaseDetailDD"));
+        model.addAttribute("budgetCodeDD", DropDownHelper.INSTANCE.getBudgetCodeDD());
         
 		model.addAttribute("contractenDD", sqlSession.selectList("be.ovam.art46.mappers.PlanningMapper.getContractenDD", doss_hdr_id));
        
@@ -207,6 +209,8 @@ public class PlanningController {
 		model.addAttribute("dossierhouders",DropDownHelper.INSTANCE.getDossierhouders());
 		model.addAttribute("hdr_id", doss_hdr_id);      // TODO :  deprecated, te verwijderen
 		model.addAttribute("doss_hdr_id", doss_hdr_id);
+        
+        model.addAttribute("isAdminArt46", Application.INSTANCE.isUserInRole("adminArt46"));
 	}
 	
 	private String getDossierhouderId(HttpServletRequest request){

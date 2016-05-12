@@ -323,14 +323,6 @@
         order by pfd.FASE_CODE, pfd.FASE_DETAIL_CODE
     </select>
 
-    <select id="getBudgetCodeDD" resultType="ciMap" >
-        select BUDGET_CODE as value,
-              BUDGET_CODE as label
-        from art46.BUDGET_CODE
-        order by budget_code
-    </select>
-
-
     <select id="getMarkeringenDD" resultType="ciMap" >
         select MARKERING_ID as value,
               OMSCHRIJVING || ' (' || SMEG.OVAMDATE(date(CREATIE_TS)) || ')' as label

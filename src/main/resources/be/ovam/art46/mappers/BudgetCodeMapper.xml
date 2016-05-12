@@ -35,11 +35,13 @@
         where budget_code = #{budget_code}
     </delete>
 
-    <select id="getBudgetCode_dd"  resultType="ciMap">
+    <select id="getBudgetCodeDD" resultType="ciMap" >
         select budget_code as value,
               budget_code_b as label
         from art46.budget_code
         order by budget_code
     </select>
+
+
 
 </mapper>
