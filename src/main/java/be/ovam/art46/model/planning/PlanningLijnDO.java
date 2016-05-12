@@ -25,6 +25,8 @@ public class PlanningLijnDO implements Serializable {
     private Integer fase_looptijd; 
     private String fase_code_heeft_details_jn;
     private String fase_detail_code;
+    private String fase_budget_code;
+    private String budget_code;
     private String actie_code;
 
     private Integer contract_id;
@@ -351,6 +353,22 @@ public class PlanningLijnDO implements Serializable {
 
     public void setFase_prijs(Integer fase_prijs) {
         this.fase_prijs = fase_prijs;
+    }
+
+    public String getFase_budget_code() {
+        return fase_budget_code;
+    }
+
+    public void setFase_budget_code(String fase_budget_code) {
+        this.fase_budget_code = fase_budget_code;
+    }
+
+    public String getBudget_code() {
+        return budget_code;
+    }
+
+    public void setBudget_code(String budget_code) {
+        this.budget_code = budget_code;
     }
 
 

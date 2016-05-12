@@ -31,6 +31,8 @@ define([
             { name: "dossier_type", label: "A/B", width: 40 },
             { name: "dossier_is_raamcontract_jn", type: "string", hidden: true },
             { name: "fase_code", label: "Fase", required: true, width: 50 },
+            { name: "fase_budget_code", label: "FBC", width: 50 },
+            { name: "budget_code", label: "BC", required: true, width: 50 },
             { name: "fase_prijs", type: "int", hidden: true },
             { name: "fase_looptijd", type: "int", hidden: true },
             { name: "fase_code_heeft_details_jn", exportCsv: false, hidden: true },

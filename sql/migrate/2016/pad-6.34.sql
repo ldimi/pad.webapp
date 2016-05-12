@@ -165,4 +165,4 @@ drop view ART46.V_PLANNING_LIJN_DETAILS;create view art46.v_planning_lijn_detail
 
 
 -- deze versie van de wijzigingen in db registreren.
-insert into art46.db_versie(db_versie, omschrijving) values ('6.34', 'toevoegen v_deelopdracht.bestek_hdr_id');
+insert into art46.db_versie(db_versie, omschrijving) values ('6.34', 'toevoegen art46.planning_lijn_versie.budget_code');
