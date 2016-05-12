@@ -252,6 +252,9 @@ define([
                     if (pl_lijn.get("ib_bedrag") || pl_lijn.get("c_isReedsGekoppeld")) {
                         return true;
                     }
+                    if (veldNaam === "de_budget_code") {
+                        return !_G_.model.isAdminArt46;
+                    }
                     return false;
                 }
             });
@@ -274,7 +277,7 @@ define([
                     m("td", "Fase:"),
                     m("td", { width: "170px" }, ff.select("fase_code", fasen[dossier_type])),
                     m("td", { width: "80px" }, "Budgetcode"),
-                    m("td", { width: "170px" }, ff.select("de_budget_code", {color: "red"}, budgetCodes))
+                    m("td", { width: "170px" }, ff.select("de_budget_code", budgetCodes))
                 ]),
                 ( fasen.heeft_details_jn(pl_lijn.get("fase_code")) === 'J') ?
                     m("tr", [

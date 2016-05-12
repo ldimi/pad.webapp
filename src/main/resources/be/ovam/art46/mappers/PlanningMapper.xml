@@ -310,7 +310,8 @@
         select pf.DOSSIER_TYPE,
               pf.FASE_CODE as value,
               pf.FASE_CODE as label,
-              pf.heeft_details_JN
+              pf.heeft_details_JN,
+              pf.budget_code
         from art46.V_PLANNING_FASE pf
         order by pf.DOSSIER_TYPE, pf.FASE_CODE
     </select>

@@ -218,8 +218,15 @@ define([
         },
 
         _invariant_budget_code: function () {
+            var fase_code, fase;
             if (this.hasChanged("fase_code")) {
-                // TODO zet fase_budget_code
+                fase_code = this.get("fase_code");
+                if (fase_code === null) {
+                    this.attributes.fase_budget_code = null;
+                } else {
+                    fase = fasen.find(fase_code, this.get("dossier_type"));
+                    this.attributes.fase_budget_code = fase.budget_code;
+                }   
             } else if (this.hasChanged("de_budget_code")) {
                 this.attributes.budget_code = this.get("de_budget_code");
             }
