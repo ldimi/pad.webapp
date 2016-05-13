@@ -99,6 +99,8 @@ public class DeelOpdrachtController extends BasicBestekController{
             }
         }
         model.addAttribute("som_openstaand_gepland", CurrencyDecorator.format(som_openstaand_gepland));
+        
+        model.addAttribute("isAdminArt46",  Application.INSTANCE.isUserInRole("adminArt46"));
                 
         return "bestek.deelopdrachten";
     }

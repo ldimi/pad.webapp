@@ -161,11 +161,11 @@
                                                  onclick="popupWindow('<html:rewrite action="deelopdrachtlijstschuldvordering"/>?popup=yes&deelopdracht_id=<bean:write name="deelopdracht" property="deelopdracht_id" />', 'Schuldvorderingen')"/>
                                         </display:column>
                                         <display:column class="center">
-                                            <logic:present role="adminArt46">
+                                            <c:if test="${isAdminArt46 || deelopdracht.afkeuring_d != null}">
                                                 <a href="/pad/s/bestek/${bestekId}/deelopdrachten/${deelopdracht.deelopdracht_id}/verwijder/">
                                                     <img src='<html:rewrite page="/"/>/resources/images/delete.gif' alt="Verwijderen deelopdracht" border="0"/>
                                                 </a>
-                                            </logic:present>
+                                            </c:if>
                                         </display:column>
                                         <display:setProperty name="basic.msg.empty_list_row" value=""/>
 
