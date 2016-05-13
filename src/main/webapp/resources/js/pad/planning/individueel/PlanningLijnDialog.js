@@ -279,6 +279,10 @@ define([
                     m("td", { width: "80px" }, "Budgetcode"),
                     m("td", { width: "170px" }, ff.select("de_budget_code", budgetCodes))
                 ]),
+                (pl_lijn.get("budget_code") !== null) ?
+                    m("tr",
+                        m("td", {colspan: 4, style: {color: "blue"}}, "(de budgetcode verschilt van de default budgetcode voor deze fase)")
+                    ) : null,
                 ( fasen.heeft_details_jn(pl_lijn.get("fase_code")) === 'J') ?
                     m("tr", [
                         m("td", "Fase detail:"),
