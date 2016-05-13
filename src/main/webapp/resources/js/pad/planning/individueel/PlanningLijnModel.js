@@ -226,9 +226,10 @@ define([
                 } else {
                     fase = fasen.find(fase_code, this.get("dossier_type"));
                     this.attributes.fase_budget_code = fase.budget_code;
-                }   
+                }
             } else if (this.hasChanged("de_budget_code")) {
                 this.attributes.budget_code = this.get("de_budget_code");
+                //events.trigger("planningLijnModel.de_budget_code:changed");
             }
 
             if (this.get("budget_code") === this.get("fase_budget_code")) {

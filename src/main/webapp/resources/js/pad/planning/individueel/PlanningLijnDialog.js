@@ -60,6 +60,11 @@ define([
             this.filterContractenDD();
         }.bind(this));
 
+        //events.on("planningLijnModel.de_budget_code:changed", function() {
+        //    // TODO force redraw;
+        //    m.redraw.strategy("all");
+        //});
+
         events.on("planningLijnModel.contract_id:changed", this.fetchBestekkenDD.bind(this));
 
         this.title = "Editeer Planningslijn";
@@ -70,6 +75,7 @@ define([
     _.extend(PlanningLijnDialog.controller.prototype, {
         preOpen: function (lijn, planningData) {
             this._lijn = lijn;
+            _G_._CURRENT_LIJN = lijn;
             this._planningData = planningData;
 
             this.fetchBestekkenDD();
@@ -160,9 +166,6 @@ define([
             }
         },
 
-
-
-
         fetchBestekkenDD: function () {
             var actie_code, contract_id;
             actie_code = this._lijn.get("actie_code");
@@ -226,9 +229,6 @@ define([
 
 
         }
-
-
-
 
     });
 

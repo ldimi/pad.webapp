@@ -64,6 +64,7 @@
             dossier_type,
             fase_code,
             fase_detail_code,
+            budget_code,
             actie_code,
             contract_id,
             contract_type,
@@ -81,6 +82,7 @@
             #{dossier_type},
             #{fase_code},
             #{fase_detail_code, jdbcType=VARCHAR},
+            #{budget_code},
             #{actie_code, jdbcType=VARCHAR},
             #{contract_id, jdbcType=INTEGER},
             #{contract_type, jdbcType=VARCHAR},
@@ -563,7 +565,7 @@
              full outer join (select budget_code,
                                     sum(bedrag) as gepland_bedrag_per_budgetcode
                               from
-                                   (select coalesce(bc.budget_code, pf.budget_code) as budget_code,
+                                   (select coalesce(bc.budget_code, pl.budget_code, pf.budget_code) as budget_code,
                                              coalesce(spv.bedrag, pl.IG_BEDRAG) as bedrag
                                     FROM art46.V_PLANNING_LIJN_DETAILS pl
                                            LEFT outer join art46.PLANNING_FASE pf
@@ -785,7 +787,7 @@
                pl.dossier_b,
                pl.dossier_gemeente_b,
                pl.fase_code,
-               coalesce(bc.budget_code, pf.budget_code) as budget_code,
+               coalesce(bc.budget_code, pl.budget_code, pf.budget_code) as budget_code,
                bc.budget_code as budget_code_benut,
                coalesce(dh.PROGRAMMA_TYPE_CODE, dos.PROGRAMMA_CODE) as programma_code,
                pl.contract_id,
