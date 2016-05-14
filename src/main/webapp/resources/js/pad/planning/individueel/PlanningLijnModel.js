@@ -1,5 +1,5 @@
 /*jslint nomen: true, debug: true, browser: true */
-/*global define: false, $: false, alert: false, console: false, _:false, _G_ */
+/*global define: false, $: false, m, alert: false, console: false, _:false, _G_ */
 
 define([
     "dropdown/planning/fasen",
@@ -203,6 +203,7 @@ define([
             this._validate_contract_id_required_for_RC_and_GGO_in_boekjaar();
 
             this._invariant_contract_id();
+            this._invariant_fase_budget_code();
             this._invariant_budget_code();
 
 
@@ -216,8 +217,8 @@ define([
             }
 
         },
-
-        _invariant_budget_code: function () {
+        
+        _invariant_fase_budget_code: function () {
             var fase_code, fase;
             if (this.hasChanged("fase_code")) {
                 fase_code = this.get("fase_code");
@@ -227,19 +228,44 @@ define([
                     fase = fasen.find(fase_code, this.get("dossier_type"));
                     this.attributes.fase_budget_code = fase.budget_code;
                 }
-            } else if (this.hasChanged("de_budget_code")) {
-                this.attributes.budget_code = this.get("de_budget_code");
-                //events.trigger("planningLijnModel.de_budget_code:changed");
             }
+        },
 
-            if (this.get("budget_code") === this.get("fase_budget_code")) {
-                this.attributes.budget_code = null;
-            }
-
-            if (this.get("budget_code") === null) {
-                this.attributes.de_budget_code = this.get("fase_budget_code");
+        _invariant_budget_code: function () {
+            var fase_budget_code, de_budget_code, self;
+            self =  this;
+            
+            fase_budget_code = this.get("fase_budget_code");
+            
+            if (this.hasChanged("de_budget_code")) {
+                de_budget_code = this.get("de_budget_code");
+                if (de_budget_code === null) {
+                    this.attributes.budget_code = null;
+                    
+                    // eerst laten we de null waarde renderen
+                    // en nadien vullen we de default waarde in.
+                    //  (anders is er een probleem indien je van default naar leeg gaat,)
+                    window.setTimeout(function () {
+                        self.set("de_budget_code", fase_budget_code);
+                        m.redraw();
+                    });
+                } else if (de_budget_code === fase_budget_code) {
+                    this.attributes.budget_code = null;
+                } else {
+                    this.attributes.budget_code = de_budget_code;
+                }
             } else {
-                this.attributes.de_budget_code = this.get("budget_code");
+                // zet budget_code
+                if (this.get("budget_code") === fase_budget_code) {
+                    this.attributes.budget_code = null;
+                }
+    
+                // zet de_budget_code
+                if (this.get("budget_code") === null) {
+                    this.attributes.de_budget_code = fase_budget_code;
+                } else {
+                    this.attributes.de_budget_code = this.get("budget_code");
+                }
             }
         },
 
