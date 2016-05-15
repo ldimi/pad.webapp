@@ -58,10 +58,9 @@ public class DossierRechtsgrondController {
     }
     
     private void clearCache() {
-        Cache cache = sqlSession.getConfiguration().getCache("be.ovam.art46.mappers.DossierRechtsgrondMapper");
-        if (cache != null) {
-            cache.clear();
-        }
+        // er is geen cache !
+        
+        // Cache cache = sqlSession.getConfiguration().getCache("be.ovam.art46.mappers.DossierRechtsgrondMapper");
     }
 
     private List getDossierRechtsgrondList() throws Exception {

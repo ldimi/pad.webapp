@@ -3,7 +3,7 @@
 
 define([
     "ov/GridComp",
-    "ov/Model",
+    "ov/Model2",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
@@ -64,7 +64,6 @@ define([
                         }));
                     },
                     onEditClicked: function (item) {
-                        item.set("status_crud", 'U');
                         event.trigger("detailcomp:open", item.clone());
                     },
                     onDeleteClicked: function (item) {
@@ -123,6 +122,10 @@ define([
         _save: function (item) {
             var action, status_crud;
             status_crud = item.get("status_crud");
+            if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
             if (status_crud === 'U') {
                 action = "update";
             } else if (status_crud === 'C') {

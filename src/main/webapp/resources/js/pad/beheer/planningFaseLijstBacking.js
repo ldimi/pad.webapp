@@ -3,7 +3,7 @@
 
 define([
     "ov/ajax",
-    "ov/Model",
+    "ov/Model2",
     "ov/GridComp",
     "ov/events",
     "beheer/planningFaseDialog"
@@ -31,11 +31,6 @@ define([
                 type: "string",
                 label: "Budget",
                 required: true
-            }, {
-                name: "status_crud",
-                type: "string",
-                default: "C",
-                hidden: true
             }])
     });
 
@@ -51,7 +46,6 @@ define([
             },
             onEditClicked: function (item, faseArray) {
                 if (window._G_isAdminArt46) {
-                    item.set("status_crud", 'U');
                     planningFaseDialog.show(item, faseArray);
                 }
             },

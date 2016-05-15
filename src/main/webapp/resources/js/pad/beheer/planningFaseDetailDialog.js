@@ -58,6 +58,10 @@ define(["ov/ajax", "ov/events"], function (ajax, events) {
             if (_fm.validate()) {
                 _fm.extractTo(_faseDetail);
                 if (validateDetailFase(_faseDetail)) {
+                    if (_faseDetail.get("status_crud") === 'R') {
+                        $.notify("Er zijn geen aanpassingen te bewaren.");
+                        return;
+                    }
                     if (_faseDetail.get("status_crud") === 'C') {
                         action = "insert";
                     } else {

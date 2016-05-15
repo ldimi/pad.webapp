@@ -3,7 +3,7 @@
 
 define([
     "ov/ajax",
-    "ov/Model",
+    "ov/Model2",
     "ov/GridComp",
     "ov/events",
     "beheer/planningFaseDetailDialog"
@@ -29,10 +29,6 @@ define([
                 name: "fase_detail_code_b",
                 label: "Omschrijving",
                 type: "string"
-            }, {
-                name: "status_crud",
-                type: "string",
-                hidden: true
             }
         ])
     });
@@ -80,7 +76,6 @@ define([
                 },
                 onEditClicked: function (item, faseDetailArray) {
                     if (window._G_isAdminArt46) {
-                        item.set("status_crud", "R");
                         planningFaseDetailDialog.show(item, faseDetailArray);
                     }
                 },
@@ -152,6 +147,10 @@ define([
             if (_fm.validate()) {
                 _fm.extractTo(_fase);
                 if (_validateFase(_fase)) {
+                    if (_fase.get("status_crud") === 'R') {
+                        $.notify("Er zijn geen aanpassingen te bewaren.");
+                        return;
+                    }
                     if (_fase.get("status_crud") === 'C') {
                         action = "insert";
                     } else {
