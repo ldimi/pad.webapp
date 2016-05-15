@@ -2,7 +2,7 @@
 /*global define: false, Slick: false, $: false, _: false, alert: false, console: false, _G_ */
 
 define([
-    "ov/Model",
+    "ov/Model2",
     "ov/GridComp",
     "ov/events",
     "ov/mithril/ajax",
@@ -47,10 +47,6 @@ define([
                 min: 1,
                 max: 100,
                 required: true
-            }, {
-                name: "status_crud",
-                default: "C",
-                hidden: true
             }
         ]),
         enforceInvariants: function () {
@@ -88,10 +84,6 @@ define([
                 min: 1,
                 max: 100,
                 required: true
-            }, {
-                name: "status_crud",
-                default: "C",
-                hidden: true
         }]),
         enforceInvariants: function () {
             var mijlpaal_d, jaar, found;
@@ -167,7 +159,7 @@ define([
                     events.trigger("mijlpaalDialog:open", new MijlpaalModel().set("jaar", _jaar));
                 },
                 onEditClicked: function (item) {
-                    events.trigger("mijlpaalDialog:open", item.clone().set("status_crud", "U"));
+                    events.trigger("mijlpaalDialog:open", item.clone());
                 },
                 onDeleteClicked: function (item) {
                     saveMijlpaal(item.clone().set("status_crud", "D"));
@@ -193,7 +185,7 @@ define([
                     events.trigger("mijlpaalProgrammaDialog:open", new MijlpaalProgrammaModel().set("jaar", _jaar));
                 },
                 onEditClicked: function (item) {
-                    events.trigger("mijlpaalProgrammaDialog:open", item.clone().set("status_crud", "U"));
+                    events.trigger("mijlpaalProgrammaDialog:open", item.clone());
                 },
                 onDeleteClicked: function (item) {
                     saveMijlpaalProgramma(item.clone().set("status_crud", "D"));
@@ -256,6 +248,10 @@ define([
                     $.notify("Er zijn validatie fouten.");
                     return;
                 }
+                if (this.mijlpaal.get("status_crud") === 'R') {
+                    $.notify("Er zijn geen aanpassingen te bewaren.");
+                    return;
+                }
                 saveMijlpaal(this.mijlpaal);
             };
         },
@@ -309,6 +305,10 @@ define([
                 this.showErrors(true);
                 if (!this.mijlpaalProgramma.isValid()) {
                     $.notify("Er zijn validatie fouten.");
+                    return;
+                }
+                if (this.mijlpaalProgramma.get("status_crud") === 'R') {
+                    $.notify("Er zijn geen aanpassingen te bewaren.");
                     return;
                 }
                 saveMijlpaalProgramma(this.mijlpaalProgramma);

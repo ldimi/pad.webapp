@@ -3,7 +3,7 @@
 
 define([
     "ov/GridComp",
-    "ov/Model",
+    "ov/Model2",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
@@ -22,10 +22,6 @@ define([
                     label: "Omschrijving",
                     width: 350,
                     required : true
-                }, {
-                    name: "status_crud",
-                    default: 'C',
-                    hidden: true
                 }]
         )
     });
@@ -62,7 +58,6 @@ define([
                         event.trigger("detailcomp:open", new InstrumentTypeModel());
                     },
                     onEditClicked: function (item) {
-                        item.set("status_crud", 'U');
                         event.trigger("detailcomp:open", item.clone());
                     },
                    onDeleteClicked: function (item) {
@@ -122,6 +117,10 @@ define([
         _save: function (item) {
             var status_crud;
             status_crud = item.get("status_crud");
+            if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
             if (status_crud !== 'U' && status_crud !== 'C') {
                 alert("item heeft een ongeldige status : " + status_crud);
                 return;

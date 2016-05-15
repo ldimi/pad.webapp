@@ -3,7 +3,7 @@
 
 define([
     "dropdown/jaren",
-    "ov/Model",
+    "ov/Model2",
     "ov/GridComp",
     "ov/events",
     "ov/mithril/ajax",
@@ -33,8 +33,7 @@ define([
             { name: "budget_code", label: "Budget code", required: true },
             { name: "budget", label: "Budget bedrag", type: "int", required: true },
             { name: "effectief_budget", label: "Effectief budget", type: "int", required: false },
-            { name: "artikel_b", label: "Artikelcode", type: "String", required: false },
-            { name: "status_crud", hidden: true, default: "C" }
+            { name: "artikel_b", label: "Artikelcode", type: "String", required: false }
         ])
     });
 
@@ -99,7 +98,7 @@ define([
                     events.trigger("jaarbudgetDialog:open", new JaarbudgetModel().set("jaar", _jaar));
                 },
                 onEditClicked: function (item) {
-                    events.trigger("jaarbudgetDialog:open", item.clone().set("status_crud", "U"));
+                    events.trigger("jaarbudgetDialog:open", item.clone());
                 },
                 onDeleteClicked: function (item) {
                     saveJaarbudget(item.clone().set("status_crud", "D"));
@@ -130,6 +129,11 @@ define([
                 this.showErrors(true);
                 if (!this.jaarbudget.isValid()) {
                     $.notify("Er zijn validatie fouten.");
+                    return;
+                }
+                
+                if (this.jaarbudget.get("status_crud") === 'R') {
+                    $.notify("Er zijn geen aanpassingen te bewaren.");
                     return;
                 }
                 saveJaarbudget(this.jaarbudget);
