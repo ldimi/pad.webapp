@@ -3,7 +3,7 @@
 
 define([
     "ov/GridComp",
-    "ov/Model",
+    "ov/Model2",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
 ], function (GridComp, Model, ajax, fhf) {
@@ -31,10 +31,6 @@ define([
                 type: "string",
                 default: "N",
                 required : true
-            }, {
-                name: "status_crud",
-                hidden: true,
-                default: "C"
             }])
     });
 
@@ -61,7 +57,6 @@ define([
             newBtn: window._G_.isAdminArt46,
             deleteBtn: window._G_.isAdminArt46,
             onEditClicked: function (item) {
-                item.set('status_crud', 'R');
                 _detailComp.ctrl.open(item.clone());
             },
             onNewClicked: function () {
@@ -124,7 +119,12 @@ define([
         _save: function (item) {
             var action, status_crud;
             status_crud = item.get("status_crud");
+            
             if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
+            if (status_crud === 'U') {
                 action = "update";
             } else if (status_crud === 'C') {
                 action = "insert";
@@ -187,8 +187,7 @@ define([
                                     ])
                                 ])
                             ])
-                        ]),
-                        m("input[name='status_crud'][type='hidden'][value='']")
+                        ])
                     ]),
                     m("button.#bewaarBtn", {onclick: _.bind(ctrl.bewaar, ctrl)}, "Bewaar"),
                     m("button.#annuleerBtn", {onclick: _.bind(ctrl.close, ctrl)}, "annuleer")
