@@ -3,7 +3,7 @@
 
 define([
     "ov/mithril/ajax",
-    "ov/Model",
+    "ov/Model2",    
     "ov/GridComp",
     "ov/events",
     "ov/mithril/formhelperFactory",
@@ -38,11 +38,6 @@ define([
                 name: "vervanger",
                 label: "Vervanger",
                 width: 120
-            }, {
-                name: "status_crud",
-                required: true,
-                hidden: true,
-                default: "C"
             }
         ])
     });
@@ -82,7 +77,6 @@ define([
                 },
                 onEditClicked: function (item) {
                     var dossierhouder = item.clone();
-                    dossierhouder.set("status_crud", 'U');
                     events.trigger("detailcomp:open", dossierhouder);
                 },
                 onDeleteClicked: function (item) {
@@ -123,17 +117,31 @@ define([
             };
 
             this.bewaar = function () {
+                var status_crud;
+                status_crud = this.dossierhouder.get("status_crud");
+                
                 this.showErrors(true);
                 if (!this.dossierhouder.isValid()) {
                     $.notify("Er zijn validatie fouten.");
                     return;
                 }
-                if (this.dossierhouder.get("status_crud") === "C" &&
+                if (status_crud === "C" &&
                     findDossierhouderInCollection(this.dossierhouder.get("doss_hdr_id")) ) {
                     $.notifyError("Deze dossierhouder is al toegevoegd.");
                     return;
                 }
-                saveDossierhouder(this.dossierhouder);
+                
+                if (status_crud === 'R') {
+                    $.notify("Er zijn geen aanpassingen te bewaren.");
+                    return;
+                }
+                
+                if (status_crud === 'U' || status_crud === 'C') {
+                    saveDossierhouder(this.dossierhouder);
+                } else {
+                    alert("item heeft een ongeldige status : " + status_crud);
+                    return;
+                }
             };
         },
         view: function(ctrl) {
