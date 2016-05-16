@@ -6,7 +6,7 @@ define([
     "dropdown/jaren",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory",
-    "ov/Model",
+    "ov/Model2",
     "ov/GridComp",
     "ov/events",
     "underscore",

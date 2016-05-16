@@ -3,7 +3,7 @@
 
 define([
     "ov/mithril/ajax",
-    "ov/Model",
+    "ov/Model2",
     "ov/mithril/formhelperFactory"
 ], function (ajax, Model, fhf) {
     'use strict';

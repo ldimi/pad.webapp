@@ -4,7 +4,7 @@
 define([
     "common/dropdown/ja_nee_dd",
     "ov/GridComp",
-    "ov/Model",
+    "ov/Model2",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
@@ -30,10 +30,6 @@ define([
                     type: "int",
                     width: 70,
                     required: true
-                }, {
-                    name: "status_crud",
-                    default: 'C',
-                    hidden: true
                 }]
         ),
 
@@ -76,10 +72,6 @@ define([
                     width: 60,
                     type: "int",
                     required: true
-                }, {
-                    name: "status_crud",
-                    default: 'C',
-                    hidden: true
                 }]
         ),
 
@@ -141,7 +133,6 @@ define([
                         event.trigger("criteriumcomp:open", new ScreeningPrioriteitCriteriumModel());
                     },
                     onEditClicked: function (item) {
-                        item.set("status_crud", 'U');
                         event.trigger("criteriumcomp:open", item.clone());
                     },
                    onDeleteClicked: function (item) {
@@ -181,7 +172,6 @@ define([
                         event.trigger("waardecomp:open", new ScreeningPrioriteitWaardeModel());
                     },
                     onEditClicked: function (item) {
-                        item.set("status_crud", 'U');
                         event.trigger("waardecomp:open", item.clone());
                     },
                    onDeleteClicked: function (item) {
@@ -271,6 +261,10 @@ define([
         _save: function (item) {
             var status_crud;
             status_crud = item.get("status_crud");
+            if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
             if (status_crud !== 'U' && status_crud !== 'C') {
                 alert("item heeft een ongeldige status : " + status_crud);
                 return;
@@ -372,6 +366,10 @@ define([
         _save: function (item) {
             var status_crud;
             status_crud = item.get("status_crud");
+            if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
             if (status_crud !== 'U' && status_crud !== 'C') {
                 alert("item heeft een ongeldige status : " + status_crud);
                 return;

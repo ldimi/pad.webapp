@@ -3,7 +3,7 @@
 
 define([
     "ov/GridComp",
-    "ov/Model",
+    "ov/Model2",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
@@ -18,10 +18,6 @@ define([
                     label: "Stofgroep",
                     width: 200,
                     required : true
-                }, {
-                    name: "status_crud",
-                    default: 'C',
-                    hidden: true
                 }]
         )
     });
@@ -131,6 +127,10 @@ define([
         _save: function (item) {
             var status_crud;
             status_crud = item.get("status_crud");
+            if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
             if (status_crud !== 'U' && status_crud !== 'C') {
                 alert("item heeft een ongeldige status : " + status_crud);
                 return;
