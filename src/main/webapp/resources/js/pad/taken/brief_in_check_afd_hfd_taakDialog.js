@@ -2,7 +2,7 @@
 /*global define: false, Slick: false, $: false, _:  false, m: false, alert: false, _G_ , console */
 
 define([
-    "ov/Model",
+    "ov/Model2",
     "ov/mithril/formhelperFactory",
     "ov/mithril/ajax"
 ], function (Model, fhf,ajax) {
