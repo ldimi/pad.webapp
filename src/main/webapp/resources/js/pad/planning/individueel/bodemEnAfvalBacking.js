@@ -156,8 +156,7 @@ define([
                             return;
                         }
                         item.set({
-                            deleted_jn: "J",
-                            status_crud: "U"
+                            deleted_jn: "J"
                         });
                         ajax.postJSON({
                             url: "/pad/s/planning/bewaar",

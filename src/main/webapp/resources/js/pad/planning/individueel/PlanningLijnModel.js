@@ -224,7 +224,7 @@ define([
                 if (fase_code === null) {
                     this.attributes.fase_budget_code = null;
                 } else {
-                    fase = fasen.find(fase_code, this.get("dossier_type"));
+                    fase = fasen.find(fase_code);
                     this.attributes.fase_budget_code = fase.budget_code;
                 }
             }

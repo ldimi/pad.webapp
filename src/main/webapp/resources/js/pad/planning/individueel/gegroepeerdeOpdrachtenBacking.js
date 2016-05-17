@@ -8,7 +8,7 @@ define([
     "planning/individueel/FaseDetailsDialog",
     "dropdown/dossierhouders",
     "dropdown/jaren",
-    "ov/Model",
+    "ov/Model2",
     "ov/events",
     "ov/formatters",
     "ov/mithril/ajax",
@@ -222,8 +222,7 @@ define([
                                     return;
                                 }
                                 item.set({
-                                    deleted_jn: "J",
-                                    status_crud: "U"
+                                    deleted_jn: "J"
                                 });
                                 ajax.postJSON({
                                     url: "/pad/s/planning/bewaar",
