@@ -112,7 +112,7 @@ define([
             this._invariant_prioriteits_index();
 
             this._invariant_instrumenten();
-
+            this._invariant_activiteiten();
         },
 
         _invariant_timing: function () {
