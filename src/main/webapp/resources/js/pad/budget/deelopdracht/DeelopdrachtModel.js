@@ -2,7 +2,7 @@
 /*global define: false, $: false, alert: false, console: false, _:false */
 
 define([
-    "ov/Model"
+    "ov/Model2"
 ], function (Model) {
     'use strict';
 
@@ -31,8 +31,7 @@ define([
             { name: "bestek_hdr_id" },
             { name: "current_doss_hdr_id" },
             // indien de deelopdracht afgekeurd is , kan opnieuw een goedkeuring gevraagd worden.
-            { name: "opnieuw_goedkeuren_jn", default: "N"},
-            { name: "status_crud" }
+            { name: "opnieuw_goedkeuren_jn", default: "N"}
         ]),
 
         enforceInvariants: function () {

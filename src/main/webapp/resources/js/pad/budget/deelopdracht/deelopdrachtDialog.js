@@ -81,7 +81,7 @@ define([
         },
 
         bewaar: function () {
-            var action, self = this;
+            var action, status_crud, self = this;
 
             this.showErrors(true);
             if (!this.deelopdracht.isValid()) {
@@ -119,8 +119,12 @@ define([
 
 
 
-
-            if (this.deelopdracht.get("status_crud") === 'C') {
+            status_crud = this.deelopdracht.get("status_crud");
+            if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
+            if (status_crud === 'C') {
                 action = "insert";
             } else {
                 action = "update";

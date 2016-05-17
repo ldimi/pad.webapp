@@ -3,7 +3,7 @@
 
 define([
     "dropdown/planning/fasen",
-    "ov/Model",
+    "ov/Model2",
     "ov/events",
     "ov/formatters",
     "underscore"
@@ -116,8 +116,7 @@ define([
             { name: "commentaar", label: "Commentaar", width: 200 },
             { name: "planning_dossier_versie", exportCsv: false, hidden: true },
             { name: "lijn_id", exportCsv: false, hidden: true },
-            { name: "deleted_jn", exportCsv: false, hidden: true },
-            { name: "status_crud", exportCsv: false, hidden: true }
+            { name: "deleted_jn", exportCsv: false, hidden: true }
         ]),
 
         get: function (attr) {
@@ -217,7 +216,7 @@ define([
             }
 
         },
-        
+
         _invariant_fase_budget_code: function () {
             var fase_code, fase;
             if (this.hasChanged("fase_code")) {
@@ -234,14 +233,14 @@ define([
         _invariant_budget_code: function () {
             var fase_budget_code, de_budget_code, self;
             self =  this;
-            
+
             fase_budget_code = this.get("fase_budget_code");
-            
+
             if (this.hasChanged("de_budget_code")) {
                 de_budget_code = this.get("de_budget_code");
                 if (de_budget_code === null) {
                     this.attributes.budget_code = null;
-                    
+
                     // eerst laten we de null waarde renderen
                     // en nadien vullen we de default waarde in.
                     //  (anders is er een probleem indien je van default naar leeg gaat,)
@@ -259,7 +258,7 @@ define([
                 if (this.get("budget_code") === fase_budget_code) {
                     this.attributes.budget_code = null;
                 }
-    
+
                 // zet de_budget_code
                 if (this.get("budget_code") === null) {
                     this.attributes.de_budget_code = fase_budget_code;
@@ -333,21 +332,6 @@ define([
             newAttrs.deleted_jn = "N";
             newAttrs.status_crud=  "C";
             return new PlanningLijnModel(newAttrs);
-        },
-
-        calcStatus: function () {
-            if (this.isDirty()) {
-                if (this.get("status_crud") === 'R') {
-                    this.set("status_crud", 'U');
-                    //status_crud , mag het vershil niet maken bij dirtycheck;
-                    this._orgAttributes.status_crud = 'U';
-                }
-            } else {
-                if (this.get("status_crud") === 'U') {
-                    this.set("status_crud", 'R');
-                    this._orgAttributes.status_crud = 'R';
-                }
-            }
         }
 
     });
