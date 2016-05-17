@@ -4,7 +4,7 @@
 define([
     "planning/individueel/PlanningLijnModel",
     "dropdown/jaren",
-    "ov/Model",
+    "ov/Model2",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory",

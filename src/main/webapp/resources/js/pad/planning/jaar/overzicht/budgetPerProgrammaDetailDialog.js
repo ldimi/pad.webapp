@@ -3,7 +3,7 @@
 
 define([
     "ov/mithril/ajax",
-    "ov/Model",
+    "ov/Model2",
     "ov/mithril/formhelperFactory"
 ], function (ajax, Model, fhf) {
     'use strict';
@@ -26,8 +26,6 @@ define([
                 label: "Budget",
                 type: "int",
                 required: true
-            }, {
-                name: "status_crud"
             }
         ])
     });
@@ -84,10 +82,15 @@ define([
             postData('/pad/s/programma/jaarbudget/delete', itemData, afterSaveCallback);
         },
         _save: function (item) {
-            var action;
-            if (item.get("status_crud") === 'R') {
+            var action, status_crud;
+            status_crud = item.get("status_crud");
+            if (status_crud === 'R') {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+                return;
+            }
+            if (status_crud === 'U') {
                 action = "update";
-            } else if (item.get("status_crud") === 'C') {
+            } else if (status_crud === 'C') {
                 action = "insert";
             } else {
                 alert("item heeft een ongeldige status : " + item.get("status_crud"));

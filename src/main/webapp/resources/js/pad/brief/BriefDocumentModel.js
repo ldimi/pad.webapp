@@ -2,7 +2,7 @@
 /*global define: false, Slick: false, $: false, _:  false, m: false, alert: false, _G_ , console */
 
 define([
-    "ov/Model"
+    "ov/Model2"
 ], function (Model) {
     'use strict';
     var BriefDocumentModel;

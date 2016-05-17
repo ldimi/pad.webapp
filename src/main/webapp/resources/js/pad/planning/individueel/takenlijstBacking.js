@@ -5,7 +5,7 @@ define([
     "planning/individueel/PlanningLijnModel",
     "dropdown/dossierhouders",
     "dropdown/jaren",
-    "ov/Model",
+    "ov/Model2",
     "ov/GridComp",
     "ov/events",
     "ov/mithril/ajax",
@@ -16,7 +16,7 @@ define([
     'use strict';
 
     var ParamModel, paramComp, comp;
-        
+
     PlanningLijnModel.prototype.meta.getColDef("ib_bedrag").set("hidden", true);
     PlanningLijnModel.prototype.meta.getColDef("ibb_d").set("hidden", true);
 
@@ -28,7 +28,7 @@ define([
             { name: "jaar", type: "int"}
         ])
     });
-    
+
     paramComp = {
         controller: function () {
             this.params = new ParamModel({
