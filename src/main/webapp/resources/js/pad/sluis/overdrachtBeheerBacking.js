@@ -94,7 +94,6 @@ define([
                 onDeleteClicked: function (item) {
                     var cloned = item.clone();
                     cloned.set('deleted_jn', 'J');
-                    cloned.set('status_crud', 'U');
                     event.trigger("dossierOverdracht:save", cloned);
                 }
             });

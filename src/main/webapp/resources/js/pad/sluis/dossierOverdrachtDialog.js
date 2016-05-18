@@ -74,10 +74,9 @@ define([
             var status_crud;
             status_crud = item.get("status_crud");
             if (status_crud === 'R') {
-                item.set("status_crud", 'U');
-            } else if (status_crud === 'C') {
-                // geen actie
-            } else {
+                $.notify("Er zijn geen aanpassingen te bewaren.");
+            }
+            if (status_crud !== 'C' && status_crud !== 'U') {
                 alert("item heeft een ongeldige status : " + status_crud);
                 return;
             }
