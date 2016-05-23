@@ -38,7 +38,7 @@ public class DossierWebloketController extends BasisDossierController {
         model.addAttribute("dossier_id", dossier_id);
         model.addAttribute("dossierUrl", dossierWebloketService.getWebloketUrl(dossier_id));
         
-        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypesVoorDossiers"));
+        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypeDossierBeheer"));
         model.addAttribute("organisatiesVoorDossiers", ovamcore_sqlSession.selectList("organisatiesVoorDossiers"));
         
         return jsview("dossier.toegangwebloket", "dossier/webloket", model);
@@ -58,7 +58,7 @@ public class DossierWebloketController extends BasisDossierController {
         model.addAttribute("dossier_id", dossier_id);
         model.addAttribute("dossierUrl", dossierWebloketService.getWebloketUrl(dossier_id));
         
-        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypesVoorDossiers"));
+        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypeDossierBeheer"));
         model.addAttribute("organisatiesVoorDossiers", ovamcore_sqlSession.selectList("organisatiesVoorDossiers"));
         
         return jsview("noMenu", "dossier/webloket", model);

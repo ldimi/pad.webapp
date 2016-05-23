@@ -35,6 +35,16 @@
             and gr.applicatie_id = 8
     </sql>
     
+     <!-- alle gebruikersrollen voor dossierBeheer -->
+   <sql id="gebruikersrolDossierBeheer_sql">
+        select 
+           *
+        from plm.GEBRUIKERSROL gr
+        where 1 = 1
+            and gr.code like '%DOSSIER'
+            and gr.APPLICATIE_ID = 8        
+    </sql>
+    
     <!--
            (5 , 'Labo'),
            (6,  'Gemeente'),
@@ -51,11 +61,50 @@
         5,6,7,8,10,11,12,13,14,15
     </sql>
     
-    <select id="organisatietypesVoorDossiers" resultType="ciMap">
-        select organisatietype
-        from  plm.organisatietype ot
-        where ot.organisatietype_id in (<include refid="organisatietype_ids_voordossiers"/>)
+    <sql id="organisatietypeDossierBeheer_sql">
+        select 
+               distinct ot.organisatietype
+        from gebruikersrolDossierBeheer gr
+                 inner join plm.ORGANISATIETYPE ot
+                 on gr.ORGANISATIETYPE_ID = ot.ORGANISATIETYPE_ID        
+    </sql>
+    
+    <!-- alle organisatietypes voor dossierBeheer -->
+    <select id="organisatietypeDossierBeheer" resultType="ciMap">
+        with gebruikersrolDossierBeheer as(
+            <include refid="gebruikersrolDossierBeheer_sql"/>      
+        )
+        select 
+               distinct ot.organisatietype
+        from gebruikersrolDossierBeheer gr
+                 inner join plm.ORGANISATIETYPE ot
+                 on gr.ORGANISATIETYPE_ID = ot.ORGANISATIETYPE_ID
     </select>
+    
+    <!-- alle momenteel actieve rollen voor dossierBeheer -->
+    <select id="login_rol_organisatie_DossierBeheer">
+        with gebruikersrolDossierBeheer as(
+            <include refid="gebruikersrolDossierBeheer_sql"/>      
+        )
+        select 
+               lg.LOGIN_ID,
+               lg.EMAIL,
+               gr.code,
+               mw.ORGANISATIE_ID
+        from gebruikersrolDossierBeheer gr
+                 inner join plm.MEDEWERKERSROL mwr
+                 on gr.GEBRUIKERSROL_ID = mwr.GEBRUIKERSROL_ID
+                    inner join plm.MEDEWERKER mw
+                    on mwr.MEDEWERKER_ID = mw.MEDEWERKER_ID
+                       inner join  plm.login lg
+                       on mw.LOGIN_ID = lg.LOGIN_ID
+        where 1 = 1
+                    and lg.email is not null
+                    and lg.toestandlogin_id != 2 
+                    and mw.toestandmedewerker_id != 0
+                    and (mwr.van_d <= current date and current date <  mwr.tot_d)
+    </select>
+    
     
 
     <select id="organisatiesVoorDossiers" resultType="ciMap">
