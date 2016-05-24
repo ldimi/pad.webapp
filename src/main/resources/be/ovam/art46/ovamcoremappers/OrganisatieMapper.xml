@@ -102,7 +102,7 @@
                     and lg.email is not null
                     and lg.toestandlogin_id != 2 
                     and mw.toestandmedewerker_id != 0
-                    and (mwr.van_d <= current date and current date <  mwr.tot_d)
+                    and (mwr.van_d &lt;= current date and current date &lt;  mwr.tot_d)
     </select>
     
     
