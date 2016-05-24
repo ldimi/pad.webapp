@@ -1219,9 +1219,9 @@
         order by aa.archief_d desc
     </select>
 
-    <select id="dossierOrganisatieEmail_lijst" parameterType="int" resultType="ciMap" >
-        select dossier_id, organisatie_id, email
-        from art46.dossier_organisatie_email
+    <select id="dossierOrganisatie_lijst" parameterType="int" resultType="ciMap" >
+        select dossier_id, organisatie_id
+        from art46.dossier_organisatie
         where dossier_id = #{dossier_id}
     </select>
 

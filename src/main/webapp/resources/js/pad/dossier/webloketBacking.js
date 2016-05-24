@@ -32,7 +32,7 @@ define([
                 name: "types"
             }, {
                 name: "email",
-                required: true
+                required: false
         }]),
         enforceInvariants: function () {
             if (this.hasChanged("organisatietype")) {
@@ -55,18 +55,18 @@ define([
         // lijst van DossierOrganisatieEmailModel opbouwen.
         //     label zetten op basis van gegevens organisatiesVoorDossiers
         //     bedrijfstype per organisatie groeperen en als string toevoegen
-        this.modelLijst = _.map(_G_.model.dossierOrganisatieEmail_lijst, function (dosOrgEmail) {
+        this.modelLijst = _.map(_G_.model.dossierOrganisatie_lijst, function (dosOrgEmail) {
             var org, typesMap;
 
             // label zetten op basis van gegevens organisatiesVoorDossiers
-            org = _.find(_G_.model.organisatiesVoorDossiers, function (it) {
+            org = _.find(_G_.model.organisatieData_voor_organisatieIds, function (it) {
                 return dosOrgEmail.organisatie_id === it.organisatie_id;
             });
             dosOrgEmail.label = (org && org.label) || "ERROR";
 
             // bedrijfstype per organisatie groeperen en als string toevoegen
             typesMap = {};
-            _.each(_G_.model.organisatiesVoorDossiers, function (it) {
+            _.each(_G_.model.organisatieTypes_voor_organisatieIds, function (it) {
                 if (dosOrgEmail.organisatie_id === it.organisatie_id)  {
                     typesMap[it.organisatietype] = 1;
                 }
@@ -100,7 +100,7 @@ define([
                 return;
             }
             ajax.postJson({
-                url: '/pad/s/dossier/add/organisatieAndEmail',
+                url: '/pad/s/dossier/add/organisatie',
                 data: this.currentItem
             }).then(function (response) {
                 if (response && response.success) {
@@ -113,7 +113,7 @@ define([
         },
         verwijder: function(item) {
             ajax.postJson({
-                url: '/pad/s/dossier/remove/organisatieAndEmail',
+                url: '/pad/s/dossier/remove/organisatie',
                 data: item
             }).then(function (response) {
                 if (response && response.success) {
@@ -169,7 +169,6 @@ define([
         return m("div", {style: {margin: "10px", "background-color": "white"}}, [
             m("h3", [
                 "webloket url : ",
-                m("a", {href: _G_.model.dossierUrl, target: "_blank"}, _G_.model.dossierUrl)
             ]),
             m("table",[
                 m("thead", [

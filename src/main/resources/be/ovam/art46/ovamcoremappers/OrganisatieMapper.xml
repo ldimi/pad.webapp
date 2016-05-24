@@ -106,6 +106,29 @@
     </select>
     
     
+    <select id="organisatieData_voor_organisatieIds" resultType="ciMap">
+        select distinct
+                org.organisatie_id,
+               ( coalesce (org.vkbo,' ') || ' ' || coalesce(org.naam, ' ') ||  
+                '  [' || coalesce(org.gemeente, ' ') || ',' || coalesce(org.adres, ' ') || ' ' ||  coalesce(org.huisnr, ' ') || ']' ) as label,
+                org.naam
+        from plm.organisatie org
+        where org.organisatie_id in 
+                        <foreach item="organisatie_id" collection="list" open="(" separator="," close=")">
+                            #{organisatie_id}
+                        </foreach>
+    </select>
+
+    <select id="organisatieTypes_voor_organisatieIds" resultType="ciMap">
+        select distinct
+               org.organisatie_id,
+               ot.organisatietype
+        <include refid="organisatie_dd_from"/>
+        where org.organisatie_id in 
+                        <foreach item="organisatie_id" collection="list" open="(" separator="," close=")">
+                            #{organisatie_id}
+                        </foreach>
+    </select>
 
     <select id="organisatiesVoorDossiers" resultType="ciMap">
         select distinct
