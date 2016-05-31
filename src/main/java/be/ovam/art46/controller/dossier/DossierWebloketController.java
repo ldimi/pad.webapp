@@ -37,55 +37,19 @@ public class DossierWebloketController extends BasisDossierController {
         model.addAttribute("dossier_id", dossier_id);
         model.addAttribute("dossierUrl", dossierWebloketService.getWebloketUrl(dossier_id));
         
-
-        //voor dropdown
-        model.addAttribute("organisatiesVoorDossiers", ovamcore_sqlSession.selectList("organisatiesVoorDossiers"));
-        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypeDossierBeheer"));
-    
-        // tabel opbouwen.
-        List<Map> dossierOrganisatie_lijst = sqlSession.selectList("dossierOrganisatie_lijst", dossier_id);
-        model.addAttribute("dossierOrganisatie_lijst", dossierOrganisatie_lijst);
+        model.addAttribute("dossierOrganisatie_lijst", sqlSession.selectList("dossierOrganisatie_lijst", dossier_id));
         
-        List organisatieId_lijst = new ArrayList();
-        for (Map organisatie : dossierOrganisatie_lijst) {
-            organisatieId_lijst.add(organisatie.get("organisatie_id"));
-        }
-        
-        model.addAttribute("organisatieData_voor_organisatieIds", ovamcore_sqlSession.selectList("organisatieData_voor_organisatieIds", organisatieId_lijst));
-        model.addAttribute("organisatieTypes_voor_organisatieIds", ovamcore_sqlSession.selectList("organisatieTypes_voor_organisatieIds", organisatieId_lijst));
+        // gegevens uit het LAA
+        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietype_dossierBeheer"));
+        model.addAttribute("organisatie_organisatietype_lijst", ovamcore_sqlSession.selectList("organisatie_organisatietype_dossierBeheer_lijst"));
+        model.addAttribute("organisatie_lijst", ovamcore_sqlSession.selectList("organisatie_dossierBeheer_lijst"));
+   
         
         return jsview("dossier.toegangwebloket", "dossier/webloket", model);
     }
         
     
     
-//    @RequestMapping(value = "/dossier/webloket", method = RequestMethod.GET)
-//    public String get(HttpSession session, Model model) {
-//        
-//        // TODO : Niet meer uit session ophalen
-//        DossierArt46Form dossierart46form = (DossierArt46Form) session.getAttribute("dossierart46form");
-//        Integer dossier_id = Integer.valueOf(dossierart46form.getId());
-//        
-//        model.addAttribute("dossierOrganisatie_lijst", sqlSession.selectList("dossierOrganisatie_lijst", dossier_id));
-//        
-//        model.addAttribute("dossier_id", dossier_id);
-//        model.addAttribute("dossierUrl", dossierWebloketService.getWebloketUrl(dossier_id));
-//        
-//        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypeDossierBeheer"));
-//        
-//        
-//        
-//        model.addAttribute("organisatiesVoorDossiers", ovamcore_sqlSession.selectList("organisatieData_voor_organisatieIds"));
-//        
-//        return jsview("noMenu", "dossier/webloket", model);
-//    }
-
-	@RequestMapping(value = "/dossier/emailsVanOrganisatie/{organisatie_id}", method = RequestMethod.GET)
-	public @ResponseBody Response getEmailsVanOrganisatie(@PathVariable Integer organisatie_id) {
-	    List emails = ovamcore_sqlSession.selectList("emailsVanOrganisatieVoorDossiers",organisatie_id);
-		return new Response(emails);
-	}
-
     @RequestMapping(value = "/dossier/add/organisatie", method = RequestMethod.POST)
 	public @ResponseBody Response addOrganisatie(@RequestBody HashMap<String, String> dosOrg) throws Exception {
 	    sqlSession.insertInTable("art46", "dossier_organisatie", dosOrg);
