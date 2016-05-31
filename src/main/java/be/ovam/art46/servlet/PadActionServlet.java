@@ -20,10 +20,11 @@ public class PadActionServlet extends ActionServlet {
 		if (request.getSession().getAttribute("selectedSub") == null) {
 			request.getSession().setAttribute("selectedSub", "0");
 		}
-		if (LoadPlugin.url == null) {
-			String url = request.getRequestURL().toString();
-			LoadPlugin.url = url.substring(0, url.indexOf(request.getContextPath())) + request.getContextPath();
-		}
+        
+//		if (LoadPlugin.url == null) {
+//			String url = request.getRequestURL().toString();
+//			LoadPlugin.url = url.substring(0, url.indexOf(request.getContextPath())) + request.getContextPath();
+//		}
 		
 		
 		super.process(request, response);

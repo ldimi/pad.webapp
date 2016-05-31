@@ -36,7 +36,6 @@ import javax.servlet.ServletException;
 public class LoadPlugin implements PlugIn {
 
 	private static final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	public static String url;
 	public static ApplicationContext applicationContext;
     private static Log log = LogFactory.getLog(LoadPlugin.class);
 	
