@@ -194,9 +194,9 @@
 
                     	
 	<util:list id="ovamcore_mapperLocations" value-type="java.lang.String">
-		<value>classpath*:be/ovam/art46/ovamcoremappers/*Mapper.xml</value>
+		<value>classpath*:be/ovam/pad/common/ovamcore/mappers/*Mapper.xml</value>
 	    <value>classpath*:be/ovam/util/mybatis/mappers/*Mapper.xml</value>
-	</util:list> 
+	</util:list>
 
 	<bean id="ovamcore_sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="ovamcore_dataSource" />
