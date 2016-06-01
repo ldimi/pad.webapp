@@ -143,7 +143,7 @@ public class DeelOpdrachtService {
             String message = "In dossier  " + deelopdrachtDO.getAnder_dossier_b_l() + " (" + deelopdrachtDO.getAnder_dossier_nr() + ") werd voor " +
                     " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht goedgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
                     ").<br><br>" + 
-                    " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
+                    " Meer info over het bestek op: http://toepassing.ovam.be/pad/s/bestek/" + deelopdrachtDO.getBestek_id();
             mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be",
                     "Goedkeuring deelopdracht",
                     Application.INSTANCE.getUser_id() + "@ovam.be",
@@ -168,7 +168,7 @@ public class DeelOpdrachtService {
             String message = "In dossier  " + deelopdrachtDO.getAnder_dossier_b_l() + " (" + deelopdrachtDO.getAnder_dossier_nr() + ") werd voor " +
                     " bestek " + deelopdrachtDO.getBestek_nr() + " de volgende deelopdracht afgekeurd: " + deelopdrachtDO.getDossier_b_l() + " (" + deelopdrachtDO.getDossier_nr() +
                     ").<br><br>" + 
-                    " Meer info over het bestek op: " + LoadPlugin.url + "/s/bestek/" + deelopdrachtDO.getBestek_id();
+                    " Meer info over het bestek op: http://toepassing.ovam.be/pad/s/bestek/" + deelopdrachtDO.getBestek_id();
             mailService.sendHTMLMail(deelopdrachtDO.getDoss_hdr_id() + "@ovam.be",
                     "afkeuring deelopdracht", 
                     Application.INSTANCE.getUser_id() + "@ovam.be",
