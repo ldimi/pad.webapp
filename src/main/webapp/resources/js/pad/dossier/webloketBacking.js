@@ -9,9 +9,9 @@ define([
 ], function (Model, events, ajax, fhf) {
     'use strict';
 
-    var _comp, DossierOrganisatieEmailModel;
+    var _comp, DossierOrganisatieModel;
 
-    DossierOrganisatieEmailModel = Model.extend({
+    DossierOrganisatieModel = Model.extend({
         constructor: function (attrs) {
             events.convert(this);
             Model.call(this, attrs);
@@ -30,19 +30,11 @@ define([
                 name: "label"
             }, {
                 name: "types"
-            }, {
-                name: "email",
-                required: true
         }]),
         enforceInvariants: function () {
             if (this.hasChanged("organisatietype")) {
                 this.attributes.organisatie_id = null;
-                this.attributes.email = null;
                 this.trigger("change:organisatietype", this.get("organisatietype"));
-            }
-            if (this.hasChanged("organisatie_id")) {
-                this.attributes.email = null;
-                this.trigger("change:organisatie_id", this.get("organisatie_id"));
             }
         }
     });
@@ -52,28 +44,28 @@ define([
     _comp = {};
     _comp.controller = function () {
 
-        // lijst van DossierOrganisatieEmailModel opbouwen.
-        //     label zetten op basis van gegevens organisatiesVoorDossiers
+        // lijst van DossierOrganisatieModel opbouwen.
+        //     label zetten op basis van gegevens organisatie_lijst
         //     bedrijfstype per organisatie groeperen en als string toevoegen
-        this.modelLijst = _.map(_G_.model.dossierOrganisatieEmail_lijst, function (dosOrgEmail) {
+        this.modelLijst = _.map(_G_.model.dossierOrganisatie_lijst, function (dosOrg) {
             var org, typesMap;
 
-            // label zetten op basis van gegevens organisatiesVoorDossiers
-            org = _.find(_G_.model.organisatiesVoorDossiers, function (it) {
-                return dosOrgEmail.organisatie_id === it.organisatie_id;
+            // label zetten op basis van gegevens organisatie_lijst
+            org = _.find(_G_.model.organisatie_lijst, function (it) {
+                return dosOrg.organisatie_id === it.organisatie_id;
             });
-            dosOrgEmail.label = (org && org.label) || "ERROR";
+            dosOrg.label = (org && org.label) || "ERROR";
 
             // bedrijfstype per organisatie groeperen en als string toevoegen
             typesMap = {};
-            _.each(_G_.model.organisatiesVoorDossiers, function (it) {
-                if (dosOrgEmail.organisatie_id === it.organisatie_id)  {
+            _.each(_G_.model.organisatie_organisatietype_lijst, function (it) {
+                if (dosOrg.organisatie_id === it.organisatie_id)  {
                     typesMap[it.organisatietype] = 1;
                 }
             });
-            dosOrgEmail.types = _.keys(typesMap).join(", ");
+            dosOrg.types = _.keys(typesMap).join(", ");
 
-            return new DossierOrganisatieEmailModel(dosOrgEmail);
+            return new DossierOrganisatieModel(dosOrg);
         });
 
         this.organisatietypes_dd = _.map(_G_.model.organisatietypes, function(type) {
@@ -82,13 +74,11 @@ define([
         this.organisatietypes_dd.unshift({value: "", label: ""});
 
         this.organisaties_dd = null;
-        this.email_dd = null;
 
-        this.currentItem = new DossierOrganisatieEmailModel();
+        this.currentItem = new DossierOrganisatieModel();
         this.currentItem.set("dossier_id", _G_.model.dossier_id);
 
         this.currentItem.on("change:organisatietype", this.filter_organisaties_dd.bind(this));
-        this.currentItem.on("change:organisatie_id", this.fetch_email_dd.bind(this));
 
         this.showErrors = m.prop(false);
     };
@@ -100,7 +90,7 @@ define([
                 return;
             }
             ajax.postJson({
-                url: '/pad/s/dossier/add/organisatieAndEmail',
+                url: '/pad/s/dossier/add/organisatie',
                 data: this.currentItem
             }).then(function (response) {
                 if (response && response.success) {
@@ -113,7 +103,7 @@ define([
         },
         verwijder: function(item) {
             ajax.postJson({
-                url: '/pad/s/dossier/remove/organisatieAndEmail',
+                url: '/pad/s/dossier/remove/organisatie',
                 data: item
             }).then(function (response) {
                 if (response && response.success) {
@@ -125,38 +115,33 @@ define([
             }.bind(this));
         },
         filter_organisaties_dd: function (organisatietype) {
+            var organisatieIds;
             if (organisatietype) {
-                // TODO : leege selectie  geeft "null" string ???
-                this.organisaties_dd = _.chain(_G_.model.organisatiesVoorDossiers)
+
+                organisatieIds = _.chain(_G_.model.organisatie_organisatietype_lijst)
+                    .filter(function (org_orgtype) {
+                        return (organisatietype === org_orgtype.organisatietype);
+                    })
+                    .map(function (org_orgtype) {
+                        return org_orgtype.organisatie_id;
+                    })
+                    .uniq()
+                    .value();
+
+                this.organisaties_dd = _.chain(_G_.model.organisatie_lijst)
                     .filter(function (org) {
-                        return (organisatietype === org.organisatietype);
+                        return (org.actief_jn === 'J' &&  _.contains(organisatieIds, org.organisatie_id));
                     }.bind(this))
                     .map(function (org) {
                         return {value: org.organisatie_id, label: org.label, naam: org.naam};
                     })
                     .sortBy("naam")
                     .value();
+
+
                 this.organisaties_dd.unshift({value: "", label: ""});
             } else {
                 this.organisaties_dd = null;
-            }
-        },
-        fetch_email_dd: function(organisatie_id) {
-            if (organisatie_id) {
-                ajax.getJson({
-                    url: '/pad/s/dossier/emailsVanOrganisatie/' + organisatie_id,
-                    background: true   // redraw moet niet wachten op resultaat.
-                }).then(function (response) {
-                    if (response && response.success) {
-                        this.email_dd = response.result;
-                        this.email_dd.unshift({value: "", label: ""});
-                    } else {
-                        alert("De actie niet gelukt (server error :" + response.errorMsg + ")");
-                    }
-                    m.redraw();
-                }.bind(this));
-            } else {
-                this.email_dd = null;
             }
         }
     });
@@ -174,21 +159,18 @@ define([
             m("table",[
                 m("thead", [
                     m("th", "Type"),
-                    m("th", "Organisatie"),
-                    m("th", {width: "150px"}, "email")
+                    m("th", "Organisatie")
                 ]),
-                m("tbody", _.map(ctrl.modelLijst, function(dosOrgEmail) {
+                m("tbody", _.map(ctrl.modelLijst, function(dosOrg) {
                     return m("tr", [
-                        m("td", dosOrgEmail.get("types")),
-                        m("td", dosOrgEmail.get("label")),
-                        m("td", dosOrgEmail.get("email")),
-                        m("td", m("button", {onclick: _.bind(ctrl.verwijder, ctrl, dosOrgEmail)}, "Verwijder"))
+                        m("td", dosOrg.get("types")),
+                        m("td", dosOrg.get("label")),
+                        m("td", m("button", {onclick: _.bind(ctrl.verwijder, ctrl, dosOrg)}, "Verwijder"))
                     ]);
                 })),
                 m("tr", [
                     m("td", ff.select("organisatietype", ctrl.organisatietypes_dd)),
                     m("td", ctrl.organisaties_dd ? ff.select("organisatie_id", ctrl.organisaties_dd) : null),
-                    m("td", ctrl.email_dd ? ff.select("email", ctrl.email_dd) : null),
                     m("td", m("button", {onclick: _.bind(ctrl.toevoegen, ctrl)}, "Toevoegen"))
                 ])
             ])

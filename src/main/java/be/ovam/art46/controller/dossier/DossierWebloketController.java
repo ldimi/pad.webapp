@@ -5,8 +5,10 @@ import be.ovam.art46.struts.actionform.DossierArt46Form;
 import be.ovam.util.mybatis.SqlSession;
 import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,54 +34,32 @@ public class DossierWebloketController extends BasisDossierController {
     public String startToegangwebloket(@PathVariable Integer dossier_id, Model model, HttpSession session) throws Exception {
         
 		putDossierInModelAndSession(dossier_id, model, session);
-        
-        model.addAttribute("dossierOrganisatieEmail_lijst", sqlSession.selectList("dossierOrganisatieEmail_lijst", dossier_id));
-        
         model.addAttribute("dossier_id", dossier_id);
         model.addAttribute("dossierUrl", dossierWebloketService.getWebloketUrl(dossier_id));
         
-        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypesVoorDossiers"));
-        model.addAttribute("organisatiesVoorDossiers", ovamcore_sqlSession.selectList("organisatiesVoorDossiers"));
+        model.addAttribute("dossierOrganisatie_lijst", sqlSession.selectList("dossierOrganisatie_lijst", dossier_id));
+        
+        // gegevens uit het LAA
+        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietype_dossierBeheer"));
+        model.addAttribute("organisatie_organisatietype_lijst", ovamcore_sqlSession.selectList("organisatie_organisatietype_dossierBeheer_lijst"));
+        model.addAttribute("organisatie_lijst", ovamcore_sqlSession.selectList("organisatie_dossierBeheer_lijst"));
+   
         
         return jsview("dossier.toegangwebloket", "dossier/webloket", model);
     }
         
     
     
-    @RequestMapping(value = "/dossier/webloket", method = RequestMethod.GET)
-    public String get(HttpSession session, Model model) {
-        
-        // TODO : Niet meer uit session ophalen
-        DossierArt46Form dossierart46form = (DossierArt46Form) session.getAttribute("dossierart46form");
-        Integer dossier_id = Integer.valueOf(dossierart46form.getId());
-        
-        model.addAttribute("dossierOrganisatieEmail_lijst", sqlSession.selectList("dossierOrganisatieEmail_lijst", dossier_id));
-        
-        model.addAttribute("dossier_id", dossier_id);
-        model.addAttribute("dossierUrl", dossierWebloketService.getWebloketUrl(dossier_id));
-        
-        model.addAttribute("organisatietypes", ovamcore_sqlSession.selectList("organisatietypesVoorDossiers"));
-        model.addAttribute("organisatiesVoorDossiers", ovamcore_sqlSession.selectList("organisatiesVoorDossiers"));
-        
-        return jsview("noMenu", "dossier/webloket", model);
-    }
-
-	@RequestMapping(value = "/dossier/emailsVanOrganisatie/{organisatie_id}", method = RequestMethod.GET)
-	public @ResponseBody Response getEmailsVanOrganisatie(@PathVariable Integer organisatie_id) {
-	    List emails = ovamcore_sqlSession.selectList("emailsVanOrganisatieVoorDossiers",organisatie_id);
-		return new Response(emails);
-	}
-
-    @RequestMapping(value = "/dossier/add/organisatieAndEmail", method = RequestMethod.POST)
-	public @ResponseBody Response addOrganisatieAndEmail(@RequestBody HashMap<String, String> dosOrgEmail) throws Exception {
-	    sqlSession.insertInTable("art46", "dossier_organisatie_email", dosOrgEmail);
-        dossierWebloketService.createFolderBasedOnTemplate(new Integer(dosOrgEmail.get("dossier_id")));
+    @RequestMapping(value = "/dossier/add/organisatie", method = RequestMethod.POST)
+	public @ResponseBody Response addOrganisatie(@RequestBody HashMap<String, String> dosOrg) throws Exception {
+	    sqlSession.insertInTable("art46", "dossier_organisatie", dosOrg);
+        dossierWebloketService.createFolderBasedOnTemplate(new Integer(dosOrg.get("dossier_id")));
 		return new Response(true, null);
 	}
     
-    @RequestMapping(value = "/dossier/remove/organisatieAndEmail", method = RequestMethod.POST)
-	public @ResponseBody Response removeOrganisatieAndEmail(@RequestBody HashMap<String, String> dosOrgEmail) throws Exception {
-	    sqlSession.deleteInTable("art46", "dossier_organisatie_email", dosOrgEmail);
+    @RequestMapping(value = "/dossier/remove/organisatie", method = RequestMethod.POST)
+	public @ResponseBody Response removeOrganisatie(@RequestBody HashMap<String, String> dosOrg) throws Exception {
+	    sqlSession.deleteInTable("art46", "dossier_organisatie", dosOrg);
 		return new Response(true, null);
 	}
     
