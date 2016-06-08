@@ -65,6 +65,6 @@ public class DossierWebloketController extends BasisDossierController {
     
     @RequestMapping(value = "/dossier/toegangwebloket/organisatie/{organisatie_id}/logins", method = RequestMethod.GET)
     public @ResponseBody List getLoginsVoorOrganisatie (@PathVariable Integer organisatie_id) {
-        return new ArrayList();
+        return ovamcore_sqlSession.selectList("medewerkers_dossierBeheer_voor_organisatie", organisatie_id);
     }
 }

@@ -16,7 +16,7 @@ define([
 
     LoginModel = Model.extend({
         meta: Model.buildMeta([
-            { name: "email", label: "Email", width: 300 }
+            { name: "email", label: "Email", width: 280 }
         ])
     });
 
@@ -25,8 +25,8 @@ define([
     LoginLijstDialog.controller = function () {
 
         this.title = "Personen met toegang tot dossiermodule";
-        this.width = 800;
-        this.height = 400;
+        this.width = 300;
+        this.height = 300;
 
         events.on("LoginLijstDialog:open", this.open.bind(this));
     };
