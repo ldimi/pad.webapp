@@ -24,27 +24,11 @@
         <div class='tab tabHoogte <%=("Raming".equals(sub_tab_selected) ? "selected" : "")%>' >
             <b><a class="sm" href="/pad/s/bestek/${bestekId}/meetstaat/raming/" >Raming</a></b>
         </div>
-        <c:if test="${meetstaatLockt eq 'true'}">
+        <c:if test="${meetstaatLocked}">
             <div class='tab tabHoogte <%=("Offertes".equals(sub_tab_selected) ? "selected" : "")%>' >
                 <b><a class="sm" href="/pad/s/bestek/${bestekId}/meetstaat/offertes/" >Offertes</a></b>
             </div>
         </c:if>
-        <!--
-        <c:forEach items="${toegekendeOffertes}" var="offerte">
-            <c:choose>
-            <c:when test="${offerte.id == offerteId}">
-                <div class='tab tabHoogte <%=("Offerte".equals(sub_tab_selected) ? "selected" : "")%>' >
-                    Offerte:<br/> ${offerte.inzender}
-                </div>
-            </c:when>
-                <c:otherwise>
-                    <div class='tab tabHoogte' >
-                        Offerte:<br/> ${offerte.inzender}
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </c:forEach>
-        -->
     </div>
 
     <br>

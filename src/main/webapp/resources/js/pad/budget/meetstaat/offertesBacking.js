@@ -11,7 +11,11 @@ define([], function () {
                           "/meetstaat/offerte/" + offerte_id +
                           "/koppelOrganisatie?organisatie_id=" + select.value;
     };
+    
+    window.openLoginlijst: function(item) {
+        events.trigger("LoginLijstDialog:open", item.get("organisatie_id"));
+    }
 
-    return {
-    };
+
+    return {};
 });

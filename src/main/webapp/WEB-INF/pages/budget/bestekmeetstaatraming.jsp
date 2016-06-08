@@ -57,7 +57,7 @@
                 <td style="text-align: right ">
                    <c:if test="${meetstaatRegel.type=='VH'}">
                     <c:choose>
-                        <c:when test="${meetstaatLockt eq 'false'}">
+                        <c:when test="${!meetstaatLocked}">
                             <input type="text" name="meetstaatRegels[${status.index}].aantal" value="<fmt:formatNumber value="${meetstaatRegel.aantal}" maxFractionDigits="2" minFractionDigits="2"/>"/>
                             <form:errors path="meetstaatRegels[${status.index}].aantal" style="color: red;"/>
                         </c:when>
@@ -117,7 +117,7 @@
 Exporteren naar draft:
 <a href="/pad/s/bestek/meetstaat/export/draftMeetstaat-${bestekId}.pdf" target="_blank"> PDF </a> / <a href="/pad/s/bestek/meetstaat/export/draftMeetstaat-${bestekId}.xls" target="_blank"> Excel </a>
 <br/><br/>
-<c:if test="${meetstaatLockt eq 'false'}">
+<c:if test="${!meetstaatLocked}">
     <input type="button" value="Meetstaat definitief maken" onclick="window.location='/pad/s/bestek/${bestekId}/meetstaat/definitiefmaken';" />
 </c:if>
 <br/><br/>

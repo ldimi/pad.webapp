@@ -27,7 +27,11 @@ import java.util.ArrayList;
 @Controller
 public class MeetstaatController extends BasicMeetstaatController{
 
+    public static final String MODEL_ATTRIBUTE_NAME_MEETSTAAT_PDF_BRIEF = "meetstaatPdfBrief";
+    public static final String MODEL_ATTRIBUTE_NAME_MEETSTAAT_EXCEL_BRIEF = "meetstaatExcelBrief";
+
     public static final String MODEL_ATTRIBUTE_NAME_TEMPLATES = "templates";
+    
     private final Logger log = Logger.getLogger(MeetstaatController.class);
 
     @Autowired
@@ -109,6 +113,10 @@ public class MeetstaatController extends BasicMeetstaatController{
     @RequestMapping(value = "/bestek/{bestekId}/meetstaat", method = RequestMethod.GET)
     public String start(@PathVariable Long bestekId, Model model) throws Exception {
         super.startBasic(bestekId,model);
+        
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_PDF_BRIEF, bestek.getMeetstaatPDF());
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_EXCEL_BRIEF, bestek.getMeetstaatExcel());
+
         model.addAttribute(MODEL_ATTRIBUTE_NAME_EENHEDEN, meetstaatEenheidService.getAllUniqueEenheden());
         model.addAttribute(MODEL_ATTRIBUTE_NAME_TYPES, MeetstaatRegel.TYPES);
         model.addAttribute(MODEL_ATTRIBUTE_NAME_TEMPLATES, meetstaatTemplateService.getAll());

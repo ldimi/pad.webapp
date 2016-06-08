@@ -160,7 +160,7 @@
 
 <tiles:insert definition="laadJS" />
 <script type="text/javascript">
-    isLocked = ${meetstaatLockt eq 'true'};
+    isLocked = ${meetstaatLocked}
     bestekId = ${bestekId};
 </script>
 <script type="text/javascript">

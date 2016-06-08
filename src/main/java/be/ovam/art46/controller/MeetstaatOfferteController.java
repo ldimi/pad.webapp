@@ -10,6 +10,7 @@ import be.ovam.pad.model.MeetstaatRegel;
 import be.ovam.pad.model.OfferteRegel;
 import be.ovam.util.mybatis.SqlSession;
 import be.ovam.web.Response;
+import static be.ovam.web.util.JsView.jsview;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -67,6 +68,7 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
         model.addAttribute("organisaties_dd", ovamcore_sqlSession.selectList("organisatie_financieelBeheer_lijst"));
         
         return "bestek.meetstaat.offertes";
+        //return jsview("bestek.meetstaat.offertes", "budget/meetstaat/offertes2", model);
     }
 
     @ModelAttribute(value = MODEL_ATTRIBUTE_NAME_OFFERTE_FORM)

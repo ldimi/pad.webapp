@@ -378,10 +378,21 @@
         <put-attribute name="sub_tab_selected" value="Raming"/>
         <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekmeetstaatraming.jsp"/>
     </definition>
+    
     <definition name="bestek.meetstaat.offertes" extends="bestek.meetstaat.baseDef">
         <put-attribute name="sub_tab_selected" value="Offertes"/>
         <put-attribute name="sub_tab_body" value="/WEB-INF/pages/budget/bestekmeetstaatoffertes.jsp"/>
     </definition>
+    <!--
+    -->
+    
+    <definition name="bestek.meetstaat.offertes.jsView" extends="bestek.meetstaat.baseDef">
+        <put-attribute name="sub_tab_selected" value="Offertes"/>
+        <put-attribute name="sub_tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>
+    </definition>
+    
+    
+       
 
     <definition name="bestek.meetstaat.offerte" extends="bestek.meetstaat.baseDef">
         <put-attribute name="sub_tab_selected" value="Offertes"/>
