@@ -2,11 +2,12 @@
 /*global define: false, Slick: false, $: false, _:  false, m: false, alert: false, _G_ */
 
 define([
+    "dossier/LoginLijstDialog",
     "ov/Model2",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
-], function (Model, events, ajax, fhf) {
+], function (LoginLijstDialog, Model, events, ajax, fhf) {
     'use strict';
 
     var _comp, DossierOrganisatieModel;
@@ -81,6 +82,8 @@ define([
         this.currentItem.on("change:organisatietype", this.filter_organisaties_dd.bind(this));
 
         this.showErrors = m.prop(false);
+
+        this.loginLijstDialogCtrl = new LoginLijstDialog.controller();
     };
     _.extend(_comp.controller.prototype, {
         toevoegen: function() {
@@ -113,6 +116,9 @@ define([
                     alert("De actie niet gelukt (server error :" + response.errorMsg + ")");
                 }
             }.bind(this));
+        },
+        openLoginlijst: function(item) {
+            events.trigger("LoginLijstDialog:open", item.get("organisatie_id"));
         },
         filter_organisaties_dd: function (organisatietype) {
             var organisatieIds;
@@ -165,15 +171,18 @@ define([
                     return m("tr", [
                         m("td", dosOrg.get("types")),
                         m("td", dosOrg.get("label")),
+                        m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, dosOrg)}, "--> Logins")),
                         m("td", m("button", {onclick: _.bind(ctrl.verwijder, ctrl, dosOrg)}, "Verwijder"))
                     ]);
                 })),
                 m("tr", [
                     m("td", ff.select("organisatietype", ctrl.organisatietypes_dd)),
                     m("td", ctrl.organisaties_dd ? ff.select("organisatie_id", ctrl.organisaties_dd) : null),
+                    m("td"),
                     m("td", m("button", {onclick: _.bind(ctrl.toevoegen, ctrl)}, "Toevoegen"))
                 ])
-            ])
+            ]),
+            LoginLijstDialog.view(ctrl.loginLijstDialogCtrl)
         ]);
 
 

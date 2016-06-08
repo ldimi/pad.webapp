@@ -63,4 +63,8 @@ public class DossierWebloketController extends BasisDossierController {
 		return new Response(true, null);
 	}
     
+    @RequestMapping(value = "/dossier/toegangwebloket/organisatie/{organisatie_id}/logins", method = RequestMethod.GET)
+    public @ResponseBody List getLoginsVoorOrganisatie (@PathVariable Integer organisatie_id) {
+        return new ArrayList();
+    }
 }
