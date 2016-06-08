@@ -36,8 +36,6 @@ import java.util.Map;
 @Controller
 public class MeetstaatOfferteController extends BasicMeetstaatController {
 
-    public static final String BESTEK_MEETSTAAT_OFFERTE = "bestek.meetstaat.offerte";
-    public static final String BESTEK_MEETSTAAT_OFFERTES = "bestek.meetstaat.offertes";
     public static final String MODEL_ATTRIBUTE_NAME_OFFERTE_FORM = "offerteForm";
     public static final String MODEL_ATTRIBUTE_NAME_BTW_TARIEVEN = "btwTarieven";
     private static final String MODEL_ATTRIBUTE_NAME_OFFERTE_ID = "offerteId";
@@ -66,9 +64,9 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
         
         model.addAttribute("offertes", meetstaatOfferteService.getOrCreateForBestek(bestekId));
         
-        model.addAttribute("organisatiesVoorOffertes_dd", ovamcore_sqlSession.selectList("organisatiesVoorOffertes_dd"));
+        model.addAttribute("organisaties_dd", ovamcore_sqlSession.selectList("organisatie_financieelBeheer_lijst"));
         
-        return BESTEK_MEETSTAAT_OFFERTES;
+        return "bestek.meetstaat.offertes";
     }
 
     @ModelAttribute(value = MODEL_ATTRIBUTE_NAME_OFFERTE_FORM)
@@ -222,7 +220,7 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
 
     private String setBasicModelOfferte(Long bestekId, Model model, OfferteForm offerteForm) throws Exception {
         setBasicModel(bestekId, model, offerteForm);
-        return BESTEK_MEETSTAAT_OFFERTE;
+        return "bestek.meetstaat.offerte";
     }
 
     private void setBasicModel(Long bestekId, Model model, OfferteForm offerteForm) throws Exception {

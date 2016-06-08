@@ -29,7 +29,7 @@
         <tr class="${styleclass}">
             <td>
                 <a href="/pad/s/bestek/${bestekId}/meetstaat/offertes/${offerte.id}/">
-                    -${offerte.inzender}
+                    ${offerte.id} ${offerte.inzender}
                </a>
             </td>
             <td style="text-align: right">
@@ -52,7 +52,7 @@
                         onchange="onChangeOrganisatie_id(this, ${bestekId}, ${offerte.id});"
                     >
                     <option value=""></option>
-                    <custom:options items="${organisatiesVoorOffertes_dd}"
+                    <custom:options items="${organisaties_dd}"
                                     itemValue="organisatie_id"
                                     selectedValue="${offerte.organisatie_id}" />
             </td>
