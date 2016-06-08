@@ -9,60 +9,60 @@
 
 
 
-            <table style="width: 90%">
-                <tr>
-                    <th>Inzender</th>
-                    <th>Totaal Excl BTW</th>
-                    <th>Totaal Incl BTW</th>
-                    <th>Status</th>
-                    <th>Organisatie</th>
-                </tr>
-                <c:forEach items="${offertes}" var="offerte" varStatus="status">
-                    <c:choose>
-                        <c:when test="${status.index mod 2 == 0 }">
-                            <c:set var="styleclass" value="tableRowEven"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="styleclass" value="tableRowOdd"/>
-                        </c:otherwise>
-                    </c:choose>
-                    <tr class="${styleclass}">
-                        <td>
-                            <a href="/pad/s/bestek/${bestekId}/meetstaat/offertes/${offerte.id}/">
-                                -${offerte.inzender}
-                           </a>
-                        </td>
-                        <td style="text-align: right">
-                            <fmt:formatNumber value="${offerte.totaal}" maxFractionDigits="2" minFractionDigits="2"/>
-                        </td>
-                        <td style="text-align: right">
-                            <fmt:formatNumber value="${offerte.totaalInclBtw}" maxFractionDigits="2" minFractionDigits="2"/>
-                        </td>
-                        <td>
-                            ${offerte.status}
-                            <c:if test="${not empty offerte.status}">
-                                <a href="/pad/s/bestek/${bestekId}/meetstaat/offertes/${offerte.id}/toekenningverwijderen/">
-                                    Toewijzing verwijderen
-                                </a>
-                            </c:if>
-                        </td>
-                        <td>
-                            <select name="organisatie_id"
-                                    style="width: 100%;"
-                                    onchange="onChangeOrganisatie_id(this, ${bestekId}, ${offerte.id});"
-                                >
-                                <option value=""></option>
-                                <custom:options items="${organisatiesVoorOffertes_dd}"
-                                                itemValue="organisatie_id"
-                                                selectedValue="${offerte.organisatie_id}" />
-                        </td>
-                    </tr>
-                </c:forEach>
-            </table>
-        <hr/>
-    <form method="get" action="/pad/s/bestek/meetstaat/offertes/export/draftOffertes-${bestekId}.xls" target="_blank" >
-        <button type="submit" class="inputbtn">Exporteren voor rekenkundige controle: Excel</button>
-    </form>
+<table style="width: 90%">
+    <tr>
+        <th>Inzender</th>
+        <th>Totaal Excl BTW</th>
+        <th>Totaal Incl BTW</th>
+        <th>Status</th>
+        <th>Organisatie</th>
+    </tr>
+    <c:forEach items="${offertes}" var="offerte" varStatus="status">
+        <c:choose>
+            <c:when test="${status.index mod 2 == 0 }">
+                <c:set var="styleclass" value="tableRowEven"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="styleclass" value="tableRowOdd"/>
+            </c:otherwise>
+        </c:choose>
+        <tr class="${styleclass}">
+            <td>
+                <a href="/pad/s/bestek/${bestekId}/meetstaat/offertes/${offerte.id}/">
+                    -${offerte.inzender}
+               </a>
+            </td>
+            <td style="text-align: right">
+                <fmt:formatNumber value="${offerte.totaal}" maxFractionDigits="2" minFractionDigits="2"/>
+            </td>
+            <td style="text-align: right">
+                <fmt:formatNumber value="${offerte.totaalInclBtw}" maxFractionDigits="2" minFractionDigits="2"/>
+            </td>
+            <td>
+                ${offerte.status}
+                <c:if test="${not empty offerte.status}">
+                    <a href="/pad/s/bestek/${bestekId}/meetstaat/offertes/${offerte.id}/toekenningverwijderen/">
+                        Toewijzing verwijderen
+                    </a>
+                </c:if>
+            </td>
+            <td>
+                <select name="organisatie_id"
+                        style="width: 100%;"
+                        onchange="onChangeOrganisatie_id(this, ${bestekId}, ${offerte.id});"
+                    >
+                    <option value=""></option>
+                    <custom:options items="${organisatiesVoorOffertes_dd}"
+                                    itemValue="organisatie_id"
+                                    selectedValue="${offerte.organisatie_id}" />
+            </td>
+        </tr>
+    </c:forEach>
+</table>
+<hr/>
+<form method="get" action="/pad/s/bestek/meetstaat/offertes/export/draftOffertes-${bestekId}.xls" target="_blank" >
+    <button type="submit" class="inputbtn">Exporteren voor rekenkundige controle: Excel</button>
+</form>
 Rapport financi&euml;le controle:
 <c:if test="${not empty bestek.controleDmsId}">
     <a href='${bestek.controleDmsFolder}/${bestek.controleDmsFileName}' target="_blank">
