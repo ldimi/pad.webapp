@@ -94,30 +94,41 @@ public class MeetstaatOfferteServiceImpl extends MeetstaatBasicService<OfferteRe
         return offerteForm.getOfferte().getId();
     }
 
-    public List<Offerte> getOrCreateForBestek(Long bestekId) throws Exception {
-        List<Brief> offerteBrieven = briefService.getOfferteBrieven(bestekId);
-        List<Offerte> result = new ArrayList<Offerte>();
-        for (Brief brief : offerteBrieven) {
-            Offerte offerte = offerteDao.getForBriefId(brief.getBrief_id());
-            if (offerte == null) {
-                offerte = new Offerte();
-                offerte.setBrief(brief);
-                offerte.setInzender(brief.getAdresContactNaam());
-                offerte.setBestekId(bestekId);
-                offerte.setBtwTarief(21);
-                Offerte origineel = offerteDao.getOrgineelHerlanceringForNewOfferte(offerte);
-                if (origineel != null) {
-                    offerte.setOrgineel(origineel);
-                }
-                offerteDao.save(offerte);
-            }
-            result.add(offerte);
-        }
-        return result;
-    }
+//    public List<Offerte> getOrCreateForBestek(Long bestekId) throws Exception {
+//        List<Brief> offerteBrieven = briefService.getOfferteBrieven(bestekId);
+//        List<Offerte> result = new ArrayList<Offerte>();
+//        for (Brief brief : offerteBrieven) {
+//            Offerte offerte = offerteDao.getForBriefId(brief.getBrief_id());
+//            if (offerte == null) {
+//                offerte = new Offerte();
+//                offerte.setBrief(brief);
+//                offerte.setInzender(brief.getAdresContactNaam());
+//                offerte.setBestekId(bestekId);
+//                offerte.setBtwTarief(21);
+//                Offerte origineel = offerteDao.getOrgineelHerlanceringForNewOfferte(offerte);
+//                if (origineel != null) {
+//                    offerte.setOrgineel(origineel);
+//                }
+//                offerteDao.save(offerte);
+//            }
+//            result.add(offerte);
+//        }
+//        return result;
+//    }
     
     public List getOrCreateOffertesForBestek(Long bestekId) {
-        return null;
+        List<Map<String, Object>> offerteList = sqlSession.selectList("getOffertesForBestek", bestekId);
+        
+        for (Map<String, Object> offerte : offerteList) {
+            if (offerte.get("id") == null) {
+                
+                // TODO set OFFERTE_ORIGINEEL_ID = ... offerteDao.getOrgineelHerlanceringForNewOfferte(offerte);
+                //   nakijken en corrigeren.
+                
+                sqlSession.insertInTable("art46", "offerte", offerte);
+            }
+        }
+        return offerteList;
     }
     
     public OfferteForm getOfferte(Offerte offerte) {

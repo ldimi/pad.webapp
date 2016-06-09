@@ -60,6 +60,25 @@
         where bestek_id= #{bestek_id}
     </select>
 
+    <select id="getOffertesForBestek" resultType="ciMap" parameterType="int" >
+        select off.id,
+               coalesce(off.inzender, br.adres_naam) as inzender,
+               coalesce(off.offerte_brief_id, br.brief_id) as offerte_brief_id,
+               coalesce(off.bestek_id, br.bestek_id) as bestek_id,
+               coalesce(off.btw_tarief, 21) as btw_tarief,
+               off.totaal,
+               off.totaal_incl_btw,
+               off.opdrachtgever_id,
+               off.organisatie_id,
+               off.status
+        from art46.v_brief br
+                left join art46.offerte off
+                on br.brief_id = off.offerte_brief_id
+        where 1 = 1
+            and br.in_aard_id = 10
+            and br.bestek_id = #{bestek_id}
+        order by br.brief_id asc
+    </select>
 
 
     <select id="getNieuwVastleggingsData" resultType="be.ovam.art46.model.AanvraagVastlegging" parameterType="string" >

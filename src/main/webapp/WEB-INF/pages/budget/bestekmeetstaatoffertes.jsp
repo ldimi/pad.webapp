@@ -36,7 +36,7 @@
                 <fmt:formatNumber value="${offerte.totaal}" maxFractionDigits="2" minFractionDigits="2"/>
             </td>
             <td style="text-align: right">
-                <fmt:formatNumber value="${offerte.totaalInclBtw}" maxFractionDigits="2" minFractionDigits="2"/>
+                <fmt:formatNumber value="${offerte.totaal_incl_btw}" maxFractionDigits="2" minFractionDigits="2"/>
             </td>
             <td>
                 ${offerte.status}

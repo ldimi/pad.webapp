@@ -19,7 +19,9 @@ public interface MeetstaatOfferteService extends MeetstaatBaseService {
 
     Long save(OfferteForm offerteForm, Long BestekId) throws Exception;
 
-    List<Offerte> getOrCreateForBestek(Long bestekId) throws Exception;
+    //List<Offerte> getOrCreateForBestek(Long bestekId) throws Exception;
+    
+    List getOrCreateOffertesForBestek(Long bestekId);
 
     OfferteForm getOfferte(Long offerteId);
 

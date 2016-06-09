@@ -63,12 +63,12 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
     public String start(@PathVariable Long bestekId, Model model) throws Exception {
         setBasicModel(bestekId, model, null);
         
-        model.addAttribute("offertes", meetstaatOfferteService.getOrCreateForBestek(bestekId));
+        model.addAttribute("offertes", meetstaatOfferteService.getOrCreateOffertesForBestek(bestekId));
         
         model.addAttribute("organisaties_dd", ovamcore_sqlSession.selectList("organisatie_financieelBeheer_lijst"));
         
-        return "bestek.meetstaat.offertes";
-        //return jsview("bestek.meetstaat.offertes", "budget/meetstaat/offertes2", model);
+        //return "bestek.meetstaat.offertes";
+        return jsview("bestek.meetstaat.offertes", "budget/meetstaat/offertes2", model);
     }
 
     @ModelAttribute(value = MODEL_ATTRIBUTE_NAME_OFFERTE_FORM)
