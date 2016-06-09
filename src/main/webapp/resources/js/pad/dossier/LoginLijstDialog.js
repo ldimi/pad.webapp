@@ -45,14 +45,14 @@ define([
 
     LoginLijstDialog.view = function (ctrl) {
         return m("div",
-                { style: { position: "absolute", top: "2px", left: "2px", right: "2px", bottom: "28px" },
-                  class: "slick-grid-div",
-                  config: gridConfigBuilder({
-                                model: LoginModel,
-                                setDataEvent: "LoginLijstDialog:dataReceived"
-                            })
-                }
-            );
+            { style: { position: "absolute", top: "2px", left: "2px", right: "2px", bottom: "28px" },
+              class: "slick-grid-div",
+              config: gridConfigBuilder({
+                            model: LoginModel,
+                            setDataEvent: "LoginLijstDialog:dataReceived"
+                        })
+            }
+        );
     };
 
     return dialogBuilder(LoginLijstDialog);

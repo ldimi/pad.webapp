@@ -49,6 +49,11 @@
             wbs_nr,
             screening_jn,
             screening_organisatie_id,
+            meetstaat_pdf_brief_id,
+            meetstaat_excel_brief_id,
+            controle_dms_id,
+            controle_dms_folder,
+            controle_dms_filename,
             voorstellen_opm,
             raamcontract_jn
         from art46.v_bestek

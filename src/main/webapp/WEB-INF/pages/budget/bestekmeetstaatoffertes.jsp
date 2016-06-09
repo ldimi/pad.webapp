@@ -64,9 +64,9 @@
     <button type="submit" class="inputbtn">Exporteren voor rekenkundige controle: Excel</button>
 </form>
 Rapport financi&euml;le controle:
-<c:if test="${not empty bestek.controleDmsId}">
-    <a href='${bestek.controleDmsFolder}/${bestek.controleDmsFileName}' target="_blank">
-        ${bestek.controleDmsFileName} <html:img src="resources/images/AlfrescoLogo32.png" width="16" height="16" border="0" alt="Brief bekijken" title="Brief bekijken"/>
+<c:if test="${not empty bestekDO.controle_dms_id}">
+    <a href='${bestekDO.controle_dms_folder}/${bestekDO.controle_dms_filename}' target="_blank">
+        ${bestekDO.controle_dms_filename} <html:img src="resources/images/AlfrescoLogo32.png" width="16" height="16" border="0" alt="Brief bekijken" title="Brief bekijken"/>
     </a>
 </c:if>
 <form action="/pad/s/bestek/meetstaat/offertes/uploaden"

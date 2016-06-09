@@ -115,7 +115,11 @@ public class MeetstaatOfferteServiceImpl extends MeetstaatBasicService<OfferteRe
         }
         return result;
     }
-
+    
+    public List getOrCreateOffertesForBestek(Long bestekId) {
+        return null;
+    }
+    
     public OfferteForm getOfferte(Offerte offerte) {
         List<MeetstaatRegel> meetstaatRegels = meetstaatService.getAll(offerte.getBestekId());
         return getOfferte(offerte, meetstaatRegels);
@@ -311,7 +315,11 @@ public class MeetstaatOfferteServiceImpl extends MeetstaatBasicService<OfferteRe
     public OffertesExport getOffertesRegelsForBestek(Long bestekId) throws Exception {
         OffertesExport offertesExport = new OffertesExport();
         List<OffertesExportRegel> offertesExportRegels = new ArrayList<OffertesExportRegel>();
-        List<Offerte> offertes = getOrCreateForBestek(bestekId);
+        
+        //List<Offerte> offertes = getOrCreateForBestek(bestekId);
+        List<Offerte> offertes = offerteDao.getForBestekId(bestekId);
+        
+        
         List<MeetstaatRegel> meetstaatRegels = meetstaatService.getAll(bestekId);
         List<OfferteRegel> emptyOfferteRegels = getEmptyOfferte(meetstaatRegels);
         for (OfferteRegel emptyOfferteRegel : emptyOfferteRegels) {

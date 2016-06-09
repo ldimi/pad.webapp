@@ -31,6 +31,13 @@ public class BestekDO implements Serializable {
 	private String screening_jn;
     private Integer screening_organisatie_id;
     
+    private Integer meetstaat_pdf_brief_id;
+    private Integer meetstaat_excel_brief_id;
+    
+    private String controle_dms_id;
+    private String controle_dms_folder;
+    private String controle_dms_filename;
+    
     private String voorstellen_opm;
 	
 	private String raamcontract_jn;
@@ -177,6 +184,46 @@ public class BestekDO implements Serializable {
 
     public void setVoorstellen_opm(String voorstellen_opm) {
         this.voorstellen_opm = voorstellen_opm;
+    }
+
+    public Integer getMeetstaat_pdf_brief_id() {
+        return meetstaat_pdf_brief_id;
+    }
+
+    public void setMeetstaat_pdf_brief_id(Integer meetstaat_pdf_brief_id) {
+        this.meetstaat_pdf_brief_id = meetstaat_pdf_brief_id;
+    }
+
+    public Integer getMeetstaat_excel_brief_id() {
+        return meetstaat_excel_brief_id;
+    }
+
+    public void setMeetstaat_excel_brief_id(Integer meetstaat_excel_brief_id) {
+        this.meetstaat_excel_brief_id = meetstaat_excel_brief_id;
+    }
+
+    public String getControle_dms_id() {
+        return controle_dms_id;
+    }
+
+    public void setControle_dms_id(String controle_dms_id) {
+        this.controle_dms_id = controle_dms_id;
+    }
+
+    public String getControle_dms_folder() {
+        return controle_dms_folder;
+    }
+
+    public void setControle_dms_folder(String controle_dms_folder) {
+        this.controle_dms_folder = controle_dms_folder;
+    }
+
+    public String getControle_dms_filename() {
+        return controle_dms_filename;
+    }
+
+    public void setControle_dms_filename(String controle_dms_filename) {
+        this.controle_dms_filename = controle_dms_filename;
     }
 
 	

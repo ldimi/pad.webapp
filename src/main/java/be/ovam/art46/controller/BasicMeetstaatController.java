@@ -13,17 +13,12 @@ import org.springframework.web.bind.annotation.InitBinder;
 
 import java.math.BigDecimal;
 
-/**
- * Created by Koen Corstjens on 29-8-13.
- */
 public class BasicMeetstaatController extends BasicBestekController {
     
     public static final String MODEL_ATTRIBUTE_NAME_TYPES = "types";
     public static final String MODEL_ATTRIBUTE_NAME_EENHEDEN = "eenheden";
     public static final String MODEL_ATTRIBUTE_NAME_MEETSTAAT_LOCKED = "meetstaatLocked";
-    private static final String MODEL_ATTRIBUTE_BESTEK = "bestek";
     
-    protected Bestek bestek;
     
     private Logger log = Logger.getLogger(BasicMeetstaatController.class);
 
@@ -42,16 +37,7 @@ public class BasicMeetstaatController extends BasicBestekController {
 
     public void startBasic(Long bestekId, Model model) throws Exception {
         super.startBasic(bestekId, model);
-        Boolean meetstaatLocked = Boolean.FALSE;
         
-        bestek = bestekService.getBestek(super.bestekId);
-        
-        if (bestek != null ) {
-            model.addAttribute(MODEL_ATTRIBUTE_BESTEK, bestek);
-            if (bestek.getMeetstaatPDF() != null) {
-                meetstaatLocked = Boolean.TRUE;
-            }
-        }
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_LOCKED, meetstaatLocked);
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_LOCKED, (bestekDO.getMeetstaat_pdf_brief_id() != null));
     }
 }

@@ -1,6 +1,7 @@
 package be.ovam.art46.controller;
 
 import be.ovam.art46.model.NewMeetstaatRequest;
+import be.ovam.art46.service.BriefService;
 import be.ovam.pad.model.Bestek;
 import be.ovam.pad.model.MeetstaatRegel;
 import be.ovam.web.Response;
@@ -45,8 +46,12 @@ public class MeetstaatController extends BasicMeetstaatController{
 
     @Autowired
     MeetstaatExportExcelService meetstaatExportExcelService;
+    
     @Autowired
     MeetstaatService meetstaatService;
+    
+    @Autowired
+    BriefService briefService;
 
 
 
@@ -114,9 +119,9 @@ public class MeetstaatController extends BasicMeetstaatController{
     public String start(@PathVariable Long bestekId, Model model) throws Exception {
         super.startBasic(bestekId,model);
         
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_PDF_BRIEF, bestek.getMeetstaatPDF());
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_EXCEL_BRIEF, bestek.getMeetstaatExcel());
-
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_PDF_BRIEF, briefService.getBrief(bestekDO.getMeetstaat_pdf_brief_id()));
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_MEETSTAAT_EXCEL_BRIEF, briefService.getBrief(bestekDO.getMeetstaat_excel_brief_id()));
+        
         model.addAttribute(MODEL_ATTRIBUTE_NAME_EENHEDEN, meetstaatEenheidService.getAllUniqueEenheden());
         model.addAttribute(MODEL_ATTRIBUTE_NAME_TYPES, MeetstaatRegel.TYPES);
         model.addAttribute(MODEL_ATTRIBUTE_NAME_TEMPLATES, meetstaatTemplateService.getAll());
