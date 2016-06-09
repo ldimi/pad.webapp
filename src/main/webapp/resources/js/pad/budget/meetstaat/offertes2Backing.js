@@ -29,7 +29,16 @@ define([
             }, {
                 name: "organisatie_id",
                 type: "int"
-        }])
+        }]),
+        enforceInvariants: function () {
+            if (this.hasChanged("organisatie_id")) {
+                //alert(this.get("id"));
+                window.location = "http://" + window.location.host +
+                                  "/pad/s/bestek/" + this.get("bestek_id")  +
+                                  "/meetstaat/offerte/" + this.get("id") +
+                                  "/koppelOrganisatie?organisatie_id=" + this.str("organisatie_id");
+            }
+        }
     });
 
 
@@ -42,21 +51,26 @@ define([
             return new OfferteModel(offerte);
         });
 
-        //this.organisaties_dd = null;
+        this.organisaties_dd = _.chain(_G_.model.organisaties_dd)
+            .map(function(org) {
+                org.value = org.organisatie_id;
+                return org;
+            })
+            .unshift({value: "", label: "" })
+            .value();
 
         this.loginLijstDialogCtrl = new LoginLijstDialog.controller();
     };
     _.extend(_comp.controller.prototype, {
-        openLoginlijst: function(item) {
-            events.trigger("LoginLijstDialog:open", item.get("organisatie_id"));
+        openLoginlijst: function(offerte) {
+            events.trigger("LoginLijstDialog:open", offerte.get("organisatie_id"));
+            alert("TODO");
         }
     });
 
     _comp.view = function (ctrl) {
-        //var ff;
-        //
-        //ff = fhf.get().setModel(ctrl.currentItem).setShowErrors(ctrl.showErrors());
-
+        var organisatie_select;
+                
         return m("div", {style: {margin: "10px", "background-color": "white"}}, [
             m("table",[
                 m("thead", [
@@ -67,22 +81,16 @@ define([
                     m("th", "Organisatie")
                 ]),
                 m("tbody", _.map(ctrl.modelLijst, function(off) {
+                    var ff = fhf.get().setModel(off);
                     return m("tr", [
                         m("td", m("a", {href: "/pad/s/bestek/" + off.get("bestek_id") + "/meetstaat/offertes/" + off.get("id") + "/"}, off.get("inzender"))),
                         m("td", off.str("totaal")),
                         m("td", off.str("totaal_incl_btw")),
                         m("td", off.str("status")),
-                        m("td", off.str("organistie_id"))
-                        //m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, off)}, "--> Logins")),
-                        //m("td", m("button", {onclick: _.bind(ctrl.verwijder, ctrl, off)}, "Verwijder"))
+                        m("td", ff.select("organisatie_id", ctrl.organisaties_dd)),
+                        m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, off)}, "--> Logins"))
                     ]);
                 }))
-                //m("tr", [
-                //    m("td", ff.select("organisatietype", ctrl.organisatietypes_dd)),
-                //    m("td", ctrl.organisaties_dd ? ff.select("organisatie_id", ctrl.organisaties_dd) : null),
-                //    m("td"),
-                //    m("td", m("button", {onclick: _.bind(ctrl.toevoegen, ctrl)}, "Toevoegen"))
-                //])
             ]),
             LoginLijstDialog.view(ctrl.loginLijstDialogCtrl)
         ]);
