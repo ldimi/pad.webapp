@@ -1,7 +1,7 @@
-package be.ovam.art46.controller.bestek;
+package be.ovam.art46.controller.budget;
 
 
-import be.ovam.art46.controller.BasicBestekController;
+import be.ovam.art46.controller.budget.BasicBestekController;
 import be.ovam.art46.form.VoorstelDeelopdrachtForm;
 import be.ovam.art46.model.SelectElement;
 import be.ovam.art46.service.DeelOpdrachtService;

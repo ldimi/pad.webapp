@@ -1,4 +1,4 @@
-package be.ovam.art46.controller.bestek;
+package be.ovam.art46.controller.budget;
 
 import be.ovam.art46.service.BijlageService;
 import org.springframework.beans.factory.annotation.Autowired;

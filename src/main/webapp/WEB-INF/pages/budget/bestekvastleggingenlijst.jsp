@@ -263,7 +263,7 @@
 <tiles:insertDefinition name="laadJS" />
 
 <script type="text/javascript">
-    bestekId = ${bestekId};
+    bestek_id = ${bestekDO.bestek_id};
 </script>
 
 <script type="text/javascript">

@@ -1,6 +1,6 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <form:form method="post" accept-charset="UTF-8"
-           action="/pad/s/bestek/${bestekId}/voorstel/${voorstelId}/sendmail"
+           action="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/${voorstelId}/sendmail"
            modelAttribute="mailForm">
     <table border="0" width="80%">
         <tr>

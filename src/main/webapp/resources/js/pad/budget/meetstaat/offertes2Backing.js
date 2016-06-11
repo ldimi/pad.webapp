@@ -13,26 +13,16 @@ define([
     var _comp, OfferteModel;
 
     OfferteModel = Model.extend({
-        meta: Model.buildMeta([{
-                name: "id",
-                type: "int"
-            }, {
-                name: "inzender"
-            }, {
-                name: "totaal",
-                type: "double"
-            }, {
-                name: "totaal_incl_btw",
-                type: "double"
-            }, {
-                name: "status"
-            }, {
-                name: "organisatie_id",
-                type: "int"
-        }]),
+        meta: Model.buildMeta([
+            { name: "id", type: "int" },
+            { name: "inzender" },
+            { name: "totaal", type: "double" },
+            { name: "totaal_incl_btw", type: "double" },
+            { name: "status" },
+            { name: "organisatie_id", type: "int"}
+        ]),
         enforceInvariants: function () {
             if (this.hasChanged("organisatie_id")) {
-                //alert(this.get("id"));
                 window.location = "http://" + window.location.host +
                                   "/pad/s/bestek/" + this.get("bestek_id")  +
                                   "/meetstaat/offerte/" + this.get("id") +
@@ -40,7 +30,6 @@ define([
             }
         }
     });
-
 
 
     _comp = {};
@@ -64,13 +53,12 @@ define([
     _.extend(_comp.controller.prototype, {
         openLoginlijst: function(offerte) {
             events.trigger("LoginLijstDialog:open", offerte.get("organisatie_id"));
-            alert("TODO");
         }
     });
 
     _comp.view = function (ctrl) {
-        var organisatie_select;
-                
+        var bestekDO = _G_.model.bestekDO;
+        
         return m("div", {style: {margin: "10px", "background-color": "white"}}, [
             m("table",[
                 m("thead", [
@@ -88,14 +76,33 @@ define([
                         m("td", off.str("totaal_incl_btw")),
                         m("td", off.str("status")),
                         m("td", ff.select("organisatie_id", ctrl.organisaties_dd)),
-                        m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, off)}, "--> Logins"))
+                        off.get("organisatie_id")
+                            ? m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, off), class: "inputbtn"}, "Logins"))
+                            : null
                     ]);
                 }))
+            ]),
+            m("br"),
+            m("form", { method: "get", action: "/pad/s/bestek/meetstaat/offertes/export/draftOffertes-" + bestekDO.bestek_id + ".xls", target: "_blank"},
+                m("button", { type: "submit", class: "inputbtn"}, "Exporteren voor rekenkundige controle: Excel")),
+            m.trust("Rapport financi&euml;le controle:"),
+            m("br"),
+            m("br"),
+            bestekDO.controle_dms_id
+                ? m("a", {href: bestekDO.controle_dms_folder + "/" + bestekDO.controle_dms_filename, target: "_blank"}, [
+                    bestekDO.controle_dms_filename,
+                    m("img", {src: "resources/images/AlfrescoLogo32.png", width: 16, height: 16, border: 0, alt: "Brief bekijken", title: "Brief bekijken"})
+                  ])
+                : null,
+            m("br"),
+            m("br"),
+            m("form", { action: "/pad/s/bestek/meetstaat/offertes/uploaden", enctype: "multipart/form-data", method: "post"}, [
+                m("input", {type: "hidden", value: bestekDO.bestek_id, name: "bestek_id"}),
+                m("input", {type: "file", name: "file", onchange: function(){ this.form.submit();} })
             ]),
             LoginLijstDialog.view(ctrl.loginLijstDialogCtrl)
         ]);
 
-        //return m("div", "hello");
     };
 
     m.mount($("#jsviewContentDiv").get(0), _comp);

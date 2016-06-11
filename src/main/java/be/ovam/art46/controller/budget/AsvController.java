@@ -1,6 +1,6 @@
-package be.ovam.art46.controller.bestek;
+package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.controller.BasicBestekController;
+import be.ovam.art46.controller.budget.BasicBestekController;
 import be.ovam.art46.service.BriefCategorieService;
 import be.ovam.art46.service.schuldvordering.AsvService;
 import be.ovam.art46.util.DropDownHelper;

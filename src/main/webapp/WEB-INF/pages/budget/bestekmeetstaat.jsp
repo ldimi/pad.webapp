@@ -80,7 +80,7 @@
         </c:if>
         <c:if test="${!empty meetstaatPdfBrief && empty offertes}">
             <div style="float: left;">
-                <input type="button" value="Meetstaat ontgrendelen" onclick="window.location='/pad/s/bestek/${bestekId}/meetstaat/ontgrendel';" />
+                <input type="button" value="Meetstaat ontgrendelen" onclick="window.location='/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/ontgrendel';" />
             </div>
         </c:if>
         <div id="waarschuwingNietOpgeslagenMeetstaat" hidden="hidden"
@@ -161,7 +161,7 @@
 <tiles:insert definition="laadJS" />
 <script type="text/javascript">
     isLocked = ${meetstaatLocked}
-    bestekId = ${bestekId};
+    bestek_id = ${bestekDO.bestek_id};
 </script>
 <script type="text/javascript">
     laadBacking('budget/meetstaat/bestekmeetstaatBacking');

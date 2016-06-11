@@ -1,5 +1,6 @@
-package be.ovam.art46.controller;
+package be.ovam.art46.controller.budget;
 
+import be.ovam.art46.controller.budget.BasicMeetstaatController;
 import be.ovam.art46.model.OfferteForm;
 import be.ovam.art46.model.SelectElement;
 import be.ovam.art46.service.meetstaat.MeetstaatEenheidService;
@@ -242,9 +243,9 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
     }
 
     @RequestMapping(value = "/bestek/meetstaat/offertes/uploaden", method = RequestMethod.POST)
-    public String addDocument(@RequestParam("bestekId") Long bestekId, @RequestParam("file") MultipartFile multipartFile) throws Exception {
-        bestekService.addControle(bestekId, multipartFile);
-        return "redirect:/s/bestek/" + bestekId + "/meetstaat/offertes/";
+    public String addDocument(@RequestParam("bestek_id") Long bestek_id, @RequestParam("file") MultipartFile multipartFile) throws Exception {
+        bestekService.addControle(bestek_id, multipartFile);
+        return "redirect:/s/bestek/" + bestek_id + "/meetstaat/offertes/";
     }
 
 }

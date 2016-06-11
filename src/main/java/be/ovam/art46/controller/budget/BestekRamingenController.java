@@ -1,6 +1,5 @@
 package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.controller.BasicBestekController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;

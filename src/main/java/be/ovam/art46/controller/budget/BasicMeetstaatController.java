@@ -1,5 +1,6 @@
-package be.ovam.art46.controller;
+package be.ovam.art46.controller.budget;
 
+import be.ovam.art46.controller.budget.BasicBestekController;
 import be.ovam.art46.service.meetstaat.MeetstaatOfferteService;
 import be.ovam.art46.util.OvamCustomNumberEditor;
 import be.ovam.pad.model.Bestek;

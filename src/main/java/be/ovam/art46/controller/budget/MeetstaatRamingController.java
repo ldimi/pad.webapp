@@ -1,5 +1,6 @@
-package be.ovam.art46.controller;
+package be.ovam.art46.controller.budget;
 
+import be.ovam.art46.controller.budget.BasicMeetstaatController;
 import be.ovam.art46.controller.model.RamingForm;
 import be.ovam.art46.service.meetstaat.MeetstaatRamingService;
 import be.ovam.art46.service.meetstaat.MeetstaatService;

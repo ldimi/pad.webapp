@@ -15,9 +15,9 @@
     </p>
 </c:if>
 
-<form:form method="post" accept-charset="UTF-8" action="/pad/s/bestek/${bestekId}/meetstaat/raming/" modelAttribute="ramingForm">
+<form:form method="post" accept-charset="UTF-8" action="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/raming/" modelAttribute="ramingForm">
     <table>
-        <input type="hidden" value="${bestekId}" name="bestekId"/>
+        <input type="hidden" value="${bestekDO.bestek_id}" name="bestekId"/>
         <tr>
         <th>Postnr.</th>
         <th>Taak</th>
@@ -115,9 +115,9 @@
 </form:form>
 
 Exporteren naar draft:
-<a href="/pad/s/bestek/meetstaat/export/draftMeetstaat-${bestekId}.pdf" target="_blank"> PDF </a> / <a href="/pad/s/bestek/meetstaat/export/draftMeetstaat-${bestekId}.xls" target="_blank"> Excel </a>
+<a href="/pad/s/bestek/meetstaat/export/draftMeetstaat-${bestekDO.bestek_id}.pdf" target="_blank"> PDF </a> / <a href="/pad/s/bestek/meetstaat/export/draftMeetstaat-${bestekDO.bestek_id}.xls" target="_blank"> Excel </a>
 <br/><br/>
 <c:if test="${!meetstaatLocked}">
-    <input type="button" value="Meetstaat definitief maken" onclick="window.location='/pad/s/bestek/${bestekId}/meetstaat/definitiefmaken';" />
+    <input type="button" value="Meetstaat definitief maken" onclick="window.location='/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/definitiefmaken';" />
 </c:if>
 <br/><br/>

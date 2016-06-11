@@ -8,7 +8,7 @@ define([
     "use strict";
 
     function onReady() {
-        new MeetstaatMediator(window.bestekId, '/pad/s/meetstaat/upload?bestekId=' + window.bestekId);
+        new MeetstaatMediator(window.bestek_id, '/pad/s/meetstaat/upload?bestek_id=' + window.bestek_id);
     }
 
     return {

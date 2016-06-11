@@ -1,6 +1,5 @@
 package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.controller.BasicBestekController;
 import be.ovam.art46.controller.model.ActieForm;
 import be.ovam.art46.decorator.BigDecimalDecorator;
 import be.ovam.art46.model.ActieType;
@@ -65,14 +64,14 @@ public class BestekActieController extends BasicBestekController{
         model.addAttribute("bestekActie",actieForm);
         return "bestek.actie.wijzig";
     }
-    @RequestMapping(value = "/bestek/{bestekId}/acties/aanmaken/", method = RequestMethod.GET)
-    public String aanmaken(@PathVariable Long bestekId, Model model) throws Exception {
-        super.startBasic(bestekId, model);
+    @RequestMapping(value = "/bestek/{bestek_id}/acties/aanmaken/", method = RequestMethod.GET)
+    public String aanmaken(@PathVariable Long bestek_id, Model model) throws Exception {
+        super.startBasic(bestek_id, model);
         ActieForm actieForm = new ActieForm();
-        actieForm.setBestek_nr(super.bestekNr);
-        actieForm.setDossier_id(super.dossierId.toString());
-        actieForm.setBestek_id(bestekId);
-        actieForm.setDossier_type(dossier_type);
+        actieForm.setBestek_id(bestek_id);
+        actieForm.setBestek_nr(bestekDO.getBestek_nr());
+        actieForm.setDossier_id(bestekDO.getDossier_id().toString());
+        actieForm.setDossier_type(bestekDO.getDossier_type());
         actieForm.setActie_id("0");
         model.addAttribute("types", DropDownHelper.INSTANCE.getActieTypesByDossierType("K"));
         model.addAttribute("actieId","0");

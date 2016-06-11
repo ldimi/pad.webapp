@@ -458,7 +458,7 @@
         <input type="submit" value="Bewaar" class="inputbtn" name="action"/>
         <input type="submit" value="Accepteren" class="inputbtn" name="action"/>
         <input type="submit" value="Afkeuren" class="inputbtn" name="action"/>
-        <a href="/pad/s/bestek/${bestekId}/schuldvordering/draftSchuldvordering-${asvDO.vordering_id}.pdf" target="_blank">Draft Antwoord brief</a>
+        <a href="/pad/s/bestek/${bestekDO.bestek_id}/schuldvordering/draftSchuldvordering-${asvDO.vordering_id}.pdf" target="_blank">Draft Antwoord brief</a>
     </c:if>
 </form:form>
 <br/>

@@ -1,5 +1,5 @@
 /*jslint debug: true, browser: true */
-/*global define: false, require: false, $: false, _: false, m: false, console: false, alert: false, window*/
+/*global define: false, require: false, $: false, _: false, m: false, console: false, alert: false, window, _G_ */
 
 define([
     "ov/mithril/ajax",
@@ -8,7 +8,7 @@ define([
 ], function (ajax, deelopdrachtDialog, event) {
     "use strict";
 
-    function deelopdrachtPromise(deelopdracht_id, bestekId, bestekNr, raamcontract_jn, dossier_id, planning_lijn_id, bedrag, voorstel_d) {
+    function deelopdrachtPromise(deelopdracht_id, bestek_id, bestekNr, raamcontract_jn, dossier_id, planning_lijn_id, bedrag, voorstel_d) {
         var deferred;
         if (deelopdracht_id) {
             return ajax.getJSON({
@@ -19,7 +19,7 @@ define([
         deferred = m.deferred();
         deferred.resolve({
             result: {
-                bestek_id: bestekId,
+                bestek_id: bestek_id,
                 bestek_nr: bestekNr,
                 dossier_id: dossier_id,
                 planning_lijn_id: planning_lijn_id,

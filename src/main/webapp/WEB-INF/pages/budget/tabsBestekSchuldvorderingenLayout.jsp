@@ -20,10 +20,10 @@
 
 <div style="margin: 5px;">
     <div class='tab subtab tabHoogte <%=("schuldvorderingen".equals(sub_tab_selected) ? "selected" : "")%> ' >
-        <b><a class="sm" href="/pad/s/bestek/${bestekId}/schuldvorderingen/" >Schuldvorderingen</a></b>
+        <b><a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/schuldvorderingen/" >Schuldvorderingen</a></b>
     </div>
     <div class='tab subtab tabHoogte <%=("overzichtSchuldvorderingen".equals(sub_tab_selected) ? "selected" : "")%>' >
-        <b><a class="sm" href="/pad/s/bestek/${bestekId}/overzichtschuldvorderingen/" >Overzicht</a></b>
+        <b><a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/overzichtschuldvorderingen/" >Overzicht</a></b>
     </div>
 </div>
 

@@ -1,4 +1,4 @@
-package be.ovam.art46.controller;
+package be.ovam.art46.controller.budget;
 
 import be.ovam.art46.model.BestekDO;
 import be.ovam.art46.service.BestekService;
@@ -11,19 +11,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
-/**
- * Created by Koen Corstjens on 29-8-13.
- */
 public class BasicBestekController {
     public static final String MODEL_ATTRIBUTE_NAME_BINDING_RESULT = "bindingResult";
-    public static final String MODEL_ATTRIBUTE_NAME_BESTEK_ID = "bestekId";
     public static final String MODEL_ATTRIBUTE_NAME_BESTEK_NR = "bestekNr";
     public static final String MODEL_ATTRIBUTE_NAME_DOSSIER_ID = "dossierId";
     public static final String MODEL_ATTRIBUTE_NAME_DOSSIER_TYPE = "dossier_type";
     public static final String MODEL_ATTRIBUTE_NAME_DOSSIER_NR = "dossierNr";
     public static final String MODEL_ATTRIBUTE_NAME_DOSSIER_URL = "dossierUrl";
 
-    private int autoGrowCollectionLimit = 2048;
+    private final int autoGrowCollectionLimit = 2048;
 
     @InitBinder
     public void initListBinder(WebDataBinder binder) {
@@ -43,36 +39,22 @@ public class BasicBestekController {
 
     protected BestekDO bestekDO;
     
-    protected Integer dossierId;
-    protected String dossier_type;
-    protected String dossierNr;
-    protected Long bestekId;
-    protected String dossierUrl;
-    protected String bestekNr;
-
-
-    public void startBasic(Long bestekId, Model model) throws Exception {
+    public void startBasic(Long bestek_id, Model model) throws Exception {
         
-        bestekDO = sql.selectOne("be.ovam.art46.mappers.BestekMapper.getBestek", bestekId);
+        bestekDO = sql.selectOne("be.ovam.art46.mappers.BestekMapper.getBestek", bestek_id);
         
         
-        this.bestekId = bestekId;
-        dossierId = bestekDO.getDossier_id();
-        bestekNr = bestekDO.getBestek_nr();
-        dossier_type = bestekDO.getDossier_type();
+        String bestek_nr = bestekDO.getBestek_nr();
+        String dossier_nr = bestekDO.getDossier_nr();
         
-        dossierNr = bestekDO.getDossier_nr();
-        dossierUrl = "dossierdetailsArt46.do?dossier_nr=" + dossierNr;
-        
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_BESTEK_ID, bestekId);
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_BESTEK_NR, bestekNr);
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_ID, dossierId);
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_TYPE,dossier_type);
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_NR, dossierNr);
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_URL, dossierUrl);
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_BESTEK_NR, bestek_nr);
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_ID, bestekDO.getDossier_id());
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_TYPE, bestekDO.getDossier_type());
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_NR, dossier_nr);
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_DOSSIER_URL, "dossierdetailsArt46.do?dossier_nr=" + dossier_nr);
                 
         model.addAttribute("bestekDO", bestekDO);
-        model.addAttribute("custom_title", "Bestek " + bestekNr);
+        model.addAttribute("custom_title", "Bestek " + bestek_nr);
     }
 
 }

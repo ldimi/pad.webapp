@@ -518,7 +518,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
     }
 
     function onReady() {
-        bestekId = window.bestekId;
+        bestekId = window.bestek_id;
         $('input[name=vast_bedrag]').change(function () {
             controleerBedrag();
         });

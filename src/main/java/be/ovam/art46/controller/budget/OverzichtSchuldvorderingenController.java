@@ -1,5 +1,6 @@
-package be.ovam.art46.controller;
+package be.ovam.art46.controller.budget;
 
+import be.ovam.art46.controller.budget.BasicMeetstaatController;
 import be.ovam.art46.controller.form.OverzichtSchuldvorderingenForm;
 import be.ovam.art46.dao.OfferteDao;
 import be.ovam.art46.dto.SelectOptionIntegerDto;
@@ -88,6 +89,7 @@ public class OverzichtSchuldvorderingenController extends BasicMeetstaatControll
 
     @RequestMapping(value = "/bestek/{bestekId}/overzichtschuldvorderingen")
     public String toon(@PathVariable Long bestekId, @RequestParam(required = false) Long offerteId, @RequestParam(required = false) Integer deelOpdrachtId, Model model) throws Exception {
+        super.startBasic(bestekId, model);
         List<Offerte> offertes = offerteDao.getToegekendForBestekId(bestekId);
         Offerte geselecteerdeOfferte = null;
         DeelOpdracht geselecteerdeDeelOpdracht = null;

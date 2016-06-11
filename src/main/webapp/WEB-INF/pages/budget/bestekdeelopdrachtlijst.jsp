@@ -102,7 +102,7 @@
                             <td width="500px" >
                                 <select name="offerte_id"
                                         style="width: 100%;"
-                                        onchange="window.open('/pad/s/bestek/' + ${bestekId} + '/offerte/' + this.options[this.selectedIndex].value + '/deelopdrachten','_top')"
+                                        onchange="window.open('/pad/s/bestek/' + ${bestekDO.bestek_id} + '/offerte/' + this.options[this.selectedIndex].value + '/deelopdrachten','_top')"
                                     >
                                     <option value="-1"></option>
                                     <custom:options items="${bestekOffertesDD}" selectedValue="${offerte_id}" />
@@ -112,7 +112,7 @@
                                 <logic:present role="adminArt46,adminIVS">
                                     <img src='<html:rewrite page="/"/>/resources/images/add.gif'
                                          alt="Toevoegen deelopdracht"
-                                         onclick="window.newDeelopdracht(${bestekId}, '${besteksaldo.bestek_nr}','${besteksaldo.raamcontract_jn}');" />
+                                         onclick="window.newDeelopdracht(${bestekDO.bestek_id}, '${besteksaldo.bestek_nr}','${besteksaldo.raamcontract_jn}');" />
                                 </logic:present>
                             </td>
                         </tr>
@@ -123,7 +123,7 @@
                                             class="planning"
                                             id="deelopdracht"
                                             name="requestScope.bestekdeelopdrachtlijst"
-                                            requestURI="/pad/s/bestek/${bestekId}/deelopdrachten/"
+                                            requestURI="/pad/s/bestek/${bestekDO.bestek_id}/deelopdrachten/"
                                             decorator="be.ovam.art46.decorator.BestekDeelopdrachtLijstDecorator"
                                             >
                                         <display:column title="Dossiernaam" sortable="true" sortProperty="dossier_b_l">
@@ -144,7 +144,7 @@
 
                                         <display:column class="center" title="Voorstel" sortable="true">
                                             <c:if test="${not empty deelopdracht.voorstel_deelopdracht_id}">
-                                                <a href="/pad/s/bestek/${bestekId}/voorstel/${deelopdracht.voorstel_deelopdracht_id}">
+                                                <a href="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/${deelopdracht.voorstel_deelopdracht_id}">
                                                     ${deelopdracht.voorstel_deelopdracht_nr}
                                                 </a>
                                             </c:if>
@@ -153,7 +153,7 @@
                                         <display:column class="center">
                                             <img src='<html:rewrite page="/"/>/resources/images/edit.gif'
                                                  alt="Aanpassen deelopdracht"
-                                                 onclick="window.openDeelopdracht(${deelopdracht.deelopdracht_id}, ${bestekId}, '${besteksaldo.bestek_nr}', '${besteksaldo.raamcontract_jn}');" />
+                                                 onclick="window.openDeelopdracht(${deelopdracht.deelopdracht_id}, ${bestekDO.bestek_id}, '${besteksaldo.bestek_nr}', '${besteksaldo.raamcontract_jn}');" />
                                         </display:column>
                                         <display:column class="center">
                                             <img src='<html:rewrite page="/"/>/resources/images/copy.gif'
@@ -162,7 +162,7 @@
                                         </display:column>
                                         <display:column class="center">
                                             <c:if test="${isAdminArt46 || deelopdracht.afkeuring_d != null}">
-                                                <a href="/pad/s/bestek/${bestekId}/deelopdrachten/${deelopdracht.deelopdracht_id}/verwijder/">
+                                                <a href="/pad/s/bestek/${bestekDO.bestek_id}/deelopdrachten/${deelopdracht.deelopdracht_id}/verwijder/">
                                                     <img src='<html:rewrite page="/"/>/resources/images/delete.gif' alt="Verwijderen deelopdracht" border="0"/>
                                                 </a>
                                             </c:if>
@@ -211,7 +211,7 @@
                                             class="planning"
                                             id="planningItem"
                                             name="openstaandePlanningslijnen"
-                                            requestURI="/pad/s/bestek/${bestekId}/deelopdrachten/"
+                                            requestURI="/pad/s/bestek/${bestekDO.bestek_id}/deelopdrachten/"
                                             >
                                         <display:column property="dossier_nr" title="Dossier nr." sortable="true" class="center" />
                                         <display:column property="dossier_b_l" title="Dossier naam" sortable="true" />
@@ -223,7 +223,7 @@
                                             <c:if test="${doss_hdr_id == planningItem.doss_hdr_id}">
                                                 <img src='<html:rewrite page="/"/>/resources/images/edit.gif'
                                                      alt="Toevoegen deelopdracht"
-                                                     onclick="window.newDeelopdracht(${bestekId}, '${besteksaldo.bestek_nr}', '${besteksaldo.raamcontract_jn}', ${planningItem.dossier_id}, ${planningItem.lijn_id}, ${planningItem.ig_bedrag}, '${planningItem.igb_ds}'  );" />
+                                                     onclick="window.newDeelopdracht(${bestekDO.bestek_id}, '${besteksaldo.bestek_nr}', '${besteksaldo.raamcontract_jn}', ${planningItem.dossier_id}, ${planningItem.lijn_id}, ${planningItem.ig_bedrag}, '${planningItem.igb_ds}'  );" />
                                             </c:if>
                                         </display:column>
                                         <display:footer>
@@ -269,7 +269,7 @@
 <script type="text/javascript">
 
     _G_.deelopdracht_id = ${empty deelopdracht_id ? "null" : deelopdracht_id} ;
-    _G_.bestek_id = ${bestekId} ;
+    _G_.bestek_id = ${bestekDO.bestek_id} ;
 
     laadBacking('budget/deelopdracht/deelopdrachtBacking');
 </script>

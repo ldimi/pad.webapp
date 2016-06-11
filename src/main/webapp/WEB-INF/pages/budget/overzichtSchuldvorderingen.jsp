@@ -4,7 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="custom" uri="/tags/custom" %>
-<form:form action="/pad/s/bestek/${bestekId}/overzichtschuldvorderingen" method="post" modelAttribute="form"><br/>
+<form:form action="/pad/s/bestek/${bestekDO.bestek_id}/overzichtschuldvorderingen" method="post" modelAttribute="form"><br/>
     <c:if test="${not empty offertes}">
         Offerte: <form:select path="offerteId" items="${offertes}" itemLabel="inzender" itemValue="id" onchange="this.form.submit();" cssStyle="width: 150"/>
         <br/>

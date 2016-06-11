@@ -8,7 +8,7 @@
     <tr>
         <logic:notEmpty name="bestekadressen" scope="request">
             <td>
-                <display:table id="adrescontact" name="requestScope.bestekadressen" requestURI="/pad/s/bestek/${bestekId}/opdrachthouders/" class="lijst width980">
+                <display:table id="adrescontact" name="requestScope.bestekadressen" requestURI="/pad/s/bestek/${bestekDO.bestek_id}/opdrachthouders/" class="lijst width980">
                     <display:column property="naam_l" title="Naam" href="adres.do?crudAction=read" paramId="adres_id" paramProperty="adres_id" sortable="true"/>
                     <display:column property="naam_contact_l" title="Contact persoon" class="center" />
                     <display:column property="functie" title="Functie" class="center"/>
@@ -29,7 +29,7 @@
         </logic:notEmpty>
         <td align="right" valign="top">
             <logic:present role="adminArt46,adminIVS">
-                <img src='<html:rewrite page="/"/>/resources/images/add.gif' title="Opdrachthouder toevoegen" onclick="popupWindow('startsearch.do?popup=yes&forwardURL=/s/bestek/${bestekId}/opdrachthouders/&searchFlag=bestekadres&searchForward=success_zoek_contact&searchId=${bestekId}', 'Adressen');"/>
+                <img src='<html:rewrite page="/"/>/resources/images/add.gif' title="Opdrachthouder toevoegen" onclick="popupWindow('startsearch.do?popup=yes&forwardURL=/s/bestek/${bestekDO.bestek_id}/opdrachthouders/&searchFlag=bestekadres&searchForward=success_zoek_contact&searchId=${bestekDO.bestek_id}', 'Adressen');"/>
             </logic:present>
         </td>
     </tr>

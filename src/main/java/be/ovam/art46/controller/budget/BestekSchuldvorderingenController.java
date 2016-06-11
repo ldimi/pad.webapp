@@ -1,6 +1,5 @@
 package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.controller.BasicBestekController;
 import be.ovam.art46.service.schuldvordering.SchuldvorderingService;
 import be.ovam.util.mybatis.SqlSession;
 

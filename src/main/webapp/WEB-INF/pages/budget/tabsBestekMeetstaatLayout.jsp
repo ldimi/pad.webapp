@@ -18,15 +18,15 @@
 <div style="margin: 5px;">
     <div>
         <div class='tab tabHoogte <%=("Meetstaat".equals(sub_tab_selected) ? "selected" : "")%>' >
-            <b><a class="sm" href="/pad/s/bestek/${bestekId}/meetstaat/" >Meetstaat</a></b>
+            <b><a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/" >Meetstaat</a></b>
         </div>
 
         <div class='tab tabHoogte <%=("Raming".equals(sub_tab_selected) ? "selected" : "")%>' >
-            <b><a class="sm" href="/pad/s/bestek/${bestekId}/meetstaat/raming/" >Raming</a></b>
+            <b><a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/raming/" >Raming</a></b>
         </div>
         <c:if test="${meetstaatLocked}">
             <div class='tab tabHoogte <%=("Offertes".equals(sub_tab_selected) ? "selected" : "")%>' >
-                <b><a class="sm" href="/pad/s/bestek/${bestekId}/meetstaat/offertes/" >Offertes</a></b>
+                <b><a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/offertes/" >Offertes</a></b>
             </div>
         </c:if>
     </div>

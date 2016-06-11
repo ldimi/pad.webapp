@@ -1,6 +1,5 @@
 package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.controller.BasicBestekController;
 import be.ovam.util.mybatis.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -13,29 +13,29 @@
 
 <div style="height: 40px; width: 1000px;">
     <div class='tab <%=("Basisgegevens".equals(tab_selected) ? "selected" : "")%>' >
-        <a class="sm" href="/pad/s/bestek/${bestekId}/basisgegevens/" >Basisgegevens <br/>${bestekNr}</a>
+        <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/basisgegevens/" >Basisgegevens <br/>${bestekNr}</a>
     </div>
-    <c:if test="${!empty bestekId}">
+    <c:if test="${!empty bestekDO.bestek_id}">
         <div class='tab <%=("Schuldvorderingen".equals(tab_selected) ? "selected" : "")%>'>
-            <a class="sm" href="/pad/s/bestek/${bestekId}/schuldvorderingen/" >Schuldvorderingen</a>
+            <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/schuldvorderingen/" >Schuldvorderingen</a>
         </div>
         <div class='tab <%=("Acties".equals(tab_selected) ? "selected" : "")%>' >
-            <a class="sm" href="/pad/s/bestek/${bestekId}/acties/" >Acties</a>
+            <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/acties/" >Acties</a>
         </div>
         <div class='tab <%=("Deelopdrachten".equals(tab_selected) ? "selected" : "")%>' >
-            <a class="sm" href="/pad/s/bestek/${bestekId}/deelopdrachten/" >Deelopdrachten</a>
+            <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/deelopdrachten/" >Deelopdrachten</a>
         </div>
         <div class='tab <%=("Vastleggingen".equals(tab_selected) ? "selected" : "")%>' >
-            <a class="sm" href="/pad/s/bestek/${bestekId}/vastleggingen/" >Vastleggingen</a>
+            <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/vastleggingen/" >Vastleggingen</a>
         </div>
         <div class='tab <%=("Opdrachthouders".equals(tab_selected) ? "selected" : "")%>'>
-            <a class="sm" href="/pad/s/bestek/${bestekId}/opdrachthouders/" >Opdrachthouders</a>
+            <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/opdrachthouders/" >Opdrachthouders</a>
         </div>
         <div class='tab <%=("Meetstaat".equals(tab_selected) ? "selected" : "")%>' >
-            <a class="sm" href="/pad/s/bestek/${bestekId}/meetstaat/" >Meetstaat</a>
+            <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/" >Meetstaat</a>
         </div>
         <div class='tab <%=("Planning".equals(tab_selected) ? "selected" : "")%>' >
-            <a class="sm" href="/pad/s/bestek/${bestekId}/planning/" >Planning</a>
+            <a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/planning/" >Planning</a>
         </div>
         <div class="tab ">
             <a style="text-align: right" href="/pad/${dossierUrl}" >Dossier: ${dossierNr}</a>

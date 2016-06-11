@@ -16,14 +16,14 @@
 
 <logic:notEmpty name="bestekschuldvorderinglijst" scope="request">
 
-    <display:table class="planning" id="schuldvordering" name="requestScope.bestekschuldvorderinglijst" requestURI="/pad/s/bestek/${bestekId}/schuldvorderingen/">
+    <display:table class="planning" id="schuldvordering" name="requestScope.bestekschuldvorderinglijst" requestURI="/pad/s/bestek/${bestekDO.bestek_id}/schuldvorderingen/">
         <display:column>
             <img src='<html:rewrite page="/"/>/resources/images/edit.gif' alt="Aanpassen schuldvordering" onclick="editSchuldVorderingDialog.show(${schuldvordering.vordering_id});"/>
         </display:column>
         <display:column title="Vordering_nr"  sortable="true" >
             <c:choose>
                 <c:when test="${empty schuldvordering.brief_id}">
-                    <a href="/pad/s/bestek/${bestekId}/aanvraagSchuldvordering/${schuldvordering.aanvr_schuldvordering_id}">${schuldvordering.schuldvordering_nr}</a>
+                    <a href="/pad/s/bestek/${bestekDO.bestek_id}/aanvraagSchuldvordering/${schuldvordering.aanvr_schuldvordering_id}">${schuldvordering.schuldvordering_nr}</a>
                 </c:when>
                 <c:otherwise>
                     ${schuldvordering.schuldvordering_nr}
@@ -60,7 +60,7 @@
 
         <c:if test="${empty schuldvordering.antw_dms_folder}">
             <display:column style="text-align: center;">
-                <a href="/pad/s/bestek/${bestekId}/schuldvordering/draftSchuldvordering-${schuldvordering.vordering_id}.pdf" target="_blank" >
+                <a href="/pad/s/bestek/${bestekDO.bestek_id}/schuldvordering/draftSchuldvordering-${schuldvordering.vordering_id}.pdf" target="_blank" >
                     draft
                 </a>
             </display:column>
@@ -76,7 +76,7 @@
         <logic:present role="boekhouding">
             <c:if test="${!empty schuldvordering.wbs_nr}">
                 <display:column style="text-align: center;">
-                    <a href="/pad/s/bestek/${bestekId}/schuldvorderingen/verwijderWbs?vordering_id=${schuldvordering.vordering_id}" >
+                    <a href="/pad/s/bestek/${bestekDO.bestek_id}/schuldvorderingen/verwijderWbs?vordering_id=${schuldvordering.vordering_id}" >
                         Verwijder Wbs
                     </a>
                 </display:column>
@@ -87,7 +87,7 @@
                           empty schuldvordering.initieel_acht_nr &&
                           schuldvordering.afgekeurd_jn == 'N'}">
                 <logic:present role="adminArt46,adminIVS">
-                    <a href="/pad/s/bestek/${bestekId}/schuldvorderingen/verwijder?vordering_id=${schuldvordering.vordering_id}" >
+                    <a href="/pad/s/bestek/${bestekDO.bestek_id}/schuldvorderingen/verwijder?vordering_id=${schuldvordering.vordering_id}" >
                         <img src='<html:rewrite page="/"/>/resources/images/delete.gif' title="Verwijderen"/>
                     </a>
                 </logic:present>

@@ -29,12 +29,12 @@
                     <display:column property="rate" title="Tijd" style="text-align:right;" decorator="be.ovam.art46.decorator.BigDecimalDecorator" />
                     <display:column style="text-align: center;">
                         <logic:present role="adminArt46,adminIVS">
-                            <img src='<html:rewrite page="/"/>/resources/images/edit.gif' alt="Actie wijzigen" title="Actie wijzigen" onclick="popupWindow('/pad/s/bestek/${bestekId}/acties/<bean:write name="actie" property="actie_id"/>/wijzig/','Actie')"/>
+                            <img src='<html:rewrite page="/"/>/resources/images/edit.gif' alt="Actie wijzigen" title="Actie wijzigen" onclick="popupWindow('/pad/s/bestek/${bestekDO.bestek_id}/acties/<bean:write name="actie" property="actie_id"/>/wijzig/','Actie')"/>
                         </logic:present>
                     </display:column>
                     <display:column style="text-align: center;">
                         <logic:present role="adminArt46,adminIVS">
-                            <a href='/pad/s/bestek/${bestekId}/acties/<bean:write name="actie" property="actie_id"/>/verwijder/'>
+                            <a href='/pad/s/bestek/${bestekDO.bestek_id}/acties/<bean:write name="actie" property="actie_id"/>/verwijder/'>
                                 <html:img border="0" page="/resources/images/delete.gif" title="Verwijderen"/>
                             </a>
                         </logic:present>
@@ -45,7 +45,7 @@
         </td>
         <td valign="top">
             <logic:present role="adminArt46,adminIVS">
-                <img src='<html:rewrite page="/"/>/resources/images/add.gif' alt="Actie toevoegen" title="Actie toevoegen" onclick="popupWindow('/pad/s/bestek/${bestekId}/acties/aanmaken/','Actie')"/>
+                <img src='<html:rewrite page="/"/>/resources/images/add.gif' alt="Actie toevoegen" title="Actie toevoegen" onclick="popupWindow('/pad/s/bestek/${bestekDO.bestek_id}/acties/aanmaken/','Actie')"/>
             </logic:present>
         </td>
     </tr>

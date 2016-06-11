@@ -19,12 +19,12 @@
 
 <div style="margin: 5px;">
     <div class='tab subtab tabHoogte <%=("deelopdrachten".equals(sub_tab_selected) ? "selected" : "")%>' >
-        <b><a class="sm" href="/pad/s/bestek/${bestekId}/deelopdrachten/" >Deelopdrachten</a></b>
+        <b><a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/deelopdrachten/" >Deelopdrachten</a></b>
     </div>
 
     <c:if test="${dossier_type eq 'X'}">
         <div class='tab tabHoogte <%=("voorstellen".equals(sub_tab_selected) ? "selected" : "")%>' >
-            <b><a class="sm" href="/pad/s/bestek/${bestekId}/deelopdrachtvoorstellen/" >Voorstellen</a></b>
+            <b><a class="sm" href="/pad/s/bestek/${bestekDO.bestek_id}/deelopdrachtvoorstellen/" >Voorstellen</a></b>
         </div>
     </c:if>
 

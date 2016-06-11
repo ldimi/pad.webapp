@@ -28,7 +28,7 @@
         </c:choose>
         <tr class="${styleclass}">
             <td>
-                <a href="/pad/s/bestek/${bestekId}/meetstaat/offertes/${offerte.id}/">
+                <a href="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/offertes/${offerte.id}/">
                     ${offerte.id} ${offerte.inzender}
                </a>
             </td>
@@ -41,7 +41,7 @@
             <td>
                 ${offerte.status}
                 <c:if test="${not empty offerte.status}">
-                    <a href="/pad/s/bestek/${bestekId}/meetstaat/offertes/${offerte.id}/toekenningverwijderen/">
+                    <a href="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/offertes/${offerte.id}/toekenningverwijderen/">
                         Toewijzing verwijderen
                     </a>
                 </c:if>
@@ -49,7 +49,7 @@
             <td>
                 <select name="organisatie_id"
                         style="width: 100%;"
-                        onchange="onChangeOrganisatie_id(this, ${bestekId}, ${offerte.id});"
+                        onchange="onChangeOrganisatie_id(this, ${bestekDO.bestek_id}, ${offerte.id});"
                     >
                     <option value=""></option>
                     <custom:options items="${organisaties_dd}"
@@ -60,7 +60,7 @@
     </c:forEach>
 </table>
 <hr/>
-<form method="get" action="/pad/s/bestek/meetstaat/offertes/export/draftOffertes-${bestekId}.xls" target="_blank" >
+<form method="get" action="/pad/s/bestek/meetstaat/offertes/export/draftOffertes-${bestekDO.bestek_id}.xls" target="_blank" >
     <button type="submit" class="inputbtn">Exporteren voor rekenkundige controle: Excel</button>
 </form>
 Rapport financi&euml;le controle:
@@ -71,8 +71,8 @@ Rapport financi&euml;le controle:
 </c:if>
 <form action="/pad/s/bestek/meetstaat/offertes/uploaden"
       enctype="multipart/form-data" method="post">
-    <input type="hidden" value="${bestekId}"
-           name="bestekId"/>
+    <input type="hidden" value="${bestekDO.bestek_id}"
+           name="bestek_id"/>
     <input type="file" name="file" onchange="this.form.submit()"/>
 </form>
 

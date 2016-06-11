@@ -4,7 +4,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="basic-div">
 <form:form method="post" accept-charset="UTF-8"
-           action="/pad/s/bestek/${bestekId}/voorstel/${voorstelDeelopdrachtForm.id}"
+           action="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/${voorstelDeelopdrachtForm.id}"
            modelAttribute="voorstelDeelopdrachtForm">
     <table style="width: 100%">
         <tr style="width: 100%">
@@ -80,13 +80,13 @@
                     </tr>
                     <tr><td colspan="2">
                         <c:if test="${voorstelDeelopdrachtForm.voorstelDeelopdracht.locked}" >
-                        <a href="/pad/s/bestek/${bestekId}/voorstel/${voorstelDeelopdrachtForm.id}/mail"><b>Verwittig leverancier</b></a>
+                        <a href="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/${voorstelDeelopdrachtForm.id}/mail"><b>Verwittig leverancier</b></a>
                         </c:if><br/>
                         <c:if test="${voorstelDeelopdrachtForm.voorstelDeelopdracht.locked}" >
-                            <a href="/pad/s/bestek/${bestekId}/voorstel/orgineelVoorstel${voorstelDeelopdrachtForm.id}.xls"><b>Exporteer naar Excel</b></a>
+                            <a href="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/orgineelVoorstel${voorstelDeelopdrachtForm.id}.xls"><b>Exporteer naar Excel</b></a>
                         </c:if>
                         <c:if test="${voorstelDeelopdrachtForm.voorstelDeelopdracht.locked}" >
-                            <a href="/pad/s/bestek/${bestekId}/voorstel/orgineelVoorstel${voorstelDeelopdrachtForm.id}.pdf"><b>Exporteer naar PDF</b></a>
+                            <a href="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/orgineelVoorstel${voorstelDeelopdrachtForm.id}.pdf"><b>Exporteer naar PDF</b></a>
                         </c:if>
                     </td></tr>
                 </table>
@@ -345,7 +345,7 @@
             <br/>
             <c:choose>
                 <c:when test="${not (voorstelDeelopdrachtForm.voorstelDeelopdracht.id == null)}">
-                    <form action="/pad/s/bestek/${bestekId}/voorstel/${voorstelDeelopdrachtForm.voorstelDeelopdracht.id}/upload/"
+                    <form action="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/${voorstelDeelopdrachtForm.voorstelDeelopdracht.id}/upload/"
                           enctype="multipart/form-data" method="post">
                         <input type="hidden" value="${voorstelDeelopdrachtForm.voorstelDeelopdracht.id}"
                                name="voorstelDeelopdrachtId"/>

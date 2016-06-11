@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <%--
-<form:form method="post" action="/pad/s/bestek/${bestekId}/planning/opslaan/" commandName="bestekramingform">
+<form:form method="post" action="/pad/s/bestek/${bestekDO.bestek_id}/planning/opslaan/" commandName="bestekramingform">
 --%>
     <table>
         <tr>

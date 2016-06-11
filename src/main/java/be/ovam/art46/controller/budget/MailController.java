@@ -1,5 +1,6 @@
-package be.ovam.art46.controller;
+package be.ovam.art46.controller.budget;
 
+import be.ovam.art46.controller.budget.BasicBestekController;
 import be.ovam.art46.common.mail.MailService;
 import be.ovam.art46.form.MailForm;
 import be.ovam.art46.service.GebruikerService;
@@ -64,9 +65,9 @@ public class MailController extends BasicBestekController {
 
 
 
-    @RequestMapping(value = "/bestek/{bestekId}/voorstel/{voorstelId}/sendmail", method = RequestMethod.POST)
+    @RequestMapping(value = "/bestek/{bestek_id}/voorstel/{voorstelId}/sendmail", method = RequestMethod.POST)
     public String sendMail(
-            @PathVariable Long bestekId,
+            @PathVariable Long bestek_id,
             @PathVariable Long voorstelId,
             @RequestParam String action,
             @ModelAttribute(MODEL_ATTRIBUTE_MAILFORM) MailForm mailForm,
@@ -86,7 +87,7 @@ public class MailController extends BasicBestekController {
             errors.addError(error);
         }
         if (errors.hasErrors()) {
-            return createMailVoorstelDeelopdracht(bestekId, voorstelId, model);
+            return createMailVoorstelDeelopdracht(bestek_id, voorstelId, model);
         }
         
         if(!StringUtils.equals("Annuleer",action)) {
@@ -101,12 +102,12 @@ public class MailController extends BasicBestekController {
                 voorstelDeelopdrachtService.save(voorstelDeelopdracht);
             }
         }
-        return "redirect:/s/bestek/" + bestekId + "/voorstel/" + voorstelId;
+        return "redirect:/s/bestek/" + bestek_id + "/voorstel/" + voorstelId;
     }
 
-    @RequestMapping(value = "/bestek/{bestekId}/voorstel/{voorstelId}/mail", method = RequestMethod.GET)
-    public String createMailVoorstelDeelopdracht(@PathVariable Long bestekId, @PathVariable Long voorstelId, Model model) throws Exception {
-        super.startBasic(bestekId, model);
+    @RequestMapping(value = "/bestek/{bestek_id}/voorstel/{voorstelId}/mail", method = RequestMethod.GET)
+    public String createMailVoorstelDeelopdracht(@PathVariable Long bestek_id, @PathVariable Long voorstelId, Model model) throws Exception {
+        super.startBasic(bestek_id, model);
         
         model.addAttribute("voorstelId", voorstelId);
         

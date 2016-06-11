@@ -1,5 +1,6 @@
-package be.ovam.art46.controller;
+package be.ovam.art46.controller.budget;
 
+import be.ovam.art46.controller.budget.BasicMeetstaatController;
 import be.ovam.art46.model.NewMeetstaatRequest;
 import be.ovam.art46.service.BriefService;
 import be.ovam.pad.model.Bestek;
@@ -65,8 +66,8 @@ public class MeetstaatController extends BasicMeetstaatController{
     @RequestMapping(value = "/meetstaat/upload", method = RequestMethod.POST)
     public
     @ResponseBody
-    Response uploadMedia(@RequestParam("file") MultipartFile file, @RequestParam("bestekId") Long bestekId) throws Exception {
-        Bestek bestek = bestekService.getBestek(bestekId);
+    Response uploadMedia(@RequestParam("file") MultipartFile file, @RequestParam("bestek_id") Long bestek_id) throws Exception {
+        Bestek bestek = bestekService.getBestek(bestek_id);
         return new Response(meetstaatService.readMeetstaatCSV(new InputStreamReader(file.getInputStream()), bestek), true, null);
     }
 

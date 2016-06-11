@@ -1,6 +1,5 @@
 package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.controller.BasicBestekController;
 import be.ovam.art46.model.BestekDO;
 import be.ovam.art46.util.Application;
 import be.ovam.art46.util.DropDownHelper;

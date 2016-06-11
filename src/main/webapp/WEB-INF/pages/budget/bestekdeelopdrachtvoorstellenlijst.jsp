@@ -3,7 +3,7 @@
 
 
 <form class="formlayout"
-      action="/pad/s/bestek/${bestekId}/voorstellen_opm/update"
+      action="/pad/s/bestek/${bestekDO.bestek_id}/voorstellen_opm/update"
       method="post" >
     <table  style="width: 700px;" >
         <tr>
@@ -68,7 +68,7 @@
                     </c:forEach>
                     </tbody>
                 </table>
-                <a href="/pad/s/bestek/${bestekId}/voorstel/nieuw">Nieuw voorstel aanvragen</a>
+                <a href="/pad/s/bestek/${bestekDO.bestek_id}/voorstel/nieuw">Nieuw voorstel aanvragen</a>
             </div>
         </td>
     </tr>

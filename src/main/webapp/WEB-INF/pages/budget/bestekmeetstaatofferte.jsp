@@ -27,14 +27,14 @@
     <c:if test="${not empty bindingResult}">
         <b style="color: red">Deze Meetstaat kan niet opgeslagen worden: Sommige waarden zijn niet correct ingevoerd</b>
     </c:if>
-    <form:form  method="post" accept-charset="UTF-8" action="/pad/s/bestek/${bestekId}/meetstaat/offertes/" modelAttribute="offerteForm">
+    <form:form  method="post" accept-charset="UTF-8" action="/pad/s/bestek/${bestekDO.bestek_id}/meetstaat/offertes/" modelAttribute="offerteForm">
         <table>
             <tr>
                 <td>Inschrijver: ${offerteForm.offerte.inzender}</td>
                 <td>
                     <input type="hidden" name="offerteId" value="${offerteForm.offerte.id}" />
                     <input type="hidden" name="offerte.id" value="${offerteForm.offerte.id}" />
-                    <input type="hidden" name="offerte.bestekId" value="${bestekId}" />
+                    <input type="hidden" name="offerte.bestekId" value="${bestekDO.bestek_id}" />
                     <input type="hidden" name="offerte.offerte.brief.brief_id" value="${offerteForm.offerte.brief.brief_id}" />
                     <input type="hidden" name="offerte.inzender" value="${offerteForm.offerte.inzender}" />
                 </td>
@@ -324,8 +324,8 @@
 </c:if>
 <tiles:insert definition="laadJS" />
 <script type="text/javascript">
-    bestekId = ${bestekId};
-    offerteId = ${offerteForm.offerte.id};
+    bestek_id = ${bestekDO.bestek_id};
+    offerte_id = ${offerteForm.offerte.id};
 </script>
 <script type="text/javascript">
     laadBacking('lijsten/bestekmeetstaatofferteBacking');
