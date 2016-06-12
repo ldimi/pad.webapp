@@ -32,7 +32,7 @@
             <tr>
                 <td>Inschrijver: ${offerteForm.offerte.inzender}</td>
                 <td>
-                    <input type="hidden" name="offerteId" value="${offerteForm.offerte.id}" />
+                    <input type="hidden" name="offerte_id" value="${offerteForm.offerte.id}" />
                     <input type="hidden" name="offerte.id" value="${offerteForm.offerte.id}" />
                     <input type="hidden" name="offerte.bestekId" value="${bestekDO.bestek_id}" />
                     <input type="hidden" name="offerte.offerte.brief.brief_id" value="${offerteForm.offerte.brief.brief_id}" />

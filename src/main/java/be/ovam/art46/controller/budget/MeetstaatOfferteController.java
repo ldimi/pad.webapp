@@ -1,6 +1,5 @@
 package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.controller.budget.BasicMeetstaatController;
 import be.ovam.art46.model.OfferteForm;
 import be.ovam.art46.model.SelectElement;
 import be.ovam.art46.service.meetstaat.MeetstaatEenheidService;
@@ -40,7 +39,7 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
 
     public static final String MODEL_ATTRIBUTE_NAME_OFFERTE_FORM = "offerteForm";
     public static final String MODEL_ATTRIBUTE_NAME_BTW_TARIEVEN = "btwTarieven";
-    private static final String MODEL_ATTRIBUTE_NAME_OFFERTE_ID = "offerteId";
+    private static final String MODEL_ATTRIBUTE_NAME_OFFERTE_ID = "offerte_id";
     
     @Autowired
     MeetstaatExportExcelService meetstaatExportExcelService;
@@ -60,22 +59,21 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
 
    
     
-    @RequestMapping(value = "/bestek/{bestekId}/meetstaat/offertes", method = RequestMethod.GET)
-    public String start(@PathVariable Long bestekId, Model model) throws Exception {
-        setBasicModel(bestekId, model, null);
+    @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes", method = RequestMethod.GET)
+    public String start(@PathVariable Long bestek_id, Model model) throws Exception {
+        setBasicModel(bestek_id, model, null);
         
-        model.addAttribute("offertes", meetstaatOfferteService.getOrCreateOffertesForBestek(bestekId));
+        model.addAttribute("offertes", meetstaatOfferteService.getOrCreateOffertesForBestek(bestek_id));
         
         model.addAttribute("organisaties_dd", ovamcore_sqlSession.selectList("organisatie_financieelBeheer_lijst"));
         
-        //return "bestek.meetstaat.offertes";
-        return jsview("bestek.meetstaat.offertes", "budget/meetstaat/offertes2", model);
+        return jsview("bestek.meetstaat.offertes", "budget/meetstaat/offertes", model);
     }
 
     @ModelAttribute(value = MODEL_ATTRIBUTE_NAME_OFFERTE_FORM)
-    public OfferteForm setofferteFormModel(@RequestParam(required = false) Long offerteId) {
-        if (offerteId != null) {
-            return meetstaatOfferteService.getOfferte(offerteId);
+    public OfferteForm setofferteFormModel(@RequestParam(required = false) Long offerte_id) {
+        if (offerte_id != null) {
+            return meetstaatOfferteService.getOfferte(offerte_id);
         }
         return new OfferteForm();
     }
@@ -96,24 +94,24 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
 
     }
 
-    @RequestMapping(value = "/bestek/{bestekId}/meetstaat/offertes", method = RequestMethod.POST)
-    public String create(@PathVariable Long bestekId, @Valid @ModelAttribute(MODEL_ATTRIBUTE_NAME_OFFERTE_FORM) OfferteForm offerteForm, BindingResult result, Model model, @RequestParam String action) throws Exception {
+    @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes", method = RequestMethod.POST)
+    public String create(@PathVariable Long bestek_id, @Valid @ModelAttribute(MODEL_ATTRIBUTE_NAME_OFFERTE_FORM) OfferteForm offerteForm, BindingResult result, Model model, @RequestParam String action) throws Exception {
         if (result.hasErrors()) {
             model.addAttribute(MODEL_ATTRIBUTE_NAME_BINDING_RESULT, result);
-            return setBasicModelOfferte(bestekId, model, offerteForm);
+            return setBasicModelOfferte(bestek_id, model, offerteForm);
         }
         if (action.equals("Toevoegen")) {
             offerteForm.getOfferteRegels().add(offerteForm.getNieuweOfferteRegel());
         }
-        Long resultOfferteId = meetstaatOfferteService.save(offerteForm, bestekId);
+        Long resultOfferteId = meetstaatOfferteService.save(offerteForm, bestek_id);
         model.addAttribute(MODEL_ATTRIBUTE_NAME_OFFERTE_ID, offerteForm.getOfferte().getId());
-        return "redirect:/s/bestek/" + bestekId + "/meetstaat/offertes/" + resultOfferteId + "/";
+        return "redirect:/s/bestek/" + bestek_id + "/meetstaat/offertes/" + resultOfferteId + "/";
     }
 
-    @RequestMapping(value = "/bestek/{bestekId}/meetstaat/offertes/{offerteId}/afsluiten/", method = RequestMethod.GET)
-    public String afsluiten(@PathVariable String bestekId, @PathVariable Long offerteId) throws Exception {
-        meetstaatOfferteService.afsluiten(offerteId);
-        return "redirect:/s/bestek/" + bestekId + "/meetstaat/offertes/" + offerteId + "/";
+    @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes/{offerte_id}/afsluiten/", method = RequestMethod.GET)
+    public String afsluiten(@PathVariable String bestek_id, @PathVariable Long offerte_id) throws Exception {
+        meetstaatOfferteService.afsluiten(offerte_id);
+        return "redirect:/s/bestek/" + bestek_id + "/meetstaat/offertes/" + offerte_id + "/";
     }
     
     @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offerte/{offerte_id}/koppelOrganisatie", method = RequestMethod.GET)
@@ -131,34 +129,34 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
     }
     
 
-    @RequestMapping(value = "/bestek/{bestekId}/meetstaat/offertes/{offerteId}/toekennen/", method = RequestMethod.GET)
-    public String toekenen(@PathVariable String bestekId, @PathVariable Long offerteId) throws Exception {
-        meetstaatOfferteService.toekenen(offerteId);
-        return "redirect:/s/bestek/" + bestekId + "/meetstaat/offertes/" + offerteId + "/";
+    @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes/{offerte_id}/toekennen/", method = RequestMethod.GET)
+    public String toekenen(@PathVariable String bestek_id, @PathVariable Long offerte_id) throws Exception {
+        meetstaatOfferteService.toekenen(offerte_id);
+        return "redirect:/s/bestek/" + bestek_id + "/meetstaat/offertes/" + offerte_id + "/";
     }
 
-    @RequestMapping(value = "/bestek/{bestekId}/meetstaat/offertes/{offerteId}/toekenningverwijderen/", method = RequestMethod.GET)
-    public String toekenningverwijderen(@PathVariable String bestekId, @PathVariable Long offerteId) throws Exception {
-        meetstaatOfferteService.toekenningverwijderen(offerteId);
-        return "redirect:/s/bestek/" + bestekId + "/meetstaat/offertes/" + offerteId + "/";
+    @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes/{offerte_id}/toekenningverwijderen/", method = RequestMethod.GET)
+    public String toekenningverwijderen(@PathVariable String bestek_id, @PathVariable Long offerte_id) throws Exception {
+        meetstaatOfferteService.toekenningverwijderen(offerte_id);
+        return "redirect:/s/bestek/" + bestek_id + "/meetstaat/offertes/" + offerte_id + "/";
     }
 
-    @RequestMapping(value = "/bestek/{bestekId}/meetstaat/offertes/{offerteId}/", method = RequestMethod.GET)
-    public String start(@PathVariable Long bestekId, @PathVariable Long offerteId, Model model) throws Exception {
-        return setBasicModelOfferte(bestekId, model, meetstaatOfferteService.getOfferte(offerteId));
+    @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes/{offerte_id}/", method = RequestMethod.GET)
+    public String start(@PathVariable Long bestek_id, @PathVariable Long offerte_id, Model model) throws Exception {
+        return setBasicModelOfferte(bestek_id, model, meetstaatOfferteService.getOfferte(offerte_id));
     }
 
-    @RequestMapping(value = "/bestek/{bestekId}/meetstaat/offertes/{offerteId}/upload/", method = RequestMethod.POST)
+    @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes/{offerte_id}/upload/", method = RequestMethod.POST)
     public
     @ResponseBody
-    Response uploadMedia(@RequestParam("file") MultipartFile file, @PathVariable("bestekId") Long bestekId, @PathVariable Long offerteId) throws Exception {
-        List<String> errors = meetstaatOfferteService.uploudMeetstaatCSV(new InputStreamReader(file.getInputStream()), bestekId, offerteId);
+    Response uploadMedia(@RequestParam("file") MultipartFile file, @PathVariable("bestek_id") Long bestek_id, @PathVariable Long offerte_id) throws Exception {
+        List<String> errors = meetstaatOfferteService.uploudMeetstaatCSV(new InputStreamReader(file.getInputStream()), bestek_id, offerte_id);
         return new Response(errors, true, null);
     }
 
 
-    @RequestMapping(value = "/bestek/meetstaat/offertes/{offerteId}/export/draftOfferte-{inzender}.xls", method = RequestMethod.GET)
-    public void exportExcel(@PathVariable Integer offerteId, @PathVariable String inzender, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/bestek/meetstaat/offertes/{offerte_id}/export/draftOfferte-{inzender}.xls", method = RequestMethod.GET)
+    public void exportExcel(@PathVariable Integer offerte_id, @PathVariable String inzender, HttpServletResponse response) throws IOException {
         ServletOutputStream op = null;
         try {
             response.setContentType("application/vnd.ms-excel");
@@ -167,7 +165,7 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
             response.setHeader("Pragma", "public");
             response.setHeader("Content-disposition", "attachment;filename=draftOfferte-" + inzender + ".xls");
             op = response.getOutputStream();
-            meetstaatExportExcelService.createOfferteExport(offerteId, op);
+            meetstaatExportExcelService.createOfferteExport(offerte_id, op);
         } catch (Exception e) {
             log.error(e, e);
         } finally {
@@ -178,8 +176,8 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
         }
     }
 
-    @RequestMapping(value = "/bestek/meetstaat/offertes/{offerteId}/export/draftOfferte-{inzender}.pdf", method = RequestMethod.GET)
-    public void exportPdf(@PathVariable Integer offerteId, @PathVariable String inzender, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/bestek/meetstaat/offertes/{offerte_id}/export/draftOfferte-{inzender}.pdf", method = RequestMethod.GET)
+    public void exportPdf(@PathVariable Integer offerte_id, @PathVariable String inzender, HttpServletResponse response) throws IOException {
         ServletOutputStream op = null;
         try {
             response.setContentType("application/download");
@@ -188,7 +186,7 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
             response.setHeader("Pragma", "public");
             response.setHeader("Content-disposition", "attachment;filename=draftOfferte-" + inzender + ".pdf");
             op = response.getOutputStream();
-            meetstaatExportPdfService.createOfferteExport(offerteId, op);
+            meetstaatExportPdfService.createOfferteExport(offerte_id, op);
         } catch (Exception e) {
             log.error(e, e);
         } finally {
@@ -199,17 +197,17 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
         }
     }
 
-    @RequestMapping(value = "/bestek/meetstaat/offertes/export/draftOffertes-{bestekId}.xls", method = RequestMethod.GET)
-    public void exportOffertesPdf(@PathVariable Long bestekId, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/bestek/meetstaat/offertes/export/draftOffertes-{bestek_id}.xls", method = RequestMethod.GET)
+    public void exportOffertesPdf(@PathVariable Long bestek_id, HttpServletResponse response) throws IOException {
         ServletOutputStream op = null;
         try {
             response.setContentType("application/download");
             response.setHeader("Expires", "0");
             response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
             response.setHeader("Pragma", "public");
-            response.setHeader("Content-disposition", "attachment;filename=draftOffertes-" + bestekId + ".xls");
+            response.setHeader("Content-disposition", "attachment;filename=draftOffertes-" + bestek_id + ".xls");
             op = response.getOutputStream();
-            meetstaatExportExcelService.createOffertesExport(bestekId, op);
+            meetstaatExportExcelService.createOffertesExport(bestek_id, op);
         } catch (Exception e) {
             log.error(e, e);
         } finally {
@@ -221,13 +219,13 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
     }
 
 
-    private String setBasicModelOfferte(Long bestekId, Model model, OfferteForm offerteForm) throws Exception {
-        setBasicModel(bestekId, model, offerteForm);
+    private String setBasicModelOfferte(Long bestek_id, Model model, OfferteForm offerteForm) throws Exception {
+        setBasicModel(bestek_id, model, offerteForm);
         return "bestek.meetstaat.offerte";
     }
 
-    private void setBasicModel(Long bestekId, Model model, OfferteForm offerteForm) throws Exception {
-        super.startBasic(bestekId, model);
+    private void setBasicModel(Long bestek_id, Model model, OfferteForm offerteForm) throws Exception {
+        super.startBasic(bestek_id, model);
         if (offerteForm != null && offerteForm.getOfferte() != null) {
             offerteForm.setOpmerkingen(new ArrayList<String>());
             if (CollectionUtils.isNotEmpty(offerteForm.getOfferteRegels())) {
@@ -246,6 +244,11 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
     public String addDocument(@RequestParam("bestek_id") Long bestek_id, @RequestParam("file") MultipartFile multipartFile) throws Exception {
         bestekService.addControle(bestek_id, multipartFile);
         return "redirect:/s/bestek/" + bestek_id + "/meetstaat/offertes/";
+    }
+
+    @RequestMapping(value = "/financieel/toegangwebloket/organisatie/{organisatie_id}/logins", method = RequestMethod.GET)
+    public @ResponseBody List getLoginsVoorOrganisatie (@PathVariable Integer organisatie_id) {
+        return ovamcore_sqlSession.selectList("medewerkers_financieelBeheer_voor_organisatie", organisatie_id);
     }
 
 }

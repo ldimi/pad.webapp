@@ -24,7 +24,7 @@ define([
 
     LoginLijstDialog.controller = function () {
 
-        this.title = "Personen met toegang tot dossiermodule";
+        this.title = "toegang tot financiele module";
         this.width = 300;
         this.height = 300;
 
@@ -33,7 +33,7 @@ define([
     _.extend(LoginLijstDialog.controller.prototype, {
         preOpen: function (organisatie_id) {
             ajax.getJSON({
-                url: "/pad/s/dossier/toegangwebloket/organisatie/" + organisatie_id + "/logins"
+                url: "/pad/s/financieel/toegangwebloket/organisatie/" + organisatie_id + "/logins"
             }).then(function (response) {
                 if (response) {
                     events.trigger("LoginLijstDialog:dataReceived", response);
