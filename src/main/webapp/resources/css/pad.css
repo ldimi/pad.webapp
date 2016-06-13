@@ -157,9 +157,10 @@ table input[type="text"], table input:not([type]),
 }
 
 
-table.lijst {
+table.lijst, table.lijst1 {
     border-collapse: collapse;
     border-spacing: 0px;
+    margin: 2px;
 }
 
 
@@ -256,6 +257,16 @@ ul.error {
 
 td {
     padding: 3px;
+}
+
+table.lijst1 td {
+    border: 1px solid white;
+}
+
+table.lijst1 th {
+    background-color : white;
+    border: 1px solid #E8A317;
+    color: #E8A317;
 }
 
 .small {

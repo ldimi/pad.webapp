@@ -43,7 +43,7 @@
             </tr>
         </table>
 
-        <table>
+        <table class="lijst" >
             <tr>
                 <th>Postnr.</th>
                 <th>Taak</th>
@@ -193,7 +193,7 @@
                     </td>
                 </tr>
                 <tr class="${styleclass}">
-                    <td colspan="12" class="${styleclass}">
+                    <td colspan="13" class="${styleclass}">
                         <div id="toggleText${status.index}" style="display: none">
                             <c:if test="${offerteRegel.type=='TP'or offerteRegel.type=='SPM' or offerteRegel.type=='VH'}">
                             BTW-tarief: ${offerteRegel.toeTePassenBtwTarief}%

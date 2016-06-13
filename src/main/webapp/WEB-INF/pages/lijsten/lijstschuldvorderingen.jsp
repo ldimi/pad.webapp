@@ -48,7 +48,7 @@
     <html:form action="lijstschuldvorderingsave">
         <tr>
             <td>
-                <display:table class="lijst width1000" id="schuldvordering" name="sessionScope.zoeklijst" requestURI="/lijstschuldvorderingenview.do" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' export="true">
+                <display:table class="lijst1 width1000" id="schuldvordering" name="sessionScope.zoeklijst" requestURI="/lijstschuldvorderingenview.do" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' export="true">
                     <display:column titleKey="lijst.schuldvordering.vordering_d" property="vordering_d" class="center" sortable="true" decorator="be.ovam.art46.decorator.DateDecorator"/>
                     <display:column titleKey="lijst.schuldvordering.dossier_b"  sortable="true" sortProperty="dossier_b" media="html">
                         <html:link action="dossierdetailsArt46?selectedtab=Bestek" paramId="id" paramName="schuldvordering" paramProperty="dossier_id">
