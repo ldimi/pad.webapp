@@ -15,9 +15,12 @@ import java.util.concurrent.TimeUnit;
  * Created by Koen on 30/06/2014.
  */
 public class EsbCacheService {
+    
     private String path;
+    
     @Autowired
     private EsbService esbService;
+    
     @Value("${ovam.dms.user}")
     private String dmsAdminID;
 

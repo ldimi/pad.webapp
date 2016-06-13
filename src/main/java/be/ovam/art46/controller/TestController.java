@@ -4,6 +4,7 @@ import be.ovam.art46.common.mail.MailService;
 import be.ovam.art46.model.User;
 import be.ovam.art46.service.BudgetRestService;
 import be.ovam.art46.service.EsbService;
+import be.ovam.art46.service.HandtekeningenService;
 import be.ovam.art46.service.TestService;
 import be.ovam.dms.alfresco.DmsUserAlfresco;
 import be.ovam.dms.model.DmsFolder;
@@ -49,6 +50,9 @@ public class TestController {
 	
     @Autowired
     private EsbService esbService;
+    
+    @Autowired
+    private HandtekeningenService handtekeningenService;
     
 
 	
@@ -154,15 +158,12 @@ public class TestController {
 		return esbService.getNodeRefFor(path, filename, System.getProperty("ovam.dms.user"));
 	}
     
-	@RequestMapping(value = "/test/deleteByPath", method = RequestMethod.GET)
+	@RequestMapping(value = "/test/handtekeningBeschikbaar", method = RequestMethod.GET)
 	public @ResponseBody
-	String deleteByPath(@RequestParam("path") String path, @RequestParam("filename") String filename) throws Exception {
-		// vb path=/Toepassingen/ivs/07/07194-1&filename=WEBLOKET
-		esbService.deleteByPath(path, filename, System.getProperty("ovam.dms.user"));
-        return "verwijderd ???";
+	String getHandtekeningBeschikbaar() throws Exception {
+		return handtekeningenService.handtekenningBeschikbaar();
 	}
     
-   
 
 	@RequestMapping(value = "/test/createDmsFolder", method = RequestMethod.GET)
 	public @ResponseBody
