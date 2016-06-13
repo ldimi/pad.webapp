@@ -70,6 +70,16 @@
                off.totaal_incl_btw,
                off.opdrachtgever_id,
                off.organisatie_id,
+               case when off.id is not null then off.offerte_origineel_id
+                    else (select min(offorg.id)
+                          from art46.offerte offorg
+                          where 1 = 1
+                                and offorg.id  &lt; off.id
+                                and offorg.bestek_id = br.bestek_id
+                                and offorg.inzender = br.adres_naam
+                                and offorg.status = 'Toegewezen'
+                          )
+               end as offerte_origineel_id,
                off.status
         from art46.v_brief br
                 left join art46.offerte off

@@ -77,10 +77,13 @@ public class BriefService {
         return true;
     }
 
-    public Brief getBrief(Integer briefId) throws Exception {
-        Brief brief = briefDAO.get(briefId);
+    public Brief getBrief(Integer brief_id) throws Exception {
+        if (brief_id == null) {
+            return null;
+        }
+        Brief brief = briefDAO.get(brief_id);
         if (brief == null) {
-            log.error("brief met id " + briefId + " bestaat niet");
+            log.error("brief met id " + brief_id + " bestaat niet");
             return null;
         }
         return brief;

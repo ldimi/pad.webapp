@@ -92,6 +92,10 @@ define([
                 $.notify("Er zijn validatie fouten.");
                 return;
             }
+            if (this.checkDuplicate()) {
+                $.notifyError("Deze organisatie is reeds gekoppeld.");
+                return;
+            }
             ajax.postJson({
                 url: '/pad/s/dossier/add/organisatie',
                 data: this.currentItem
@@ -103,6 +107,11 @@ define([
                     alert("De actie is niet gelukt (server error :" + response.errorMsg + ")");
                 }
             }.bind(this));
+        },
+        checkDuplicate: function () {
+            return _.some(this.modelLijst, function (dosorg) {
+                return dosorg.get("organisatie_id") === this.currentItem.get("organisatie_id");
+            }, this);
         },
         verwijder: function(item) {
             ajax.postJson({
@@ -171,15 +180,17 @@ define([
                     return m("tr", [
                         m("td", dosOrg.get("types")),
                         m("td", dosOrg.get("label")),
-                        m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, dosOrg)}, "--> Logins")),
-                        m("td", m("button", {onclick: _.bind(ctrl.verwijder, ctrl, dosOrg)}, "Verwijder"))
+                        m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, dosOrg), class: "inputbtn"}, "Logins ...")),
+                        m("td", m("button", {onclick: _.bind(ctrl.verwijder, ctrl, dosOrg), class: "inputbtn"}, "Verwijder"))
                     ]);
                 })),
                 m("tr", [
                     m("td", ff.select("organisatietype", ctrl.organisatietypes_dd)),
                     m("td", ctrl.organisaties_dd ? ff.select("organisatie_id", ctrl.organisaties_dd) : null),
                     m("td"),
-                    m("td", m("button", {onclick: _.bind(ctrl.toevoegen, ctrl)}, "Toevoegen"))
+                    ctrl.currentItem.get("organisatie_id")
+                        ? m("td", m("button", {onclick: _.bind(ctrl.toevoegen, ctrl), class: "inputbtn"}, "Toevoegen"))
+                        : null
                 ])
             ]),
             LoginLijstDialog.view(ctrl.loginLijstDialogCtrl)

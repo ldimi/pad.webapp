@@ -5,9 +5,8 @@ define([
     "budget/meetstaat/LoginLijstDialog",
     "ov/Model2",
     "ov/events",
-    "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
-], function (LoginLijstDialog, Model, events, ajax, fhf) {
+], function (LoginLijstDialog, Model, events, fhf) {
     'use strict';
 
     var _comp, OfferteModel;
@@ -58,7 +57,7 @@ define([
 
     _comp.view = function (ctrl) {
         var bestekDO = _G_.model.bestekDO;
-        
+
         return m("div", {style: {margin: "10px", "background-color": "white"}}, [
             m("table",[
                 m("thead", [
@@ -66,6 +65,7 @@ define([
                     m("th", "Totaal Excl BTW"),
                     m("th", "Totaal Incl BTW"),
                     m("th", "Status"),
+                    m("th", ""),
                     m("th", "Organisatie")
                 ]),
                 m("tbody", _.map(ctrl.modelLijst, function(off) {
@@ -75,9 +75,12 @@ define([
                         m("td", off.str("totaal")),
                         m("td", off.str("totaal_incl_btw")),
                         m("td", off.str("status")),
+                        off.get("status")
+                            ? m("td", m("a", {href: "/pad/s/bestek/" + off.get("bestek_id") + "/meetstaat/offertes/" + off.get("id") + "/toekenningverwijderen/"}, "Toewijzing verwijderen"))
+                            : m("td", null),
                         m("td", ff.select("organisatie_id", ctrl.organisaties_dd)),
                         off.get("organisatie_id")
-                            ? m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, off), class: "inputbtn"}, "Logins"))
+                            ? m("td", m("button", {onclick: _.bind(ctrl.openLoginlijst, ctrl, off), class: "inputbtn"}, "Logins ..."))
                             : null
                     ]);
                 }))
