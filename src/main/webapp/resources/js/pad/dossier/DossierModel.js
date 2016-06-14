@@ -2,7 +2,7 @@
 /*global define: false, Slick: false, $: false, _:  false, m: false, alert: false, _G_ */
 
 define([
-    "ov/Model2",
+    "ov/Model",
     "common/dossier/ActiviteitenManager",
     "common/dossier/InstrumentenManager",
     "common/dropdown/dossier/screening/risicos"

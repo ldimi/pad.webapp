@@ -14,7 +14,7 @@ define([
     "dropdown/art46_lijsten",
     "common/dropdown/dossier/fasen",
     "common/dropdown/dossier/rechtsgronden",
-    "ov/Model2",
+    "ov/Model",
     "ov/mithril/formhelperFactory"
 ], function (dossierTypes, dossierhouders, dossierhoudersBB, dossierhoudersJD, programmaTypes, doelgroepen_dd, provincies,
              fusiegemeenten, art46_artikels, art46_lijsten, fasen, rechtsgronden, Model, fhf) {

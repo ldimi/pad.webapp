@@ -3,7 +3,7 @@
 
 define([
     "ov/GridComp",
-    "ov/Model2",
+    "ov/Model",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
 ], function (GridComp, Model, ajax, fhf) {

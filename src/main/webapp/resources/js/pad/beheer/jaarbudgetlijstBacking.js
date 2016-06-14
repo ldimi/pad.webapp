@@ -3,7 +3,7 @@
 
 define([
     "dropdown/jaren",
-    "ov/Model2",
+    "ov/Model",
     "ov/GridComp",
     "ov/events",
     "ov/mithril/ajax",
@@ -131,7 +131,7 @@ define([
                     $.notify("Er zijn validatie fouten.");
                     return;
                 }
-                
+
                 if (this.jaarbudget.get("status_crud") === 'R') {
                     $.notify("Er zijn geen aanpassingen te bewaren.");
                     return;

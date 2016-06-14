@@ -8,7 +8,7 @@ define([
     "planning/individueel/FaseDetailsDialog",
     "dropdown/dossierhouders",
     "dropdown/jaren",
-    "ov/Model2",
+    "ov/Model",
     "ov/events",
     "ov/formatters",
     "ov/mithril/ajax",

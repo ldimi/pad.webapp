@@ -3,7 +3,7 @@
 
 define([
     "dropdown/planning/fasen",
-    "ov/Model2",
+    "ov/Model",
     "ov/events",
     "ov/formatters",
     "underscore"

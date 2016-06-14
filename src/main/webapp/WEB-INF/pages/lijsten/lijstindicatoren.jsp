@@ -37,7 +37,7 @@
         <td>
             <logic:present name="aanpak_s_total" scope="session">
                 <logic:equal name="zoekaction" scope="session" value="/lijstindicatorenview.do">
-                    <display:table class="lijst width1000"
+                    <display:table class="lijst1 width1000"
                             defaultsort="3" id="dossier"
                             name="sessionScope.zoeklijst"
                             requestURI="/lijstindicatorenview.do"

@@ -5,7 +5,7 @@ define([
     "planning/individueel/PlanningLijnModel",
     "dropdown/dossierhouders",
     "dropdown/jaren",
-    "ov/Model2",
+    "ov/Model",
     "ov/GridComp",
     "ov/events",
     "ov/mithril/ajax",

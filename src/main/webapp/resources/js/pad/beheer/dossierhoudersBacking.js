@@ -3,7 +3,7 @@
 
 define([
     "ov/mithril/ajax",
-    "ov/Model2",    
+    "ov/Model",
     "ov/GridComp",
     "ov/events",
     "ov/mithril/formhelperFactory",
@@ -119,7 +119,7 @@ define([
             this.bewaar = function () {
                 var status_crud;
                 status_crud = this.dossierhouder.get("status_crud");
-                
+
                 this.showErrors(true);
                 if (!this.dossierhouder.isValid()) {
                     $.notify("Er zijn validatie fouten.");
@@ -130,12 +130,12 @@ define([
                     $.notifyError("Deze dossierhouder is al toegevoegd.");
                     return;
                 }
-                
+
                 if (status_crud === 'R') {
                     $.notify("Er zijn geen aanpassingen te bewaren.");
                     return;
                 }
-                
+
                 if (status_crud === 'U' || status_crud === 'C') {
                     saveDossierhouder(this.dossierhouder);
                 } else {

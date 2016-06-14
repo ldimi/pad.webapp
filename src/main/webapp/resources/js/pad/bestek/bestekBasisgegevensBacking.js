@@ -4,7 +4,7 @@
 define([
     "dropdown/dossierhouders",
     "ov/mithril/ajax",
-    "ov/Model2",
+    "ov/Model",
     "ov/mithril/formhelperFactory",
     "ov/mithril/dialogBuilder"
 ], function (dossierhouders, ajax, Model, fhf, dialogBuilder) {

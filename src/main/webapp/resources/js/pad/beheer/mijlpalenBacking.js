@@ -2,7 +2,7 @@
 /*global define: false, Slick: false, $: false, _: false, alert: false, console: false, _G_ */
 
 define([
-    "ov/Model2",
+    "ov/Model",
     "ov/GridComp",
     "ov/events",
     "ov/mithril/ajax",

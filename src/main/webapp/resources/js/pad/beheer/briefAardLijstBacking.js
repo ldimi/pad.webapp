@@ -3,7 +3,7 @@
 
 define([
     "ov/GridComp",
-    "ov/Model2",
+    "ov/Model",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
 ], function (GridComp, Model, ajax, fhf) {
@@ -119,7 +119,7 @@ define([
         _save: function (item) {
             var action, status_crud;
             status_crud = item.get("status_crud");
-            
+
             if (status_crud === 'R') {
                 $.notify("Er zijn geen aanpassingen te bewaren.");
                 return;

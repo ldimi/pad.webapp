@@ -12,14 +12,16 @@
     <% zoeklijst = "sessionScope.sublijst"; %>
 </logic:present>
 <table>
+    <%--
     <tr>
         <th>
             Brief Zoeklijst
         </th>
     </tr>
+    --%>
     <tr>
         <td>
-            <display:table id="brief" name="<%=zoeklijst%>" requestURI="<%=requestURI %>" defaultsort="1" defaultorder="descending" export="true" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' class="lijst" >
+            <display:table id="brief" name="<%=zoeklijst%>" requestURI="<%=requestURI %>" defaultsort="1" defaultorder="descending" export="true" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' class="lijst1" >
 
                 <display:column property="inschrijf_d" title="Inschrijving" decorator="be.ovam.art46.decorator.DateDecorator" sortable="true" class="center"/>
                 <display:column property="reactie_voor_d" title="Reactie voor" decorator="be.ovam.art46.decorator.DateDecorator" sortable="true" class="center"/>

@@ -7,7 +7,7 @@ define([
     "taken/brief_in_check_afd_hfd_taakDialog",
     "taken/brief_in_check_auteur_taakDialog",
     "ov/GridComp",
-    "ov/Model2",
+    "ov/Model",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
 ], function (TaakModel, nieuw_pad_dossier_taakDialog, brief_in_check_afd_hfd_taakDialog, brief_in_check_auteur_taakDialog, GridComp, Model, ajax, fhf) {

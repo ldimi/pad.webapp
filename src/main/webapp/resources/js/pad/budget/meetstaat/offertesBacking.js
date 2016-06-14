@@ -3,7 +3,7 @@
 
 define([
     "budget/meetstaat/LoginLijstDialog",
-    "ov/Model2",
+    "ov/Model",
     "ov/events",
     "ov/mithril/formhelperFactory"
 ], function (LoginLijstDialog, Model, events, fhf) {
@@ -59,14 +59,15 @@ define([
         var bestekDO = _G_.model.bestekDO;
 
         return m("div", {style: {margin: "10px", "background-color": "white"}}, [
-            m("table",[
+            m("table.lijst1",[
                 m("thead", [
                     m("th", "Inzender"),
                     m("th", "Totaal Excl BTW"),
                     m("th", "Totaal Incl BTW"),
                     m("th", "Status"),
                     m("th", ""),
-                    m("th", "Organisatie")
+                    m("th", "Organisatie"),
+                    m("th")
                 ]),
                 m("tbody", _.map(ctrl.modelLijst, function(off) {
                     var ff = fhf.get().setModel(off);

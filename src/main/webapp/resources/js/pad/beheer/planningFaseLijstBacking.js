@@ -3,7 +3,7 @@
 
 define([
     "ov/ajax",
-    "ov/Model2",
+    "ov/Model",
     "ov/GridComp",
     "ov/events",
     "beheer/planningFaseDialog"

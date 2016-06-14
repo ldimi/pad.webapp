@@ -3,7 +3,7 @@
 
 define([
     "dossier/LoginLijstDialog",
-    "ov/Model2",
+    "ov/Model",
     "ov/events",
     "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"

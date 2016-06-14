@@ -43,7 +43,7 @@
             </tr>
         </table>
 
-        <table class="lijst" >
+        <table class="lijst1" >
             <tr>
                 <th>Postnr.</th>
                 <th>Taak</th>
@@ -69,6 +69,8 @@
                         <c:set var="styleclass" value="tableRowOdd"/>
                     </c:otherwise>
                 </c:choose>
+                <%--
+                --%>
                 <tr class="${styleclass}">
                     <td>${offerteRegel.cleanPostnr}</td>
                     <td style="width: 300px">

@@ -2,7 +2,7 @@
 /*global define: false, $: false, alert: false, confirm: false,  _: false, m: false, console: false, _G_ */
 
 define([
-    "ov/Model2"
+    "ov/Model"
 ], function (Model) {
     'use strict';
 

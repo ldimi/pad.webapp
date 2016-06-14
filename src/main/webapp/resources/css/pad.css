@@ -157,7 +157,7 @@ table input[type="text"], table input:not([type]),
 }
 
 
-table.lijst, table.lijst1 {
+table.lijst {
     border-collapse: collapse;
     border-spacing: 0px;
     margin: 2px;
@@ -212,9 +212,10 @@ th {
     font-size: 11px;
     font-weight: bold;
     color: #6C7170;
+    padding-top: 8px;
+    padding-bottom: 8px;
     padding-left: 3px;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding-right: 3px;
 }
 
 .blauwetekst {
@@ -259,15 +260,35 @@ td {
     padding: 3px;
 }
 
+
+table.lijst1 {
+    border-collapse: collapse;
+    border-spacing: 0px;
+    margin-top: 5px;
+    margin-left: 2px;
+}
+
 table.lijst1 td {
-    border: 1px solid white;
+    border-botom: 1px dotted silver;
 }
 
 table.lijst1 th {
     background-color : white;
-    border: 1px solid #E8A317;
-    color: #E8A317;
+    border-top: 1px solid darkgoldenrod;
+    border-bottom: 2px solid darkgoldenrod;
+    border-left: 1px dotted silver;
+    border-right: 1px dotted silver;
+    font-weight: bold;
+    color: darkslategrey;
 }
+
+table.bordered td {
+    border: 1px dotted silver;
+}
+
+table.striped tr:nth-child(even) {background: white; }
+table.striped tr:nth-child(odd) {background: #f5f5f5; }
+
 
 .small {
     font-size: 0px;
@@ -277,13 +298,13 @@ table.lijst1 th {
 
 .tableRowOdd {
     background-color: #f5f5f5;
-    border: 1px solid transparent;
-    border-bottom-color: silver;
+    // border: 1px solid transparent;
+    // border-bottom-color: silver;
 }
 .tableRowEven {
     background-color: white;
-    border: 1px solid transparent;
-    border-bottom-color: silver;
+    // border: 1px solid transparent;
+    // border-bottom-color: silver;
 }
 
 .notification {
@@ -347,7 +368,9 @@ table.lijst1 th {
 .slick-grid-div {
     background: white;
     outline: 0;
-    border: 1px solid lightGray;
+    border-left: 1px solid lightGray;
+    border-right: 1px solid lightGray;
+    border-bottom: 1px solid lightGray;
     font-size: 10px !important;
     border-radius: 5px;
 }
@@ -356,13 +379,35 @@ table.lijst1 th {
   font-size: 10px;
 }
 
-.slick-header-columns, .slick-headerrow-columns, .slick-header-column.ui-state-default {
+.slick-header-column {
+    height: 20px !important;
+    line-height: 20px !important;
+}
+
+.slick-header-column.ui-state-default,
+.slick-header.ui-state-default {
+    background: white;
+    border-top: transparent;
+    border-bottom: transparent;
+    font-weight: bold;
+    color: black;
+}
+
+div.slick-grid-div .slick-header-columns {
+    background: white;
+    border-top: 1px solid darkgoldenrod;
+    border-bottom: 2px solid darkgoldenrod;
+}
+
+div.slick-grid-div .slick-header-columns,
+div.slick-grid-div .slick-headerrow-columns,
+div.slick-grid-div .slick-header-column.ui-state-default {
       -webkit-box-sizing: content-box;
          -moz-box-sizing: content-box;
               box-sizing: content-box;
 }
 
-.slick-row.active {
+div.slick-grid-div .slick-row.active {
     z-index: 10;
     background: #DFE8F6 !important;
 }

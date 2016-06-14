@@ -2,7 +2,7 @@
 /*global define: false, console: false, $: false, _:  false, m: false, alert: false, _G_ */
 
 define([
-    "ov/Model2",
+    "ov/Model",
     "dropdown/dossierTypes",
     "ov/mithril/formhelperFactory",
     "ov/events"

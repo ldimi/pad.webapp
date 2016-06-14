@@ -5,7 +5,6 @@ define([
     "jasmine",
     "jasmine-html",
     "ov/test/ModelSpec",
-    "ov/test/Model2Spec",
     "ov/test/parsersFormattersSpec",
     "ov/test/FormSpec",
     "ov/test/selectSpec"
