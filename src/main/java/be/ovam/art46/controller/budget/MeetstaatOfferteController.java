@@ -43,7 +43,6 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
     
     @Autowired
     MeetstaatExportExcelService meetstaatExportExcelService;
-    private Logger log = Logger.getLogger(MeetstaatOfferteController.class);
     
     @Autowired
     private MeetstaatExportPdfService meetstaatExportPdfService;
@@ -57,7 +56,7 @@ public class MeetstaatOfferteController extends BasicMeetstaatController {
     @Autowired
     private SqlSession ovamcore_sqlSession;
 
-   
+    private Logger log = Logger.getLogger(MeetstaatOfferteController.class);
     
     @RequestMapping(value = "/bestek/{bestek_id}/meetstaat/offertes", method = RequestMethod.GET)
     public String start(@PathVariable Long bestek_id, Model model) throws Exception {
