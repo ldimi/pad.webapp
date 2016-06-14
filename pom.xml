@@ -14,7 +14,7 @@
     <name>Pad webapp</name>
     <description>OVAM Pad webapp</description>
     <packaging>war</packaging>
-    <version>6.32</version>
+    <version>6.33-SNAPSHOT</version>
 
     <properties>
         <pad.common.version>6.21</pad.common.version>
