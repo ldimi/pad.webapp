@@ -5,13 +5,8 @@
 <%@ taglib uri="/tags/display-tags" prefix="display" %>
 <table>
     <tr>
-        <th>
-            Dossier zoeklijst .
-        </th>
-    </tr>
-    <tr>
         <td>
-            <display:table class="lijst" id="dossier" name="sessionScope.zoeklijst" export="true" requestURI="/s/dossier/lijst" defaultsort="1" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
+            <display:table class="lijst1" id="dossier" name="sessionScope.zoeklijst" export="true" requestURI="/s/dossier/lijst" defaultsort="1" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
                 <display:column title="Fusiegemeente" sortable="true" property="gemeente_b" />
                 <display:column title="Adres" property="adres"/>
 
