@@ -138,6 +138,6 @@
     </form>
 
     <div class="facturen" style="margin-top: 5px;" >Facturen :</div>
-    <div id="facturenDiv" class="slick-grid-div facturen" style="width: 720px; height: 100px;" ></div>
+    <div id="facturenDiv" class="facturen" style="width: 720px; height: 100px;" ></div>
 </div>
 

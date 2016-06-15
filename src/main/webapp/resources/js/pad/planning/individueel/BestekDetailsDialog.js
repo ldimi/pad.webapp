@@ -74,7 +74,6 @@ define([
         return m("#bestekDetailsDialog", [
             m("div",
                 { style: { position: "absolute", top: "2px", left: "2px", right: "2px", bottom: "28px" },
-                  class: "slick-grid-div",
                   config: gridConfigBuilder({
                                 model: BestekDetailModel,
                                 editBtn: ctrl.selectCb ? "Selecteer" : false,

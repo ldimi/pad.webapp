@@ -171,10 +171,11 @@ define([
                 "webloket url : ",
                 m("a", {href: _G_.model.dossierUrl, target: "_blank"}, _G_.model.dossierUrl)
             ]),
-            m("table",[
+            m("table.lijst1",[
                 m("thead", [
                     m("th", "Type"),
-                    m("th", "Organisatie")
+                    m("th", "Organisatie"),
+                    m("th", {colspan: 2})
                 ]),
                 m("tbody", _.map(ctrl.modelLijst, function(dosOrg) {
                     return m("tr", [

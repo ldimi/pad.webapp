@@ -296,14 +296,14 @@ table.striped tr:nth-child(odd) {background: #f5f5f5; }
 
 
 .tableRowOdd {
-    background-color: #f5f5f5;
-    // border: 1px solid transparent;
-    // border-bottom-color: silver;
+    background-color: white;
+    border: 1px solid transparent;
+    border-bottom-color: silver;
 }
 .tableRowEven {
-    background-color: white;
-    // border: 1px solid transparent;
-    // border-bottom-color: silver;
+    background-color: #f5f5f5;
+    border: 1px solid transparent;
+    border-bottom-color: silver;
 }
 
 .notification {
