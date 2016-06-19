@@ -34,6 +34,8 @@ public class PlanningFaseController {
         model.addAttribute("title", "Beheer Planning fasen");
         model.addAttribute("menuId", "m_toepassingsbeheer.planningfasen");
         
+		model.addAttribute("budgetCodeDD", sqlSession.selectList("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCodeDD"));
+
         return jsview("beheer/planningFaseLijst2", model);
 	}
 	
