@@ -4,6 +4,7 @@ import be.ovam.web.Response;
 import be.ovam.art46.model.planning.PlanningFaseDO;
 import be.ovam.art46.model.planning.PlanningFaseDetailDO;
 import be.ovam.util.mybatis.SqlSession;
+import static be.ovam.web.util.JsView.jsview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,14 @@ public class PlanningFaseController {
 	@RequestMapping(value = "/beheer/planningfaselijst", method = RequestMethod.GET)
 	public String start(Model model, HttpServletRequest request) throws Exception {
 		return "beheer.planningfaselijst";
+	}
+	
+	@RequestMapping(value = "/beheer/planningfaselijst2", method = RequestMethod.GET)
+	public String start2(Model model, HttpServletRequest request) throws Exception {
+        model.addAttribute("title", "Beheer Planning fasen");
+        model.addAttribute("menuId", "m_toepassingsbeheer.planningfasen");
+        
+        return jsview("beheer/planningFaseLijst2", model);
 	}
 	
 	@RequestMapping(value = "/planningFasen", method = RequestMethod.GET)
