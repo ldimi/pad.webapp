@@ -2,7 +2,7 @@
 /*global define: false, Slick: false, $: false, alert: false, _, m, _G_ */
 
 define([
-    "dropdown/planning/budgetCodes",    
+    "dropdown/planning/budgetCodes",
     "ov/Model",
     "ov/events",
     "ov/mithril/ajax",
@@ -18,11 +18,11 @@ define([
         meta: Model.buildMeta([
             { name: "dossier_type", type: "string", label: "Dossier type", required: true },
             { name: "fase_code", type: "string", label: "Fase code", required: true},
-            { name: "fase_code_b", type: "string", label: "Omschrijving" },
+            { name: "fase_code_b", type: "string", label: "Omschrijving", width: 150 },
             { name: "budget_code", type: "string", label: "Budget", required: true }
         ])
     });
-    
+
     FaseDetailModel = Model.extend({
         meta: Model.buildMeta([
             { name: "fase_code", type: "string", hidden: true, required: true },
@@ -33,15 +33,15 @@ define([
 
     _handleResponse = function (response) {
         if (response && response.success) {
-            events.trigger("fasenGrid:setData", response.result);
+            events.trigger("fasen:dataReceived", response.result);
         } else {
             alert("De actie is niet gelukt (server error :" + response.errorMsg + ")");
         }
     };
 
-    
-    
-    
+
+
+
     _comp = {
         controller: function () {
             this.faseDialogCtrl = new faseDialog.controller();
@@ -72,16 +72,16 @@ define([
                                 content: item
                             }).then(_handleResponse);
                         },
-                        setDataEvent: "fasenGrid:setData"
+                        setDataEvent: "fasen:dataReceived"
                     }),
                     style: {width: "500px", height: "90%"}
                 }),
-    
+
                 faseDialog.view(ctrl.faseDialogCtrl)
             ]);
         }
     };
-    
+
     /* -------------------------------------------------------------------------------------------------------- */
 
     faseDialog = dialogBuilder({
@@ -101,13 +101,17 @@ define([
                 { value: "A", label: "Afval" },
                 { value: "B", label: "Bodem" }
             ];
-            
+
             this.faseDetailDialogCtrl = new faseDetailDialog.controller();
 
-            this.preOpen = function (fase) {
+
+
+
+            this.preOpen = function (fase, faseArray) {
                 this.fase = fase;
+                this.faseArray = faseArray;
                 this.showErrors(false);
-                
+
                 ajax.postJson({
                     url: '/pad/s/planningFaseDetails',
                     content: this.fase
@@ -117,7 +121,7 @@ define([
             };
 
             this.bewaar = function () {
-                var status_crud;
+                var status_crud, action;
                 status_crud = this.fase.get("status_crud");
 
                 this.showErrors(true);
@@ -125,26 +129,50 @@ define([
                     $.notify("Er zijn validatie fouten.");
                     return;
                 }
-                
-                alert("TODO");
-                //if (status_crud === "C" &&
-                //    findFaseInCollection(this.fase.get("doss_hdr_id")) ) {
-                //    $.notifyError("Deze fase is al toegevoegd.");
-                //    return;
-                //}
-                //
-                //if (status_crud === 'R') {
-                //    $.notify("Er zijn geen aanpassingen te bewaren.");
-                //    return;
-                //}
-                //
-                //if (status_crud === 'U' || status_crud === 'C') {
-                //    saveFase(this.fase);
-                //} else {
-                //    alert("item heeft een ongeldige status : " + status_crud);
-                //    return;
-                //}
+
+                if (!this.validateNoDuplicate(this.fase)) {
+                    $.notifyError("code is niet uniek.");
+                    return;
+                }
+
+                if (status_crud === 'R') {
+                    $.notify("Er zijn geen aanpassingen te bewaren.");
+                    return;
+                }
+
+                if (status_crud === 'C') {
+                    action = "insert";
+                } else {
+                    action = "update";
+                }
+
+                ajax.postJson({
+                    url: '/pad/s/planningFase/' + action,
+                    content: this.fase
+                }).then(function (response) {
+                    if (response && response.success) {
+                        events.trigger("fasen:dataReceived", response.result);
+                    } else {
+                        alert("De actie is niet gelukt (server error :" + response.errorMsg + ")");
+                    }
+                });
             };
+
+            this.validateNoDuplicate = function (fase) {
+                var duplicate;
+                if (fase.get("status_crud") === 'C') {
+                    //code moet uniek zijn.
+                    duplicate = _.find(this.faseArray, function (item) {
+                        return (item.get("dossier_type") === fase.get("dossier_type") &&
+                                item.get("fase_code") === fase.get("fase_code"));
+                    });
+                    if (duplicate) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+
         },
         view: function(ctrl) {
             var ff;
@@ -164,9 +192,9 @@ define([
                     ]),
                     m("tr", [
                         m("td", "Fase code:"),
-                        m("td", ff.input("fase_code", { 
+                        m("td", ff.input("fase_code", {
                             readOnly: (ctrl.fase.get("status_crud") !== 'C'),
-                            maxlength: 5 
+                            maxlength: 5
                         }))
                     ]),
                     m("tr", [
@@ -216,7 +244,7 @@ define([
                     }),
                     style: {width: "300px", height: "150px" }
                 }),
-                
+
                 faseDetailDialog.view(ctrl.faseDetailDialogCtrl)
             ];
         }
@@ -229,7 +257,7 @@ define([
         controller: function () {
             events.on("faseDetailDialog:open", this.open.bind(this));
             // na save wordt er gewacht op data, vooraleer de dialog te sluiten.
-            events.on("fasen:dataReceived", _.bind(this.close, this));
+            //events.on("fasen:dataReceived", _.bind(this.close, this));
 
             this.title = "Editeer Fase";
             //this.width = 750;
@@ -241,19 +269,19 @@ define([
                 this.faseDetailArray = faseDetailArray;
                 this.faseDetail = faseDetail;
                 this.showErrors(false);
-                
+
             };
 
             this.bewaar = function () {
                 var status_crud;
-                status_crud = this.fase.get("status_crud");
+                status_crud = this.faseDetail.get("status_crud");
 
                 this.showErrors(true);
-                if (!this.fase.isValid()) {
+                if (!this.faseDetail.isValid()) {
                     $.notify("Er zijn validatie fouten.");
                     return;
                 }
-                
+
                 alert("TODO");
             };
         },
@@ -292,7 +320,7 @@ define([
 
 
     m.mount($("#jsviewContentDiv").get(0), _comp);
-    
+
     $( document ).ready(function () {
         ajax.getJSON({
             url: '/pad/s/planningFasen'
