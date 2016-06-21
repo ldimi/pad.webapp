@@ -6,7 +6,6 @@ import be.ovam.art46.model.planning.PlanningFaseDetailDO;
 import be.ovam.util.mybatis.SqlSession;
 import static be.ovam.web.util.JsView.jsview;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,20 +24,15 @@ public class PlanningFaseController {
 	private SqlSession sqlSession;
 	
 	@RequestMapping(value = "/beheer/planningfaselijst", method = RequestMethod.GET)
-	public String start(Model model, HttpServletRequest request) throws Exception {
-		return "beheer.planningfaselijst";
-	}
-	
-	@RequestMapping(value = "/beheer/planningfaselijst2", method = RequestMethod.GET)
 	public String start2(Model model, HttpServletRequest request) throws Exception {
         model.addAttribute("title", "Beheer Planning fasen");
         model.addAttribute("menuId", "m_toepassingsbeheer.planningfasen");
         
 		model.addAttribute("budgetCodeDD", sqlSession.selectList("be.ovam.art46.mappers.BudgetCodeMapper.getBudgetCodeDD"));
 
-        return jsview("beheer/planningFaseLijst2", model);
+        return jsview("beheer/planningFaseLijst", model);
 	}
-	
+
 	@RequestMapping(value = "/planningFasen", method = RequestMethod.GET)
 	public @ResponseBody
 	Response getPlanningFaseList() throws Exception {
@@ -46,33 +40,7 @@ public class PlanningFaseController {
 		return new Response(result, true, null);
 	}
 
-	@RequestMapping(value = "/planningFase/update", method = RequestMethod.POST)
-	public @ResponseBody Response update(@RequestBody PlanningFaseDO fase) throws Exception {
-		sqlSession.update("be.ovam.art46.mappers.PlanningFaseMapper.updatePlanningFase", fase);		
-		return getPlanningFaseList();
-	}
-	
-	@RequestMapping(value = "/planningFase/insert", method = RequestMethod.POST)
-	public @ResponseBody Response insert(@RequestBody PlanningFaseDO fase) throws Exception {
-		sqlSession.update("be.ovam.art46.mappers.PlanningFaseMapper.insertPlanningFase", fase);		
-		return getPlanningFaseList();
-	}
-	
-	@RequestMapping(value = "/planningFase/delete", method = RequestMethod.POST)
-	public @ResponseBody Response delete(@RequestBody PlanningFaseDO fase) throws Exception {
-		Response response;
-		try{
-			sqlSession.update("be.ovam.art46.mappers.PlanningFaseMapper.deletePlanningFase", fase);
-			response = getPlanningFaseList();
-		} catch (DataIntegrityViolationException de) {
-			response = new Response(null, false, "Deze plannings-fase kan niet verwijderd worden omdat er al planningslijnen naar verwijzen.");
-		} catch (Exception ex) {
-			response = new Response(null, false, ex.getClass().getSimpleName() + " : " + ex.getMessage());
-		}
-		return response;
-	}
-	
-
+    
 	
 	@RequestMapping(value = "/planningFaseDetails", method = RequestMethod.POST)
 	public @ResponseBody
@@ -87,30 +55,25 @@ public class PlanningFaseController {
 		return getPlanningFaseDetailList(fase);
 	}
 
-	@RequestMapping(value = "/planningFaseDetail/update", method = RequestMethod.POST)
-	public @ResponseBody Response update(@RequestBody PlanningFaseDetailDO faseDetail) throws Exception {
-		sqlSession.update("be.ovam.art46.mappers.PlanningFaseMapper.updatePlanningFaseDetail", faseDetail);		
-		return getPlanningFaseDetailList(faseDetail);
-	}
-	
-	@RequestMapping(value = "/planningFaseDetail/insert", method = RequestMethod.POST)
-	public @ResponseBody Response insert(@RequestBody PlanningFaseDetailDO faseDetail) throws Exception {
-		sqlSession.update("be.ovam.art46.mappers.PlanningFaseMapper.insertPlanningFaseDetail", faseDetail);		
-		return getPlanningFaseDetailList(faseDetail);
-	}
-	
-	@RequestMapping(value = "/planningFaseDetail/delete", method = RequestMethod.POST)
-	public @ResponseBody Response delete(@RequestBody PlanningFaseDetailDO faseDetail) throws Exception {
-		Response response;
-		try{
-			sqlSession.update("be.ovam.art46.mappers.PlanningFaseMapper.deletePlanningFaseDetail", faseDetail);
-			response = getPlanningFaseDetailList(faseDetail);
-		} catch (DataIntegrityViolationException de) {
-			response = new Response(null, false, "Deze plannings-detailfase kan niet verwijderd worden omdat er al planningslijnen naar verwijzen.");
-		} catch (Exception ex) {
-			response = new Response(null, false, ex.getClass().getSimpleName() + " : " + ex.getMessage());
-		}
-		return response;
-	}
-	
+    
+    @RequestMapping(value = "/beheer/planningFase/save", method = RequestMethod.POST)
+    public @ResponseBody Response saveFase(@RequestBody PlanningFaseDO fase) throws Exception  {
+        sqlSession.saveInTable("art46", "planning_fase", fase);
+        clearCache();
+        return getPlanningFaseList();
+    }
+
+    @RequestMapping(value = "/beheer/planningFaseDetail/save", method = RequestMethod.POST)
+    public @ResponseBody Response saveFaseDetail(@RequestBody PlanningFaseDetailDO faseDetail) throws Exception  {
+        sqlSession.saveInTable("art46", "planning_fase_detail", faseDetail);
+        clearCache();
+        return getPlanningFaseDetailList(faseDetail);
+    }
+
+    private void clearCache() {
+        sqlSession.getConfiguration().getCache("be.ovam.art46.mappers.PlanningFaseMapper").clear();
+    }
+    
+    
+    
 }

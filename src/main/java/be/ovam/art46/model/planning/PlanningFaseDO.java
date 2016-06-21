@@ -11,6 +11,8 @@ public class PlanningFaseDO implements Serializable {
     private String fase_code;
     private String fase_code_b;
     private String budget_code;
+    
+    private String status_crud;
 
 
     public String getDossier_type() {
@@ -43,6 +45,14 @@ public class PlanningFaseDO implements Serializable {
 
     public String getBudget_code() {
         return budget_code;
+    }
+
+    public String getStatus_crud() {
+        return status_crud;
+    }
+
+    public void setStatus_crud(String status_crud) {
+        this.status_crud = status_crud;
     }
 
 }

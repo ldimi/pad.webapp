@@ -183,12 +183,6 @@
     <!-- Beheer -->
     <!-- ****** -->
 
-    <definition name="beheer.planningfaselijst" extends="baseDef">
-        <put-attribute name="title" value="Beheer Planning fasen"/>
-        <put-attribute name="menuId" value="m_toepassingsbeheer.planningfasen"/>
-        <put-attribute name="body" value="/WEB-INF/pages/beheer/planningfaselijst.jsp"/>
-    </definition>
-
     <definition name="beheer.budgetcodelijst" extends="baseDef">
         <put-attribute name="title" value="Beheer Budgetcodes"/>
         <put-attribute name="menuId" value="m_toepassingsbeheer.budgetcodes"/>

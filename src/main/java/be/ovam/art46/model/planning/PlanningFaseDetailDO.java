@@ -10,6 +10,8 @@ public class PlanningFaseDetailDO implements Serializable {
     private String fase_code;
     private String fase_detail_code;
     private String fase_detail_code_b;
+    
+    private String status_crud;
 
 
     public String getFase_code() {
@@ -34,6 +36,14 @@ public class PlanningFaseDetailDO implements Serializable {
 
     public void setFase_detail_code_b(String fase_detail_code_b) {
         this.fase_detail_code_b = fase_detail_code_b;
+    }
+
+    public String getStatus_crud() {
+        return status_crud;
+    }
+
+    public void setStatus_crud(String status_crud) {
+        this.status_crud = status_crud;
     }
 
 }
