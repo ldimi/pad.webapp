@@ -1,4 +1,4 @@
-package be.ovam.art46.controller.dossier;
+package be.ovam.art46.controller.budget;
 
 import be.ovam.art46.struts.actionform.DossierZoekForm;
 import be.ovam.art46.util.DropDownHelper;
@@ -17,15 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class DossierZoekController {
+public class BestekZoekController {
 	
 	@Autowired
 	private SqlSession sqlSession;
 	
-	@RequestMapping(value = "/dossier/zoek", method = RequestMethod.GET)
+	@RequestMapping(value = "/bestek/zoek", method = RequestMethod.GET)
 	public String zoek(Model model) throws Exception {
-		//model.addAttribute("params", new ZoekParams());
-		//return "dossier.zoek";
         
         DropDownHelper DDH = DropDownHelper.INSTANCE;
         
@@ -41,14 +39,10 @@ public class DossierZoekController {
         model.addAttribute("provincies", DDH.getProvincies());
         model.addAttribute("fusiegemeenten", DDH.getFusiegemeenten());
         
-        model.addAttribute("art46_artikels", DDH.getArtikels());
-        model.addAttribute("art46_lijsten", DDH.getLijsten());
-        
-        
-        model.addAttribute("title", "Zoek Dossier");
+        model.addAttribute("title", "Zoek Bestek");
         model.addAttribute("menuId", "m_dossier.zoeken");
         
-        return jsview("dossier/zoek", model);
+        return jsview("bestek/zoek", model);
 	}
 
 	@SuppressWarnings("rawtypes")
