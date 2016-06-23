@@ -13,13 +13,13 @@
                         ${bestek.bestek_nr}
                     </a>
                 </display:column>
-                <display:column property="bestek_nr" title="Besteknr" sortable="true" media="csv excel pdf xml" style="width: 300px;" />
-                <display:column  title="Omschrijving" sortProperty="bestek_nr">
+                <display:column property="bestek_nr" title="Besteknr" sortable="true" media="csv excel pdf xml" />
+                <display:column  title="Omschrijving" sortProperty="bestek_nr"  style="width: 300px;">
                     <a href='/pad/s/bestek/${bestek.bestek_id}/basisgegevens/' >
                         ${bestek.omschrijving}
                     </a>
                 </display:column>
-                <display:column property="omschrijving" title="Omschrijving" sortable="true" media="csv excel pdf xml" style="width: 300px;" />
+                <display:column property="omschrijving" title="Omschrijving" sortable="true" media="csv excel pdf xml" />
                 <display:column property="fase_b" title="Fase" sortable="true" media="html csv excel pdf xml"/>
                 <display:column property="type_b" title="Type" sortable="true" media="html csv excel pdf xml"/>
                 <display:column property="wbs_nr" title="SAP WBS" sortable="true" media="html csv excel pdf xml"/>
