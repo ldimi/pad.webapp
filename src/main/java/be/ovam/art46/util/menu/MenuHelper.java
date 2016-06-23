@@ -22,6 +22,10 @@ public enum MenuHelper {
 				.add(new MenuItem("zoeken", "Zoek dossier", "/pad/s/dossier/zoek", null))
 				.add(new MenuItem("zoekenKadaster", "Zoek kadaster", "./kadasterzoek.do", null)))
 								
+			.add(new MenuItem("m_bestek", "Bestekbeheer", "/pad/s/mijnbestekken", "testIVS")
+				.add(new MenuItem("mijnbestekken", "Mijn bestekken", "/pad/s/mijnbestekken", null))
+				.add(new MenuItem("zoeken", "Zoek bestek", "/pad/s/bestek/zoek", null)))
+								
             .add(new MenuItem("m_planning", "Planning", "./s/planning/individueel/bodemEnAfval", null)
                 .add(new MenuItem("individueel", "planning IB", "./s/planning/individueel/bodemEnAfval", null))
                 .add(new MenuItem("jaar", "planning JB", "./s/planning/jaar/overzichtbudgetten", null))

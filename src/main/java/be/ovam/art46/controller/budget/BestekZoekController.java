@@ -22,6 +22,11 @@ public class BestekZoekController {
 	@Autowired
 	private SqlSession sqlSession;
 	
+    @RequestMapping(value = "/mijnbestekken", method = RequestMethod.GET)
+	public String mijnbestekken(Model model) throws Exception {
+        return "bestek.mijnbestekken";
+    }
+
 	@RequestMapping(value = "/bestek/zoek", method = RequestMethod.GET)
 	public String zoek(Model model) throws Exception {
         
@@ -46,7 +51,7 @@ public class BestekZoekController {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "/dossier/zoek/result", method = RequestMethod.GET)
+	@RequestMapping(value = "/bestek/zoek/result", method = RequestMethod.GET)
 	public String zoekResult (@ModelAttribute DossierZoekForm form, Model model, HttpSession session,final RedirectAttributes redirectAttributes) throws Exception {
         
 		List result = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierZoekResult", form);
@@ -62,7 +67,7 @@ public class BestekZoekController {
 		return "dossier.zoek.result";
 	}
 	
-	@RequestMapping(value = "/dossier/lijst", method = RequestMethod.GET)
+	@RequestMapping(value = "/bestek/lijst", method = RequestMethod.GET)
 	public String lijst() throws Exception {
 		return "dossier.zoek.result";
 	}
