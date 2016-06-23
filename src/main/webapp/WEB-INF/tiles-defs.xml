@@ -36,7 +36,7 @@
     </definition>
 
 	<definition name="index" extends="lijstenBaseDef12">
-    	<put name="title" value="Lijst Dossiers"/>
+    	<put name="title" value="Mijn dossiers"/>
         <put name="menuId" value="m_dossier.dossiers"/>
     	<put name="body" value="/WEB-INF/pages/lijsten/index_lijst.jsp"/>
     </definition>

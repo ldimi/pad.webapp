@@ -1,6 +1,7 @@
 package be.ovam.art46.controller.budget;
 
 import be.ovam.art46.struts.actionform.DossierZoekForm;
+import be.ovam.art46.util.Application;
 import be.ovam.art46.util.DropDownHelper;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class BestekZoekController {
 	
     @RequestMapping(value = "/mijnbestekken", method = RequestMethod.GET)
 	public String mijnbestekken(Model model) throws Exception {
+        
+        model.addAttribute("mijnbestekken", sqlSession.selectList("be.ovam.art46.mappers.BestekMapper.mijnbestekken", Application.INSTANCE.getUser_id()));
+        
         return "bestek.mijnbestekken";
     }
 
@@ -33,19 +37,12 @@ public class BestekZoekController {
         DropDownHelper DDH = DropDownHelper.INSTANCE;
         
         model.addAttribute("dossierhouders", DDH.getDossierhouders());
-        model.addAttribute("dossierhoudersBB", DDH.getAmbtenarenBOA());
-        model.addAttribute("dossierhoudersJD", DDH.getAmbtenarenJD());
         model.addAttribute("programmaTypes", DDH.getProgrammaTypes());
-        model.addAttribute("doelgroepen_dd", DDH.getDoelgroepen_dd());
 
         model.addAttribute("fasen", DDH.getDossierFasen_dd());
-        model.addAttribute("rechtsgronden", DDH.getDossierRechtsgronden());
-        
-        model.addAttribute("provincies", DDH.getProvincies());
-        model.addAttribute("fusiegemeenten", DDH.getFusiegemeenten());
         
         model.addAttribute("title", "Zoek Bestek");
-        model.addAttribute("menuId", "m_dossier.zoeken");
+        model.addAttribute("menuId", "m_bestek.zoeken");
         
         return jsview("bestek/zoek", model);
 	}

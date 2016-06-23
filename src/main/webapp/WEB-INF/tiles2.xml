@@ -310,7 +310,7 @@
     </definition>
 
     <definition name="bestek.mijnbestekken" extends="baseDef">
-        <put-attribute name="title" value="Bestek"/>
+        <put-attribute name="title" value="Mijn Bestekken"/>
         <put-attribute name="menuId" value="m_bestek.mijnbestekken"/>
         <put-attribute name="body" value="/WEB-INF/pages/bestek/mijnbestekken.jsp"/>
     </definition>

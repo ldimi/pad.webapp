@@ -6,6 +6,26 @@
 <mapper namespace="be.ovam.art46.mappers.BestekMapper">
 
 
+    <select id="mijnbestekken" resultType="ciMap" parameterType="string" >
+        select
+            be.bestek_id,
+            be.bestek_nr,
+            be.dossier_nr,
+            be.dossier_type,
+            be.dossier_b_l,
+            be.raamcontract_jn,
+            be.type_b,
+            be.procedure_b,
+            be.fase_b,
+            be.omschrijving,
+            be.wbs_nr,
+            be.screening_jn
+        from art46.v_bestek be
+        where 1 = 1
+             and be.stop_d is null
+             and be.bestek_hdr_id = #{bestek_hdr_id}
+     </select>
+
     <select id="getNieuwBestekData" resultType="be.ovam.art46.model.BestekDO" parameterType="int" >
     <![CDATA[
         select

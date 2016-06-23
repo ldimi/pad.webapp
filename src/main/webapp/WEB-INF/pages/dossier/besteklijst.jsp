@@ -21,7 +21,7 @@
                             <logic:equal name="bestek" property="deelopdracht" value="1">
                                 <bean:write name="bestek" property="bestek_nr"/>
                             </logic:equal>
-                            </display:column>
+                        </display:column>
                         <display:column property="omschrijving" title="Omschrijving" />
                         <display:column title="Opdrachthouder" property="naam" />
                         <display:column title="Bestekhouder" property="bestek_hdr_id" />
