@@ -233,7 +233,8 @@ define([
                             ]),
                             ( deelopdracht.get("raamcontract_jn") === "J" )
                                 ? // beheer goed/afkeuren voor raamcontracten
-                                (deelopdracht.get("ander_doss_hdr_id") !== deelopdracht.get("current_doss_hdr_id") &&
+                                (deelopdracht.get("current_doss_hdr_id") === null ||
+                                 deelopdracht.get("ander_doss_hdr_id") !== deelopdracht.get("current_doss_hdr_id") &&
                                  deelopdracht.get("bestek_hdr_id") !== deelopdracht.get("current_doss_hdr_id")  )
                                     ?  // readonly mededeling van goedkeurings status
                                     (deelopdracht.get("goedkeuring_afkeuring") === "gk")
