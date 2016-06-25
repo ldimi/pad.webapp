@@ -151,14 +151,8 @@
     <!-- Adressen -->
     <!-- ******** -->
 
-    <definition name="adres.zoek" extends="baseDef">
-        <put-attribute name="title" value="Adressen"/>
-        <put-attribute name="menuId" value="m_briefwisseling.zoekAdres"/>
-        <put-attribute name="body" value="/WEB-INF/pages/adres/zoek.jsp"/>
-    </definition>
-
     <definition name="adres.zoek.result" extends="baseDef">
-        <put-attribute name="title" value="Adressen"/>
+        <put-attribute name="title" value="Adres lijst"/>
         <put-attribute name="menuId" value="m_briefwisseling.zoekAdres"/>
         <put-attribute name="body" value="/WEB-INF/pages/adres/adreslijst2.jsp"/>
     </definition>

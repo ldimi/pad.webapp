@@ -2,7 +2,9 @@ package be.ovam.art46.controller.adres;
 
 import be.ovam.art46.dao.AdresDAO;
 import be.ovam.art46.struts.actionform.AdresZoekForm;
+import be.ovam.art46.util.DropDownHelper;
 import be.ovam.util.mybatis.SqlSession;
+import static be.ovam.web.util.JsView.jsview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,8 +27,14 @@ public class AdresZoekController {
 	
 	@RequestMapping(value = "/adres/zoek", method = RequestMethod.GET)
 	public String zoek(Model model) throws Exception {
-		return "adres.zoek";
+        model.addAttribute("menuId", "m_briefwisseling.zoekAdres");
+        model.addAttribute("title", "Adressen");
+        
+        model.addAttribute("provincies", DropDownHelper.INSTANCE.getProvincies());
+        
+        return jsview("adres/zoekAdres", model);
 	}
+
 
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/adres/zoek/result", method = RequestMethod.GET)

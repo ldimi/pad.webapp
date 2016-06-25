@@ -5,14 +5,9 @@
 
 <table>
     <tr>
-        <th>
-            Adres zoeklijstzzz
-        </th>
-    </tr>
-    <tr>
         <td>
             <display:table id="adres"
-                class="lijst"
+                class="lijst1"
                 name="sessionScope.zoeklijst"
                 requestURI="/s/adres/lijst"
                 pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
