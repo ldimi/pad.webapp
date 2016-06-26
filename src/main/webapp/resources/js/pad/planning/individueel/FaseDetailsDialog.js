@@ -46,7 +46,7 @@ define([
 
             this.title = "Fase : " + fase_code;
 
-            ajax.postJSON({
+            ajax.postJson({
                 url: "/pad/s/planning/getDetailsVoorFase",
                 content: {
                     contract_id: contract_id,

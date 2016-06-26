@@ -330,7 +330,7 @@ define([
     m.mount($("#jsviewContentDiv").get(0), _comp);
 
     $( document ).ready(function () {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/planningFasen'
         }).then(function (response) {
             events.trigger("fasen:dataReceived", response.result);

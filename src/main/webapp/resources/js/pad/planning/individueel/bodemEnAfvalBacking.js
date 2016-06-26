@@ -59,7 +59,7 @@ define([
 
             this.ophalen = function () {
                 $('#planningGrid').addClass('invisible');
-                ajax.postJSON({
+                ajax.postJson({
                     url: "/pad/s/planning/getPlanning",
                     content: this.params
                 }).then(function (response) {
@@ -158,7 +158,7 @@ define([
                         item.set({
                             deleted_jn: "J"
                         });
-                        ajax.postJSON({
+                        ajax.postJson({
                             url: "/pad/s/planning/bewaar",
                             content: item.clone()
                         }).then(function () {

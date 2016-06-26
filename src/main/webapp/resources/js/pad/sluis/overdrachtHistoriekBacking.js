@@ -109,7 +109,7 @@ define([
         ophalen: function (ev) {
             ev.preventDefault();
             //alert(JSON.stringify(this.params));
-            ajax.postJSON({
+            ajax.postJson({
                 url: '/pad/s/sluis/overdracht/historiek/lijst',
                 content: this.params
             }).then(function (response) {

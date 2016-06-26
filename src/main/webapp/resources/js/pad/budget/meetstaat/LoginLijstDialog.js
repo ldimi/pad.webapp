@@ -32,7 +32,7 @@ define([
     };
     _.extend(LoginLijstDialog.controller.prototype, {
         preOpen: function (organisatie_id) {
-            ajax.getJSON({
+            ajax.getJson({
                 url: "/pad/s/financieel/toegangwebloket/organisatie/" + organisatie_id + "/logins"
             }).then(function (response) {
                 if (response) {

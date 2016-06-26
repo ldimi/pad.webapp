@@ -19,7 +19,7 @@ define([
             });
 
             $(function () {
-                ajax.getJSON({
+                ajax.getJson({
                     url: '/pad/s/brief/' + comp.brief_id() + '/documenten'
                 }).then(function (data) {
                     _grid.setData(data.result);

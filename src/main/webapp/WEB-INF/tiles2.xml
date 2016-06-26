@@ -157,6 +157,9 @@
         <put-attribute name="body" value="/WEB-INF/pages/adres/adreslijst2.jsp"/>
     </definition>
 
+    <definition name="adres.zoek.result2" 
+        template="/WEB-INF/pages/adres/adreslijst2.jsp" />
+
     <!-- Dossier Zoeken -->
     <!-- ************** -->
 

@@ -104,7 +104,7 @@ define([
 
 
             promiseArr = _(urlArr).map( function (url) {
-                return ajax.postJSON({
+                return ajax.postJson({
                     url: url,
                     content: self.params
                 });

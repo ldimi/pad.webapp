@@ -44,7 +44,7 @@ define([
 
             this.ophalen = function () {
                 $('#takenlijst').addClass('invisible');
-                ajax.postJSON({
+                ajax.postJson({
                     url: "/pad/s/planning/getTaken",
                     content: this.params
                 }).then(function (taken) {

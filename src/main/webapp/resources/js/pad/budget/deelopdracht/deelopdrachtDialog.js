@@ -68,7 +68,7 @@ define([
             var deelopdracht_id;
             deelopdracht_id =this.deelopdracht.get("deelopdracht_id");
             if (deelopdracht_id) {
-                ajax.getJSON({
+                ajax.getJson({
                     url: '/pad/s/budget/deelopdracht/getBrieven?deelopdrachtId=' + deelopdracht_id
                 }).then(function (response) {
                     if (response && response.success) {

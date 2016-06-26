@@ -357,7 +357,7 @@ define([
     _comp.laadSmegData = function (item) {
         var dossier_id_boa = item.get("dossier_id_boa");
         if (dossier_id_boa !== null) {
-            ajax.getJSON({
+            ajax.getJson({
                 url: '/pad/s/sluis/smegdata/' + dossier_id_boa
             }).then(function (response) {
                 if (response && response.success) {

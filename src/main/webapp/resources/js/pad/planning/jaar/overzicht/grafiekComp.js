@@ -62,7 +62,7 @@ define([
     ophalenProgrammaGrafiek = function (jaar, programma_code, markering_id) {
         var programmaGeplandPromise, programmaBenutPromise, programmaGemarkeerdPromise;
 
-        programmaGeplandPromise = ajax.postJSON({
+        programmaGeplandPromise = ajax.postJson({
             url: '/pad/s/planning/jaar/getProgrammaGeplandData',
             content: {
                 "jaar": jaar,
@@ -70,7 +70,7 @@ define([
             }
         });
 
-        programmaBenutPromise = ajax.postJSON({
+        programmaBenutPromise = ajax.postJson({
             url: '/pad/s/planning/jaar/getProgrammaBenutData',
             content: {
                 "jaar": jaar,
@@ -78,7 +78,7 @@ define([
             }
         });
 
-        programmaGemarkeerdPromise = ajax.postJSON({
+        programmaGemarkeerdPromise = ajax.postJson({
             url: '/pad/s/planning/jaar/getProgrammaGemarkeerdePlanningData',
             content: {
                 "jaar": jaar,

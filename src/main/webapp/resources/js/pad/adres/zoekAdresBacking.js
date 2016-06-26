@@ -29,7 +29,7 @@ define([
         {value: "VLAAMS BRABANT", label: "VLAAMS BRABANT"},
         {value: "WEST VLAANDEREN", label: "WEST VLAANDEREN"}
     ];
-
+    
     _comp = {};
     _comp.controller = function () {
         this.params = new ZoekParamsModel();

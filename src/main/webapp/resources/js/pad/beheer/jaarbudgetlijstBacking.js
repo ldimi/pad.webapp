@@ -38,7 +38,7 @@ define([
     });
 
     getJaarbudgetten = function (jaar) {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/beheer/getjaarbudgetten',
             content: {
                 "jaar": jaar

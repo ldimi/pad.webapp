@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AdresZoekController {
@@ -30,10 +32,21 @@ public class AdresZoekController {
         model.addAttribute("menuId", "m_briefwisseling.zoekAdres");
         model.addAttribute("title", "Adressen");
         
-        model.addAttribute("provincies", DropDownHelper.INSTANCE.getProvincies());
+        //model.addAttribute("provincies", DropDownHelper.INSTANCE.getProvincies());
         
         return jsview("adres/zoekAdres", model);
 	}
+
+	@RequestMapping(value = "/adres/zoek2", method = RequestMethod.GET)
+	public String zoek2(Model model) throws Exception {
+        model.addAttribute("menuId", "m_briefwisseling.zoekAdres");
+        model.addAttribute("title", "Adressen");
+        
+        //model.addAttribute("provincies", DropDownHelper.INSTANCE.getProvincies());
+        
+        return jsview("adres/zoekAdres2", model);
+	}
+
 
 
 	@SuppressWarnings("rawtypes")
@@ -43,13 +56,29 @@ public class AdresZoekController {
 		
 		if (adreslijst.size() > 3000) {
 			model.addAttribute("errorMsg", "Verfijn uw zoekopdracht, er werden meer dan 3000 resultaten gevonden.");
-			return "adres.zoek";
+			return zoek(model);
 		}
 		
 		session.setAttribute("zoeklijst", adreslijst);	
 		session.setAttribute("sublijst", null);		
 		session.setAttribute("zoekaction", "/s/adres/lijst");
 		return "adres.zoek.result";
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/adres/zoeken", method = RequestMethod.GET)
+	public String zoekResult2 (@ModelAttribute AdresZoekForm form, Model model, HttpSession session,final RedirectAttributes redirectAttributes) throws Exception {
+		List adreslijst = adresDAO.getAdresZoekResult(form);
+		
+//		if (adreslijst.size() > 3000) {
+//			redirectAttributes.addFlashAttribute("errorMsg", "Verfijn uw zoekopdracht, er werden meer dan 3000 resultaten gevonden.");
+//			return "redirect:/s/adres/zoek2";
+//		}
+		
+		session.setAttribute("zoeklijst", adreslijst);	
+		session.setAttribute("sublijst", null);		
+		session.setAttribute("zoekaction", "/s/adres/lijst");
+		return "adres.zoek.result2";
 	}
 	
 	@RequestMapping(value = "/adres/lijst", method = RequestMethod.GET)

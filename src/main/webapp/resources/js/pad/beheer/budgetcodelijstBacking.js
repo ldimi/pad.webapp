@@ -200,7 +200,7 @@ define([
 
         _detailComp.ctrl.onReady();
 
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/beheer/budgetcodes'
         }).then(function (data) {
             _grid.setData(data);

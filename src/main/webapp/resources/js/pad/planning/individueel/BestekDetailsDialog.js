@@ -51,7 +51,7 @@ define([
 
             this.title = "Bestek : " + bestek_nr;
 
-            ajax.postJSON({
+            ajax.postJson({
                 url: "/pad/s/planning/getDetailsVoorBestek",
                 content: bestek_id
             }).then(function (response) {

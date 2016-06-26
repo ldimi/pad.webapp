@@ -19,7 +19,7 @@ define([
 
     _getData = function (params) {
         $('#data_div').addClass('invisible');
-        ajax.postJSON({
+        ajax.postJson({
             url: "/pad/s/planning/individueel/grafiek/jaarData",
             content: params
         }).then(function (response) {

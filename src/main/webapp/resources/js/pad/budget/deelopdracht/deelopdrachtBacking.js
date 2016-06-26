@@ -11,7 +11,7 @@ define([
     function deelopdrachtPromise(deelopdracht_id, bestek_id, bestekNr, raamcontract_jn, dossier_id, planning_lijn_id, bedrag, voorstel_d) {
         var deferred;
         if (deelopdracht_id) {
-            return ajax.getJSON({
+            return ajax.getJson({
                 url: '/pad/s/deelopdracht?id=' + deelopdracht_id
             });
         }
@@ -34,19 +34,19 @@ define([
     }
 
     function dossiersPromise(deelopdracht_id) {
-        return ajax.getJSON({
+        return ajax.getJson({
             url: '/pad/s/deelopdracht/dossiers?deelopdracht_id=' + deelopdracht_id
         });
     }
 
     function planningLijnenPromise(bestek_id, deelopdracht_id) {
-        return ajax.getJSON({
+        return ajax.getJson({
             url: '/pad/s/deelopdracht/planning_lijnen?bestek_id=' + bestek_id + '&deelopdracht_id=' + deelopdracht_id
         });
     }
 
     function offertenPromise(bestek_id) {
-        return ajax.getJSON({
+        return ajax.getJson({
             url: '/pad/s/deelopdracht/offertes?bestek_id=' + bestek_id
         });
     }

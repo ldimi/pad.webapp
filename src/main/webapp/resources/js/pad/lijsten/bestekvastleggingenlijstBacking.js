@@ -266,7 +266,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
     }
 
     function setPlanningLijnen() {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/lijsten/planning_lijnen?bestekId=' + bestekId + '&aanvraagId=' + aanvraagId
         }).success(function (data) {
             data.result.unshift({
@@ -279,7 +279,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
     }
 
     function setGunningsverslagen() {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/lijsten/gunningsverslagScans?bestekId=' + bestekId + '&aanvraagId=' + aanvraagId
         }).success(function (data) {
             data.result.unshift({
@@ -291,7 +291,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
     }
 
     function setGunningsbeslissingen() {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/lijsten/gunningsbeslissingsScans?bestekId=' + bestekId + '&aanvraagId=' + aanvraagId
         }).success(function (data) {
             data.result.unshift({
@@ -302,7 +302,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
         });
     }
     function setOvereenkomsten() {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/lijsten/overeenkomstScans?bestekId=' + bestekId + '&aanvraagId=' + aanvraagId
         }).success(function (data) {
             data.result.unshift({
@@ -314,7 +314,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
     }
 
     function setAllScans() {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/lijsten/allScans?bestekId=' + bestekId + '&aanvraagId=' + aanvraagId
         }).success(function (data) {
             data.result.unshift({
@@ -343,7 +343,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
     }
 
     function setOpdrachthouders() {
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/lijsten/opdrachthouders?bestekId=' + bestekId
         }).success(function (data) {
             data.result.unshift({
@@ -386,7 +386,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
 
     function setSpreiding(aanvraagId) {
         if (aanvraagId) {
-            ajax.getJSON({
+            ajax.getJson({
                 url: '/pad/s/lijsten/spreidingen?aanvraagId=' + aanvraagId
             }).success(function (response) {
                 vastleggingsBetalingsGrid.setData(response.result);
@@ -401,7 +401,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
 
     function setOptioneleBestanden(aanvraagId) {
         if (aanvraagId) {
-            ajax.getJSON({
+            ajax.getJson({
                 url: '/pad/s/lijsten/optioneleBrieven?aanvraagId=' + aanvraagId
             }).success(function (response) {
                 optioneleBestandenGrid.setData(response.result);
@@ -633,7 +633,7 @@ define(["ov/ajax", "ov/Meta", "ov/GridComp"], function (ajax, Meta, GridComp) {
                     if (!data) {
                         data = [];
                     }
-                    ajax.getJSON({
+                    ajax.getJson({
                         url: '/pad/s/vastlegging/brief?briefId=' + item.bestand
                     }).success(function (response) {
                         data.push(response.result);

@@ -172,7 +172,7 @@ define([
 
         _detailComp.ctrl.onReady();
 
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s/beheer/briefTypesVos'
         }).then(function (data) {
             _grid.setData(data.result);

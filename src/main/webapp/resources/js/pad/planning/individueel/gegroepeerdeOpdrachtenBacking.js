@@ -92,7 +92,7 @@ define([
             this.ophalen = function () {
                 $('#overzicht_div').addClass('invisible');
 
-                ajax.postJSON({
+                ajax.postJson({
                     url: "/pad/s/planning/getPlanning",
                     content: this.params
                 }).then(function (response) {
@@ -110,7 +110,7 @@ define([
                     }
                 });
 
-                ajax.postJSON({
+                ajax.postJson({
                     url: "/pad/s/planning/getOverzichtRaamcontract",
                     content: this.params.get("dossier_id")
                 }).then(function (response) {
@@ -224,7 +224,7 @@ define([
                                 item.set({
                                     deleted_jn: "J"
                                 });
-                                ajax.postJSON({
+                                ajax.postJson({
                                     url: "/pad/s/planning/bewaar",
                                     content: item.clone()
                                 }).then(function () {

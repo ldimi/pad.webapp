@@ -24,7 +24,7 @@ define([
 
     planningOphalen = function (params) {
         $('#planningGridDiv').addClass('invisible');
-        ajax.postJSON({
+        ajax.postJson({
             url: "/pad/s/planning/getPlanning",
             content: params
         }).then(function (planning) {

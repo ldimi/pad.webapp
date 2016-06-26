@@ -213,7 +213,7 @@ define([
 
 
     ophalen = function () {
-        var jaar, budgettenPromise, programmaBudgettenPromise, mijlpalenPromise, mijlpalenProgrammaPromise, getJSON;
+        var jaar, budgettenPromise, programmaBudgettenPromise, mijlpalenPromise, mijlpalenProgrammaPromise, getJson;
 
         jaar = $('#paramForm').find("[name=jaar]").val();
         $('#jb_content_div').addClass('invisible');
@@ -223,8 +223,8 @@ define([
             return; // no action
         }
 
-        getJSON = function (url) {
-            return ajax.getJSON({
+        getJson = function (url) {
+            return ajax.getJson({
                 url: url,
                 content: {
                     "jaar": jaar
@@ -232,10 +232,10 @@ define([
             });
         };
 
-        budgettenPromise = getJSON('/pad/s/planning/jaar/budgetPerBudgetcode');
-        programmaBudgettenPromise = getJSON('/pad/s/planning/jaar/budgetPerProgrammacode');
-        mijlpalenPromise = getJSON('/pad/s/beheer/getJaarMijlpalen');
-        mijlpalenProgrammaPromise = getJSON('/pad/s/beheer/getJaarMijlpalenProgramma');
+        budgettenPromise = getJson('/pad/s/planning/jaar/budgetPerBudgetcode');
+        programmaBudgettenPromise = getJson('/pad/s/planning/jaar/budgetPerProgrammacode');
+        mijlpalenPromise = getJson('/pad/s/beheer/getJaarMijlpalen');
+        mijlpalenProgrammaPromise = getJson('/pad/s/beheer/getJaarMijlpalenProgramma');
 
         $.when(budgettenPromise, programmaBudgettenPromise, mijlpalenPromise, mijlpalenProgrammaPromise)
             .done(function (jaarbudgetResp, programmaBudgettenResp, mijlpalenResp, mijlpalenProgrammaResp) {

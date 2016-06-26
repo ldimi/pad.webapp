@@ -94,7 +94,7 @@ define([
 
         _bewaar: function () {
 
-            ajax.postJSON({
+            ajax.postJson({
                 url: "/pad/s/planning/bewaar",
                 content: this._lijn.clone()
             }).then(function (response) {
@@ -177,7 +177,7 @@ define([
         fetchBestekkenDDByDossierId: function (dossier_id) {
             var self = this;
             if (dossier_id !== null) {
-                ajax.postJSON({
+                ajax.postJson({
                     url: "/pad/s/planning/getBestekkenByDossier",
                     content: dossier_id
                 }).then(function (bestekken_dd) {

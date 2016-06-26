@@ -23,7 +23,7 @@ define([
 
 
         // autocomplete lijst voor fusiegemeenten
-        ajax.getJSON({
+        ajax.getJson({
             url: '/pad/s//adres/gemeentenLijst'
         }).then(function (gemeentenLijst) {
 
