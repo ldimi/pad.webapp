@@ -21,7 +21,7 @@ define([
             { name: "actief_s" }
         ])
     });
-    
+
     provincies = [
         {value: "", label: ""},
         {value: "ANTWERPEN", label: "ANTWERPEN"},
@@ -30,22 +30,27 @@ define([
         {value: "VLAAMS BRABANT", label: "VLAAMS BRABANT"},
         {value: "WEST VLAANDEREN", label: "WEST VLAANDEREN"}
     ];
-    
-    
+
+
     _comp = {};
     _comp.controller = function () {
-        this.params = new ZoekParamsModel();
+        if (_G_.model.params) {
+            this.params = new ZoekParamsModel(_G_.model.params);
+        } else {
+            this.params = new ZoekParamsModel();
+        }
         this.results = m.prop("");
         this.showErrors = m.prop(false);
-        this.zoeken = function (params) {
-            var self = this;
+
+
+        this.zoeken = function () {
             ajax.getHtml({
                 url: '/pad/s/adres/zoeken',
-                content: {"naam_adres": "dirk"}
+                content: this.params.toJSON()
             }).then(function (response) {
                 //alert(response);
-                self.results(response); 
-            });
+                this.results(response);
+            }.bind(this));
         };
     };
 

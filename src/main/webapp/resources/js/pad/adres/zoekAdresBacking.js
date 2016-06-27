@@ -20,7 +20,7 @@ define([
             { name: "actief_s" }
         ])
     });
-    
+
     provincies = [
         {value: "", label: ""},
         {value: "ANTWERPEN", label: "ANTWERPEN"},
@@ -29,10 +29,14 @@ define([
         {value: "VLAAMS BRABANT", label: "VLAAMS BRABANT"},
         {value: "WEST VLAANDEREN", label: "WEST VLAANDEREN"}
     ];
-    
+
     _comp = {};
     _comp.controller = function () {
-        this.params = new ZoekParamsModel();
+        if (_G_.model.params) {
+            this.params = new ZoekParamsModel(_G_.model.params);
+        } else {
+            this.params = new ZoekParamsModel();
+        }
         this.showErrors = m.prop(false);
     };
 

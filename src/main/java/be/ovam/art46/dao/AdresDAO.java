@@ -1,5 +1,6 @@
 package be.ovam.art46.dao;
 
+import be.ovam.art46.controller.adres.AdresZoekParams;
 import be.ovam.art46.struts.actionform.AdresZoekForm;
 import be.ovam.pad.model.Adres;
 
@@ -24,6 +25,12 @@ public class AdresDAO extends GenericDAO<Adres> {
 		List adreslijst = sqlSession.selectList("be.ovam.art46.mappers.AdresMapper.zoekAdres", adresZoekForm);
 		return adreslijst;
 	}
+	@SuppressWarnings("rawtypes")
+	public List getAdresZoekResult(AdresZoekParams adresZoekParams) throws Exception {
+		List adreslijst = sqlSession.selectList("be.ovam.art46.mappers.AdresMapper.zoekAdres", adresZoekParams);
+		return adreslijst;
+	}
+	
 	
 	public String getGemeenteNaam(String postcode) throws Exception {
 		String gemeenteNaam = (String) sqlSession.selectOne("be.ovam.art46.mappers.AdresMapper.getGemeenteNaamByPostcode", postcode);
