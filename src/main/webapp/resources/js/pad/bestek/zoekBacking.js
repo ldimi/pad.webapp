@@ -5,14 +5,12 @@ define([
     "dropdown/dossierTypes",
     "dropdown/dossierhouders",
     "dropdown/programmaTypes",
-    "common/dropdown/dossier/fasen",
-    "common/dropdown/dossier/rechtsgronden",
     "ov/Model",
     "ov/mithril/formhelperFactory"
-], function (dossierTypes, dossierhouders, programmaTypes, fasen, rechtsgronden, Model, fhf) {
+], function (dossierTypes, dossierhouders, programmaTypes, Model, fhf) {
     'use strict';
 
-    var _comp, ZoekParamsModel, ja_nee_dd;
+    var _comp, ZoekParamsModel, ja_nee_dd, bestekBodemFase_dd;
 
     ja_nee_dd = [{
         value: "",
@@ -25,16 +23,21 @@ define([
         label: "Nee"
     }];
 
+    bestekBodemFase_dd = _G_.model.bestekBodemFase_dd;
+    bestekBodemFase_dd.unshift( {value: "", label: "" });
+
     ZoekParamsModel = Model.extend({
         meta: Model.buildMeta([
-            { name: "dossier_type" },
             { name: "bestek_nr" },
-            { name: "dossier_id" },
+            { name: "bestek_hdr_id" },
+            { name: "omschrijving" },
+            { name: "wbs_nr" },
+            { name: "fase_id", type: "int" },
+            { name: "dossier_nr" },
+            { name: "dossier_type" },
             { name: "doss_hdr_id" },
             { name: "dossier_b" },
-            { name: "wbs_nr" },
             { name: "programma_code" },
-            { name: "fase_id", type: "int" },
             { name: "raamcontract_jn" },
             { name: "incl_afgesloten_s" }
         ]),
@@ -43,35 +46,8 @@ define([
 
             dossier_type = this.get("dossier_type");
 
-            if (dossier_type === null) {
-                this.attributes.rechtsgrond_code = null;
-                this.attributes.dossier_fase_id = null;
-            } else {
-
-                if (this.attributes.rechtsgrond_code !== null) {
-                    if (!rechtsgronden.isValid(this.attributes.rechtsgrond_code, dossier_type)) {
-                        this.attributes.rechtsgrond_code = null;
-                    }
-                }
-
-                if (this.attributes.dossier_fase_id !== null) {
-                    if (!fasen.isValid(this.attributes.dossier_fase_id, dossier_type)) {
-                        this.attributes.dossier_fase_id = null;
-                    }
-                }
-            }
-
-            if (dossier_type !== 'B') {
-                this.attributes.ig_s = null;
-                this.attributes.historiek_lijst_id = null;
-                this.attributes.ob_s = null;
-            }
-
             if (dossier_type !== 'X') {
                 this.attributes.raamcontract_jn = null;
-            } else {
-                // voor andere dossiers wordt hier niet opgezocht !!
-                this.attributes.dossier_fase_id = null;
             }
 
 
@@ -82,7 +58,7 @@ define([
 
     _comp = {};
     _comp.controller = function () {
-        this.params = new ZoekParamsModel();
+        this.params = new ZoekParamsModel(_G_.model.params);
         this.showErrors = m.prop(false);
     };
 
@@ -94,13 +70,23 @@ define([
         return m("div", {style: {margin: "30px"}}, [
                     (_G_.model.errorMsg) ?
                         m("div", {style: {color : "red"}} , _G_.model.errorMsg) : null,
-                    m("form", {action: "/pad/s/dossier/zoek/result"}, [
+                    m("form", {action: "/pad/s/bestek/zoeken"}, [
                         m("table.formlayout", [
                             m("tbody", [
                                 m("tr", [
                                     m("td", "Bestek nummer"),
                                     m("td", [
                                         ff.input("bestek_nr", {class: "input"})
+                                    ]),
+                                    m("td", "Bestekhouder"),
+                                    m("td", [
+                                        ff.select("bestek_hdr_id", {class: "input"}, dossierhouders)
+                                    ])
+                                ]),
+                                m("tr", [
+                                    m("td", "Omschrijving"),
+                                    m("td", [
+                                        ff.input("omschrijving", {class: "input"})
                                     ])
                                 ]),
                                 m("tr", [
@@ -111,9 +97,9 @@ define([
                                 ]),
                                 m("tr", [
                                     m("td", "Fase"),
-                                    m("td", ff.select("dossier_fase_id", {class: "input"}, fasen[ctrl.params.get("dossier_type")] || [] ))
+                                    m("td", ff.select("fase_id", {class: "input"}, _G_.model.bestekBodemFase_dd))
                                 ]),
-                                m("tr" , { style: {height: "20px"}}),
+                                m("tr", { style: { height: "20px" }}),
                                 m("tr", [
                                     m("td", "Dossier type"),
                                     m("td", [
@@ -131,7 +117,7 @@ define([
                                     m("td", [
                                         ff.input("dossier_nr", {class: "input"})
                                     ]),
-                                    m("td", "Dossierhouder IVS"),
+                                    m("td", "Dossierhouder"),
                                     m("td", [
                                         ff.select("doss_hdr_id", {class: "input"}, dossierhouders)
                                     ])
@@ -148,18 +134,17 @@ define([
                                         ff.select("programma_code", {class: "input"}, programmaTypes)
                                     ])
                                 ]),
+                                m("tr", { style: { height: "20px" }}),
                                 m("tr", [
                                     m("td[colspan=2]", [
-                                        ff.checkbox("incl_afgesloten_s", "Inclusief afgesloten bestekken")
+                                        ff.checkbox("incl_afgesloten_s", "Inclusief afgesloten dossiers")
                                     ])
                                 ]),
                                 m("tr", [
                                     m("td[colspan=4][align=right]", [
                                         m("input[type=submit][value=Zoeken].inputbtn")
                                     ])
-                                ]),
-
-                                m("tr")
+                                ])
                             ])
                         ])
                     ])

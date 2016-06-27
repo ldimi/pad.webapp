@@ -24,7 +24,69 @@
         where 1 = 1
              and be.stop_d is null
              and be.bestek_hdr_id = #{bestek_hdr_id}
-     </select>
+    </select>
+
+    <select id="getBestekZoekResult" resultType="ciMap" parameterType="be.ovam.art46.controller.budget.BestekZoekParams" >
+        select
+            be.bestek_id,
+            be.bestek_nr,
+            be.dossier_nr,
+            be.dossier_type,
+            be.dossier_b_l,
+            be.raamcontract_jn,
+            be.type_b,
+            be.procedure_b,
+            be.fase_b,
+            be.omschrijving,
+            be.wbs_nr,
+            be.screening_jn
+        from art46.v_bestek be
+                left outer join art46.v_dossier dos
+                on be.dossier_id = dos.id
+        where 1=1
+            <if test="bestek_nr != null">
+                and be.bestek_nr like '%' || upper(#{bestek_nr}) || '%'
+            </if>
+            <if test="omschrijving != null">
+                and upper(be.omschrijving) like '%' || upper(#{omschrijving}) || '%'
+            </if>
+            <if test="bestek_hdr_id != null">
+                 and be.bestek_hdr_id = #{bestek_hdr_id}
+            </if>
+            <if test="wbs_nr != null">
+                and upper(be.wbs_nr) like '%' || upper(#{wbs_nr}) || '%'
+            </if>
+            <if test="fase_id != null">
+                 and be.fase_id = #{fase_id}
+            </if>
+            <if test="dossier_nr != null">
+                and be.dossier_nr like '%' || #{dossier_nr} || '%'
+            </if>
+            <if test="dossier_type != null">
+                 and be.dossier_type = #{dossier_type}
+            </if>
+            <if test="raamcontract_jn != null">
+                 and be.raamcontract_jn = #{raamcontract_jn}
+            </if>
+            <if test="doss_hdr_id != null">
+                 and be.doss_hdr_id = #{doss_hdr_id}
+            </if>
+            <if test="dossier_b != null">
+                and upper(be.dossier_b_l) like '%' || upper(#{dossier_b}) || '%'
+            </if>
+            <if test="programma_code != null">
+                and dos.programma_code = #{programma_code}
+            </if>
+
+            <if test='incl_afgesloten_s == null || incl_afgesloten_s != "1"'>
+                    and dos.afsluit_d is null
+            </if>
+
+            <if test="raamcontract_jn != null">
+                 and be.raamcontract_jn = #{raamcontract_jn}
+            </if>
+
+    </select>
 
     <select id="getNieuwBestekData" resultType="be.ovam.art46.model.BestekDO" parameterType="int" >
     <![CDATA[

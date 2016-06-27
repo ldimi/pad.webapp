@@ -312,6 +312,12 @@
         <put-attribute name="body" value="/WEB-INF/pages/bestek/mijnbestekken.jsp"/>
     </definition>
 
+    <definition name="bestek.zoek.result" extends="baseDef">
+        <put-attribute name="title" value="Zoek bestek"/>
+        <put-attribute name="menuId" value="m_bestek.zoeken"/>
+        <put-attribute name="body" value="/WEB-INF/pages/bestek/bestekzoekresult.jsp"/>
+    </definition>
+
     <definition name="bestek.basisgegevens.jsView" extends="bestek.baseDef">
         <put-attribute name="tab_selected" value="Basisgegevens"/>
         <put-attribute name="tab_body" value="/WEB-INF/pages/layouts/jsView.jsp"/>

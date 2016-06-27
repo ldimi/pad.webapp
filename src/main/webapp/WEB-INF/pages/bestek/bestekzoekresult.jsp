@@ -1,6 +1,6 @@
 <%@ taglib uri="/tags/display-tags" prefix="display" %>
 
-<display:table class="lijst1" id="bestek" name="sessionScope.zoeklijst" requestURI="/s/mijnbestekken/lijst" export="true" defaultsort="1" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
+<display:table class="lijst1" id="bestek" name="sessionScope.zoeklijst" requestURI="/s/bestek/zoek/lijst" export="true" defaultsort="1" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
 
     <display:column  title="Besteknr" sortProperty="bestek_nr"  sortable="true" >
         <a href='/pad/s/bestek/${bestek.bestek_id}/basisgegevens/' >

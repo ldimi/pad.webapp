@@ -24,13 +24,22 @@ public class BestekZoekController {
 	private SqlSession sqlSession;
 	
     @RequestMapping(value = "/mijnbestekken", method = RequestMethod.GET)
-	public String mijnbestekken(Model model) throws Exception {
-        
-        model.addAttribute("mijnbestekken", sqlSession.selectList("be.ovam.art46.mappers.BestekMapper.mijnbestekken", Application.INSTANCE.getUser_id()));
-        
+	public String mijnbestekken(HttpSession session) throws Exception {
+        List result = sqlSession.selectList("be.ovam.art46.mappers.BestekMapper.mijnbestekken", Application.INSTANCE.getUser_id());
+
+		session.setAttribute("zoeklijst", result);	
+		session.setAttribute("sublijst", null);		
+		session.setAttribute("zoekaction", "/s//mijnbestekken/lijst");
+        return "bestek.mijnbestekken";
+    }
+    
+    @RequestMapping(value = "/mijnbestekken/lijst", method = RequestMethod.GET)
+	public String mijnbestekken() throws Exception {
         return "bestek.mijnbestekken";
     }
 
+    
+    
 	@RequestMapping(value = "/bestek/zoek", method = RequestMethod.GET)
 	public String zoek(Model model) throws Exception {
         
@@ -39,7 +48,7 @@ public class BestekZoekController {
         model.addAttribute("dossierhouders", DDH.getDossierhouders());
         model.addAttribute("programmaTypes", DDH.getProgrammaTypes());
 
-        model.addAttribute("fasen", DDH.getDossierFasen_dd());
+        model.addAttribute("bestekBodemFase_dd", DDH.getBestekBodemFase());
         
         model.addAttribute("title", "Zoek Bestek");
         model.addAttribute("menuId", "m_bestek.zoeken");
@@ -48,24 +57,24 @@ public class BestekZoekController {
 	}
 
 	@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "/bestek/zoek/result", method = RequestMethod.GET)
-	public String zoekResult (@ModelAttribute DossierZoekForm form, Model model, HttpSession session,final RedirectAttributes redirectAttributes) throws Exception {
+	@RequestMapping(value = "/bestek/zoeken", method = RequestMethod.GET)
+	public String zoeken (@ModelAttribute("params") BestekZoekParams params, Model model, HttpSession session,final RedirectAttributes redirectAttributes) throws Exception {
         
-		List result = sqlSession.selectList("be.ovam.art46.mappers.DossierMapper.getDossierZoekResult", form);
+		List result = sqlSession.selectList("be.ovam.art46.mappers.BestekMapper.getBestekZoekResult", params);
 		if (result.size() > 1000) {
             redirectAttributes.addFlashAttribute("errorMsg", "Verfijn uw zoekopdracht, er werden meer dan 1000 resultaten gevonden.");
-			//model.addAttribute("foutBoodschap", "Verfijn uw zoekopdracht, er werden meer dan 1000 resultaten gevonden.");
-            return "redirect:/s/dossier/zoek";
+			redirectAttributes.addFlashAttribute("params", model.asMap().get("params"));
+            return "redirect:/s/bestek/zoek";
 		}
 		
 		session.setAttribute("zoeklijst", result);	
 		session.setAttribute("sublijst", null);		
-		session.setAttribute("zoekaction", "/s/dossier/lijst");
-		return "dossier.zoek.result";
+		session.setAttribute("zoekaction", "/s/bestek/zoek/lijst");
+		return "bestek.zoek.result";
 	}
 	
-	@RequestMapping(value = "/bestek/lijst", method = RequestMethod.GET)
+	@RequestMapping(value = "/bestek/zoek/lijst", method = RequestMethod.GET)
 	public String lijst() throws Exception {
-		return "dossier.zoek.result";
+		return "bestek.zoek.result";
 	}
 }
