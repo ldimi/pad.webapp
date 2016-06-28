@@ -39,7 +39,7 @@
             be.fase_b,
             be.omschrijving,
             be.wbs_nr,
-            be.screening_jn
+            dos.programma_code
         from art46.v_bestek be
                 left outer join art46.v_dossier dos
                 on be.dossier_id = dos.id

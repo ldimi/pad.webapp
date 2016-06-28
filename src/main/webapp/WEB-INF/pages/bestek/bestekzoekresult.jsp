@@ -23,6 +23,7 @@
     <display:column property="dossier_nr" title="Dossier nr." sortable="true" media="html csv excel pdf xml"/>
     <display:column property="dossier_b_l" title="Dossier titel" sortable="true" media="html csv excel pdf xml"/>
     <display:column property="dossier_type" title="Dos. type" sortable="true" media="html csv excel pdf xml"/>
+    <display:column property="programma_code" title="Programma" sortable="true" media="html csv excel pdf xml"/>
 
 </display:table>
 
