@@ -15,6 +15,8 @@ public class ScheduledTasks {
     @Qualifier("sqlSession")
     protected SqlSession sql;
 
+    @Autowired
+    private SqlSession ovamcore_sqlSession;
 
     @Scheduled(cron = "0 30 7-19 * * 1-5")
     public void registreerOverdrachtsFichesBijBestemmeling() {
@@ -22,5 +24,16 @@ public class ScheduledTasks {
         // wordt om het uur (op het half uur) getriggerd tijdens werkdagen.
         sql.insert("registreerOverdrachtsFichesBijBestemmeling");
     }
-    
+
+
+//    @Scheduled(cron = "0 30 7-19 * * 1-5")
+//    public void registreerOverdrachtsFichesBijBestemmeli() {
+//        // nieuwe overdrachten aanmaken
+//        // wordt om het uur (op het half uur) getriggerd tijdens werkdagen.
+//        sql.insert("registreerOverdrachtsFichesBijBestemmeling");
+//    }
+
+
+
+
 }
