@@ -20,7 +20,7 @@ public class ScheduledWebloketService {
     @Autowired
     private SqlSession ovamcore_sqlSession;
 
-    private final static Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+    private final static Logger log = LoggerFactory.getLogger(ScheduledWebloketService.class);
     
     
     public void syncWebloketMedewerkersRol() {

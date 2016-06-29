@@ -31,8 +31,8 @@ public class ScheduledTasks {
     }
 
 
-    @Scheduled(cron = "0 */2 7-19 * * 1-5")
-    //@Scheduled(cron = "0 40 6 * * *")
+    //@Scheduled(cron = "0 */2 7-19 * * 1-5")
+    @Scheduled(cron = "0 0 20 * * *")
     public void syncWebloketMedewerkersRol() {
         scheduledWebloketService.syncWebloketMedewerkersRol();
     }
