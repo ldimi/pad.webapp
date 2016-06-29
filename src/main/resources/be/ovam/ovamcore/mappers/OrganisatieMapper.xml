@@ -44,7 +44,9 @@
     </sql>
    
     <sql id="medewerkersrol_sql">
-        select lg.login_id,
+        select distinct 
+               lg.login_id,
+               lg.email,
                mw.organisatie_id,
                gr.code,
                gr.organisatietype_id,
@@ -61,15 +63,25 @@
         where gr.applicatie_id = 8        
     </sql>
     
+    <sql id="medewerkersrol_actief_sql" >
+        <include refid="medewerkersrol_sql"/>
+            and <include refid="medewerkersrol_actief_conditie"/>
+    </sql>
+
+    <!-- alle medewerkersrollen -->
+    <select id="medewerkersrol_actief_alle" resultType="ciMap">
+        <include refid="medewerkersrol_actief_sql"/>
+    </select>
+     
+    
     <sql id="medewerkersrol_dossierBeheer_sql">
         <include refid="medewerkersrol_sql"/>
             and gr.code like '%DOSSIER' 
     </sql>
 
     <sql id="medewerkersrol_actief_dossierBeheer_sql">
-        <include refid="medewerkersrol_sql"/>
+        <include refid="medewerkersrol_actief_sql"/>
             and gr.code like '%DOSSIER' 
-            and <include refid="medewerkersrol_actief_conditie"/>
     </sql>
     
     <!-- alle medewerkersrollen voor dossierBeheer -->
@@ -102,9 +114,8 @@
     </sql>
     
     <sql id="medewerkersrol_actief_financieelBeheer_sql">
-        <include refid="medewerkersrol_sql"/>
+        <include refid="medewerkersrol_actief_sql"/>
             and gr.code like '%FINANCIEEL' 
-            and <include refid="medewerkersrol_actief_conditie"/>
     </sql>
     
     <select id="medewerkers_financieelBeheer_voor_organisatie" resultType="ciMap">

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="be.ovam.art46.mappers.WebloketMapper">
+
+    <select id="select_all_medewerkersrollen" resultType="ciMap" >
+        select * from art46.WEBLOKET_MEDEWERKERSROL
+    </select>
+
+    <delete id="delete_all_medewerkersrollen">
+        delete from art46.WEBLOKET_MEDEWERKERSROL
+    </delete>
+
+</mapper>

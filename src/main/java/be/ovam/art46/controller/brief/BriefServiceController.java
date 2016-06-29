@@ -6,10 +6,8 @@ import be.ovam.art46.service.*;
 import be.ovam.pad.model.Brief;
 import be.ovam.pad.model.Dossier;
 import be.ovam.art46.model.ScanDTO;
-import be.ovam.art46.service.schuldvordering.SchuldvorderingService;
 import be.ovam.art46.struts.actionform.BriefForm;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
