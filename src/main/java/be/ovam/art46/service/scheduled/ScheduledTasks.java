@@ -1,8 +1,6 @@
 package be.ovam.art46.service.scheduled;
 
 import be.ovam.util.mybatis.SqlSession;
-import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +31,13 @@ public class ScheduledTasks {
     }
 
 
-    @Scheduled(cron = "0 */1 7-19 * * 1-5")
+    @Scheduled(cron = "0 */2 7-19 * * 1-5")
+    //@Scheduled(cron = "0 40 6 * * *")
     public void syncWebloketMedewerkersRol() {
         scheduledWebloketService.syncWebloketMedewerkersRol();
     }
 
-
+    
 
 
 }
