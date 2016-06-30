@@ -178,11 +178,17 @@
             do.ander_dossier_b as dossier_b,
             do.ander_doss_hdr_id as uitvoerder,
             do.deelopdracht_nr as omschrijving,
-            do.bestek_nr || ' , ' || do.dossier_nr || ' : ' || do.dossier_b_l as extra_info,
+            do.bestek_nr || ' , ' || do.dossier_nr || ' : ' || do.dossier_b_l ||
+                 case when vdo.status = 'TOEGEKEND' then ' (' || vdo.voorstel_deelopdracht_nr || ' toegekend)'
+                      else ''
+                 end
+            as extra_info,
             's/bestek/' || do.bestek_id || '/deelopdrachten/' || do.deelopdracht_id as link,
             cast(null as date) as uiterste_eind_d,
             cast(null as int) as termijn
         from art46.v_deelopdracht do
+                 left join art46.v_voorstel_deelopdracht vdo
+                 on do.voorstel_deelopdracht_id = vdo.voorstel_deelopdracht_id
         where 1 = 1
             and do.afsluit_d is null
             and do.goedkeuring_d is null
