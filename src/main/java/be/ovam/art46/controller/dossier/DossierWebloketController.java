@@ -1,14 +1,11 @@
 package be.ovam.art46.controller.dossier;
 
 import be.ovam.art46.service.dossier.DossierWebloketService;
-import be.ovam.art46.struts.actionform.DossierArt46Form;
 import be.ovam.util.mybatis.SqlSession;
 import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

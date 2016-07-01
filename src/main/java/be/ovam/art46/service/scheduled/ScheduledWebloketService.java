@@ -41,4 +41,11 @@ public class ScheduledWebloketService {
             sql.insertInTable("art46", "webloket_medewerkersrol", medewerkersRol);
         }
     }
+    
+    public void verwijderDossierAbonnees () {
+        log.info("start removeDossierAbonnees");
+        Integer deleted = sql.delete("be.ovam.art46.mappers.DossierMapper.verwijderDossierAbonnees");
+        log.info("stop removeDossierAbonnees : aantal verwijderde abonnees = " + deleted);
+    }
+    
 }

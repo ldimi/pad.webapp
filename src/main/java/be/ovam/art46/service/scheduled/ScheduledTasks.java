@@ -1,12 +1,10 @@
 package be.ovam.art46.service.scheduled;
 
-import be.ovam.util.mybatis.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +12,8 @@ import org.springframework.stereotype.Component;
 public class ScheduledTasks {
 
     @Autowired
-    @Qualifier("sqlSession")
-    protected SqlSession sql;
-    
+    ScheduledOverdrachtService scheduledOverdrachtService;
+
     @Autowired
     ScheduledWebloketService scheduledWebloketService;
 
@@ -27,7 +24,7 @@ public class ScheduledTasks {
     public void registreerOverdrachtsFichesBijBestemmeling() {
         // nieuwe overdrachten aanmaken
         // wordt om het uur (op het half uur) getriggerd tijdens werkdagen.
-        sql.insert("registreerOverdrachtsFichesBijBestemmeling");
+        scheduledOverdrachtService.registreerOverdrachtsFichesBijBestemmeling();
     }
 
 
@@ -37,7 +34,9 @@ public class ScheduledTasks {
         scheduledWebloketService.syncWebloketMedewerkersRol();
     }
 
-    
-
+    @Scheduled(cron = "0 40 11 * * *")
+    public void verwijderDossierAbonnees() {
+        scheduledWebloketService.verwijderDossierAbonnees();
+    }
 
 }

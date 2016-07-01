@@ -1225,4 +1225,30 @@
         where dossier_id = #{dossier_id}
     </select>
 
+    <delete id="verwijderDossierAbonnees" >
+        delete from art46.DOSSIER_ABONNEE da1
+        where (da1.email, da1.dossier_id) in (
+                                    select distinct da.email, da.dossier_id
+                                    from  art46.DOSSIER_ABONNEE da
+                                             left join art46.WEBLOKET_MEDEWERKERSROL mwr
+                                             on da.EMAIL = mwr.EMAIL
+                                             and mwr.code like '%_DOSSIER'
+                                    where 1 = 1
+                                        and mwr.email is null
+                                        and mwr.ORGANISATIE_ID != 1
+                                    )
+            or (da1.email, da1.dossier_id) in (
+                                    select distinct da.email, da.dossier_id
+                                    from  art46.DOSSIER_ABONNEE da
+                                             inner join art46.WEBLOKET_MEDEWERKERSROL mwr
+                                             on da.EMAIL = mwr.EMAIL
+                                             and mwr.code like '%_DOSSIER'
+                                         left join art46.DOSSIER_ORGANISATIE dosorg
+                                         on da.DOSSIER_ID = dosorg.dossier_id
+                                         and mwr.ORGANISATIE_ID = dosorg.ORGANISATIE_ID
+                                    where 1 = 1
+                                        and dosorg.ORGANISATIE_ID is null
+                                    )
+    </delete>
+
 </mapper>
