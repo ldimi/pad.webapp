@@ -34,7 +34,7 @@ public class ScheduledTasks {
         scheduledWebloketService.syncWebloketMedewerkersRol();
     }
 
-    @Scheduled(cron = "0 40 11 * * *")
+    @Scheduled(cron = "0 30 6 * * *")
     public void verwijderDossierAbonnees() {
         scheduledWebloketService.verwijderDossierAbonnees();
     }
