@@ -48,7 +48,7 @@ public class ScheduledWebloketService {
         log.info("start removeDossierAbonnees");
         Integer deleted = sql.delete("be.ovam.art46.mappers.DossierMapper.verwijderDossierAbonnees");
         
-        if (deleted < 30) {
+        if (deleted > 30) {
            log.info("ERROR removeDossierAbonnees : te verwijderen abonnees lijkt verdacht groot : " + deleted); 
            throw new RuntimeException("ERROR removeDossierAbonnees : te verwijderen abonnees lijkt verdacht groot : " + deleted);
         }
