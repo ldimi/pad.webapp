@@ -108,9 +108,15 @@
 
     <insert id="registreerOverdrachtsFichesBijBestemmeling">
         insert into art46.DOSSIER_OVERDRACHT
-        (versie_nr, dossier_type, dossier_id, status_start_d, status, deleted_jn)
+        (versie_nr, dossier_type, dossier_id, status_start_d, status, deleted_jn, screening_jn, aanmaak_pad_jn)
             select distinct
-                1, 'B', ados.id, current date, 'registrati', 'N'
+                1, 'B', ados.id, current date, 'registrati', 'N',
+                case when dt.code = 'CODE2018' then 'N'
+                     else 'J'
+                end as screening_jn,
+                case when (dt.code = 'CODE2018' and docst.code = 'CODE50') then 'N'      --  TE BESPREKEN !!! ivm constraint
+                     else 'J'
+                end as aanmaak_pad_jn
             from smeg.dossier sd
                     inner join smeg.BUNDEL_BUNDEL bb
                     on sd.id = bb.PARENT_BUNDEL_ID
@@ -120,14 +126,14 @@
                     on doc.TYPE_ID = dt.ID
                 inner join art46.dossier ados
                 on sd.dossier_id = ados.dossier_id_boa
-                    left join smeg_ref.DOCUMENTSTATUS docs
-                    on doc.STATUS_ID = docs.ID
+                    inner join smeg_ref.DOCUMENTSTATUS docst
+                    on doc.STATUS_ID = docst.ID
                 left join art46.DOSSIER_OVERDRACHT doso
                 on ados.id = doso.DOSSIER_ID
             WHERE 1 = 1
-                and dt.code in ('CODE2003')      -- Overdrachtsfiche dossier BB naar IVS  handhaving
-                and doc.STATUS_ID = 38           -- nota bij bestemmeling
-                and doso.OVERDRACHT_ID is null   -- bestaat nog niet als overdracht.
+                and dt.code in ('CODE2003', 'CODE2018', 'CODE2019')
+                and docst.code in ('CODE40', 'CODE50')   -- nota bij bestemmeling
+                and doso.OVERDRACHT_ID is null           -- bestaat nog niet als overdracht.
     </insert>
 
 </mapper>
