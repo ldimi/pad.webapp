@@ -1235,7 +1235,7 @@
                                              and mwr.code like '%_DOSSIER'
                                     where 1 = 1
                                         and mwr.email is null
-                                        and mwr.ORGANISATIE_ID != 1
+                                        and lower(da.email) not like '%@ovam.be'
                                     )
             or (da1.email, da1.dossier_id) in (
                                     select distinct da.email, da.dossier_id

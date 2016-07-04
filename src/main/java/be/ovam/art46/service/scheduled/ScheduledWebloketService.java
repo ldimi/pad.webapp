@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ScheduledWebloketService {
 	
     @Autowired
@@ -45,6 +47,12 @@ public class ScheduledWebloketService {
     public void verwijderDossierAbonnees () {
         log.info("start removeDossierAbonnees");
         Integer deleted = sql.delete("be.ovam.art46.mappers.DossierMapper.verwijderDossierAbonnees");
+        
+        if (deleted < 30) {
+           log.info("ERROR removeDossierAbonnees : te verwijderen abonnees lijkt verdacht groot : " + deleted); 
+           throw new RuntimeException("ERROR removeDossierAbonnees : te verwijderen abonnees lijkt verdacht groot : " + deleted);
+        }
+        
         log.info("stop removeDossierAbonnees : aantal verwijderde abonnees = " + deleted);
     }
     
