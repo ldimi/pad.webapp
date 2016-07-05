@@ -17,7 +17,7 @@
     <version>6.35-SNAPSHOT</version>
 
     <properties>
-        <pad.common.version>6.21</pad.common.version>
+        <pad.common.version>6.22-SNAPSHOT</pad.common.version>
                                 
         <spring.security.ldap.version>1.3.2.RELEASE</spring.security.ldap.version>
         
