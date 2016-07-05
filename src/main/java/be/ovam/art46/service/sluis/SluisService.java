@@ -112,7 +112,7 @@ public class SluisService {
         BeanMap doso = new BeanMap(overdracht);
         Map<String, Object> dos = new HashMap(doso);
         
-        if ("naar_ivs".equals(overdracht.getStatus())) {
+        if ("naar_ivs".equals(overdracht.getStatus()) && "J".equals(overdracht.getAanmaak_pad_jn()) ) {
             String dossier_b = overdracht.getDossier_b();
             if (dossier_b == null || dossier_b.length() == 0) {
                 throw new RuntimeException("Dossier_b moet ingevuld zijn om een ivs dossier aan te maken.");

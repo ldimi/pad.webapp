@@ -8,14 +8,31 @@ define([
     "ov/events"
 ], function (Model, dossierTypes, fhf,event) {
     'use strict';
-    var comp, ParamsModel;
+    var comp, ParamsModel, ja_nee_dd;
+
+    ja_nee_dd = [
+        { value:  "J", label: "Ja" },
+        { value:  "N", label: "Nee" }
+    ];
 
     ParamsModel = Model.extend({
-        meta: Model.buildMeta([{
-            name: "dossier_type"
-        }, {
-            name: "selected_status_list"
-        }])
+        meta: Model.buildMeta([
+           { name: "aanmaak_pad_jn", default: "J" },
+           { name: "screening_jn", default: "J" },
+           { name: "dossier_type" },
+           { name: "selected_status_list" }
+        ]),
+
+        enforceInvariants: function () {
+            if ( this.get("aanmaak_pad_jn") === "N" ) {
+                this.attributes.screening_jn = "N";
+                this.attributes.dossier_type = "B";
+            } else if (this.hasChanged("aanmaak_pad_jn") && this.get("aanmaak_pad_jn") === "J") {
+                this.attributes.screening_jn = "J";
+                this.attributes.dossier_type = null;
+            }
+        }
+
     });
 
     comp = {};
@@ -68,8 +85,16 @@ define([
                 m("table",
                     m("tbody",
                         m("tr", [
+                            m("td", "voor PAD:"),
+                            m("td", ff.select("aanmaak_pad_jn", ja_nee_dd)),
+                            ( ctrl.params.get("aanmaak_pad_jn") === "J" )
+                                ? [
+                                    m("td", "Screening ?:"),
+                                    m("td", ff.select("screening_jn", ja_nee_dd))
+                                  ]
+                                : null,
                             m("td", "Dossier Type:"),
-                            m("td", ff.select("dossier_type", ctrl.dossier_types)),
+                            m("td", ff.select("dossier_type", {readOnly: ( ctrl.params.get("aanmaak_pad_jn") === "N" ) }, ctrl.dossier_types)),
                             m("td", "Status:"),
                             m("td", ff.select_multiple("selected_status_list", ctrl.statusSelectOptions)),
                             m("td", m("button", {onclick: _.bind(ctrl.ophalen, ctrl) }, "Ophalen"))
@@ -79,6 +104,8 @@ define([
             )
         );
     };
+
+
 
 
     return comp;
