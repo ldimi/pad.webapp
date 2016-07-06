@@ -31,6 +31,11 @@ define([
                 this.attributes.screening_jn = "J";
                 this.attributes.dossier_type = null;
             }
+            
+            if ((this.hasChanged("aanmaak_pad_jn") && this.get("screening_jn") === "N") ||
+                (this.hasChanged("screening_jn") && this.get("screening_jn") === "N")      ) {
+                this.attributes.selected_status_list = [];
+            }
         }
 
     });
@@ -54,6 +59,12 @@ define([
             .map(_.clone)
             .filter(function (item) {
                 return (_G_.model.page_status_list.indexOf(item.value) !== -1);
+            })
+            .value();
+            
+        this.statusSelectOptions_zonder_screening = _.chain(this.statusSelectOptions)
+            .filter(function (item) {
+                return !_.contains(["screening", "na_screen", "na_scr_afg"], item.value);
             })
             .value();
 
@@ -96,7 +107,9 @@ define([
                             m("td", "Dossier Type:"),
                             m("td", ff.select("dossier_type", {readOnly: ( ctrl.params.get("aanmaak_pad_jn") === "N" ) }, ctrl.dossier_types)),
                             m("td", "Status:"),
-                            m("td", ff.select_multiple("selected_status_list", ctrl.statusSelectOptions)),
+                            ( ctrl.params.get("screening_jn") === "J" )
+                                ? m("td", ff.select_multiple("selected_status_list", ctrl.statusSelectOptions))
+                                : m("td", ff.select_multiple("selected_status_list", ctrl.statusSelectOptions_zonder_screening)),
                             m("td", m("button", {onclick: _.bind(ctrl.ophalen, ctrl) }, "Ophalen"))
                         ])
                     )

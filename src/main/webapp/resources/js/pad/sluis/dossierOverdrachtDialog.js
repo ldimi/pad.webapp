@@ -212,12 +212,32 @@ define([
                         ]),
                         m(".row.form-group", [
                             m(".col-xs-6", [
+                                m(".col-xs-3", "Gemeente:"),
+                                m(".col-xs-9", ff.select("nis_id", fusiegemeenten))
+                            ]),
+                            m(".col-xs-6", [
+                                m(".col-xs-3", "Dossierhouder IVS:"),
+                                m(".col-xs-9", ff.select("doss_hdr_id", dossierhouders))
+                            ])
+                        ]),
+                        m(".row.form-group", [
+                            m(".col-xs-6", [
                                 m(".col-xs-3", "Rechtsgrond:"),
                                 m(".col-xs-9", ff.select("rechtsgrond_code", rechtsgronden[dossier_type] ))
                             ]),
                             m(".col-xs-6", [
                                 m(".col-xs-3", "Fase:"),
-                                m(".col-xs-9",  ff.select("dossier_fase_id", fasen[dossier_type] ))
+                                m(".col-xs-9", ff.select("dossier_fase_id", fasen[dossier_type] ))
+                            ])
+                        ]),
+                        m(".row.form-group", [
+                            m(".col-xs-6", [
+                                m(".col-xs-3", "Programma:"),
+                                m(".col-xs-9", ff.select("programma_code", programmaTypes))
+                            ]),
+                            m(".col-xs-6", [
+                                m(".col-xs-3", "Doelgroep:"),
+                                m(".col-xs-9", ff.select("doelgroep_type_id", doelgroepen_dd))
                             ])
                         ])
                     ],
