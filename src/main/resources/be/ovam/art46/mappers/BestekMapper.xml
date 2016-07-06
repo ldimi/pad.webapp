@@ -23,6 +23,7 @@
         from art46.v_bestek be
         where 1 = 1
              and be.stop_d is null
+             and be.afsluit_d is null
              and be.bestek_hdr_id = #{bestek_hdr_id}
     </select>
 
@@ -39,6 +40,7 @@
             be.fase_b,
             be.omschrijving,
             be.wbs_nr,
+            be.afsluit_d,
             dos.programma_code
         from art46.v_bestek be
                 left outer join art46.v_dossier dos
@@ -78,8 +80,11 @@
                 and dos.programma_code = #{programma_code}
             </if>
 
-            <if test='incl_afgesloten_s == null || incl_afgesloten_s != "1"'>
+            <if test='incl_afgesloten_dossiers == null || incl_afgesloten_dossiers != "1"'>
                     and dos.afsluit_d is null
+            </if>
+            <if test='incl_afgesloten_bestekken == null || incl_afgesloten_bestekken != "1"'>
+                    and be.afsluit_d is null
             </if>
 
             <if test="raamcontract_jn != null">

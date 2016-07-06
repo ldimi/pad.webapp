@@ -15,7 +15,9 @@ public class BestekZoekParams implements Serializable {
     private String dossier_b;
     private String programma_code;
     private String raamcontract_jn;
-    private String incl_afgesloten_s;
+    
+    private String incl_afgesloten_dossiers;
+    private String incl_afgesloten_bestekken;
 
     public String getBestek_nr() {
         return bestek_nr;
@@ -89,14 +91,6 @@ public class BestekZoekParams implements Serializable {
         this.raamcontract_jn = raamcontract_jn;
     }
 
-    public String getIncl_afgesloten_s() {
-        return incl_afgesloten_s;
-    }
-
-    public void setIncl_afgesloten_s(String incl_afgesloten_s) {
-        this.incl_afgesloten_s = incl_afgesloten_s;
-    }
-
     public String getDossier_type() {
         return dossier_type;
     }
@@ -111,6 +105,22 @@ public class BestekZoekParams implements Serializable {
 
     public void setOmschrijving(String omschrijving) {
         this.omschrijving = omschrijving;
+    }
+
+    public String getIncl_afgesloten_dossiers() {
+        return incl_afgesloten_dossiers;
+    }
+
+    public void setIncl_afgesloten_dossiers(String incl_afgesloten_dossiers) {
+        this.incl_afgesloten_dossiers = incl_afgesloten_dossiers;
+    }
+
+    public String getIncl_afgesloten_bestekken() {
+        return incl_afgesloten_bestekken;
+    }
+
+    public void setIncl_afgesloten_bestekken(String incl_afgesloten_bestekken) {
+        this.incl_afgesloten_bestekken = incl_afgesloten_bestekken;
     }
 
     

@@ -39,7 +39,8 @@ define([
             { name: "dossier_b" },
             { name: "programma_code" },
             { name: "raamcontract_jn" },
-            { name: "incl_afgesloten_s" }
+            { name: "incl_afgesloten_bestekken" },
+            { name: "incl_afgesloten_dossiers" }
         ]),
         enforceInvariants: function () {
             var dossier_type;
@@ -99,6 +100,11 @@ define([
                                     m("td", "Fase"),
                                     m("td", ff.select("fase_id", {class: "input"}, _G_.model.bestekBodemFase_dd))
                                 ]),
+                                m("tr", [
+                                    m("td[colspan=2]", [
+                                        ff.checkbox("incl_afgesloten_bestekken", "Inclusief afgesloten bestekken")
+                                    ])
+                                ]),
                                 m("tr", { style: { height: "20px" }}),
                                 m("tr", [
                                     m("td", "Dossier type"),
@@ -137,7 +143,7 @@ define([
                                 m("tr", { style: { height: "20px" }}),
                                 m("tr", [
                                     m("td[colspan=2]", [
-                                        ff.checkbox("incl_afgesloten_s", "Inclusief afgesloten dossiers")
+                                        ff.checkbox("incl_afgesloten_dossiers", "Inclusief afgesloten dossiers")
                                     ])
                                 ]),
                                 m("tr", [
