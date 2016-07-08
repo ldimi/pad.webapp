@@ -116,6 +116,9 @@ define([
                     if ("status" === veldNaam ) {
                         return (ctrl.item.get("status_crud") === 'C');
                     }
+                    if ("screening_jn" === veldNaam) {
+                        return (ctrl.item.get("aanmaak_pad_jn") === "N");
+                    }
                     if (_.contains(["status_start_d", "prioriteits_index"], veldNaam) ) {
                         return true;
                     }
@@ -132,6 +135,12 @@ define([
                     m(".col-xs-6", [
                         m(".col-xs-3", "Dossier Type:"),
                         m(".col-xs-9", ff.select("dossier_type", ctrl.dossier_types))
+                    ]),
+                    m(".col-xs-6", [
+                        m(".col-xs-3", "Aanmaak Padnr:"),
+                        m(".col-xs-3",  ff.select("aanmaak_pad_jn", ja_nee_dd)),
+                        m(".col-xs-3", "Screening gewenst:"),
+                        m(".col-xs-3",  ff.select("screening_jn", ja_nee_dd))
                     ])
                 ]),
                 (dossier_type === 'B')

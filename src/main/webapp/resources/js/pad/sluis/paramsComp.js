@@ -8,9 +8,15 @@ define([
     "ov/events"
 ], function (Model, dossierTypes, fhf,event) {
     'use strict';
-    var comp, ParamsModel, ja_nee_dd;
+    var comp, ParamsModel, ja_nee_dd, ja_nee_leeg_dd;
 
     ja_nee_dd = [
+        { value:  "J", label: "Ja" },
+        { value:  "N", label: "Nee" }
+    ];
+
+    ja_nee_leeg_dd = [
+        { value:  "", label: "" },
         { value:  "J", label: "Ja" },
         { value:  "N", label: "Nee" }
     ];
@@ -31,10 +37,10 @@ define([
                 this.attributes.screening_jn = "J";
                 this.attributes.dossier_type = null;
             }
-            
+
             if ((this.hasChanged("aanmaak_pad_jn") && this.get("screening_jn") === "N") ||
                 (this.hasChanged("screening_jn") && this.get("screening_jn") === "N")      ) {
-                this.attributes.selected_status_list = [];
+                this.attributes.selected_status_list = _G_.model.page_status_list.slice(0, 1);
             }
         }
 
@@ -61,7 +67,7 @@ define([
                 return (_G_.model.page_status_list.indexOf(item.value) !== -1);
             })
             .value();
-            
+
         this.statusSelectOptions_zonder_screening = _.chain(this.statusSelectOptions)
             .filter(function (item) {
                 return !_.contains(["screening", "na_screen", "na_scr_afg"], item.value);
@@ -96,18 +102,14 @@ define([
                 m("table",
                     m("tbody",
                         m("tr", [
-                            m("td", "voor PAD:"),
+                            m("td", "Aanmaak PADnr:"),
                             m("td", ff.select("aanmaak_pad_jn", ja_nee_dd)),
-                            ( ctrl.params.get("aanmaak_pad_jn") === "J" )
-                                ? [
-                                    m("td", "Screening ?:"),
-                                    m("td", ff.select("screening_jn", ja_nee_dd))
-                                  ]
-                                : null,
+                            m("td", "Screening gewenst:"),
+                            m("td", ff.select("screening_jn", {readOnly: ( ctrl.params.get("aanmaak_pad_jn") === "N" ) }, ja_nee_leeg_dd)),
                             m("td", "Dossier Type:"),
                             m("td", ff.select("dossier_type", {readOnly: ( ctrl.params.get("aanmaak_pad_jn") === "N" ) }, ctrl.dossier_types)),
                             m("td", "Status:"),
-                            ( ctrl.params.get("screening_jn") === "J" )
+                            ( ctrl.params.get("screening_jn") !== "N" )
                                 ? m("td", ff.select_multiple("selected_status_list", ctrl.statusSelectOptions))
                                 : m("td", ff.select_multiple("selected_status_list", ctrl.statusSelectOptions_zonder_screening)),
                             m("td", m("button", {onclick: _.bind(ctrl.ophalen, ctrl) }, "Ophalen"))
