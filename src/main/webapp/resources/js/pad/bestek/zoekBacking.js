@@ -140,12 +140,6 @@ define([
                                         ff.select("programma_code", {class: "input"}, programmaTypes)
                                     ])
                                 ]),
-                                m("tr", { style: { height: "20px" }}),
-                                m("tr", [
-                                    m("td[colspan=2]", [
-                                        ff.checkbox("incl_afgesloten_dossiers", "Inclusief afgesloten dossiers")
-                                    ])
-                                ]),
                                 m("tr", [
                                     m("td[colspan=4][align=right]", [
                                         m("input[type=submit][value=Zoeken].inputbtn")

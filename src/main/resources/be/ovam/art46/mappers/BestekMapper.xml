@@ -90,9 +90,6 @@
                 and dos.programma_code = #{programma_code}
             </if>
 
-            <if test='incl_afgesloten_dossiers == null || incl_afgesloten_dossiers != "1"'>
-                    and dos.afsluit_d is null
-            </if>
             <if test='incl_afgesloten_bestekken == null || incl_afgesloten_bestekken != "1"'>
                     and be.afsluit_d is null
             </if>
