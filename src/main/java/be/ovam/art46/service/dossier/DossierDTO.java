@@ -31,7 +31,7 @@ public class DossierDTO implements Serializable{
     private String aanpak_onderzocht_s;
 	private String aanpak_onderzocht_l;
 	private String financiele_info;
-	private String onderzoek_id;
+	private Integer onderzoek_id;
 
 	private Date conform_bbo_d;
 	private Date conform_bsp_d;
@@ -196,11 +196,11 @@ public class DossierDTO implements Serializable{
         this.financiele_info = financiele_info;
     }
 
-    public String getOnderzoek_id() {
+    public Integer getOnderzoek_id() {
         return onderzoek_id;
     }
 
-    public void setOnderzoek_id(String onderzoek_id) {
+    public void setOnderzoek_id(Integer onderzoek_id) {
         this.onderzoek_id = onderzoek_id;
     }
 

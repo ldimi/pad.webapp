@@ -45,7 +45,7 @@ define([
         this.width = 800;
 
         this.dossier_types = _.filter(dossierTypes, function (type) { return type.value !== 'X'; });
-        _G_.dossierAdressen = [];
+        this.dossierAdressen = null;
 
         this.showErrors = m.prop(false);
     };
@@ -57,7 +57,7 @@ define([
 
             this.title = "Overdracht detail, id:  " + this.item.get("overdracht_id") + ", dossierNr: " + this.item.get("dossier_nr") ;
 
-            _comp.laadSmegData(this.item);
+            this.fetchDossierOnderzoekAdressen();
 
             this.showErrors(false);
         },
@@ -98,6 +98,43 @@ define([
                     alert("De actie niet gelukt (server error :" + response.errorMsg + ")");
                 }
             });
+        },
+        fetchSmegData: function () {
+            var dossier_id_boa;
+            dossier_id_boa = this.item.get("dossier_id_boa");
+            
+            if (!this.item.isValid("dossier_id_boa")) {
+                return;
+            }
+            if (dossier_id_boa === null) {
+                return;
+            }
+            
+            ajax.getJson({
+                url: '/pad/s/sluis/smegdata/' + dossier_id_boa
+            }).then(function (response) {
+                this.item.setSmeg_data(response.result.smegData);
+            }.bind(this));
+            
+            this.fetchDossierOnderzoekAdressen();
+        },
+        fetchDossierOnderzoekAdressen: function () {
+            var dossier_id_boa;
+            dossier_id_boa = this.item.get("dossier_id_boa");
+            this.dossierAdressen = null;
+            
+            if (!this.item.isValid("dossier_id_boa")) {
+                return;
+            }
+            if (dossier_id_boa === null) {
+                return;
+            }
+            
+            ajax.getJson({
+                url: '/pad/s/sluis/smegdata/dossierAdressen/' + dossier_id_boa
+            }).then(function (response) {
+                this.dossierAdressen = response.result;
+            }.bind(this));
         }
 
     });
@@ -158,7 +195,8 @@ define([
                                             _.bind(ctrl.item.setSmeg_data, ctrl.item)("editing");
                                             _.bind(ctrl.item.set, ctrl.item)({"dossier_id_boa": this.value });
                                         },
-                                        onblur: _.partial(_comp.view.onblur_dossier_id_boa, ctrl.item),
+                                        //onblur: _.partial(_comp.view.onblur_dossier_id_boa, ctrl.item),
+                                        onblur: _.bind(ctrl.fetchSmegData, ctrl),
                                         disabled: (ctrl.item.get("status_crud") !== 'C')
                                     })
                                 )
@@ -193,10 +231,10 @@ define([
                                         m(".col-xs-9", ff.select("doss_hdr_id", dossierhouders))
                                     ])
                                 ]),
-                                m(".row.form-group", {class: "invisiblee"}, [
+                                m(".row.form-group", {class: ctrl.dossierAdressen ? "" : "invisible"}, [
                                     m(".col-xs-6", [
                                         m(".col-xs-3", "Adres bodemonderzoek:"),
-                                        m(".col-xs-9", ff.select("onderzoek_id", _G_.dossierAdressen))
+                                        m(".col-xs-9", ff.select("onderzoek_id", ctrl.dossierAdressen))
                                     ])
                                 ]),
                                 m(".row.form-group", [
@@ -387,26 +425,26 @@ define([
 
         return vdom;
     };
-    _comp.view.onblur_dossier_id_boa = function (item) {
-        if (item.isValid("dossier_id_boa")) {
-            _comp.laadSmegData(item);
-        }
-    };
-    _comp.laadSmegData = function (item) {
-        var dossier_id_boa = item.get("dossier_id_boa");
-        if (dossier_id_boa !== null) {
-            ajax.getJson({
-                url: '/pad/s/sluis/smegdata/' + dossier_id_boa
-            }).then(function (response) {
-                if (response && response.success) {
-                    item.setSmeg_data(response.result.smegData);
-                    _G_.dossierAdressen = response.result.dossierAdressen;
-                } else {
-                    alert("De actie is niet gelukt (server error :" + response.errorMsg + ")");
-                }
-            });
-        }
-    };
+    // _comp.view.onblur_dossier_id_boa = function (item) {
+    //     if (item.isValid("dossier_id_boa")) {
+    //         _comp.laadSmegData(item);
+    //     }
+    // };
+    // _comp.laadSmegData = function (item) {
+    //     var dossier_id_boa = item.get("dossier_id_boa");
+    //     if (dossier_id_boa !== null) {
+    //         ajax.getJson({
+    //             url: '/pad/s/sluis/smegdata/' + dossier_id_boa
+    //         }).then(function (response) {
+    //             if (response && response.success) {
+    //                 item.setSmeg_data(response.result.smegData);
+    //                 _G_.dossierAdressen = response.result.dossierAdressen;
+    //             } else {
+    //                 alert("De actie is niet gelukt (server error :" + response.errorMsg + ")");
+    //             }
+    //         });
+    //     }
+    // };
 
 
     return dialogBuilder(_comp);
