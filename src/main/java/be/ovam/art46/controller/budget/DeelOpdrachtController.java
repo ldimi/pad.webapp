@@ -1,6 +1,5 @@
 package be.ovam.art46.controller.budget;
 
-import be.ovam.art46.decorator.BigDecimalDecorator;
 import be.ovam.art46.decorator.CurrencyDecorator;
 import be.ovam.art46.model.SelectionBoxValue;
 import be.ovam.art46.service.BriefService;
@@ -55,8 +54,6 @@ public class DeelOpdrachtController extends BasicBestekController{
     
     @RequestMapping(value = "/bestek/{bestek_id}/offerte/{offerte_id}/deelopdrachten", method = RequestMethod.GET)
     public String start(@PathVariable Long bestek_id, @PathVariable Long offerte_id, Model model) throws Exception {
-        super.startBasic(bestek_id, model);
-        
         if (offerte_id != null && offerte_id == -1 ) {
             return "redirect:/s/bestek/" + bestek_id + "/deelopdrachten";
         }

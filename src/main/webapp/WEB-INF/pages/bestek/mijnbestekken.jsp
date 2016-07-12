@@ -23,6 +23,9 @@
     <display:column property="dossier_nr" title="Dossier nr." sortable="true" media="html csv excel pdf xml"/>
     <display:column property="dossier_b_l" title="Dossier titel" sortable="true" media="html csv excel pdf xml"/>
     <display:column property="dossier_type" title="Dos. type" sortable="true" media="html csv excel pdf xml"/>
+    <display:column property="vastlegging" title="Vastgelegd" sortable="true" media="html csv excel pdf xml" class="number" decorator="be.ovam.art46.decorator.CurrencyDecorator"/>
+    <display:column property="gefactureerd" title="Gefactureerd" sortable="true" media="html csv excel pdf xml" class="number" decorator="be.ovam.art46.decorator.CurrencyDecorator"/>
+    <display:column property="saldo" title="Saldo" sortable="true" media="html csv excel pdf xml" class="number" decorator="be.ovam.art46.decorator.CurrencyDecorator"/>
 
 </display:table>
 

@@ -19,8 +19,13 @@
             be.fase_b,
             be.omschrijving,
             be.wbs_nr,
-            be.screening_jn
+            be.screening_jn,
+            art46.round_to_dec_31_2(sa.vastlegging) as vastlegging,
+            art46.round_to_dec_31_2(sa.gefactureerd) as gefactureerd,
+            art46.round_to_dec_31_2(sa.vastlegging - sa.gefactureerd) as saldo
         from art46.v_bestek be
+                 left join art46.v_bestek_saldos sa
+                 on be.bestek_id = sa.bestek_id
         where 1 = 1
              and be.stop_d is null
              and be.afsluit_d is null
@@ -41,10 +46,15 @@
             be.omschrijving,
             be.wbs_nr,
             be.afsluit_d,
-            dos.programma_code
+            dos.programma_code,
+            art46.round_to_dec_31_2(sa.vastlegging) as vastlegging,
+            art46.round_to_dec_31_2(sa.gefactureerd) as gefactureerd,
+            art46.round_to_dec_31_2(sa.vastlegging - sa.gefactureerd) as saldo
         from art46.v_bestek be
-                left outer join art46.v_dossier dos
+                left outer join art46.dossier dos
                 on be.dossier_id = dos.id
+            left join art46.v_bestek_saldos sa
+            on be.bestek_id = sa.bestek_id
         where 1=1
             <if test="bestek_nr != null">
                 and be.bestek_nr like '%' || upper(#{bestek_nr}) || '%'
@@ -193,54 +203,21 @@
     </select>
 
 
-    <select id="besteksaldo_1" resultType="ciMap" parameterType="int" >
-        with vastlegging as (select sum(coalesce(spv.bedrag,0)) AS vastlegging
-                             from ART46.BESTEK_SAP_PROJECT absp
-                                    left outer join SAP.PROJECT_VASTLEGGING spv
-                                    on absp.project_id = spv.project_id
-                             where absp.bestek_id = #{bestek_id}
-                            )
-            , geraamd as (select sum(coalesce(bedrag, 0)) as geraamd
-                            from ART46.DEELOPDRACHT absp
-                            where bestek_id = #{bestek_id}
-                            )
-            , factuur as (select sum(coalesce(spv.bedrag, 0)) as  factuur
-                            from ART46.BESTEK_SAP_PROJECT absp
-                                    left outer join SAP.PROJECT_FACTUUR spv
-                                    on (absp.project_id = spv.project_id)
-                            where absp.bestek_id = #{bestek_id}
-                            )
-        select
-            vastlegging.vastlegging,
-            geraamd.geraamd,
-            vastlegging.vastlegging - geraamd.geraamd as geraamd_saldo,
-            factuur.factuur,
-            vastlegging.vastlegging - factuur.factuur as saldo,
-            b.bestek_id,
-            b.bestek_nr,
-            b.dossier_id,
-            dos.raamcontract_jn
-        from
-            vastlegging, geraamd, factuur,
-            art46.bestek b
-              inner join art46.v_dossier dos
-              on b.dossier_id = dos.id
-              and b.bestek_id = #{bestek_id}
-    </select>
     <select id="besteksaldo" resultType="ciMap" parameterType="int" >
-        select
-            b.bestek_id,
-            b.bestek_nr,
-            b.dossier_id,
-            b.raamcontract_jn,
-            b.initiele_vastlegging,
-            b.vastlegging,
-            b.geraamd,
-            b.vastlegging - b.geraamd as geraamd_saldo,
-            b.gefactureerd as factuur,
-            b.vastlegging - b.gefactureerd as saldo,
-            b.openstaand_gepland
-        from art46.v_ander_dossier_bestek_saldos b
+        select b.bestek_id,
+               b.bestek_nr,
+               b.dossier_id,
+               b.raamcontract_jn,
+               art46.round_to_dec_31_2(sa.initiele_vastlegging) as initiele_vastlegging,
+               art46.round_to_dec_31_2(sa.vastlegging) as vastlegging,
+               art46.round_to_dec_31_2(sa.geraamd) as geraamd,
+               art46.round_to_dec_31_2(sa.vastlegging - sa.geraamd) as geraamd_saldo,
+               art46.round_to_dec_31_2(sa.gefactureerd) as factuur,
+               art46.round_to_dec_31_2(sa.vastlegging - sa.gefactureerd) as saldo,
+               art46.round_to_dec_31_2(sa.openstaand_gepland) as openstaand_gepland
+        from  art46.v_bestek b
+                 left join art46.v_bestek_saldos sa
+                 on b.bestek_id = sa.bestek_id
         where b.bestek_id = #{bestek_id}
     </select>
 
