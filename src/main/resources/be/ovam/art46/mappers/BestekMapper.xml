@@ -27,7 +27,6 @@
                  left join art46.v_bestek_saldos sa
                  on be.bestek_id = sa.bestek_id
         where 1 = 1
-             and be.stop_d is null
              and be.afsluit_d is null
              and be.bestek_hdr_id = #{bestek_hdr_id}
     </select>

@@ -559,7 +559,7 @@
                         inner join ART46.V_SMEG_DOSSIER_ONDERZOEK o
                         on do.dossier_id_boa = o.dossier_id
                 where
-                    do.id = #{dossier_id}
+                    do.dossier_id_boa = #{dossier_id_boa}
                     and o.adres is not null
                     and o.adres != ''
                 group by o.ADRES

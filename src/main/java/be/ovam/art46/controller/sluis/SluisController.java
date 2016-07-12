@@ -190,8 +190,20 @@ public class  SluisController {
     public
     @ResponseBody
     Response getSmegData(@PathVariable String dossier_id_boa) throws Exception {
-        return new Response(sql.selectOne("be.ovam.art46.mappers.DossierOverdrachtMapper.getSmegDataByDossierIdBoa", dossier_id_boa), true, null);
+        Map result = new HashMap();
+        Map smegData = sql.selectOne("be.ovam.art46.mappers.DossierOverdrachtMapper.getSmegDataByDossierIdBoa", dossier_id_boa);
+        result.put("smegData", smegData);
+        result.put("dossierAdressen", sql.selectList("getDossierAdressen", dossier_id_boa));
+        return new Response(result, true, null);
     }
+    
+    @RequestMapping(value = "/sluis/smegdata/dossierAdressen/{dossier_id_boa}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Response getdossierAdressen(@PathVariable String dossier_id_boa) throws Exception {
+        return new Response(sql.selectList("getDossierAdressen", dossier_id_boa), true, null);
+    }
+    
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private Response getOverdrachten() {

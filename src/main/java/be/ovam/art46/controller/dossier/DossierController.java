@@ -157,7 +157,8 @@ public class DossierController extends BasisDossierController {
 
         if (dossierDTO.getId() != null) {
             if ("B".equals(dossierDTO.getDossier_type())) {
-                model.addAttribute("dossierAdressen", sqlSession.selectList("getDossierAdressen", dossierDTO.getId()));
+                //model.addAttribute("dossierAdressen", sqlSession.selectList("getDossierAdressen", dossierDTO.getId()));
+                model.addAttribute("dossierAdressen", sqlSession.selectList("getDossierAdressen", dossierDTO.getDossier_id_boa()));
                 model.addAttribute("mistralUrl", System.getProperty("pad.mistral2Url"));
             }
             if (!"X".equals(dossierDTO.getDossier_type())) {

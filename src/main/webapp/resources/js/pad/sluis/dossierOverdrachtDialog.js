@@ -32,6 +32,7 @@ define([
     'use strict';
     var _comp;
 
+
     _comp = {};
 
     _comp.controller = function () {
@@ -44,6 +45,7 @@ define([
         this.width = 800;
 
         this.dossier_types = _.filter(dossierTypes, function (type) { return type.value !== 'X'; });
+        _G_.dossierAdressen = [];
 
         this.showErrors = m.prop(false);
     };
@@ -54,6 +56,8 @@ define([
             window._item = item;
 
             this.title = "Overdracht detail, id:  " + this.item.get("overdracht_id") + ", dossierNr: " + this.item.get("dossier_nr") ;
+
+            _comp.laadSmegData(this.item);
 
             this.showErrors(false);
         },
@@ -189,6 +193,12 @@ define([
                                         m(".col-xs-9", ff.select("doss_hdr_id", dossierhouders))
                                     ])
                                 ]),
+                                m(".row.form-group", {class: "invisiblee"}, [
+                                    m(".col-xs-6", [
+                                        m(".col-xs-3", "Adres bodemonderzoek:"),
+                                        m(".col-xs-9", ff.select("onderzoek_id", _G_.dossierAdressen))
+                                    ])
+                                ]),
                                 m(".row.form-group", [
                                     m(".col-xs-6", [
                                         m(".col-xs-3", "Rechtsgrond:"),
@@ -210,7 +220,6 @@ define([
                                     ])
                                 ])
                             ] : null
-
                     ]
                     : [
                         m(".row.form-group", [
@@ -390,7 +399,8 @@ define([
                 url: '/pad/s/sluis/smegdata/' + dossier_id_boa
             }).then(function (response) {
                 if (response && response.success) {
-                    item.setSmeg_data(response.result);
+                    item.setSmeg_data(response.result.smegData);
+                    _G_.dossierAdressen = response.result.dossierAdressen;
                 } else {
                     alert("De actie is niet gelukt (server error :" + response.errorMsg + ")");
                 }
