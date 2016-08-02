@@ -4,7 +4,7 @@
 <display:table id="adres"
     class="lijst1"
     name="sessionScope.zoeklijst"
-    requestURI="/s/adres/lijst"
+    requestURI="${zoekaction}"
     pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
 
     <display:column property="naam" title="Naam" href="adres.do?crudAction=read&adres_id=${adres.adres_id}" sortable="true" />

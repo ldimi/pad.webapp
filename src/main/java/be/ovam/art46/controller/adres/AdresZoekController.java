@@ -72,7 +72,7 @@ public class AdresZoekController {
 		
 		session.setAttribute("zoeklijst", adreslijst);	
 		session.setAttribute("sublijst", null);		
-		session.setAttribute("zoekaction", "/s/adres/lijst");
+		session.setAttribute("zoekaction", "/s/adres/lijst2");
 		return "adres.zoek.result2";
 	}
 	
@@ -80,4 +80,10 @@ public class AdresZoekController {
 	public String lijst() throws Exception {
 		return "adres.zoek.result";
 	}
+
+	@RequestMapping(value = "/adres/lijst2", method = RequestMethod.GET)
+	public String lijst2() throws Exception {
+		return "adres.zoek.result2";
+	}
+
 }

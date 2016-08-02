@@ -9,7 +9,7 @@ define([
 ], function (Model, fhf, ajax) {
     'use strict';
 
-    var _comp, ZoekParamsModel, provincies, zoeken;
+    var _comp, ZoekParamsModel, provincies;
 
     ZoekParamsModel = Model.extend({
         meta: Model.buildMeta([
@@ -49,7 +49,34 @@ define([
                 content: this.params.toJSON()
             }).then(function (response) {
                 //alert(response);
-                this.results(response);
+                this.setResults(response);
+            }.bind(this));
+        };
+        
+        this.sorteren = function (url) {
+            m.redraw.strategy("all");
+            ajax.getHtml({
+                url: url
+            }).then(function (response) {
+                console.log(response);
+                this.setResults(response);
+            }.bind(this));
+        };
+        
+        
+        this.setResults = function (resultHtml) {
+            this.results(resultHtml);
+            window.setTimeout(function() {
+                console.log("set click handlers");
+                console.log($("th.sortable>a").length);
+                $("th.sortable>a").click(function (evt) {
+                    evt.preventDefault();
+                    console.log("start sorteren");
+                    this.sorteren(evt.target.href);
+                    console.log("stop sorteren");
+                    return false;
+                }.bind(this));
+                console.log("stop set click handlers");
             }.bind(this));
         };
     };
