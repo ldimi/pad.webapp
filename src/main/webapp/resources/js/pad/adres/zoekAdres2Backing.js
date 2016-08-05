@@ -53,27 +53,30 @@ define([
             }.bind(this));
         };
         
-        this.sorteren = function (url) {
-            m.redraw.strategy("all");
+        this.urlViaAjax = function (url) {
+            // m.redraw.strategy("all");
+            console.log("start urlViaAjax");
             ajax.getHtml({
                 url: url
             }).then(function (response) {
-                console.log(response);
+                console.log("resultaat urlViaAjax!");
                 this.setResults(response);
             }.bind(this));
+            console.log("stop urlViaAjax");
         };
         
         
         this.setResults = function (resultHtml) {
             this.results(resultHtml);
             window.setTimeout(function() {
-                console.log("set click handlers");
-                console.log($("th.sortable>a").length);
+                console.log("set click handlers headers: " + $("th.sortable>a").length);
                 $("th.sortable>a").click(function (evt) {
-                    evt.preventDefault();
-                    console.log("start sorteren");
-                    this.sorteren(evt.target.href);
-                    console.log("stop sorteren");
+                    this.urlViaAjax(evt.target.href);
+                    return false;
+                }.bind(this));
+                console.log("set click handlers delete_adres : " + $("a[name=delete_adres]").length);
+                $("a[name=delete_adres]").click(function (evt) {
+                    this.urlViaAjax(evt.target.href);
                     return false;
                 }.bind(this));
                 console.log("stop set click handlers");

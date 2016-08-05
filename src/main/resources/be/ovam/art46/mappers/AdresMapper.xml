@@ -5,6 +5,27 @@
 
 <mapper namespace="be.ovam.art46.mappers.AdresMapper">
 
+    <select id="getAdres" parameterType="int" resultType=" be.ovam.art46.controller.adres.AdresD0">
+        select
+            adres_id,
+            naam,
+            voornaam,
+            straat,
+            postcode,
+            gemeente,
+            land,
+            tel,
+            fax,
+            email,
+            website,
+            stop_s,
+            maatsch_zetel,
+            type_id,
+            gsm,
+            referentie_postcodes
+        from art46.adres
+    </select>
+
     <insert id="insertDossierAdres" parameterType="map">
         insert into ART46.dossier_adres (
             dossier_id,

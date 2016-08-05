@@ -17,7 +17,7 @@
     <display:column property="actief_jn" title="Actief ?" sortable="true"/>
     <display:column property="adres_type_b" title="type" sortable="true"/>
     <display:column>
-        <a href="/pad/adres.do?crudAction=delete&adres_id=${adres.adres_id}">
+        <a name="delete_adres" href="/pad/adres.do?crudAction=delete&adres_id=${adres.adres_id}">
             <img border="0" src="/pad/resources/images/delete.gif" title="Verwijderen adres"/>
         </a>
     </display:column>

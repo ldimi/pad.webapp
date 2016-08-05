@@ -67,7 +67,7 @@ public class AdresZoekController {
 		if (adreslijst.size() > 3000) {
 			redirectAttributes.addFlashAttribute("errorMsg", "Verfijn uw zoekopdracht, er werden meer dan 3000 resultaten gevonden.");
 			redirectAttributes.addFlashAttribute("params", model.asMap().get("params"));
-			return "redirect:/s/adres/zoek";
+			return "redirect:/s/adres/zoek2";
 		}
 		
 		session.setAttribute("zoeklijst", adreslijst);	
