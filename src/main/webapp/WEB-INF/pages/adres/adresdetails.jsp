@@ -72,7 +72,7 @@
             <td>Land</td>
             <td align='left'>
                 <html:select property="land" styleClass="input">
-                    <html:optionsCollection name="DDH" property="landen" label="land_b" value="land" />
+                    <html:optionsCollection name="DDH" property="landen" />
                 </html:select>
             </td>
             <td>Type</td>

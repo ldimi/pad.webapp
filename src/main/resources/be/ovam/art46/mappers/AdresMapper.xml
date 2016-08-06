@@ -5,7 +5,7 @@
 
 <mapper namespace="be.ovam.art46.mappers.AdresMapper">
 
-    <select id="getAdres" parameterType="int" resultType=" be.ovam.art46.controller.adres.AdresD0">
+    <select id="getAdres" parameterType="int" resultType="be.ovam.art46.controller.adres.AdresDO">
         select
             adres_id,
             naam,
@@ -24,6 +24,7 @@
             gsm,
             referentie_postcodes
         from art46.adres
+        where adres_id = #{adres_id}
     </select>
 
     <insert id="insertDossierAdres" parameterType="map">
@@ -270,16 +271,6 @@
         from crab.straatnm a inner join crab.gemnm b on b.gemid=a.GEMID
         where lower(b.GEMNM) like ('%' || lower(#{gemeente}) || '%')
         and  lower(STRAATNM) like ('%' || lower(#{straat}) || '%')
-    </select>
-
-
-    <select id="geeflanden" parameterType="string" resultType="ciMap">
-        select
-            land as label,
-            ISOcode as value
-        from
-            art46.land
-            where lower(land) like ('%' || lower(#{land}) || '%')
     </select>
 
 

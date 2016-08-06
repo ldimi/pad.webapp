@@ -1,6 +1,6 @@
 package be.ovam.art46.controller.adres;
 
-public class AdresDo {
+public class AdresDO {
 
     private Integer adres_id;
     private String naam;

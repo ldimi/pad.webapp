@@ -1,6 +1,7 @@
 package be.ovam.art46.controller.adres;
 
 import be.ovam.art46.dao.AdresDAO;
+import be.ovam.art46.util.DropDownHelper;
 import be.ovam.util.mybatis.SqlSession;
 import static be.ovam.web.util.JsView.jsview;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,16 @@ public class AdresController {
 	@Autowired
 	private AdresDAO adresDAO;
 
+    private final DropDownHelper DDH = DropDownHelper.INSTANCE;
 	
 	@RequestMapping(value = "/adres/{adres_id}", method = RequestMethod.GET)
 	public String getAdres(@PathVariable Integer adres_id, Model model) throws Exception {
         model.addAttribute("menuId", "m_briefwisseling.detailAdres");
         model.addAttribute("title", "Adres details");
+        
+        model.addAttribute("adresDO", sqlSession.selectOne("getAdres", adres_id));
+        model.addAttribute("landen", DDH.getLanden());
+        model.addAttribute("adrestypes", DDH.getAdrestypes());
         
         return jsview("adres/adresDetail", model);
 	}

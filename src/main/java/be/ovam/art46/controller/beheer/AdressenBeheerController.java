@@ -110,13 +110,6 @@ public class AdressenBeheerController {
 		return straten;		
 	}
 	
-	@RequestMapping(value="/adres/stellandvoor",method=RequestMethod.GET)
-	public @ResponseBody List zoekland(@RequestParam("term") String land){			
-		List straten = sqlSession.selectList("be.ovam.art46.mappers.AdresMapper.geeflanden", land);
-		return straten;		
-	}	
-
-	
 	@RequestMapping(value = "/nieuw_adres", method = RequestMethod.GET)
 	public String nieuwAdres(Model model){
 		Adres_1 adres = new Adres_1();

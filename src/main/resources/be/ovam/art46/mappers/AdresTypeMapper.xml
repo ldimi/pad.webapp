@@ -5,10 +5,16 @@
 
 <mapper namespace="be.ovam.art46.mappers.AdresTypeMapper">
 
-	<cache flushInterval="2000" readOnly="true" />
+    <cache flushInterval="2000" readOnly="true" />
 
-	<select id="adrestypes" resultType="ciMap">
-		select * from ART46.ADRES_TYPE order by adres_type_b
-	</select>
-	
+    <select id="adrestypes" resultType="ciMap">
+        select
+            adres_type_id,
+            adres_type_b,
+            adres_type_id as value,
+            adres_type_b as label
+        from ART46.ADRES_TYPE
+        order by adres_type_b
+    </select>
+    
 </mapper>

@@ -77,7 +77,11 @@
     </select>
 
     <select id="landen" resultType="ciMap">
-        select * from OVAM.LAND order by land_b
+        select
+            land as value,
+            land_b as label
+        from ovam.land
+        order by land_b
     </select>
 
     <select id="faseRamingByDossierType"  resultType="ciMap"  parameterType="string">
@@ -154,10 +158,6 @@
         select id, omschrijving
         from art46.V_PROVINCIE_VLAANDEREN
         order by id
-    </select>
-
-    <select id="adrestypes" resultType="ciMap">
-        select * from ART46.ADRES_TYPE order by adres_type_b
     </select>
 
     <select id="kadasterafdelingen" resultType="ciMap">

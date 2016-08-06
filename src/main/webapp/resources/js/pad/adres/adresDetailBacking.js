@@ -9,6 +9,8 @@ define([
     "use strict";
 
     var AdresModel, comp;
+    
+    _G_.model.adrestypes.unshift({value: "", label: ""});
 
     AdresModel = Model.extend({
         meta: Model.buildMeta([
@@ -81,58 +83,44 @@ define([
                     m("tr", [
                         m("td", "Voornaam / Afdeling:"),
                         m("td", ff.input("voornaam")),
-                         m("td", "Fax:"),
-                         m("td", ff.input("fax"))
+                        m("td", "Fax:"),
+                        m("td", ff.input("fax"))
                     ]),
                     m("tr", [
-                        m("td", "Procedure:"),
-                        m("td", ff.select("procedure_id", _G_.model.bestekBodemProcedure_dd)),
-                        m("td", "Datum start:"),
-                        m("td", ff.dateInput("start_d"))
+                        m("td", "Straat & nr.:"),
+                        m("td", ff.input("straat")),
+                        m("td", "Gsm:"),
+                        m("td", ff.input("gsm"))
                     ]),
                     m("tr", [
-                        m("td", "Fase:"),
-                        m("td", ff.select("fase_id", _G_.model.bestekBodemFase_dd)),
-                        m("td", "Datum stop:"),
-                        m("td", ff.dateInput("stop_d"))
+                        m("td", "Postcode:"),
+                        m("td", ff.input("postcode")),
+                        m("td", "Email:"),
+                        m("td", ff.input("email"))
                     ]),
                     m("tr", [
-                        m("td", {colspan: 2}, ff.checkbox("raamcontract_jn", {disabled: true}, "Raamcontract", "J", "N")),
-                        m("td", "Datum afsluiting:"),
-                        m("td", ff.dateInput("afsluit_d"))
+                        m("td", "Gemeente:"),
+                        m("td", ff.input("gemeente")),
+                        m("td", "Website:"),
+                        m("td", ff.input("website"))
                     ]),
                     m("tr", [
-                        m("td", {colspan: 2}, ff.checkbox("verlenging_s", null, "Verlenging", "1", "0"))
+                        m("td", "Land:"),
+                        m("td", ff.select("land", _G_.model.landen)),
+                        m("td", "Type:"),
+                        m("td", ff.select("type_id", _G_.model.adrestypes))
                     ]),
                     m("tr", [
-                        m("td", ff.checkbox("screening_jn", {disabled: !_G_.model.isAdminArt46 }, "Screening", "J", "N")),
-                        (ctrl.bestek.get("screening_jn") === "J") ?
-                            m("td", {colspan: 3}, ff.select("screening_organisatie_id", {readOnly: !_G_.model.isAdminArt46 }, ctrl.organisaties_dd)) : null
-                    ]),
-                    m("tr", [
-                         m("td", "SAP wbs nummer:"),
-                         m("td", ff.input("wbs_nr", {readOnly: true}))
-                    ]),
-                    m("tr", [
-                         m("td", {colspan: 2}, [
-                             "Omschrijving:",
-                             m("br"),
-                             ff.textarea("omschrijving", {rows: 10, cols:55, maxlength: 750 })
-                         ]),
-                         m("td", {colspan: 2}, [
-                             "Opmerkingen:",
-                             m("br"),
-                             ff.textarea("commentaar", {rows: 10, cols:55, maxlength: 750 })
-                         ])
+                        m("td", "Voornaam / Afdeling:"),
+                        m("td", ff.input("voornaam")),
+                        m("td", "Fax:"),
+                        m("td", ff.input("fax"))
                     ])
                 ]),
-                (_G_.model.isEditAllowed) ?
-                    m("div.floatRightContainer", {style: {width: "800px", paddingTop: "10px"}}, [
-                        (ctrl.adres.get("bestek_id") !== null && ctrl.adres.get("wbs_nr") === null) ?
-                            m("button", {onclick: _.bind(ctrl.aanmakenSAP, ctrl)}, "Aanmaken in SAP") : null ,
-                        m("button", {onclick: _.bind(ctrl.bewaar, ctrl)},
-                            (ctrl.adres.get("bestek_id") === null) ? "Nieuw bestek toevoegen" : "Wijzigingen opslaan" )
-                    ]) : null
+                m("div.floatRightContainer", {style: {width: "800px", paddingTop: "10px"}}, [
+                    m("button", {onclick: _.bind(ctrl.bewaar, ctrl)},
+                        (ctrl.adres.get("adres_id") === null) ? "Nieuw adres toevoegen" : "Wijzigingen opslaan" )
+                ])
 
             ]);
         }
