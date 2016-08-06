@@ -3,6 +3,7 @@ package be.ovam.art46.controller.adres;
 import be.ovam.art46.dao.AdresDAO;
 import be.ovam.art46.util.DropDownHelper;
 import be.ovam.util.mybatis.SqlSession;
+import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AdresController {
@@ -35,5 +38,10 @@ public class AdresController {
         return jsview("adres/adresDetail", model);
 	}
 
+    @RequestMapping(value = "/adres/save", method = RequestMethod.POST)
+    public @ResponseBody Response save(@RequestBody AdresDO adresDO) throws Exception {
+        sqlSession.saveInTable("art46", "adres", adresDO);
+        return new Response(adresDO.getAdres_id());
+    }
 
 }

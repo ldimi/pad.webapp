@@ -57,7 +57,7 @@ define([
                         content: this.adres
                     }).then(function (response) {
                         if (response && response.success) {
-                            window.location = "http://" + window.location.host + "/pad/s/adres/" + response.result + "/basisgegevens";
+                            window.location = "http://" + window.location.host + "/pad/s/adres/" + response.result;
                         } else {
                             alert("De actie niet gelukt (server error :" + response.errorMsg + ")");
                         }

@@ -22,7 +22,8 @@
             maatsch_zetel,
             type_id,
             gsm,
-            referentie_postcodes
+            referentie_postcodes,
+            'R' as status_crud
         from art46.adres
         where adres_id = #{adres_id}
     </select>

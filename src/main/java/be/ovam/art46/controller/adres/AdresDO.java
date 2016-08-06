@@ -19,6 +19,8 @@ public class AdresDO {
     private String gsm;
     private String referentie_postcodes;
     
+    private String status_crud;
+    
     // private Integer derde_id;
     // private String huis_nr;
     // private String straat_zonder_nr;
@@ -149,6 +151,14 @@ public class AdresDO {
 
     public void setReferentie_postcodes(String referentie_postcodes) {
         this.referentie_postcodes = referentie_postcodes;
+    }
+
+    public String getStatus_crud() {
+        return status_crud;
+    }
+
+    public void setStatus_crud(String status_crud) {
+        this.status_crud = status_crud;
     }
 
    
