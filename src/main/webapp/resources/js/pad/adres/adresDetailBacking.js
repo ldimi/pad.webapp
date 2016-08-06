@@ -76,33 +76,33 @@ define([
                 m("table.formLayout", {width: "800px"}, [
                     m("tr", [
                          m("td", "Naam / Bedrijf:"),
-                         m("td", ff.input("naam")),
+                         m("td", ff.input("naam", {maxlength: 120})),
                          m("td", "Tel.:"),
-                         m("td", ff.input("tel"))
+                         m("td", ff.input("tel", {maxlength: 12}))
                     ]),
                     m("tr", [
                         m("td", "Voornaam / Afdeling:"),
-                        m("td", ff.input("voornaam")),
+                        m("td", ff.input("voornaam", {maxlength: 120})),
                         m("td", "Fax:"),
-                        m("td", ff.input("fax"))
+                        m("td", ff.input("fax", {maxlength: 12}))
                     ]),
                     m("tr", [
                         m("td", "Straat & nr.:"),
-                        m("td", ff.input("straat")),
+                        m("td", ff.input("straat", {maxlength: 40})),
                         m("td", "Gsm:"),
-                        m("td", ff.input("gsm"))
+                        m("td", ff.input("gsm", {maxlength: 20}))
                     ]),
                     m("tr", [
                         m("td", "Postcode:"),
-                        m("td", ff.input("postcode")),
+                        m("td", ff.input("postcode", {maxlength: 8})),
                         m("td", "Email:"),
-                        m("td", ff.input("email"))
+                        m("td", ff.input("email", {maxlength: 50}))
                     ]),
                     m("tr", [
                         m("td", "Gemeente:"),
-                        m("td", ff.input("gemeente")),
+                        m("td", ff.input("gemeente", {maxlength: 40})),
                         m("td", "Website:"),
-                        m("td", ff.input("website"))
+                        m("td", ff.input("website", {maxlength: 100}))
                     ]),
                     m("tr", [
                         m("td", "Land:"),
@@ -111,10 +111,12 @@ define([
                         m("td", ff.select("type_id", _G_.model.adrestypes))
                     ]),
                     m("tr", [
-                        m("td", "Voornaam / Afdeling:"),
-                        m("td", ff.input("voornaam")),
-                        m("td", "Fax:"),
-                        m("td", ff.input("fax"))
+                        m("td[colspan=2]", ff.checkbox("maatsch_zetel", "Maatschappelijke zetel")),
+                        m("td[colspan=2]", ff.checkbox("stop_s", "Niet actief"))
+                    ]),
+                    m("tr", [
+                        m("td", "Referentie postcodes:"),
+                        m("td[colspan=3]", ff.textarea("referentie_postcodes", {rows: 3, cols:90, maxlength: 1500 }))
                     ])
                 ]),
                 m("div.floatRightContainer", {style: {width: "800px", paddingTop: "10px"}}, [
