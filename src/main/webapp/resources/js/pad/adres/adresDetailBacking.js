@@ -122,8 +122,40 @@ define([
                 m("div.floatRightContainer", {style: {width: "800px", paddingTop: "10px"}}, [
                     m("button", {onclick: _.bind(ctrl.bewaar, ctrl)},
                         (ctrl.adres.get("adres_id") === null) ? "Nieuw adres toevoegen" : "Wijzigingen opslaan" )
+                ]),
+                
+                m("h4", "Contacten"),
+                
+                m("table.lijst1",[
+                    m("thead", [
+                        m("tr", [
+                            m("th", "Naam"),
+                            m("th", "Telefoon"),
+                            m("th", "Fax"),
+                            m("th", "GSM"),
+                            m("th", "Email"),
+                            m("th", "Functie"),
+                            m("th", "Commentaar"),
+                            m("th", "Actief?"),
+                            m("th", "")
+                        ])
+                    ]),
+                    m("tbody",
+                        _.map(_G_.model.adresContactenlijst, function (contact) {
+                            return m("tr", [
+                                m("td", contact.naam),
+                                m("td", contact.tel),
+                                m("td", contact.fax),
+                                m("td", contact.gsm),
+                                m("td", contact.email),
+                                m("td", contact.functie),
+                                m("td", contact.commentaar),
+                                m("td", contact.actief_jn),
+                                m("td", "")
+                            ]);
+                        })
+                    )
                 ])
-
             ]);
         }
     };

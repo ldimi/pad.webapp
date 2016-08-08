@@ -28,14 +28,7 @@ public class AdresController {
 	
 	@RequestMapping(value = "/adres/{adres_id}", method = RequestMethod.GET)
 	public String getAdres(@PathVariable Integer adres_id, Model model) throws Exception {
-        model.addAttribute("menuId", "m_briefwisseling.detailAdres");
-        model.addAttribute("title", "Adres details");
-        
-        model.addAttribute("adresDO", sqlSession.selectOne("getAdres", adres_id));
-        model.addAttribute("landen", DDH.getLanden());
-        model.addAttribute("adrestypes", DDH.getAdrestypes());
-        
-        return jsview("adres/adresDetail", model);
+        return getAdresContact(adres_id, null, model);
 	}
 
     @RequestMapping(value = "/adres/save", method = RequestMethod.POST)
@@ -43,5 +36,22 @@ public class AdresController {
         sqlSession.saveInTable("art46", "adres", adresDO);
         return new Response(adresDO.getAdres_id());
     }
+
+    @RequestMapping(value = "/adres/{adres_id}/contact/{contact_id}", method = RequestMethod.GET)
+	public String getAdresContact(@PathVariable Integer adres_id, @PathVariable Integer contact_id, Model model) throws Exception {
+        model.addAttribute("menuId", "m_briefwisseling.detailAdres");
+        model.addAttribute("title", "Adres details");
+        
+        model.addAttribute("selected_contact_id", contact_id);
+        
+        model.addAttribute("adresDO", sqlSession.selectOne("getAdres", adres_id));
+		model.addAttribute("adresContactenlijst", sqlSession.selectList("getAdresContacten", adres_id));
+        
+        
+        model.addAttribute("landen", DDH.getLanden());
+        model.addAttribute("adrestypes", DDH.getAdrestypes());
+        
+        return jsview("adres/adresDetail", model);
+	}
 
 }
