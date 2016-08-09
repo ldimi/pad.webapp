@@ -46,7 +46,7 @@ define([
             this.bewaar = function () {
                 this.showErrors(true);
 
-                if (this.adres.get("bestek_id") === null || this.adres.isDirty()) {
+                if (this.adres.get("adres_id") === null || this.adres.isDirty()) {
                     if (!this.adres.isValid()) {
                         $.notify("Er zijn validatie fouten.");
                         return;
@@ -143,7 +143,7 @@ define([
                     m("tbody",
                         _.map(_G_.model.adresContactenlijst, function (contact) {
                             return m("tr", [
-                                m("td", contact.naam),
+                                m("td", contact.naam_voornaam),
                                 m("td", contact.tel),
                                 m("td", contact.fax),
                                 m("td", contact.gsm),

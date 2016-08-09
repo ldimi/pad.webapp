@@ -28,6 +28,29 @@
         where adres_id = #{adres_id}
     </select>
 
+    <select id="getAdresContacten" parameterType="int" resultType="ciMap">
+        select
+            contact_id,
+            adres_id,
+            naam,
+            voornaam,
+            coalesce(naam,'') || ' ' || coalesce(voornaam,'') naam_voornaam,
+            tel,
+            fax,
+            gsm,
+            email,
+            functie,
+            commentaar,
+            stop_s,
+            case when stop_s = '1' then 'N'
+                 else 'J'
+            end as actief_jn,
+            referentie_postcodes
+        from art46.adres_contact
+        where adres_id = #{adres_id}
+    </select>
+
+
     <insert id="insertDossierAdres" parameterType="map">
         insert into ART46.dossier_adres (
             dossier_id,
@@ -55,26 +78,6 @@
                 contact_id = #{contact_id}
     </delete>
 
-
-    <select id="getAdresContacten" parameterType="int" resultType="ciMap">
-        select
-            contact_id,
-            adres_id,
-            coalesce(naam,'') || ' ' || coalesce(voornaam,'') naam,
-            tel,
-            fax,
-            gsm,
-            email,
-            functie,
-            commentaar,
-            stop_s,
-            case when stop_s = '1' then 'N'
-                 else 'J'
-            end as actief_jn,
-            referentie_postcodes
-        from art46.adres_contact
-        where adres_id = #{adres_id}
-    </select>
 
     <select id="zoekAdres" parameterType="be.ovam.art46.struts.actionform.AdresZoekForm" resultType="ciMap">
         with contacten_of_adressen as (

@@ -21,7 +21,7 @@
                     <display:table id="adrescontact" name="requestScope.adresContactenlijst" requestURI="/adres.do?crudAction=read" export="true" defaultsort="1" pagesize='<%= ((be.ovam.art46.struts.actionform.PagingForm) session.getAttribute("pagingform")).getPagesizeInt()%>' >
                         <display:column titleKey="adrescontact.lijst.naam" sortable="true">
                             <a href='<html:rewrite action="adrescontact"/>?crudAction=read&adres_id=<bean:write name="adrescontact" property="adres_id"/>&contact_id=<bean:write name="adrescontact" property="contact_id"/>'>
-                                <bean:write name="adrescontact" property="naam"/>
+                                <bean:write name="adrescontact" property="naam_voornaam"/>
                             </a>
                         </display:column>
                         <display:column property="tel" titleKey="adrescontact.lijst.tel" sortable="true"/>

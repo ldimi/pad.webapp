@@ -56,7 +56,7 @@
                         <td class="nopadding">
                             <html:select property="contact_id" styleClass="input">
                                 <html:option value="0">&nbsp;</html:option>
-                                <html:optionsCollection name="briefform" property="contactList" label="naam" value="contact_id" />
+                                <html:optionsCollection name="briefform" property="contactList" label="naam_voornaam" value="contact_id" />
                             </html:select>
                         </td>
                     </tr>
