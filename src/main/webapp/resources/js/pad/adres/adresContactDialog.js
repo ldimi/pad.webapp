@@ -31,12 +31,13 @@ define([
         enforceInvariants: function () {
         }
     });
+    
 
     adresContactDialog = {
         controller: function() {
             this.title = "Contact persoon";
-            this.width = 300;
-            this.height = 300;
+            this.width = 400;
+            //this.height = 300;
     
             events.on("adresContactDialog:open", this.open.bind(this));
 
@@ -73,9 +74,10 @@ define([
         },
         view: function (ctrl) {
             var ff;
-            ff = fhf.get().setModel(ctrl.adres).setShowErrors(ctrl.showErrors());
-            return m("div", {style: {margin: "10px", align:"left", width: "1000px"}}, [
-                m("table.formLayout", {width: "800px"}, [
+            ff = fhf.get().setModel(ctrl.adresContact).setShowErrors(ctrl.showErrors());
+            
+            return m("div", {style: {align:"left"}}, [
+                m("table.formLayout", [
                     m("tr", [
                         m("td", "Naam:"),
                         m("td", ff.input("naam", {maxlength: 120}))
@@ -116,9 +118,9 @@ define([
                         m("td", ff.textarea("referentie_postcodes", {rows: 3, cols:90, maxlength: 1500 }))
                     ])
                 ]),
-                m("div.floatRightContainer", {style: {width: "800px", paddingTop: "10px"}}, [
+                m("div.floatRightContainer", {style: { paddingTop: "10px"}}, [
                     m("button", {onclick: _.bind(ctrl.bewaar, ctrl)},
-                        (ctrl.adres.get("contact_id") === null) ? "Nieuw contact toevoegen" : "Wijzigingen opslaan" )
+                        (ctrl.adresContact.get("contact_id") === null) ? "Nieuw contact toevoegen" : "Wijzigingen opslaan" )
                 ])
             ]);
         }

@@ -2,10 +2,11 @@
 /*global define: false, Slick: false, $: false, _: false, alert: false, window, _G_, m */
 
 define([
-    "ov/mithril/ajax",
+    "adres/adresContactDialog",
     "ov/Model",
+    "ov/mithril/ajax",
     "ov/mithril/formhelperFactory"
-], function (ajax, Model, fhf) {
+], function (adresContactDialog, Model, ajax, fhf) {
     "use strict";
 
     var AdresModel, comp;
@@ -41,7 +42,13 @@ define([
         controller: function() {
             this.adres = new AdresModel(_G_.model.adresDO);
             this.showErrors = m.prop(false);
+            
+            this.contactDialogCtrl = new adresContactDialog.controller();
 
+            this.openContact = function (contact) {
+                this.contactDialogCtrl.open(contact);
+                return false;
+            };
 
             this.bewaar = function () {
                 this.showErrors(true);
@@ -143,7 +150,9 @@ define([
                     m("tbody",
                         _.map(_G_.model.adresContactenlijst, function (contact) {
                             return m("tr", [
-                                m("td", contact.naam_voornaam),
+                                m("td",
+                                    m("a", { href: "#", onclick: ctrl.openContact.bind(ctrl, contact) }, contact.naam_voornaam)
+                                ),
                                 m("td", contact.tel),
                                 m("td", contact.fax),
                                 m("td", contact.gsm),
@@ -155,7 +164,9 @@ define([
                             ]);
                         })
                     )
-                ])
+                ]),
+                
+                adresContactDialog.view(ctrl.contactDialogCtrl)
             ]);
         }
     };
