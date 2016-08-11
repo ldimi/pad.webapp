@@ -50,6 +50,7 @@ public class AdresController {
         
         model.addAttribute("landen", DDH.getLanden());
         model.addAttribute("adrestypes", DDH.getAdrestypes());
+		model.addAttribute("gemeentenLijst", sqlSession.selectList("getGemeentenLijst"));
         
         return jsview("adres/adresDetail", model);
 	}

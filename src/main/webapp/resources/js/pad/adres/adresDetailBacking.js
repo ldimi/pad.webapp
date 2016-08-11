@@ -37,12 +37,17 @@ define([
         enforceInvariants: function () {
         }
     });
+    
+    _.each(_G_.model.gemeentenLijst, function(item) {
+        item.label = item.postcode + ' ' + item.fusiegemeente + ' ' + item.deelgemeente;
+    });
+    
 
     comp = {
         controller: function() {
             this.adres = new AdresModel(_G_.model.adresDO);
             this.showErrors = m.prop(false);
-            
+                        
             this.contactDialogCtrl = new adresContactDialog.controller();
 
             this.openContact = function (contact) {
@@ -101,7 +106,37 @@ define([
                     ]),
                     m("tr", [
                         m("td", "Postcode:"),
-                        m("td", ff.input("postcode", {maxlength: 8})),
+                        m("td", m("input", {
+                                    type: "text",
+                                    maxlength: 8,
+                                    value: ctrl.adres.get("postcode"),
+                                    config : function (el, initialised, context) {
+                                        if (!initialised) {
+                                            $(el).autocomplete({
+                                                source: _G_.model.gemeentenLijst,
+                                                minLength: 2,
+                                                focus: function(event, ui) {
+                                                    // prevent autocomplete from updating the textbox
+                                                    event.preventDefault();
+                                                    // manually update the textbox
+                                                    $(this).val(ui.item.postcode);
+                                                    console.log("focus");
+                                                    ctrl.adres.set("postcode", ui.item.postcode);
+                                                },
+                                                select: function(event, ui) {
+                                                    // prevent autocomplete from updating the textbox
+                                                    event.preventDefault();
+                                                    // manually update the textbox and hidden field
+                                                    //$(this).val(ui.item.postcode);
+                                                    //$gemeente.val(ui.item.fusiegemeente);
+                                                    console.log("select");
+                                                    ctrl.adres.set("gemeente", ui.item.fusiegemeente);
+                                                    m.redraw();
+                                                }
+                                            });
+                                        }
+                                    }
+                        })),
                         m("td", "Email:"),
                         m("td", ff.input("email", {maxlength: 50}))
                     ]),
