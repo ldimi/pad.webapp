@@ -5,7 +5,8 @@ define([
     "adres/adresContactDialog",
     "ov/Model",
     "ov/mithril/ajax",
-    "ov/mithril/formhelperFactory"
+    "ov/mithril/formhelperFactory",
+    "selectize"
 ], function (adresContactDialog, Model, ajax, fhf) {
     "use strict";
 
@@ -35,8 +36,25 @@ define([
         ]),
 
         enforceInvariants: function () {
+            var postcode, fusiegemeente, gemeente;
+            if (this.hasChanged("postcode")) {
+                postcode = this.get("postcode");
+                gemeente = _(_G_.model.gemeentenLijst)
+                    .find( function (item) {
+                        return item.postcode === postcode;
+                    });
+                this.attributes.gemeente = gemeente.fusiegemeente;
+            }
+            if (this.hasChanged("gemeente")) {
+                fusiegemeente = this.get("gemeente");
+                gemeente = _(_G_.model.gemeentenLijst)
+                    .find( function (item) {
+                        return item.fusiegemeente === fusiegemeente;
+                    });
+                this.attributes.postcode = gemeente.postcode;
+            }
         }
-    });
+    });                               
     
     _.each(_G_.model.gemeentenLijst, function(item) {
         item.label = item.postcode + ' ' + item.fusiegemeente + ' ' + item.deelgemeente;
@@ -49,6 +67,22 @@ define([
             this.showErrors = m.prop(false);
                         
             this.contactDialogCtrl = new adresContactDialog.controller();
+            
+            this.postcode_dd = _(_G_.model.gemeentenLijst)
+                .map(function (item) {
+                    return {
+                        value: item.postcode,
+                        label: item.postcode + ' ' + item.fusiegemeente + ' ' + item.deelgemeente
+                    };
+                });
+
+            this.gemeente_dd = _(_G_.model.gemeentenLijst)
+                .map(function (item) {
+                    return {
+                        value: item.fusiegemeente,
+                        label: item.postcode + ' ' + item.fusiegemeente + ' ' + item.deelgemeente
+                    };
+                });
 
             this.openContact = function (contact) {
                 this.contactDialogCtrl.open(contact);
@@ -113,24 +147,14 @@ define([
                                     config : function (el, initialised, context) {
                                         if (!initialised) {
                                             $(el).autocomplete({
-                                                source: _G_.model.gemeentenLijst,
+                                                source: ctrl.postcode_dd,
                                                 minLength: 2,
-                                                focus: function(event, ui) {
-                                                    // prevent autocomplete from updating the textbox
-                                                    event.preventDefault();
-                                                    // manually update the textbox
-                                                    $(this).val(ui.item.postcode);
-                                                    console.log("focus");
-                                                    ctrl.adres.set("postcode", ui.item.postcode);
-                                                },
+                                                autoFocus: true ,
                                                 select: function(event, ui) {
                                                     // prevent autocomplete from updating the textbox
                                                     event.preventDefault();
-                                                    // manually update the textbox and hidden field
-                                                    //$(this).val(ui.item.postcode);
-                                                    //$gemeente.val(ui.item.fusiegemeente);
                                                     console.log("select");
-                                                    ctrl.adres.set("gemeente", ui.item.fusiegemeente);
+                                                    ctrl.adres.set("postcode", ui.item.value);
                                                     m.redraw();
                                                 }
                                             });
@@ -142,7 +166,27 @@ define([
                     ]),
                     m("tr", [
                         m("td", "Gemeente:"),
-                        m("td", ff.input("gemeente", {maxlength: 40})),
+                        m("td", m("input", {
+                                    type: "text",
+                                    maxlength: 8,
+                                    value: ctrl.adres.get("gemeente"),
+                                    config : function (el, initialised, context) {
+                                        if (!initialised) {
+                                            $(el).autocomplete({
+                                                source: ctrl.gemeente_dd,
+                                                minLength: 2,
+                                                autoFocus: true ,
+                                                select: function(event, ui) {
+                                                    // prevent autocomplete from updating the textbox
+                                                    event.preventDefault();
+                                                    console.log("select");
+                                                    ctrl.adres.set("gemeente", ui.item.value);
+                                                    m.redraw();
+                                                }
+                                            });
+                                        }
+                                    }
+                        })),
                         m("td", "Website:"),
                         m("td", ff.input("website", {maxlength: 100}))
                     ]),
