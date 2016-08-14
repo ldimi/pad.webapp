@@ -49,7 +49,7 @@ define([
             this.bewaar = function () {
                 this.showErrors(true);
 
-                if (this.adresContact.get("bestek_id") === null || this.adresContact.isDirty()) {
+                if (this.adresContact.get("contact_id") === null || this.adresContact.isDirty()) {
                     if (!this.adresContact.isValid()) {
                         $.notify("Er zijn validatie fouten.");
                         return;
@@ -60,6 +60,7 @@ define([
                         content: this.adresContact
                     }).then(function (response) {
                         if (response && response.success) {
+                            $.notify("Dit contact gegevens zijn bewaard.");
                             window.location = "http://" + window.location.host + "/pad/s/adres/" + response.result;
                         } else {
                             alert("De actie niet gelukt (server error :" + response.errorMsg + ")");

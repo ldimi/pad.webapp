@@ -168,7 +168,7 @@ define([
                         m("td", "Gemeente:"),
                         m("td", m("input", {
                                     type: "text",
-                                    maxlength: 8,
+                                    maxlength: 40,
                                     value: ctrl.adres.get("gemeente"),
                                     config : function (el, initialised, context) {
                                         if (!initialised) {

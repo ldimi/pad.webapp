@@ -5,6 +5,7 @@ import be.ovam.art46.util.DropDownHelper;
 import be.ovam.util.mybatis.SqlSession;
 import be.ovam.web.Response;
 import static be.ovam.web.util.JsView.jsview;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +22,6 @@ public class AdresController {
 	@Autowired
 	private SqlSession sqlSession;
 	
-	@Autowired
-	private AdresDAO adresDAO;
-
     private final DropDownHelper DDH = DropDownHelper.INSTANCE;
 	
 	@RequestMapping(value = "/adres/{adres_id}", method = RequestMethod.GET)
@@ -35,6 +33,12 @@ public class AdresController {
     public @ResponseBody Response save(@RequestBody AdresDO adresDO) throws Exception {
         sqlSession.saveInTable("art46", "adres", adresDO);
         return new Response(adresDO.getAdres_id());
+    }
+
+    @RequestMapping(value = "/adres/contact/save", method = RequestMethod.POST)
+    public @ResponseBody Response save(@RequestBody Map adresContact) throws Exception {
+        sqlSession.saveInTable("art46", "adres_contact", adresContact);
+        return new Response(adresContact.get("adres_id"));
     }
 
     @RequestMapping(value = "/adres/{adres_id}/contact/{contact_id}", method = RequestMethod.GET)
